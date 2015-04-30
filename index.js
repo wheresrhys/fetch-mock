@@ -124,6 +124,7 @@ FetchMock.prototype.getRouter = function (config) {
 FetchMock.prototype.mock = function (config) {
 	var defaultFetch = GLOBAL.fetch;
 	var router = this.getRouter(config);
+	config.greedy = typeof config.greedy === 'undefined' ? true : config.greedy
 	sinon.stub(GLOBAL, 'fetch', function (url, opts) {
 			var response = router(url, opts);
 			if (response) {
@@ -137,6 +138,7 @@ FetchMock.prototype.mock = function (config) {
 };
 
 FetchMock.prototype.restore = function () {
+	this.reset();
 	GLOBAL.fetch.restore();
 };
 

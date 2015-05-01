@@ -15,7 +15,7 @@ function mockResponse (url, body, opts) {
 	opts.headers = opts.headers ? new Headers(opts.headers) : new Headers();
 
 	var s = new stream.Readable();
-	if (body) {
+	if (body != null) {
 		if (typeof body === 'object') {
 			body = JSON.stringify(body);
 		}
@@ -24,11 +24,7 @@ function mockResponse (url, body, opts) {
 
 	s.push(null);
 
-	if (opts.status === 200) {
-		return Promise.resolve(new Response(s, opts));
-	} else {
-		return Promise.reject(new Response(s, opts));
-	}
+	return Promise.resolve(new Response(s, opts));
 }
 
 function compileRoute (route) {
@@ -124,12 +120,14 @@ FetchMock.prototype.getRouter = function (config) {
 FetchMock.prototype.mock = function (config) {
 	var defaultFetch = GLOBAL.fetch;
 	var router = this.getRouter(config);
-	config.greedy = typeof config.greedy === 'undefined' ? true : config.greedy
+	config.greed = config.greed || 'none';
 	sinon.stub(GLOBAL, 'fetch', function (url, opts) {
 			var response = router(url, opts);
 			if (response) {
 				return mockResponse(url, response.body, response.opts);
-			} else if (config.greedy) {
+			} else if (config.greed === 'good') {
+				return mockResponse(url, 'unmocked url :' + url);
+			} else if (config.greed === 'bad') {
 				return Promise.reject('unmocked url :' + url);
 			} else {
 				return defaultFetch(url, opts);

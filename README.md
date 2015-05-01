@@ -10,17 +10,17 @@ var fetchMock = require('fetch-mock');
 // name, matcher and response, to add a single route
 fetchMock.registerRoute([
  {
-   name: 'session',
-   matcher: 'https://sessionservice.host.com',
-   response: 'user-12345'
+	 name: 'session',
+	 matcher: 'https://sessionservice.host.com',
+	 response: 'user-12345'
  },
  {
-   name: 'geo',
-   matcher: /^https\:\/\/geoservice\.host\.com/,
-   // objects will be converted to strings using JSON.stringify before being returned
-   response: {
-    country: 'uk'
-   }
+	 name: 'geo',
+	 matcher: /^https\:\/\/geoservice\.host\.com/,
+	 // objects will be converted to strings using JSON.stringify before being returned
+	 response: {
+		country: 'uk'
+	 }
  }
 ])
 
@@ -41,6 +41,7 @@ it('should do A', function () {
 	fetchMock.calls('session') // non empty array
 	fetchMock.called('geo') // Boolean
 
+	// reset all call logs
 	fetchMock.reset()
 
 	fetchMock.calls('session') // undefined
@@ -74,13 +75,13 @@ describe('content', function () {
 			// and even add one to be mocked for this test only 
 			// - the route will exist until fetchMock.restore() is called
 			routes: ['session', 'content', {
-		   name: 'enhanced-content',
-		   matcher: /^https\:\/\/enhanced-contentservice\.host\.com/,
-		   // responses can be contextual depending on the request
-		   // url and opts parameters are exactly what would be passed to fetch
-		   response: function (url, opts) {
-		   	return 'enhanced-article-' + url.split('article-id/')[1];
-		   }
+			 name: 'enhanced-content',
+			 matcher: /^https\:\/\/enhanced-contentservice\.host\.com/,
+			 // responses can be contextual depending on the request
+			 // url and opts parameters are exactly what would be passed to fetch
+			 response: function (url, opts) {
+				return 'enhanced-article-' + url.split('article-id/')[1];
+			 }
 			}]
 		});
 		

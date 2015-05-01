@@ -7,15 +7,18 @@ var Headers = require('node-fetch/lib/headers');
 var sinon = require('sinon');
 var stream = require('stream');
 
-function mockResponse (url, body, opts) {
-
-	opts = opts || {};
+function mockResponse (url, config) {
+	if (config.throws) {
+		return Promise.reject(config.throws);
+	}
+	opts = config.opts || {};
 	opts.url = url;
 	opts.status = opts.status || 200;
 	opts.headers = opts.headers ? new Headers(opts.headers) : new Headers();
 
 	var s = new stream.Readable();
-	if (body != null) {
+	if (config.body != null) {
+		var body = config.body;
 		if (typeof body === 'object') {
 			body = JSON.stringify(body);
 		}
@@ -124,11 +127,11 @@ FetchMock.prototype.mock = function (config) {
 	sinon.stub(GLOBAL, 'fetch', function (url, opts) {
 			var response = router(url, opts);
 			if (response) {
-				return mockResponse(url, response.body, response.opts);
+				return mockResponse(url, response);
 			} else if (config.greed === 'good') {
-				return mockResponse(url, 'unmocked url :' + url);
+				return mockResponse(url, {body: 'unmocked url :' + url});
 			} else if (config.greed === 'bad') {
-				return Promise.reject('unmocked url :' + url);
+				return mockResponse(url, {throws: 'unmocked url :' + url});
 			} else {
 				return defaultFetch(url, opts);
 			}

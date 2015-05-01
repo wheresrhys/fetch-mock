@@ -151,5 +151,9 @@ FetchMock.prototype.calls = function (name) {
 	return this._calls[name];
 };
 
+FetchMock.prototype.called = function (name) {
+	return !!(this._calls[name] && this._calls[name].length);
+};
+
 
 module.exports = new FetchMock();

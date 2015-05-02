@@ -69,6 +69,7 @@ FetchMock.prototype.unregisterRoute = function (name) {
 	if (!name) {
 		this.routes = [];
 		return;
+	}
 	if (name instanceof Array) {
 		names = name;
 	} else {

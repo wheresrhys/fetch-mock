@@ -145,6 +145,7 @@ FetchMock.prototype.restore = function () {
 
 FetchMock.prototype.reset = function () {
 	this.calls = {};
+	GLOBAL.fetch.reset();
 };
 
 FetchMock.prototype.calls = function (name) {

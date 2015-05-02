@@ -128,6 +128,10 @@ FetchMock.prototype.getRouter = function (config) {
 };
 
 FetchMock.prototype.mock = function (config) {
+	if (this.isMocking) {
+		throw 'fetch-mock is already mocking routes. Call .restore() before mocking again';
+	}
+	this.isMocking = true;
 	var defaultFetch = GLOBAL.fetch;
 	var router = this.getRouter(config);
 	config.greed = config.greed || 'none';
@@ -147,6 +151,7 @@ FetchMock.prototype.mock = function (config) {
 
 FetchMock.prototype.restore = function () {
 	this.reset();
+	this.isMocking = false;
 	GLOBAL.fetch.restore();
 };
 

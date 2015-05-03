@@ -27,5 +27,9 @@
     "es6-promise": "^2.1.1",
     "node-fetch": "^1.1.2",
     "sinon": "^1.14.1"
+  },
+  "devDependencies": {
+    "chai": "^2.3.0",
+    "mocha": "^2.2.4"
   }
 }

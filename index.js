@@ -32,16 +32,35 @@ function mockResponse (url, body, opts) {
 }
 
 function compileRoute (route) {
+	if (!route.name) {
+		throw 'each route must be named';
+	}
+
+	if (!route.matcher) {
+		throw 'each route must specify a string, regex or function to match calls to fetch';
+	}
+
+	if (!route.name) {
+		throw 'each route must define a response';
+	}
+
 	if (typeof route.matcher === 'string') {
-		var expectedUrl = route.matcher
-		route.matcher = function (url) {
-			return url === expectedUrl;
+		var expectedUrl = route.matcher;
+		if (route.matcher.indexOf('^') === 0) {
+			expectedUrl = expectedUrl.substr(1);
+			route.matcher = function (url) {
+				return url.indexOf(expectedUrl) === 0;
+			};
+		} else {
+			route.matcher = function (url) {
+				return url === expectedUrl;
+			};
 		}
 	} else if (route.matcher instanceof RegExp) {
-		var urlRX = route.matcher
+		var urlRX = route.matcher;
 		route.matcher = function (url) {
 			return urlRX.test(url);
-		}
+		};
 	}
 	return route;
 }
@@ -60,7 +79,7 @@ FetchMock.prototype.registerRoute = function (name, matcher, response) {
 			name: name,
 			matcher: matcher,
 			response: response
-		}]
+		}];
 	}
 	this.routes = this.routes.concat(routes.map(compileRoute));
 };
@@ -70,6 +89,7 @@ FetchMock.prototype.unregisterRoute = function (name) {
 	if (!name) {
 		this.routes = [];
 		return;
+	}
 	if (name instanceof Array) {
 		names = name;
 	} else {
@@ -79,13 +99,17 @@ FetchMock.prototype.unregisterRoute = function (name) {
 	this.routes = this.routes.filter(function (route) {
 		return names.indexOf(route.name)  === -1;
 	});
-
-}
+};
 
 FetchMock.prototype.getRouter = function (config) {
+
 	var routes;
 
 	if (config.routes) {
+		if (!(config.routes instanceof Array)) {
+			config.routes = [config.routes];
+		}
+
 		var preRegisteredRoutes = {};
 		this.routes.forEach(function (route) {
 			preRegisteredRoutes[route.name] = route;
@@ -98,19 +122,25 @@ FetchMock.prototype.getRouter = function (config) {
 				return compileRoute(route);
 			}
 		});
+		var routeNames = {};
+		config.routes.forEach(function (route) {
+			if (routeNames[route.name]) {
+				throw 'Route names must be unique';
+			}
+			routeNames[route.name] = true;
+		})
 	} else {
 		routes = this.routes;
 	}
 
-	opts.responses = opts.responses || {};
+	config.responses = config.responses || {};
 
 	return function (url, opts) {
 		var response;
 		routes.some(function (route) {
 			if (route.matcher(url, opts)) {
-				this._calls[route.name] = this.calls[route.name] || [];
-				this._calls[route.name].push([url, opts]);
-				response = opts.responses || route.response;
+				this.push(route.name, [url, opts]);
+				response = config.responses || route.response;
 				if (typeof response === 'function') {
 					response = response(url, opts);
 				}
@@ -118,20 +148,31 @@ FetchMock.prototype.getRouter = function (config) {
 			}
 		});
 		return response;
-	}
+	};
+};
+
+FetchMock.prototype.push = function (name, call) {
+	this._calls[name] = this.calls[name] || [];
+	this._calls[name].push(call);
 };
 
 FetchMock.prototype.mock = function (config) {
+	config = config || {};
 	var defaultFetch = GLOBAL.fetch;
 	var router = this.getRouter(config);
+	var self = this;
+
 	sinon.stub(GLOBAL, 'fetch', function (url, opts) {
 			var response = router(url, opts);
 			if (response) {
 				return mockResponse(url, response.body, response.opts);
-			} else if (config.greedy) {
-				return Promise.reject('unmocked url :' + url);
 			} else {
-				return defaultFetch(url, opts);
+				self.push('__unmatched', [url, opts]);
+				if (config.greedy) {
+					return Promise.reject('unmocked url :' + url);
+				} else {
+					return defaultFetch(url, opts);
+				}
 			}
 	});
 };
@@ -147,6 +188,5 @@ FetchMock.prototype.reset = function () {
 FetchMock.prototype.calls = function (name) {
 	return this._calls[name];
 };
-
 
 module.exports = new FetchMock();

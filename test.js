@@ -138,7 +138,7 @@ describe('fetch-mock', function () {
 						expect(unmatchedCalls[0]).to.eql(['http://1', {method: 'GET'}]);
 						expect(unmatchedCalls[1]).to.eql(['http://2', {method: 'POST'}]);
 						done();
-					}).catch(err)
+					});
 			});
 
 			it('configure to send good responses', function (done) {
@@ -337,32 +337,121 @@ describe('fetch-mock', function () {
 
 		});
 
-	// 	describe('responses', function () {
-	// 		it('respond with a string', function (done) {
+		describe('responses', function () {
+			it('respond with a string', function (done) {
+				fetchMock.mock({
+					routes: {
+						name: 'route',
+						matcher: 'http://it.at.there',
+						response: 'a string'
+					}
+				});
+				fetch('http://it.at.there')
+					.then(function (res) {
+						expect(res.status).to.equal(200);
+						res.text().then(function (text) {
+							expect(text).to.equal('a string');
+							done();
+						});
+					});
+			});
 
-	// 		});
+			it('respond with a json', function (done) {
+				fetchMock.mock({
+					routes: {
+						name: 'route',
+						matcher: 'http://it.at.there',
+						response: {an: 'object'}
+					}
+				});
+				fetch('http://it.at.there')
+					.then(function (res) {
+						expect(res.status).to.equal(200);
+						res.json().then(function (json) {
+							expect(json).to.eql({an: 'object'});
+							done();
+						});
+					});
+			});
 
-	// 		it('respond with a json', function (done) {
+			it('respond with a status', function (done) {
+				fetchMock.mock({
+					routes: {
+						name: 'route',
+						matcher: 'http://it.at.there',
+						response: {status: 404}
+					}
+				});
+				fetch('http://it.at.there')
+					.then(function (res) {
+						expect(res.status).to.equal(404);
+						done();
+					});
+			});
 
-	// 		});
+			it('respond with a complex response, including headers', function (done) {
+				fetchMock.mock({
+					routes: {
+						name: 'route',
+						matcher: 'http://it.at.there',
+						response: {
+							status: 202,
+							body: {an: 'object'},
+							headers: {
+								header: 'val'
+							}
+						}
+					}
+				});
+				fetch('http://it.at.there')
+					.then(function (res) {
+						expect(res.status).to.equal(202);
+						expect(res.headers.get('header')).to.equal('val');
+						res.json().then(function (json) {
+							expect(json).to.eql({an: 'object'});
+							done();
+						});
+					});
+			});
 
-	// 		it('respond with a status', function (done) {
+			it('imitate a failed request', function (done) {
+				fetchMock.mock({
+					routes: {
+						name: 'route',
+						matcher: 'http://it.at.there',
+						response: {
+							throws: 'Oh no'
+						}
+					}
+				});
+				fetch('http://it.at.there')
+					.catch(function (res) {
+						expect(res).to.equal('Oh no');
+						done();
+					});
+			});
 
-	// 		});
+			it('construct a response based on the request', function (done) {
+				fetchMock.mock({
+					routes: {
+						name: 'route',
+						matcher: 'http://it.at.there',
+						response: function (url, opts) {
+							return url + opts.headers.header;
+						}
+					}
+				});
+				fetch('http://it.at.there', {headers: {header: 'val'}})
+					.then(function (res) {
+						expect(res.status).to.equal(200);
+						res.text().then(function (json) {
+							expect(text).to.equal('http://it.at.thereval');
+							done();
+						});
+					});
+			});
 
-	// 		it('respond with a complex response, including headers', function (done) {
-
-	// 		});
-
-	// 		it('imitate a failed request', function (done) {
-
-	// 		});
-
-	// 		it('construct a response based on the request', function (done) {
-
-	// 		});
-
-	// 	});
+		});
 
 
 

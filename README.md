@@ -43,7 +43,7 @@ it('should do A', function () {
 		// none: all unmatched calls get sent straight through to the default fetch
 		// bad: all unmatched calls result in a rejected promise
 		// good: all unmatched calls result in a resolved promise with a 200 status
-		greedy: 'none' 
+		greed: 'none' 
 	});
 	
 	thingToTest.exec();

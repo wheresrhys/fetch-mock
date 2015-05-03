@@ -7,15 +7,24 @@ var Headers = require('node-fetch/lib/headers');
 var sinon = require('sinon');
 var stream = require('stream');
 
-function mockResponse (url, body, opts) {
-
-	opts = opts || {};
+function mockResponse (url, config) {
+	// allow just body to be passed in as this is the commonest use case
+	if (typeof config === 'string' || !(config.body || config.headers || config.throws || config.status)) {
+		config = {
+			body: config
+		};
+	}
+	if (config.throws) {
+		return Promise.reject(config.throws);
+	}
+	opts = config.opts || {};
 	opts.url = url;
 	opts.status = opts.status || 200;
 	opts.headers = opts.headers ? new Headers(opts.headers) : new Headers();
 
 	var s = new stream.Readable();
-	if (body) {
+	if (config.body != null) {
+		var body = config.body;
 		if (typeof body === 'object') {
 			body = JSON.stringify(body);
 		}
@@ -24,11 +33,7 @@ function mockResponse (url, body, opts) {
 
 	s.push(null);
 
-	if (opts.status === 200) {
-		return Promise.resolve(new Response(s, opts));
-	} else {
-		return Promise.reject(new Response(s, opts));
-	}
+	return Promise.resolve(new Response(s, opts));
 }
 
 function compileRoute (route) {
@@ -157,15 +162,25 @@ FetchMock.prototype.push = function (name, call) {
 };
 
 FetchMock.prototype.mock = function (config) {
+var self = this;
+	if (this.isMocking) {
+		throw 'fetch-mock is already mocking routes. Call .restore() before mocking again';
+	}
+
+	this.isMocking = true;
 	config = config || {};
+
 	var defaultFetch = GLOBAL.fetch;
 	var router = this.getRouter(config);
-	var self = this;
-
+	config.greed = config.greed || 'none';
 	sinon.stub(GLOBAL, 'fetch', function (url, opts) {
 			var response = router(url, opts);
 			if (response) {
-				return mockResponse(url, response.body, response.opts);
+				return mockResponse(url, response);
+			} else if (config.greed === 'good') {
+				return mockResponse(url, {body: 'unmocked url :' + url});
+			} else if (config.greed === 'bad') {
+				return mockResponse(url, {throws: 'unmocked url :' + url});
 			} else {
 				self.push('__unmatched', [url, opts]);
 				if (config.greedy) {
@@ -178,15 +193,22 @@ FetchMock.prototype.mock = function (config) {
 };
 
 FetchMock.prototype.restore = function () {
+	this.reset();
+	this.isMocking = false;
 	GLOBAL.fetch.restore();
 };
 
 FetchMock.prototype.reset = function () {
 	this.calls = {};
+	GLOBAL.fetch.reset();
 };
 
 FetchMock.prototype.calls = function (name) {
 	return this._calls[name];
+};
+
+FetchMock.prototype.called = function (name) {
+	return !!(this._calls[name] && this._calls[name].length);
 };
 
 module.exports = new FetchMock();

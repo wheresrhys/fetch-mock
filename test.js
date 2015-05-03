@@ -72,9 +72,7 @@ describe('fetch-mock', function () {
 		beforeEach(function () {
 			try {
 				fetchMock.restore();
-			} catch (e) {
-				// console.log(e);
-			}
+			} catch (e) {}
 		});
 
 		describe('api parameters', function () {
@@ -457,37 +455,242 @@ describe('fetch-mock', function () {
 	});
 
 	describe('persistent route config', function () {
-	// 	it('register a single route', function (done) {
 
-	// 	});
+		beforeEach(function () {
+			try {
+				fetchMock.restore();
+			} catch (e) {}
+			fetchMock.unregisterRoute();
+		});
 
-	// 	it('register multiple routes', function (done) {
+		it('register a single route', function (done) {
+			fetchMock.registerRoute('route', 'http://it.at.there', 'a string');
+			fetchMock.mock();
+			fetch('http://it.at.there')
+				.then(function () {
+					expect(fetchMock.calls('route').length).to.equal(1);
+					done();
+				});
+		});
 
-	// 	});
+		it('register a single route as an object', function (done) {
+			fetchMock.registerRoute({
+				name: 'route',
+				matcher: 'http://it.at.there',
+				response: 'ok'
+			});
+			fetchMock.mock();
+			fetch('http://it.at.there')
+				.then(function () {
+					expect(fetchMock.calls('route').length).to.equal(1);
+					done();
+				});
+		});
 
-	// 	it('expects unique route names', function (done) {
+		it('register multiple routes', function (done) {
+			fetchMock.registerRoute([{
+				name: 'route1',
+				matcher: 'http://it.at.there',
+				response: 'ok'
+			}, {
+				name: 'route2',
+				matcher: 'http://it.at.here',
+				response: 'ok'
+			}]);
+			fetchMock.mock();
+			Promise.all([fetch('http://it.at.there'),	fetch('http://it.at.here')])
+				.then(function (res) {
+					expect(fetchMock.calls('route1').length).to.equal(1);
+					expect(fetchMock.calls('route2').length).to.equal(1);
+					done();
+				});
+		});
 
-	// 	});
+		it('expects unique route names', function () {
+			expect(function () {
+				fetchMock.registerRoute([{
+					name: 'route',
+					matcher: 'http://it.at.there',
+					response: 'ok'
+				}, {
+					name: 'route',
+					matcher: 'http://it.at.here',
+					response: 'ok'
+				}]);
+				fetchMock();
+			}).to.throw();
+		});
 
-	// 	it('unregister a single route', function (done) {
+		it('register routes multiple times', function () {
+			fetchMock.registerRoute('route1', 'http://it.at.there', 'a string');
+			fetchMock.registerRoute('route2', 'http://it.at.here', 'a string');
+			fetchMock.mock();
+			Promise.all([fetch('http://it.at.there'),	fetch('http://it.at.here')])
+				.then(function (res) {
+					expect(fetchMock.calls('route1').length).to.equal(1);
+					expect(fetchMock.calls('route2').length).to.equal(1);
+					done();
+				})
+		});
 
-	// 	});
+		it('unregister a single route', function (done) {
+			fetchMock.registerRoute([{
+				name: 'route1',
+				matcher: 'http://it.at.there',
+				response: 'ok'
+			}, {
+				name: 'route2',
+				matcher: 'http://it.at.here',
+				response: 'ok'
+			}, {
+				name: 'route3',
+				matcher: 'http://it.at.where',
+				response: 'ok'
+			}]);
+			fetchMock.unregisterRoute('route2');
+			fetchMock.mock();
+			Promise.all([fetch('http://it.at.there'),	fetch('http://it.at.here')])
+				.then(function (res) {
+					expect(fetchMock.calls('route1').length).to.equal(1);
+					expect(fetchMock.calls('route2').length).to.equal(0);
+					expect(fetchMock.calls('__unmatched').length).to.equal(1);
+					done();
+				});
+		});
 
-	// 	it('unregister multiple routes', function (done) {
+		it('unregister multiple routes', function (done) {
+			fetchMock.registerRoute([{
+				name: 'route1',
+				matcher: 'http://it.at.there',
+				response: 'ok'
+			}, {
+				name: 'route2',
+				matcher: 'http://it.at.here',
+				response: 'ok'
+			}, {
+				name: 'route3',
+				matcher: 'http://it.at.where',
+				response: 'ok'
+			}]);
+			fetchMock.unregisterRoute(['route1', 'route2']);
+			fetchMock.mock();
+			Promise.all([fetch('http://it.at.there'),	fetch('http://it.at.here'), fetch('http://it.at.where')])
+				.then(function (res) {
+					expect(fetchMock.calls('route3').length).to.equal(1);
+					expect(fetchMock.calls('route1').length).to.equal(0);
+					expect(fetchMock.calls('route2').length).to.equal(0);
+					expect(fetchMock.calls('__unmatched').length).to.equal(2);
+					done();
+				});
+		});
 
-	// 	});
+		it('preserve registered routes from test to test', function (done) {
+			fetchMock.registerRoute('route', 'http://it.at.there', 'a string');
+			fetchMock.mock();
+			fetch('http://it.at.there')
+				.then(function () {
+					expect(fetchMock.calls('route').length).to.equal(1);
+					fetchMock.restore();
+					expect(fetchMock.calls('route').length).to.equal(0);
+					fetchMock.mock();
+					fetch('http://it.at.there')
+						.then(function () {
+							expect(fetchMock.calls('route').length).to.equal(1);
+							fetchMock.restore();
+							done();
+						});
+				});
+		});
 
-	// 	it('use all registered routes in a mock by default', function (done) {
+		it('use selection of registered routes', function (done) {
+			fetchMock.registerRoute([{
+				name: 'route1',
+				matcher: 'http://it.at.there',
+				response: 'ok'
+			}, {
+				name: 'route2',
+				matcher: 'http://it.at.here',
+				response: 'ok'
+			}, {
+				name: 'route3',
+				matcher: 'http://it.at.where',
+				response: 'ok'
+			}]);
+			fetchMock.mock({
+				routes: ['route3', 'route1']
+			});
+			Promise.all([fetch('http://it.at.there'),	fetch('http://it.at.here'), fetch('http://it.at.where')])
+				.then(function (res) {
+					expect(fetchMock.calls('route3').length).to.equal(1);
+					expect(fetchMock.calls('route1').length).to.equal(1);
+					expect(fetchMock.calls('route2').length).to.equal(0);
+					expect(fetchMock.calls('__unmatched').length).to.equal(1);
+					done();
+				});
+		});
 
-	// 	});
+		it('mix one off routes with registered routes', function (done) {
+			fetchMock.registerRoute({
+				name: 'route1',
+				matcher: 'http://it.at.there',
+				response: 'ok'
+			});
+			fetchMock.mock({
+				routes: [{
+					name: 'route2',
+					matcher: 'http://it.at.here',
+					response: 'ok'
+				}, 'route1']
+			});
+			Promise.all([fetch('http://it.at.there'),	fetch('http://it.at.here')])
+				.then(function (res) {
+					expect(fetchMock.calls('route2').length).to.equal(1);
+					expect(fetchMock.calls('route1').length).to.equal(1);
+					done();
+				});
+		});
 
-	// 	it('use selection of registered routes', function (done) {
+		it('apply routes in specified order', function (done) {
+			fetchMock.registerRoute({
+				name: 'route1',
+				matcher: 'http://it.at.here',
+				response: 'ok'
+			});
+			fetchMock.mock({
+				routes: [{
+					name: 'route2',
+					matcher: 'http://it.at.here',
+					response: 'ok'
+				}, 'route1']
+			});
+			fetch('http://it.at.here')
+				.then(function (res) {
+					expect(fetchMock.calls('route2').length).to.equal(1);
+					expect(fetchMock.calls('route1').length).to.equal(0);
+					done();
+				});
+		});
 
-	// 	});
+		it('override response for a registered route', function (done) {
+			fetchMock.registerRoute({
+				name: 'route1',
+				matcher: 'http://it.at.here',
+				response: 'ok'
+			});
+			fetchMock.mock({
+				responses: {
+					route1: 'changed my mind'
+				}
+			});
+			fetch('http://it.at.here')
+				.then(function (res) {
+					res.text().then(function (text) {
+						expect(text).to.equal('changed my mind');
+						done();
+					});
 
-	// 	it('override response for a registered route', function (done) {
-
-	// 	});
+				});
+		});
 
 	});
 

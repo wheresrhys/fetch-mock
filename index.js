@@ -76,12 +76,14 @@ FetchMock.prototype.registerRoute = function (name, matcher, response) {
 	var routes;
 	if (name instanceof Array) {
 		routes = name;
-	} else {
+	} else if (arguments.length === 3 ) {
 		routes = [{
 			name: name,
 			matcher: matcher,
 			response: response
 		}];
+	} else {
+		routes = [name];
 	}
 	this.routes = this.routes.concat(routes.map(compileRoute));
 };
@@ -104,7 +106,6 @@ FetchMock.prototype.unregisterRoute = function (name) {
 };
 
 FetchMock.prototype.getRouter = function (config) {
-
 	var routes;
 
 	if (config.routes) {
@@ -116,7 +117,6 @@ FetchMock.prototype.getRouter = function (config) {
 		this.routes.forEach(function (route) {
 			preRegisteredRoutes[route.name] = route;
 		});
-
 		routes = config.routes.map(function (route) {
 			if (typeof route === 'string') {
 				return preRegisteredRoutes[route];
@@ -124,22 +124,26 @@ FetchMock.prototype.getRouter = function (config) {
 				return compileRoute(route);
 			}
 		});
-		var routeNames = {};
-		config.routes.forEach(function (route) {
-			if (routeNames[route.name]) {
-				throw 'Route names must be unique';
-			}
-			routeNames[route.name] = true;
-		})
 	} else {
 		routes = this.routes;
 	}
+
+
+	var routeNames = {};
+	routes.forEach(function (route) {
+		if (routeNames[route.name]) {
+			throw 'Route names must be unique';
+		}
+		routeNames[route.name] = true;
+	});
 
 	config.responses = config.responses || {};
 
 	return function (url, opts) {
 		var response;
+
 		routes.some(function (route) {
+
 			if (route.matcher(url, opts)) {
 				this.push(route.name, [url, opts]);
 				response = config.responses[route.name] || route.response;
@@ -159,14 +163,13 @@ FetchMock.prototype.push = function (name, call) {
 };
 
 FetchMock.prototype.mock = function (config) {
-var self = this;
+	var self = this;
 	if (this.isMocking) {
 		throw 'fetch-mock is already mocking routes. Call .restore() before mocking again';
 	}
 
 	this.isMocking = true;
 	config = config || {};
-
 	var defaultFetch = GLOBAL.fetch;
 	var router = this.getRouter(config);
 	config.greed = config.greed || 'none';

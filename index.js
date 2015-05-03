@@ -17,9 +17,8 @@ function mockResponse (url, config) {
 	}
 	var opts = config.opts || {};
 	opts.url = url;
-	opts.status = opts.status || 200;
-	opts.headers = opts.headers ? new Headers(opts.headers) : new Headers();
-
+	opts.status = config.status || 200;
+	opts.headers = config.headers ? new Headers(config.headers) : new Headers();
 
 	var s = new stream.Readable();
 	if (config.body != null) {
@@ -143,7 +142,7 @@ FetchMock.prototype.getRouter = function (config) {
 		routes.some(function (route) {
 			if (route.matcher(url, opts)) {
 				this.push(route.name, [url, opts]);
-				response = config.responses || route.response;
+				response = config.responses[route.name] || route.response;
 				if (typeof response === 'function') {
 					response = response(url, opts);
 				}

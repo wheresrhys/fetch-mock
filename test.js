@@ -147,7 +147,7 @@ describe('fetch-mock', function () {
 					.then(function (res) {
 						expect(fetchMock.calls('__unmatched').length).to.equal(1);
 						expect(res.status).to.equal(200);
-						res.text().then (function (text) {
+						res.text().then(function (text) {
 							expect(text).to.equal('unmocked url: http://1');
 							done();
 						});
@@ -386,7 +386,8 @@ describe('fetch-mock', function () {
 					.then(function (res) {
 						expect(res.status).to.equal(404);
 						done();
-					});
+					})
+					.catch(err);
 			});
 
 			it('respond with a complex response, including headers', function (done) {
@@ -425,8 +426,8 @@ describe('fetch-mock', function () {
 					}
 				});
 				fetch('http://it.at.there')
-					.catch(function (res) {
-						expect(res).to.equal('Oh no');
+					.catch(function (err) {
+						expect(err).to.equal('Oh no');
 						done();
 					});
 			});
@@ -444,7 +445,7 @@ describe('fetch-mock', function () {
 				fetch('http://it.at.there', {headers: {header: 'val'}})
 					.then(function (res) {
 						expect(res.status).to.equal(200);
-						res.text().then(function (json) {
+						return res.text().then(function (text) {
 							expect(text).to.equal('http://it.at.thereval');
 							done();
 						});
@@ -453,11 +454,9 @@ describe('fetch-mock', function () {
 
 		});
 
+	});
 
-
-	// });
-
-	// describe('persistent route config', function () {
+	describe('persistent route config', function () {
 	// 	it('register a single route', function (done) {
 
 	// 	});

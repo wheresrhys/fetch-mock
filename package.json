@@ -4,7 +4,7 @@
   "description": "Mock http requests made using fetch (or isomorphic-fetch)",
   "main": "index.js",
   "scripts": {
-    "test": "make test"
+    "test": "mocha test.js"
   },
   "repository": {
     "type": "git",
@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "chai": "^2.3.0",
-    "mocha": "^2.2.4"
+    "mocha": "^2.2.4",
+    "npm-prepublish": "^1.2.0"
   }
 }

@@ -1,9 +1,7 @@
 'use strict';
 
-require('es6-promise').polyfill();
-
-var Response = require('node-fetch/lib/response');
-var Headers = require('node-fetch/lib/headers');
+var Response = require('node-fetch').Response;
+var Headers = require('node-fetch').Headers;
 var sinon = require('sinon');
 var stream = require('stream');
 
@@ -17,10 +15,11 @@ function mockResponse (url, config) {
 	if (config.throws) {
 		return Promise.reject(config.throws);
 	}
-	opts = config.opts || {};
+	var opts = config.opts || {};
 	opts.url = url;
 	opts.status = opts.status || 200;
 	opts.headers = opts.headers ? new Headers(opts.headers) : new Headers();
+
 
 	var s = new stream.Readable();
 	if (config.body != null) {
@@ -28,11 +27,10 @@ function mockResponse (url, config) {
 		if (typeof body === 'object') {
 			body = JSON.stringify(body);
 		}
-		s.push(body);
+		s.push(body, 'utf-8');
 	}
 
 	s.push(null);
-
 	return Promise.resolve(new Response(s, opts));
 }
 
@@ -45,7 +43,7 @@ function compileRoute (route) {
 		throw 'each route must specify a string, regex or function to match calls to fetch';
 	}
 
-	if (!route.name) {
+	if (typeof route.response === 'undefined') {
 		throw 'each route must define a response';
 	}
 
@@ -157,7 +155,7 @@ FetchMock.prototype.getRouter = function (config) {
 };
 
 FetchMock.prototype.push = function (name, call) {
-	this._calls[name] = this.calls[name] || [];
+	this._calls[name] = this._calls[name] || [];
 	this._calls[name].push(call);
 };
 
@@ -173,18 +171,17 @@ var self = this;
 	var defaultFetch = GLOBAL.fetch;
 	var router = this.getRouter(config);
 	config.greed = config.greed || 'none';
+
 	sinon.stub(GLOBAL, 'fetch', function (url, opts) {
 			var response = router(url, opts);
 			if (response) {
 				return mockResponse(url, response);
-			} else if (config.greed === 'good') {
-				return mockResponse(url, {body: 'unmocked url :' + url});
-			} else if (config.greed === 'bad') {
-				return mockResponse(url, {throws: 'unmocked url :' + url});
 			} else {
 				self.push('__unmatched', [url, opts]);
-				if (config.greedy) {
-					return Promise.reject('unmocked url :' + url);
+				if (config.greed === 'good') {
+					return mockResponse(url, {body: 'unmocked url: ' + url});
+				} else if (config.greed === 'bad') {
+					return mockResponse(url, {throws: 'unmocked url: ' + url});
 				} else {
 					return defaultFetch(url, opts);
 				}
@@ -193,13 +190,13 @@ var self = this;
 };
 
 FetchMock.prototype.restore = function () {
-	this.reset();
 	this.isMocking = false;
+	this.reset();
 	GLOBAL.fetch.restore();
 };
 
 FetchMock.prototype.reset = function () {
-	this.calls = {};
+	this._calls = {};
 	GLOBAL.fetch.reset();
 };
 

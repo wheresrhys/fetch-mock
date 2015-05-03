@@ -1,6 +1,10 @@
 # fetch-mock
 Mock http requests made using fetch (or isomorphic-fetch)
 
+*notes* 
+- When using isomorphic-fetch or node-fetch fetch should be added as a global 
+- fetch-mock doesn't declare fetch or Promise as dependencies; as you're testing `fetch` it's assumed you're already taking care of these globals
+
 ```javascript
 
 var fetchMock = require('fetch-mock');

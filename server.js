@@ -2,7 +2,6 @@
 
 var Response = require('node-fetch').Response;
 var Headers = require('node-fetch').Headers;
-var sinon = require('sinon');
 var stream = require('stream');
 
 function mockResponse (url, config) {
@@ -33,8 +32,9 @@ function mockResponse (url, config) {
 	return Promise.resolve(new Response(s, opts));
 }
 
-var FetchMock = require('./fetch-mock');
+var FetchMock = require('./src/fetch-mock');
 
 module.exports = new FetchMock({
-	mockResponse: mockResponse
+	mockResponse: mockResponse,
+	theGlobal: GLOBAL
 });

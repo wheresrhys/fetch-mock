@@ -2,6 +2,7 @@
 
 var sinon = require('sinon');
 var mockResponse;
+var theGlobal;
 
 function compileRoute (route) {
 	if (!route.name) {
@@ -39,6 +40,7 @@ function compileRoute (route) {
 
 var FetchMock = function (opts) {
 	mockResponse = opts.mockResponse;
+	theGlobal = opts.theGlobal;
 	this.routes = [];
 	this._calls = {};
 };
@@ -141,11 +143,11 @@ FetchMock.prototype.mock = function (config) {
 
 	this.isMocking = true;
 	config = config || {};
-	var defaultFetch = GLOBAL.fetch;
+	var defaultFetch = theGlobal.fetch;
 	var router = this.getRouter(config);
 	config.greed = config.greed || 'none';
 
-	sinon.stub(GLOBAL, 'fetch', function (url, opts) {
+	sinon.stub(theGlobal, 'fetch', function (url, opts) {
 			var response = router(url, opts);
 			if (response) {
 				return mockResponse(url, response);
@@ -165,12 +167,12 @@ FetchMock.prototype.mock = function (config) {
 FetchMock.prototype.restore = function () {
 	this.isMocking = false;
 	this.reset();
-	GLOBAL.fetch.restore();
+	theGlobal.fetch.restore();
 };
 
 FetchMock.prototype.reset = function () {
 	this._calls = {};
-	GLOBAL.fetch.reset();
+	theGlobal.fetch.reset();
 };
 
 FetchMock.prototype.calls = function (name) {

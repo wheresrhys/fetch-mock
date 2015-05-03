@@ -2,7 +2,7 @@
   "name": "fetch-mock",
   "version": "0.0.0",
   "description": "Mock http requests made using fetch (or isomorphic-fetch)",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "mocha test.js"
   },

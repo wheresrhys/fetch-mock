@@ -19,7 +19,7 @@ var err = function (err) {
 	console.log(error);
 }
 
-var fetchMock = require('./index.js');
+var fetchMock = require('./server.js');
 
 describe('fetch-mock', function () {
 

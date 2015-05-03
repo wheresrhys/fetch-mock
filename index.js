@@ -149,9 +149,9 @@ FetchMock.prototype.getRouter = function (config) {
 				}
 				return true;
 			}
-		});
+		}.bind(this));
 		return response;
-	};
+	}.bind(this);
 };
 
 FetchMock.prototype.push = function (name, call) {
@@ -201,7 +201,7 @@ FetchMock.prototype.reset = function () {
 };
 
 FetchMock.prototype.calls = function (name) {
-	return this._calls[name];
+	return this._calls[name] || [];
 };
 
 FetchMock.prototype.called = function (name) {

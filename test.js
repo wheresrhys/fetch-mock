@@ -184,43 +184,155 @@ describe('fetch-mock', function () {
 						response: 'ok'
 					}
 				});
-				Promise.all[fetch('http://it.at.there'), fetch('http://it.at.thereabouts')])
+				Promise.all([fetch('http://it.at.there'), fetch('http://it.at.thereabouts')])
 					.then(function (res) {
 						expect(fetchMock.calls('route').length).to.equal(1);
 						expect(fetchMock.calls('__unmatched').length).to.equal(1);
-					})
+						done();
+					});
 			});
 
 			it('match strings starting with a string', function (done) {
-				done();
+				fetchMock.mock({
+					routes: {
+						name: 'route',
+						matcher: '^http://it.at.there',
+						response: 'ok'
+					}
+				});
+				Promise.all([fetch('http://it.at.there'), fetch('http://it.at.thereabouts'), fetch('http://it.at.hereabouts')])
+					.then(function (res) {
+						expect(fetchMock.calls('route').length).to.equal(2);
+						expect(fetchMock.calls('__unmatched').length).to.equal(1);
+						done();
+					});
 			});
 
 			it('match regular expressions', function (done) {
-				done();
+				fetchMock.mock({
+					routes: {
+						name: 'route',
+						matcher: /http\:\/\/it\.at\.there\/\d+/,
+						response: 'ok'
+					}
+				});
+				Promise.all([fetch('http://it.at.there/'), fetch('http://it.at.there/12345'), fetch('http://it.at.there/abcde')])
+					.then(function (res) {
+						expect(fetchMock.calls('route').length).to.equal(1);
+						expect(fetchMock.calls('__unmatched').length).to.equal(2);
+						done();
+					});
 			});
 
 			it('match using custom functions', function (done) {
-				done();
+				fetchMock.mock({
+					routes: {
+						name: 'route',
+						matcher: function (url, opts) {
+							return url.indexOf('logged-in') > -1 && opts && opts.headers && opts.headers.authorized === true;
+						},
+						response: 'ok'
+					}
+				});
+				Promise.all([
+					fetch('http://it.at.there/logged-in', {headers:{authorized: true}}),
+					fetch('http://it.at.there/12345', {headers:{authorized: true}}),
+					fetch('http://it.at.there/logged-in')
+				])
+					.then(function (res) {
+						expect(fetchMock.calls('route').length).to.equal(1);
+						expect(fetchMock.calls('__unmatched').length).to.equal(2);
+						done();
+					});
 			});
 
 			it('match multiple routes', function (done) {
-				done();
+				fetchMock.mock({
+					routes: [{
+						name: 'route1',
+						matcher: 'http://it.at.there',
+						response: 'ok'
+					}, {
+						name: 'route2',
+						matcher: 'http://it.at.here',
+						response: 'ok'
+					}]
+				});
+				Promise.all([fetch('http://it.at.there'), fetch('http://it.at.here'), fetch('http://it.at.nowhere')])
+					.then(function (res) {
+						expect(fetchMock.calls('route1').length).to.equal(1);
+						expect(fetchMock.calls('route2').length).to.equal(1);
+						expect(fetchMock.calls('__unmatched').length).to.equal(1);
+						done();
+					});
 			});
 
 			it('match first compatible route when many routes match', function (done) {
-				done();
+				fetchMock.mock({
+					routes: [{
+						name: 'route1',
+						matcher: 'http://it.at.there',
+						response: 'ok'
+					}, {
+						name: 'route2',
+						matcher: '^http://it.at.there',
+						response: 'ok'
+					}]
+				});
+				Promise.all([fetch('http://it.at.there')])
+					.then(function (res) {
+						expect(fetchMock.calls('route1').length).to.equal(1);
+						expect(fetchMock.calls('route2').length).to.equal(0);
+						done();
+					});
 			});
 
 			it('record history of calls to matched routes', function (done) {
-				done();
+				fetchMock.mock({
+					routes: {
+						name: 'route',
+						matcher: '^http://it.at.there',
+						response: 'ok'
+					}
+				});
+				Promise.all([fetch('http://it.at.there'), fetch('http://it.at.thereabouts', {headers: {head: 'val'}})])
+					.then(function (res) {
+						expect(fetchMock.calls('route')[0]).to.eql(['http://it.at.there', undefined]);
+						expect(fetchMock.calls('route')[1]).to.eql(['http://it.at.thereabouts', {headers: {head: 'val'}}]);
+						done();
+					});
 			});
 
 			it('be possible to reset call history', function (done) {
-				done();
+				fetchMock.mock({
+					routes: {
+						name: 'route',
+						matcher: '^http://it.at.there',
+						response: 'ok'
+					}
+				});
+				fetch('http://it.at.there')
+					.then(function (res) {
+						fetchMock.reset();
+						expect(fetchMock.calls('route').length).to.equal(0);
+						done();
+					});
 			});
 
 			it('restoring clears call history', function (done) {
-				done();
+				fetchMock.mock({
+					routes: {
+						name: 'route',
+						matcher: '^http://it.at.there',
+						response: 'ok'
+					}
+				});
+				fetch('http://it.at.there')
+					.then(function (res) {
+						fetchMock.restore();
+						expect(fetchMock.calls('route').length).to.equal(0);
+						done();
+					});
 			});
 
 		});

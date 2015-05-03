@@ -175,51 +175,55 @@ describe('fetch-mock', function () {
 
 		});
 
-	// 	describe('route matching', function () {
-	// 		it('match exact strings', function (done) {
-	// 			fetchMock.mock({
-	// 				routes: {
-	// 					name: 'route',
-	// 					matcher: 'http://it.at.there',
-	// 					response: 'ok'
-	// 				}
-	// 			});
-	// 			// Promise.all[fetch()
-	// 		});
+		describe('route matching', function () {
+			it('match exact strings', function (done) {
+				fetchMock.mock({
+					routes: {
+						name: 'route',
+						matcher: 'http://it.at.there',
+						response: 'ok'
+					}
+				});
+				Promise.all[fetch('http://it.at.there'), fetch('http://it.at.thereabouts')])
+					.then(function (res) {
+						expect(fetchMock.calls('route').length).to.equal(1);
+						expect(fetchMock.calls('__unmatched').length).to.equal(1);
+					})
+			});
 
-	// 		it('match strings starting with a string', function (done) {
+			it('match strings starting with a string', function (done) {
+				done();
+			});
 
-	// 		});
+			it('match regular expressions', function (done) {
+				done();
+			});
 
-	// 		it('match regular expressions', function (done) {
+			it('match using custom functions', function (done) {
+				done();
+			});
 
-	// 		});
+			it('match multiple routes', function (done) {
+				done();
+			});
 
-	// 		it('match using custom functions', function (done) {
+			it('match first compatible route when many routes match', function (done) {
+				done();
+			});
 
-	// 		});
+			it('record history of calls to matched routes', function (done) {
+				done();
+			});
 
-	// 		it('match multiple routes', function (done) {
+			it('be possible to reset call history', function (done) {
+				done();
+			});
 
-	// 		});
+			it('restoring clears call history', function (done) {
+				done();
+			});
 
-	// 		it('match first compatible route when many routes match', function (done) {
-
-	// 		});
-
-	// 		it('record history of calls to matched routes', function (done) {
-
-	// 		});
-
-	// 		it('be possible to reset call history', function (done) {
-
-	// 		});
-
-	// 		it('restoring clears call history', function (done) {
-
-	// 		});
-
-	// 	});
+		});
 
 	// 	describe('responses', function () {
 	// 		it('respond with a string', function (done) {

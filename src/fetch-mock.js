@@ -1,8 +1,44 @@
 'use strict';
 
 var sinon = require('sinon');
-var mockResponse;
+var Headers;
+var Response;
+var stream;
+var Blob;
 var theGlobal;
+
+
+function mockResponse (url, config) {
+	// allow just body to be passed in as this is the commonest use case
+	if (typeof config === 'string' || !(config.body || config.headers || config.throws || config.status)) {
+		config = {
+			body: config
+		};
+	}
+	if (config.throws) {
+		return Promise.reject(config.throws);
+	}
+	var opts = config.opts || {};
+	opts.url = url;
+	opts.status = config.status || 200;
+	opts.headers = config.headers ? new Headers(config.headers) : new Headers();
+
+
+	var body = config.body;
+	if (config.body != null && typeof body === 'object') {
+		body = JSON.stringify(body);
+	}
+
+	if (stream) {
+		var s = new stream.Readable();
+		if (body != null) {
+			s.push(body, 'utf-8');
+		}
+		s.push(null);
+		body = s;
+	}
+	return Promise.resolve(new Response(body, opts));
+}
 
 function compileRoute (route) {
 	if (!route.name) {
@@ -39,7 +75,10 @@ function compileRoute (route) {
 }
 
 var FetchMock = function (opts) {
-	mockResponse = opts.mockResponse;
+	Headers = opts.Headers;
+	Response = opts.Response;
+	stream = opts.stream;
+	Blob = opts.Blob;
 	theGlobal = opts.theGlobal;
 	this.routes = [];
 	this._calls = {};

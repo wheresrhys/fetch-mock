@@ -4,7 +4,7 @@
   "description": "Mock http requests made using fetch (or isomorphic-fetch)",
   "main": "server.js",
   "scripts": {
-    "test": "mocha test/server.js && ./node_modules/karma/bin/karma start --single-run"
+    "test": "make test coverage"
   },
   "repository": {
     "type": "git",
@@ -30,6 +30,7 @@
   "devDependencies": {
     "browserify": "^10.0.0",
     "chai": "^2.3.0",
+    "coveralls": "^2.11.2",
     "debowerify": "^1.2.1",
     "es6-promise": "^2.1.1",
     "karma": "^0.12.31",
@@ -39,6 +40,7 @@
     "karma-mocha": "^0.1.10",
     "karma-phantomjs-launcher": "^0.1.4",
     "mocha": "^2.2.4",
+    "mocha-lcov-reporter": "0.0.2",
     "npm-prepublish": "^1.2.0"
   }
 }

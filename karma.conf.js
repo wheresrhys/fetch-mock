@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = function(karma) {
-	karma.set({
+	var configuration = {
 
 		frameworks: [ 'mocha', 'chai', 'browserify'],
 		files: [
@@ -15,6 +15,20 @@ module.exports = function(karma) {
 				transform: ['debowerify'],
 				debug: true
 		},
-		browsers: ['PhantomJS'],
-	});
+		browsers: ['PhantomJS', 'Chrome'],
+		customLaunchers: {
+      Chrome_travis_ci: {
+        base: 'Chrome',
+        flags: ['--no-sandbox']
+      }
+    }
+	};
+
+  if(process.env.TRAVIS){
+    configuration.browsers = ['PhantomJS', 'Chrome_travis_ci'];
+  }
+
+  karma.set(configuration);
+
 };
+

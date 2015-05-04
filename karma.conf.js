@@ -17,18 +17,18 @@ module.exports = function(karma) {
 		},
 		browsers: ['PhantomJS', 'Chrome'],
 		customLaunchers: {
-      Chrome_travis_ci: {
-        base: 'Chrome',
-        flags: ['--no-sandbox']
-      }
-    }
+			Chrome_travis_ci: {
+				base: 'Chrome',
+				flags: ['--no-sandbox']
+			}
+		}
 	};
 
-  if(process.env.TRAVIS){
-    configuration.browsers = ['PhantomJS', 'Chrome_travis_ci'];
-  }
+	if(process.env.TRAVIS){
+		configuration.browsers = ['PhantomJS', 'Chrome_travis_ci'];
+	}
 
-  karma.set(configuration);
+	karma.set(configuration);
 
 };
 

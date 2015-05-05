@@ -689,6 +689,28 @@ module.exports = function (fetchMock, theGlobal) {
 					});
 			});
 
+			it('apply overrides when mock already mocking', function (done) {
+				fetchMock.registerRoute({
+					name: 'route1',
+					matcher: 'http://it.at.here',
+					response: 'ok'
+				});
+				fetchMock.mock();
+				fetchMock.reMock({
+					responses: {
+						route1: 'changed my mind'
+					}
+				});
+				fetch('http://it.at.here')
+					.then(function (res) {
+						res.text().then(function (text) {
+							expect(text).to.equal('changed my mind');
+							done();
+						});
+
+					});
+			});
+
 		});
 
 	});

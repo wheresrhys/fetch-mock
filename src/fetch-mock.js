@@ -209,6 +209,11 @@ FetchMock.prototype.restore = function () {
 	theGlobal.fetch.restore();
 };
 
+FetchMock.prototype.reMock = function (config) {
+	this.restore();
+	this.mock(config);
+};
+
 FetchMock.prototype.reset = function () {
 	this._calls = {};
 	theGlobal.fetch.reset();

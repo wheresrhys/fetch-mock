@@ -19,14 +19,15 @@ Replaces `fetch()` with a sinon stub which, in addition to the default sinon beh
 		* `string`: Either an exact url to match e.g. 'http://www.site.com/page.html' or, if the string begins with a `^`, the string following the `^` must begin the url e.g. '^http://www.site.com' would match 'http://www.site.com' or 'http://www.site.com/page.html'
 		* `RegExp`: A regular  expression to test the url against
 		* `Function(url, opts)`: A function that is passed the url and opts `fetch` is called with and that returns a Boolean
-	* `response`: Configures the response object returned by the mock. Can have one of the following values
+	* `response`: Configures the response object returned by the mock. Can take any of the following values
 		* `string`: creates a 200 response with the string as the response body
 		* `object`: If the object contains any of the properties body, status, headers, throws; then these properties - all of them optional - are used to construct a response as follows
 			* `body`: Retunred in the response body
 			* `status`: Returned in the response status
 			* `headers`: Returned in the response headers. They should be defined as an object literal (property names case-insensitive) which will be converted to a `Headers` instance
 			* `throws`: If this property is present then a `Promise` rejected with the value of `throws` is returned
-		As long as the object does not contain any of the above properties it is converted into a json string and this is returned as the body of a 200 response
+		
+			As long as the object does not contain any of the above properties it is converted into a json string and this is returned as the body of a 200 response
 		* `Function(url, opts)`: A function that is passed the url and opts `fetch()` is called with and that returns any of the responses listed above
 * `responses`: When `registerRoute()` has already been used to register some routes then `responses` can be used to override the default response. Its value should be an object mapping route names to responses, which should be similar to those listed immediately above e.g. 
 

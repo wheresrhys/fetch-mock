@@ -102,7 +102,7 @@ var FetchMock = function (opts) {
 	this.stubGlobalFetch = true;
 };
 
-FetchMock.prototype.setNonGlobalFetch = function (func) {
+FetchMock.prototype.useNonGlobalFetch = function (func) {
 	this.stubGlobalFetch = false;
 	this.fetch = func;
 };
@@ -239,6 +239,7 @@ FetchMock.prototype.mock = function (config) {
 		debug('applying sinon.stub to fetch');
 		sinon.stub(theGlobal, 'fetch', mock);
 	} else {
+		this.fetch && sinon.stub(this, 'fetch', mock);
 		return mock;
 	}
 };
@@ -266,7 +267,7 @@ FetchMock.prototype.constructMock = function (config) {
 				return mockResponse(url, {throws: 'unmocked url: ' + url});
 			} else {
 				debug('forwarding to default fetch');
-				return defaultFetch(url, opts);
+				return defaultFetch && defaultFetch(url, opts);
 			}
 		}
 	}
@@ -278,6 +279,8 @@ FetchMock.prototype.restore = function () {
 	this.reset();
 	if (this.stubGlobalFetch) {
 		theGlobal.fetch.restore();
+	} else if (this.fetch) {
+		this.fetch.restore();
 	}
 	debug('fetch restored');
 };

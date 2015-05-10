@@ -99,11 +99,11 @@ var FetchMock = function (opts) {
 	theGlobal = opts.theGlobal;
 	this.routes = [];
 	this._calls = {};
-	this.stubGlobalFetch = true;
+	this.usesGlobalFetch = true;
 };
 
 FetchMock.prototype.useNonGlobalFetch = function (func) {
-	this.stubGlobalFetch = false;
+	this.usesGlobalFetch = false;
 	this.fetch = func;
 };
 
@@ -235,7 +235,7 @@ FetchMock.prototype.mock = function (config) {
 	var mock = this.constructMock(config);
 
 
-	if (this.stubGlobalFetch) {
+	if (this.usesGlobalFetch) {
 		debug('applying sinon.stub to fetch');
 		sinon.stub(theGlobal, 'fetch', mock);
 	} else {
@@ -247,7 +247,7 @@ FetchMock.prototype.mock = function (config) {
 FetchMock.prototype.constructMock = function (config) {
 	config = config || {};
 	var self = this;
-	var defaultFetch = this.stubGlobalFetch ? theGlobal.fetch : this.fetch;
+	var defaultFetch = this.usesGlobalFetch ? theGlobal.fetch : this.fetch;
 	var router = this.getRouter(config);
 	config.greed = config.greed || 'none';
 
@@ -277,7 +277,7 @@ FetchMock.prototype.restore = function () {
 	debug('restoring fetch');
 	this.isMocking = false;
 	this.reset();
-	if (this.stubGlobalFetch) {
+	if (this.usesGlobalFetch) {
 		theGlobal.fetch.restore();
 	} else if (this.fetch) {
 		this.fetch.restore();
@@ -293,7 +293,11 @@ FetchMock.prototype.reMock = function (config) {
 FetchMock.prototype.reset = function () {
 	debug('resetting call logs');
 	this._calls = {};
-	theGlobal.fetch.reset();
+	if (this.usesGlobalFetch) {
+		theGlobal.fetch.reset();
+	} else if (this.fetch) {
+		this.fetch.reset();
+	}
 	debug('call logs reset');
 };
 

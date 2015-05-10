@@ -32,6 +32,7 @@
     "chai": "^2.3.0",
     "coveralls": "^2.11.2",
     "debowerify": "^1.2.1",
+    "debug": "^2.2.0",
     "es6-promise": "^2.1.1",
     "karma": "^0.12.31",
     "karma-browserify": "^4.1.2",

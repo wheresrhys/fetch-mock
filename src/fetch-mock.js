@@ -6,20 +6,27 @@ var Response;
 var stream;
 var Blob;
 var theGlobal;
-
+var debug = require('debug')('fetch-mock')
 
 function mockResponse (url, config) {
+	debug('mocking response for ' + url);
 	// allow just body to be passed in as this is the commonest use case
 	if (typeof config === 'number') {
+		debug('status response detected for ' + url);
 		config = {
 			status: config
 		};
 	} else if (typeof config === 'string' || !(config.body || config.headers || config.throws || config.status)) {
+		debug('body response detected for ' + url);
 		config = {
 			body: config
 		};
+	} else {
+		debug('full config response detected for ' + url);
 	}
+
 	if (config.throws) {
+		debug('mocking failed request for ' + url);
 		return Promise.reject(config.throws);
 	}
 	var opts = config.opts || {};
@@ -27,12 +34,12 @@ function mockResponse (url, config) {
 	opts.status = config.status || 200;
 	opts.headers = config.headers ? new Headers(config.headers) : new Headers();
 
-
 	var body = config.body;
 	if (config.body != null && typeof body === 'object') {
 		body = JSON.stringify(body);
 	}
 
+	debug('sending body "' + body + '"" for ' + url);
 	if (stream) {
 		var s = new stream.Readable();
 		if (body != null) {
@@ -45,6 +52,9 @@ function mockResponse (url, config) {
 }
 
 function compileRoute (route) {
+
+	debug('compiling route: ' + route.name);
+
 	if (!route.name) {
 		throw 'each route must be named';
 	}
@@ -60,16 +70,19 @@ function compileRoute (route) {
 	if (typeof route.matcher === 'string') {
 		var expectedUrl = route.matcher;
 		if (route.matcher.indexOf('^') === 0) {
+			debug('constructing starts with string matcher for route: ' + route.name);
 			expectedUrl = expectedUrl.substr(1);
 			route.matcher = function (url) {
 				return url.indexOf(expectedUrl) === 0;
 			};
 		} else {
+			debug('constructing string matcher for route: ' + route.name);
 			route.matcher = function (url) {
 				return url === expectedUrl;
 			};
 		}
 	} else if (route.matcher instanceof RegExp) {
+		debug('constructing regex matcher for route: ' + route.name);
 		var urlRX = route.matcher;
 		route.matcher = function (url) {
 			return urlRX.test(url);
@@ -89,6 +102,7 @@ var FetchMock = function (opts) {
 };
 
 FetchMock.prototype.registerRoute = function (name, matcher, response) {
+	debug('registering routes');
 	var routes;
 	if (name instanceof Array) {
 		routes = name;
@@ -101,30 +115,40 @@ FetchMock.prototype.registerRoute = function (name, matcher, response) {
 	} else {
 		routes = [name];
 	}
+
+	debug('registering routes: ' + routes.map(function (r) {return r.name}));
+
 	this.routes = this.routes.concat(routes.map(compileRoute));
 };
 
-FetchMock.prototype.unregisterRoute = function (name) {
-	var names;
-	if (!name) {
+FetchMock.prototype.unregisterRoute = function (names) {
+
+	if (!names) {
+		debug('unregistering all routes');
 		this.routes = [];
 		return;
 	}
-	if (name instanceof Array) {
-		names = name;
-	} else {
-		names = [name];
+	if (!(names instanceof Array)) {
+		names = [names];
 	}
 
+	debug('unregistering routes: ' + names);
+
 	this.routes = this.routes.filter(function (route) {
-		return names.indexOf(route.name)  === -1;
+		var keep = names.indexOf(route.name) === -1;
+		if (!keep) {
+			debug('unregistering route ' + route.name);
+		}
+		return keep;
 	});
 };
 
 FetchMock.prototype.getRouter = function (config) {
+	debug('building router');
 	var routes;
 
 	if (config.routes) {
+		debug('applying one time only routes');
 		if (!(config.routes instanceof Array)) {
 			config.routes = [config.routes];
 		}
@@ -135,12 +159,15 @@ FetchMock.prototype.getRouter = function (config) {
 		});
 		routes = config.routes.map(function (route) {
 			if (typeof route === 'string') {
+				debug('applying preregistered route ' + route);
 				return preRegisteredRoutes[route];
 			} else {
+				debug('applying one time route ' + route.name);
 				return compileRoute(route);
 			}
 		});
 	} else {
+		debug('no one time only routes defined. Using preregistered routes only');
 		routes = this.routes;
 	}
 
@@ -157,18 +184,30 @@ FetchMock.prototype.getRouter = function (config) {
 
 	return function (url, opts) {
 		var response;
-
+		debug('searching for matching route for ' + url);
 		routes.some(function (route) {
 
 			if (route.matcher(url, opts)) {
+				debug('Found matching route (' + route.name + ') for ' + url);
 				this.push(route.name, [url, opts]);
-				response = config.responses[route.name] || route.response;
+
+				if (config.responses[route.name]) {
+					debug('Overriding response for ' + route.name);
+					response = config.responses[route.name];
+				} else {
+					debug('Using default response for ' + route.name);
+					response = route.response;
+				}
+
 				if (typeof response === 'function') {
+					debug('Constructing dynamic response for ' + route.name);
 					response = response(url, opts);
 				}
 				return true;
 			}
 		}.bind(this));
+
+		debug('returning response for ' + url);
 		return response;
 	}.bind(this);
 };
@@ -179,9 +218,10 @@ FetchMock.prototype.push = function (name, call) {
 };
 
 FetchMock.prototype.mock = function (config) {
+	debug('mocking fetch');
 	var self = this;
 	if (this.isMocking) {
-		throw 'fetch-mock is already mocking routes. Call .restore() before mocking again';
+		throw 'fetch-mock is already mocking routes. Call .restore() before mocking again or use .reMock() if this is intentional';
 	}
 
 	this.isMocking = true;
@@ -190,17 +230,23 @@ FetchMock.prototype.mock = function (config) {
 	var router = this.getRouter(config);
 	config.greed = config.greed || 'none';
 
+	debug('applying sinon.stub to fetch')
 	sinon.stub(theGlobal, 'fetch', function (url, opts) {
 			var response = router(url, opts);
 			if (response) {
+				debug('response found for ' + url);
 				return mockResponse(url, response);
 			} else {
+				debug('response not found for ' + url);
 				self.push('__unmatched', [url, opts]);
 				if (config.greed === 'good') {
+					debug('sending default good response');
 					return mockResponse(url, {body: 'unmocked url: ' + url});
 				} else if (config.greed === 'bad') {
+					debug('sending default bad response');
 					return mockResponse(url, {throws: 'unmocked url: ' + url});
 				} else {
+					debug('forwarding to default fetch');
 					return defaultFetch(url, opts);
 				}
 			}
@@ -208,9 +254,11 @@ FetchMock.prototype.mock = function (config) {
 };
 
 FetchMock.prototype.restore = function () {
+	debug('restoring fetch');
 	this.isMocking = false;
 	this.reset();
 	theGlobal.fetch.restore();
+	debug('fetch restored');
 };
 
 FetchMock.prototype.reMock = function (config) {
@@ -219,8 +267,10 @@ FetchMock.prototype.reMock = function (config) {
 };
 
 FetchMock.prototype.reset = function () {
+	debug('resetting call logs');
 	this._calls = {};
 	theGlobal.fetch.reset();
+	debug('call logs reset');
 };
 
 FetchMock.prototype.calls = function (name) {

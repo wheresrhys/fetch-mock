@@ -99,6 +99,12 @@ var FetchMock = function (opts) {
 	theGlobal = opts.theGlobal;
 	this.routes = [];
 	this._calls = {};
+	this.stubGlobalFetch = true;
+};
+
+FetchMock.prototype.setNonGlobalFetch = function (func) {
+	this.stubGlobalFetch = false;
+	this.fetch = func;
 };
 
 FetchMock.prototype.registerRoute = function (name, matcher, response) {
@@ -145,6 +151,7 @@ FetchMock.prototype.unregisterRoute = function (names) {
 
 FetchMock.prototype.getRouter = function (config) {
 	debug('building router');
+
 	var routes;
 
 	if (config.routes) {
@@ -219,45 +226,59 @@ FetchMock.prototype.push = function (name, call) {
 
 FetchMock.prototype.mock = function (config) {
 	debug('mocking fetch');
-	var self = this;
+
 	if (this.isMocking) {
 		throw 'fetch-mock is already mocking routes. Call .restore() before mocking again or use .reMock() if this is intentional';
 	}
 
 	this.isMocking = true;
+	var mock = this.constructMock(config);
+
+
+	if (this.stubGlobalFetch) {
+		debug('applying sinon.stub to fetch');
+		sinon.stub(theGlobal, 'fetch', mock);
+	} else {
+		return mock;
+	}
+};
+
+FetchMock.prototype.constructMock = function (config) {
 	config = config || {};
-	var defaultFetch = theGlobal.fetch;
+	var self = this;
+	var defaultFetch = this.stubGlobalFetch ? theGlobal.fetch : this.fetch;
 	var router = this.getRouter(config);
 	config.greed = config.greed || 'none';
 
-	debug('applying sinon.stub to fetch')
-	sinon.stub(theGlobal, 'fetch', function (url, opts) {
-			var response = router(url, opts);
-			if (response) {
-				debug('response found for ' + url);
-				return mockResponse(url, response);
+	return function (url, opts) {
+		var response = router(url, opts);
+		if (response) {
+			debug('response found for ' + url);
+			return mockResponse(url, response);
+		} else {
+			debug('response not found for ' + url);
+			self.push('__unmatched', [url, opts]);
+			if (config.greed === 'good') {
+				debug('sending default good response');
+				return mockResponse(url, {body: 'unmocked url: ' + url});
+			} else if (config.greed === 'bad') {
+				debug('sending default bad response');
+				return mockResponse(url, {throws: 'unmocked url: ' + url});
 			} else {
-				debug('response not found for ' + url);
-				self.push('__unmatched', [url, opts]);
-				if (config.greed === 'good') {
-					debug('sending default good response');
-					return mockResponse(url, {body: 'unmocked url: ' + url});
-				} else if (config.greed === 'bad') {
-					debug('sending default bad response');
-					return mockResponse(url, {throws: 'unmocked url: ' + url});
-				} else {
-					debug('forwarding to default fetch');
-					return defaultFetch(url, opts);
-				}
+				debug('forwarding to default fetch');
+				return defaultFetch(url, opts);
 			}
-	});
+		}
+	}
 };
 
 FetchMock.prototype.restore = function () {
 	debug('restoring fetch');
 	this.isMocking = false;
 	this.reset();
-	theGlobal.fetch.restore();
+	if (this.stubGlobalFetch) {
+		theGlobal.fetch.restore();
+	}
 	debug('fetch restored');
 };
 

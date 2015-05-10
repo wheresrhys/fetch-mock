@@ -10,7 +10,11 @@ var theGlobal;
 
 function mockResponse (url, config) {
 	// allow just body to be passed in as this is the commonest use case
-	if (typeof config === 'string' || !(config.body || config.headers || config.throws || config.status)) {
+	if (typeof config === 'number') {
+		config = {
+			status: config
+		};
+	} else if (typeof config === 'string' || !(config.body || config.headers || config.throws || config.status)) {
 		config = {
 			body: config
 		};

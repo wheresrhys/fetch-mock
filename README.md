@@ -2,7 +2,7 @@
 Mock http requests made using fetch (or isomorphic-fetch)
 
 *notes* 
-- When using isomorphic-fetch or node-fetch ideally `fetch` should be added as a global. If not possible to do so you can still use fetch-mock in combination with [mockery](https://github.com/mfncooper/mockery) in nodejs (see `setNonGlobalFetch(func)` below)
+- When using isomorphic-fetch or node-fetch ideally `fetch` should be added as a global. If not possible to do so you can still use fetch-mock in combination with [mockery](https://github.com/mfncooper/mockery) in nodejs (see `useNonGlobalFetch(func)` below)
 - fetch-mock doesn't declare `fetch` or `Promise` as dependencies; as you're testing `fetch` it's assumed you're already taking care of these globals
 - fetch-mock uses [npm debug](https://www.npmjs.com/package/debug). To output useful messages for debugging set the environment variable `DEBUG=fetch-mock`
 - If you prefer documentation by example skip to the bottom of this README

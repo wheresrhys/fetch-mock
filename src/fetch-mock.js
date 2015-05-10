@@ -234,17 +234,20 @@ FetchMock.prototype.mock = function (config) {
 	this.isMocking = true;
 	var mock = this.constructMock(config);
 
-
 	if (this.usesGlobalFetch) {
 		debug('applying sinon.stub to fetch');
 		sinon.stub(theGlobal, 'fetch', mock);
 	} else {
-		this.fetch && sinon.stub(this, 'fetch', mock);
+		if (this.fetch) {
+			debug('applying sinon.stub to fetch');
+			sinon.stub(this, 'fetch', mock);
+		}
 		return mock;
 	}
 };
 
 FetchMock.prototype.constructMock = function (config) {
+	debug('constructing mock function');
 	config = config || {};
 	var self = this;
 	var defaultFetch = this.usesGlobalFetch ? theGlobal.fetch : this.fetch;

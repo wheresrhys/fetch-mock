@@ -333,6 +333,22 @@ module.exports = function (fetchMock, theGlobal) {
 			});
 
 			describe('responses', function () {
+
+				it('respond with a status', function (done) {
+					fetchMock.mock({
+						routes: {
+							name: 'route',
+							matcher: 'http://it.at.there',
+							response: 300
+						}
+					});
+					fetch('http://it.at.there')
+						.then(function (res) {
+							expect(res.status).to.equal(300);
+							done();
+						});
+				});
+
 				it('respond with a string', function (done) {
 					fetchMock.mock({
 						routes: {

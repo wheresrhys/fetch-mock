@@ -2,7 +2,7 @@
 Mock http requests made using fetch (or isomorphic-fetch)
 
 *notes* 
-- When using isomorphic-fetch or node-fetch `fetch` should be added as a global 
+- When using isomorphic-fetch or node-fetch ideally `fetch` should be added as a global. If not possible to do so you can still use fetch-mock in combination with [mockery](https://github.com/mfncooper/mockery) in nodejs (see `useNonGlobalFetch(func)` below)
 - fetch-mock doesn't declare `fetch` or `Promise` as dependencies; as you're testing `fetch` it's assumed you're already taking care of these globals
 - fetch-mock uses [npm debug](https://www.npmjs.com/package/debug). To output useful messages for debugging set the environment variable `DEBUG=fetch-mock`
 - If you prefer documentation by example skip to the bottom of this README
@@ -80,6 +80,29 @@ Often your application/module will need a mocked response for some http requests
 
 ### `unregisterRoute(name)`
 Unregisters one or more previously registered routes. Accepts either a string or an array of strings
+
+### `useNonGlobalFetch(func)`
+To use fetch-mock with with [mockery](https://github.com/mfncooper/mockery) you will need to use this function to prevent fetch-mock trying to mock the function globally.
+* `func` Optional reference to `fetch` (or any other function you may want to substitute for `fetch` in your tests). This will be converted to a `sinon.stub` and can be accessed via `fetchMock.fetch`
+
+#### Mockery example
+```javascript
+var fetch = require('node-fetch');
+var fetchMock = require('fetch-mock');
+var mockery = require('mockery');
+fetchMock.useNonGlobalFetch(fetch);
+
+fetchMock.registerRoute([
+ ...
+])
+it('should make a request', function (done) {
+	mockery.registerMock('fetch', fetchMock.mock());
+	// test code goes in here
+	mockery.deregisterMock('fetch');
+	done();
+});
+
+```
 
 ## Example 
 ```javascript

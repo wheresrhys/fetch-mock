@@ -28,8 +28,9 @@ module.exports = function (fetchMock, theGlobal) {
 
 			it('call fetch if no routes defined', function () {
 				fetchMock.mock();
-				fetch();
+				fetch('url', {prop: 'val'});
 				expect(fetchCalls.length).to.equal(1);
+				expect(fetchCalls[0]).to.eql(['url', {prop: 'val'}]);
 				fetchMock.restore();
 			});
 

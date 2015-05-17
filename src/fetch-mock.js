@@ -309,6 +309,9 @@ FetchMock.prototype.calls = function (name) {
 };
 
 FetchMock.prototype.called = function (name) {
+	if (!name) {
+		return !!Object.keys(this._calls).length;
+	}
 	return !!(this._calls[name] && this._calls[name].length);
 };
 

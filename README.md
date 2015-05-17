@@ -62,10 +62,10 @@ Restores `fetch()` to its unstubbed state and clears all data recorded for its c
 Clears all data recorded for `fetch()`'s calls
 
 ### `calls(routeName)`
-Returns an array of arrays of the arguments passed to `fetch()` that matched the given route
+Returns an array of arrays of the arguments passed to `fetch()` that matched the given route. '__unmatched' can be passed in to return results for calls not matching any route.
 
 ### `called(routeName)`
-Returns a Boolean denoting whether any calls matched the given route
+Returns a Boolean denoting whether any calls matched the given route. '__unmatched' can be passed in to return results for calls not matching any route. If no routeName is passed it returns `true` if any fetch calls were made
 
 ### `reMock()` 
 Normally calling `mock()` twice without restoring inbetween will throw an error. `reMock()` calls `restore()` internally before calling `mock()` again. This allows you to put a generic call to `mock()` in a `beforeEach()` while retaining the flexibility to vary the responses for some tests

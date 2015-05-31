@@ -18,9 +18,7 @@
     "spy"
   ],
   "license": "MIT",
-  "dependencies": {
-    "debug": "^2.2.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "fetch": "~0.6.0"
   }

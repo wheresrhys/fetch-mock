@@ -6,7 +6,9 @@ Mock http requests made using fetch (or isomorphic-fetch)
 - fetch-mock doesn't declare `fetch` or `Promise` as dependencies; as you're testing `fetch` it's assumed you're already taking care of these globals
 - fetch-mock uses [npm debug](https://www.npmjs.com/package/debug). To output useful messages for debugging set the environment variable `DEBUG=fetch-mock`
 - If you prefer documentation by example skip to the bottom of this README
-
+- To use fetch-mock on the server simply `npm install fetch-mock` and `require('fetch-mock)`. In the browser either 
+	- use browserify + debowerify and both `npm install fetch-mock` and `bower install fetch-mock`, then use `require('fetch-mock)`
+	- use browserify and `npm install fetch-mock` and `require('fetch-mock/client)`
 
 ## API
 

@@ -281,7 +281,9 @@ FetchMock.prototype.restore = function () {
 	this.isMocking = false;
 	this.reset();
 	if (this.usesGlobalFetch) {
-		theGlobal.fetch.restore();
+		if(typeof theGlobal.fetch.restore === 'function') {
+			theGlobal.fetch.restore();
+		}
 	} else if (this.fetch) {
 		this.fetch.restore();
 	}
@@ -297,7 +299,9 @@ FetchMock.prototype.reset = function () {
 	debug('resetting call logs');
 	this._calls = {};
 	if (this.usesGlobalFetch) {
-		theGlobal.fetch.reset();
+		if(typeof theGlobal.fetch.reset === 'function') {
+			theGlobal.fetch.reset();
+		}
 	} else if (this.fetch) {
 		this.fetch.reset();
 	}

@@ -28,28 +28,12 @@ describe('non-global use', function () {
 			fetchMock.restore();
 		} catch (e) {}
 	});
-
-	it('returns mock function when non global fetch used', function () {
-		fetchMock.useNonGlobalFetch();
-		var mock = fetchMock.mock();
-		expect(typeof mock).to.equal('function');
-		expect(typeof fetchMock.fetch).to.equal('undefined');
-		expect(function () {
-			mock('url', {prop: 'val'})
-		}).not.to.throw();
-		expect(fetchMock.called('__unmatched')).to.be.true;
-		fetchMock.restore();
-		fetchMock.usesGlobalFetch = true;
-	});
-
 	it('stubs non global fetch if function passed in', function () {
-		fetch('url', {prop: 'val'});
 
 		fetchMock.useNonGlobalFetch(dummyFetch);
-		expect(fetchMock.fetch).to.equal(dummyFetch);
+		expect(fetchMock.realFetch).to.equal(dummyFetch);
 		var mock = fetchMock.mock();
 		expect(typeof mock).to.equal('function');
-		expect(typeof fetchMock.fetch.called).to.equal('boolean');
 		expect(function () {
 			mock('url', {prop: 'val'})
 		}).not.to.throw();

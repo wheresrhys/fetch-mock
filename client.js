@@ -1,6 +1,6 @@
 'use strict';
 
-var FetchMock = require('./src/fetch-mock');
+const FetchMock = require('./src/fetch-mock');
 
 module.exports = new FetchMock({
 	theGlobal: window,

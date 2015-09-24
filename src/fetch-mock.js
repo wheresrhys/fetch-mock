@@ -1,11 +1,11 @@
 'use strict';
 
-var Headers;
-var Response;
-var stream;
-var Blob;
-var theGlobal;
-var debug;
+let Headers;
+let Response;
+let stream;
+let Blob;
+let theGlobal;
+let debug;
 
 function mockResponse (url, config) {
 	debug('mocking response for ' + url);
@@ -28,25 +28,31 @@ function mockResponse (url, config) {
 		debug('mocking failed request for ' + url);
 		return Promise.reject(config.throws);
 	}
-	var opts = config.opts || {};
+
+	const opts = config.opts || {};
 	opts.url = url;
 	opts.status = config.status || 200;
+	// the ternary oprator is to cope with new Headers(undefined) throwing in chrome
+	// (unclear to me if this is a bug or if the specification says this is correct behaviour)
 	opts.headers = config.headers ? new Headers(config.headers) : new Headers();
 
-	var body = config.body;
+	let body = config.body;
+
 	if (config.body != null && typeof body === 'object') {
 		body = JSON.stringify(body);
 	}
 
 	debug('sending body "' + body + '"" for ' + url);
+
 	if (stream) {
-		var s = new stream.Readable();
+		let s = new stream.Readable();
 		if (body != null) {
 			s.push(body, 'utf-8');
 		}
 		s.push(null);
 		body = s;
 	}
+
 	return Promise.resolve(new Response(body, opts));
 }
 
@@ -67,7 +73,7 @@ function compileRoute (route) {
 	}
 
 	if (typeof route.matcher === 'string') {
-		var expectedUrl = route.matcher;
+		let expectedUrl = route.matcher;
 		if (route.matcher.indexOf('^') === 0) {
 			debug('constructing starts with string matcher for route: ' + route.name);
 			expectedUrl = expectedUrl.substr(1);
@@ -82,7 +88,7 @@ function compileRoute (route) {
 		}
 	} else if (route.matcher instanceof RegExp) {
 		debug('constructing regex matcher for route: ' + route.name);
-		var urlRX = route.matcher;
+		const urlRX = route.matcher;
 		route.matcher = function (url) {
 			return urlRX.test(url);
 		};
@@ -90,223 +96,210 @@ function compileRoute (route) {
 	return route;
 }
 
-var FetchMock = function (opts) {
-	Headers = opts.Headers;
-	Response = opts.Response;
-	stream = opts.stream;
-	Blob = opts.Blob;
-	theGlobal = opts.theGlobal;
-	debug = opts.debug;
-	this.routes = [];
-	this._calls = {};
-	this.usesGlobalFetch = true;
-	this.realFetch = theGlobal.fetch;
-};
-
-FetchMock.prototype.useNonGlobalFetch = function (func) {
-	this.usesGlobalFetch = false;
-	this.realFetch = func;
-};
-
-FetchMock.prototype.registerRoute = function (name, matcher, response) {
-	debug('registering routes');
-	var routes;
-	if (name instanceof Array) {
-		routes = name;
-	} else if (arguments.length === 3 ) {
-		routes = [{
-			name: name,
-			matcher: matcher,
-			response: response
-		}];
-	} else {
-		routes = [name];
-	}
-
-	debug('registering routes: ' + routes.map(function (r) {return r.name}));
-
-	this.routes = this.routes.concat(routes.map(compileRoute));
-};
-
-FetchMock.prototype.unregisterRoute = function (names) {
-
-	if (!names) {
-		debug('unregistering all routes');
+class FetchMock {
+	constructor (opts) {
+		Headers = opts.Headers;
+		Response = opts.Response;
+		stream = opts.stream;
+		Blob = opts.Blob;
+		theGlobal = opts.theGlobal;
+		debug = opts.debug;
 		this.routes = [];
-		return;
-	}
-	if (!(names instanceof Array)) {
-		names = [names];
-	}
-
-	debug('unregistering routes: ' + names);
-
-	this.routes = this.routes.filter(function (route) {
-		var keep = names.indexOf(route.name) === -1;
-		if (!keep) {
-			debug('unregistering route ' + route.name);
-		}
-		return keep;
-	});
-};
-
-FetchMock.prototype.getRouter = function (config) {
-	debug('building router');
-
-	var routes;
-
-	if (config.routes) {
-		debug('applying one time only routes');
-		if (!(config.routes instanceof Array)) {
-			config.routes = [config.routes];
-		}
-
-		var preRegisteredRoutes = {};
-		this.routes.forEach(function (route) {
-			preRegisteredRoutes[route.name] = route;
-		});
-		routes = config.routes.map(function (route) {
-			if (typeof route === 'string') {
-				debug('applying preregistered route ' + route);
-				return preRegisteredRoutes[route];
-			} else {
-				debug('applying one time route ' + route.name);
-				return compileRoute(route);
-			}
-		});
-	} else {
-		debug('no one time only routes defined. Using preregistered routes only');
-		routes = this.routes;
-	}
-
-
-	var routeNames = {};
-	routes.forEach(function (route) {
-		if (routeNames[route.name]) {
-			throw 'Route names must be unique';
-		}
-		routeNames[route.name] = true;
-	});
-
-	config.responses = config.responses || {};
-
-	return function (url, opts) {
-		var response;
-		debug('searching for matching route for ' + url);
-		routes.some(function (route) {
-
-			if (route.matcher(url, opts)) {
-				debug('Found matching route (' + route.name + ') for ' + url);
-				this.push(route.name, [url, opts]);
-
-				if (config.responses[route.name]) {
-					debug('Overriding response for ' + route.name);
-					response = config.responses[route.name];
-				} else {
-					debug('Using default response for ' + route.name);
-					response = route.response;
-				}
-
-				if (typeof response === 'function') {
-					debug('Constructing dynamic response for ' + route.name);
-					response = response(url, opts);
-				}
-				return true;
-			}
-		}.bind(this));
-
-		debug('returning response for ' + url);
-		return response;
-	}.bind(this);
-};
-
-FetchMock.prototype.push = function (name, call) {
-	this._calls[name] = this._calls[name] || [];
-	this._calls[name].push(call);
-};
-
-FetchMock.prototype.mock = function (config) {
-	debug('mocking fetch');
-
-	if (this.isMocking) {
-		throw 'fetch-mock is already mocking routes. Call .restore() before mocking again or use .reMock() if this is intentional';
-	}
-
-	this.isMocking = true;
-	var mock = this.constructMock(config);
-
-	if (this.usesGlobalFetch) {
-		debug('stubbing global fetch');
+		this._calls = {};
 		this.mockedContext = theGlobal;
-	} else if (this.realFetch) {
-		debug('stubbing non-global fetch');
+		this.realFetch = theGlobal.fetch;
+	}
+
+	useNonGlobalFetch (func) {
 		this.mockedContext = this;
-	} else {
-		throw 'No fetch instance available';
+		this.realFetch = func;
 	}
-	this.mockedContext.fetch = mock;
 
-	return mock;
-};
-
-FetchMock.prototype.constructMock = function (config) {
-	debug('constructing mock function');
-	config = config || {};
-	var self = this;
-	var defaultFetch = this.usesGlobalFetch ? theGlobal.fetch : this.realFetch;
-	var router = this.getRouter(config);
-	config.greed = config.greed || 'none';
-
-	return function (url, opts) {
-		var response = router(url, opts);
-		if (response) {
-			debug('response found for ' + url);
-			return mockResponse(url, response);
+	registerRoute (name, matcher, response) {
+		debug('registering routes');
+		let routes;
+		if (name instanceof Array) {
+			routes = name;
+		} else if (arguments.length === 3 ) {
+			routes = [{
+				name,
+				matcher,
+				response,
+			}];
 		} else {
-			debug('response not found for ' + url);
-			self.push('__unmatched', [url, opts]);
-			if (config.greed === 'good') {
-				debug('sending default good response');
-				return mockResponse(url, {body: 'unmocked url: ' + url});
-			} else if (config.greed === 'bad') {
-				debug('sending default bad response');
-				return mockResponse(url, {throws: 'unmocked url: ' + url});
-			} else {
-				debug('forwarding to default fetch');
-				return defaultFetch && defaultFetch(url, opts);
-			}
+			routes = [name];
 		}
-	};
-};
 
-FetchMock.prototype.restore = function () {
-	debug('restoring fetch');
-	this.isMocking = false;
-	this.mockedContext.fetch = this.realFetch;
-	delete this.mockedContext;
-	this.reset();
-	debug('fetch restored');
-};
+		debug('registering routes: ' + routes.map(r => r.name));
 
-FetchMock.prototype.reMock = function (config) {
-	this.restore();
-	this.mock(config);
-};
-
-FetchMock.prototype.reset = function () {
-	debug('resetting call logs');
-	this._calls = {};
-};
-
-FetchMock.prototype.calls = function (name) {
-	return this._calls[name] || [];
-};
-
-FetchMock.prototype.called = function (name) {
-	if (!name) {
-		return !!Object.keys(this._calls).length;
+		this.routes = this.routes.concat(routes.map(compileRoute));
 	}
-	return !!(this._calls[name] && this._calls[name].length);
-};
+
+	unregisterRoute (names) {
+
+		if (!names) {
+			debug('unregistering all routes');
+			this.routes = [];
+			return;
+		}
+		if (!(names instanceof Array)) {
+			names = [names];
+		}
+
+		debug('unregistering routes: ' + names);
+
+		this.routes = this.routes.filter(route => {
+			const keep = names.indexOf(route.name) === -1;
+			if (!keep) {
+				debug('unregistering route ' + route.name);
+			}
+			return keep;
+		});
+	}
+
+	getRouter (config) {
+		debug('building router');
+
+		let routes;
+
+		if (config.routes) {
+			debug('applying one time only routes');
+			if (!(config.routes instanceof Array)) {
+				config.routes = [config.routes];
+			}
+
+			const preRegisteredRoutes = {};
+			this.routes.forEach(route => {
+				preRegisteredRoutes[route.name] = route;
+			});
+			routes = config.routes.map(route => {
+				if (typeof route === 'string') {
+					debug('applying preregistered route ' + route);
+					return preRegisteredRoutes[route];
+				} else {
+					debug('applying one time route ' + route.name);
+					return compileRoute(route);
+				}
+			});
+		} else {
+			debug('no one time only routes defined. Using preregistered routes only');
+			routes = this.routes;
+		}
+
+
+		const routeNames = {};
+		routes.forEach(route => {
+			if (routeNames[route.name]) {
+				throw 'Route names must be unique';
+			}
+			routeNames[route.name] = true;
+		});
+
+		config.responses = config.responses || {};
+
+		return (url, opts) => {
+			let response;
+			debug('searching for matching route for ' + url);
+			routes.some(route => {
+
+				if (route.matcher(url, opts)) {
+					debug('Found matching route (' + route.name + ') for ' + url);
+					this.push(route.name, [url, opts]);
+
+					if (config.responses[route.name]) {
+						debug('Overriding response for ' + route.name);
+						response = config.responses[route.name];
+					} else {
+						debug('Using default response for ' + route.name);
+						response = route.response;
+					}
+
+					if (typeof response === 'function') {
+						debug('Constructing dynamic response for ' + route.name);
+						response = response(url, opts);
+					}
+					return true;
+				}
+			});
+
+			debug('returning response for ' + url);
+			return response;
+		};
+	}
+
+	push (name, call) {
+		this._calls[name] = this._calls[name] || [];
+		this._calls[name].push(call);
+	}
+
+	mock (config) {
+		debug('mocking fetch');
+
+		if (this.isMocking) {
+			throw 'fetch-mock is already mocking routes. Call .restore() before mocking again or use .reMock() if this is intentional';
+		}
+
+		this.isMocking = true;
+
+		return this.mockedContext.fetch = this.constructMock(config);
+	}
+
+	constructMock (config) {
+		debug('constructing mock function');
+		config = config || {};
+		const router = this.getRouter(config);
+		config.greed = config.greed || 'none';
+
+		return (url, opts) => {
+			const response = router(url, opts);
+			if (response) {
+				debug('response found for ' + url);
+				return mockResponse(url, response);
+			} else {
+				debug('response not found for ' + url);
+				this.push('__unmatched', [url, opts]);
+				if (config.greed === 'good') {
+					debug('sending default good response');
+					return mockResponse(url, {body: 'unmocked url: ' + url});
+				} else if (config.greed === 'bad') {
+					debug('sending default bad response');
+					return mockResponse(url, {throws: 'unmocked url: ' + url});
+				} else {
+					debug('forwarding to default fetch');
+					return this.realFetch(url, opts);
+				}
+			}
+		};
+	}
+
+	restore () {
+		debug('restoring fetch');
+		this.isMocking = false;
+		this.mockedContext.fetch = this.realFetch;
+		this.reset();
+		debug('fetch restored');
+	}
+
+	reMock (config) {
+		this.restore();
+		this.mock(config);
+	}
+
+	reset () {
+		debug('resetting call logs');
+		this._calls = {};
+	}
+
+	calls (name) {
+		return this._calls[name] || [];
+	}
+
+	called (name) {
+		if (!name) {
+			return !!Object.keys(this._calls).length;
+		}
+		return !!(this._calls[name] && this._calls[name].length);
+	}
+}
 
 module.exports = FetchMock;

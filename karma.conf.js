@@ -12,7 +12,7 @@ module.exports = function(karma) {
 			'test/client.js': ['browserify']
 		},
 		browserify: {
-				transform: ['debowerify'],
+				transform: ['babelify', 'debowerify'],
 				debug: true
 		},
 		browsers: ['Chrome'],

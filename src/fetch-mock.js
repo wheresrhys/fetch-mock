@@ -1,12 +1,11 @@
 'use strict';
 
-var sinon = require('sinon');
 var Headers;
 var Response;
 var stream;
 var Blob;
 var theGlobal;
-var debug = require('debug')('fetch-mock')
+var debug;
 
 function mockResponse (url, config) {
 	debug('mocking response for ' + url);
@@ -97,14 +96,16 @@ var FetchMock = function (opts) {
 	stream = opts.stream;
 	Blob = opts.Blob;
 	theGlobal = opts.theGlobal;
+	debug = opts.debug;
 	this.routes = [];
 	this._calls = {};
 	this.usesGlobalFetch = true;
+	this.realFetch = theGlobal.fetch;
 };
 
 FetchMock.prototype.useNonGlobalFetch = function (func) {
 	this.usesGlobalFetch = false;
-	this.fetch = func;
+	this.realFetch = func;
 };
 
 FetchMock.prototype.registerRoute = function (name, matcher, response) {
@@ -235,22 +236,24 @@ FetchMock.prototype.mock = function (config) {
 	var mock = this.constructMock(config);
 
 	if (this.usesGlobalFetch) {
-		debug('applying sinon.stub to fetch');
-		sinon.stub(theGlobal, 'fetch', mock);
+		debug('stubbing global fetch');
+		this.mockedContext = theGlobal;
+	} else if (this.realFetch) {
+		debug('stubbing non-global fetch');
+		this.mockedContext = this;
 	} else {
-		if (this.fetch) {
-			debug('applying sinon.stub to fetch');
-			sinon.stub(this, 'fetch', mock);
-		}
-		return mock;
+		throw 'No fetch instance available';
 	}
+	this.mockedContext.fetch = mock;
+
+	return mock;
 };
 
 FetchMock.prototype.constructMock = function (config) {
 	debug('constructing mock function');
 	config = config || {};
 	var self = this;
-	var defaultFetch = this.usesGlobalFetch ? theGlobal.fetch : this.fetch;
+	var defaultFetch = this.usesGlobalFetch ? theGlobal.fetch : this.realFetch;
 	var router = this.getRouter(config);
 	config.greed = config.greed || 'none';
 
@@ -273,18 +276,15 @@ FetchMock.prototype.constructMock = function (config) {
 				return defaultFetch && defaultFetch(url, opts);
 			}
 		}
-	}
+	};
 };
 
 FetchMock.prototype.restore = function () {
 	debug('restoring fetch');
 	this.isMocking = false;
+	this.mockedContext.fetch = this.realFetch;
+	delete this.mockedContext;
 	this.reset();
-	if (this.usesGlobalFetch) {
-		theGlobal.fetch.restore();
-	} else if (this.fetch) {
-		this.fetch.restore();
-	}
 	debug('fetch restored');
 };
 
@@ -296,12 +296,6 @@ FetchMock.prototype.reMock = function (config) {
 FetchMock.prototype.reset = function () {
 	debug('resetting call logs');
 	this._calls = {};
-	if (this.usesGlobalFetch) {
-		theGlobal.fetch.reset();
-	} else if (this.fetch) {
-		this.fetch.reset();
-	}
-	debug('call logs reset');
 };
 
 FetchMock.prototype.calls = function (name) {

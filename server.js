@@ -9,5 +9,6 @@ module.exports = new FetchMock({
 	theGlobal: GLOBAL,
 	Response: Response,
 	Headers: Headers,
-	stream: stream
+	stream: stream,
+	debug: require('debug')('fetch-mock')
 });

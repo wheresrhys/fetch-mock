@@ -15,7 +15,7 @@ module.exports = function(karma) {
 				transform: ['debowerify'],
 				debug: true
 		},
-		browsers: ['PhantomJS', 'Chrome'],
+		browsers: ['Chrome'],
 		customLaunchers: {
 			Chrome_travis_ci: {
 				base: 'Chrome',
@@ -25,7 +25,7 @@ module.exports = function(karma) {
 	};
 
 	if(process.env.TRAVIS){
-		configuration.browsers = ['PhantomJS', 'Chrome_travis_ci'];
+		configuration.browsers = ['Chrome_travis_ci'];
 	}
 
 	karma.set(configuration);

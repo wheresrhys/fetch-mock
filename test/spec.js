@@ -8,7 +8,7 @@ module.exports = function (fetchMock, theGlobal) {
 	// we can't use sinon to spy on fetch in these tests as fetch-mock
 	// uses it internally and sinon doesn't allow spying on a previously
 	// stubbed function, so just use this very basic stub
-	var dummyFetch = theGlobal.fetch = function () {
+	var dummyFetch = theGlobal.fetch = fetchMock.realFetch = function () {
 		fetchCalls.push([].slice.call(arguments));
 		return Promise.resolve(arguments);
 	};
@@ -55,12 +55,6 @@ module.exports = function (fetchMock, theGlobal) {
 					fetchMock.mock();
 					fetchMock.restore();
 				}).not.to.throw();
-			});
-
-			it('turn fetch into a sinon stub', function () {
-				fetchMock.mock();
-				expect(typeof fetch.called).to.equal('boolean');
-				fetchMock.restore();
 			});
 
 		});

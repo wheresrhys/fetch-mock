@@ -58,6 +58,18 @@ function mockResponse (url, config) {
 
 function compileRoute (route) {
 
+  var method = route.method;
+  var matchMethod;
+  if(method) {
+    method = method.toLowerCase();
+    matchMethod = function(options) {
+      var m = options && options.method ? options.method.toLowerCase() : 'get';
+      return m === method;
+    };
+  } else {
+    matchMethod = function(){ return true; };
+  }
+
 	debug('compiling route: ' + route.name);
 
 	if (!route.name) {
@@ -77,20 +89,20 @@ function compileRoute (route) {
 		if (route.matcher.indexOf('^') === 0) {
 			debug('constructing starts with string matcher for route: ' + route.name);
 			expectedUrl = expectedUrl.substr(1);
-			route.matcher = function (url) {
-				return url.indexOf(expectedUrl) === 0;
+			route.matcher = function (url, options) {
+				return matchMethod(options) && url.indexOf(expectedUrl) === 0;
 			};
 		} else {
 			debug('constructing string matcher for route: ' + route.name);
-			route.matcher = function (url) {
-				return url === expectedUrl;
+			route.matcher = function (url, options) {
+				return matchMethod(options) && url === expectedUrl;
 			};
 		}
 	} else if (route.matcher instanceof RegExp) {
 		debug('constructing regex matcher for route: ' + route.name);
 		const urlRX = route.matcher;
-		route.matcher = function (url) {
-			return urlRX.test(url);
+		route.matcher = function (url, options) {
+			return matchMethod(options) && urlRX.test(url);
 		};
 	}
 	return route;

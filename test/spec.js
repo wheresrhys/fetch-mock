@@ -252,6 +252,32 @@ module.exports = function (fetchMock, theGlobal) {
 						});
 				});
 
+        it('match method', function(done) {
+					fetchMock.mock({
+						routes: [{
+							name: 'route1',
+							method: 'get',
+							matcher: 'http://it.at.here',
+							response: 'ok'
+						}, {
+							name: 'route2',
+							method: 'put',
+							matcher: 'http://it.at.here',
+							response: 'ok'
+						}]
+					});
+					Promise.all([fetch('http://it.at.here', {method: 'put'}), fetch('http://it.at.here'), fetch('http://it.at.here', {method: 'GET'}), fetch('http://it.at.here', {method: 'delete'})])
+						.then(function (res) {
+							expect(fetchMock.called()).to.be.true;
+							expect(fetchMock.called('route1')).to.be.true;
+							expect(fetchMock.called('route2')).to.be.true;
+							expect(fetchMock.calls('route1').length).to.equal(2);
+							expect(fetchMock.calls('route2').length).to.equal(1);
+							expect(fetchMock.calls('__unmatched').length).to.equal(1);
+							done();
+						}).catch(done);
+        });
+
 				it('match multiple routes', function (done) {
 					fetchMock.mock({
 						routes: [{

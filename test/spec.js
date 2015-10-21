@@ -119,12 +119,12 @@ module.exports = function (fetchMock, theGlobal) {
 			});
 
 			describe('shorthand notation', function () {
-				it('accepts name, matcher, route triples', function () {
+				it('accepts matcher, method, route triples', function () {
 					expect(function () {
-						fetchMock.mock('route', 'http://it.at.there', 'ok');
+						fetchMock.mock('http://it.at.there', 'PUT', 'ok');
 					}).not.to.throw();
-					fetch('http://it.at.there');
-					expect(fetchMock.calls('route').length).to.equal(1);
+					fetch('http://it.at.there', {method: 'PUT'});
+					expect(fetchMock.calls().length).to.equal(1);
 				});
 
 				it('accepts matcher, route pairs', function () {
@@ -133,6 +133,14 @@ module.exports = function (fetchMock, theGlobal) {
 					}).not.to.throw();
 					fetch('http://it.at.there');
 					expect(fetchMock.calls().length).to.equal(1);
+				});
+
+				it('accepts single route', function () {
+					expect(function () {
+						fetchMock.mock({name: 'route', matcher: 'http://it.at.there', response: 'ok'});
+					}).not.to.throw();
+					fetch('http://it.at.there');
+					expect(fetchMock.calls('route').length).to.equal(1);
 				});
 
 				it('accepts array of routes', function () {

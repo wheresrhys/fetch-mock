@@ -244,38 +244,39 @@ class FetchMock {
 		this._calls[name].push(call);
 	}
 
-	mock (name, matcher, response) {
+	mock (matcher, method, response) {
 
 		let config;
 		if (response) {
 
 			config = {
 				routes: [{
-					name,
+					name: '_mock',
 					matcher,
+					method,
 					response
 				}]
 			}
 
-		} else if (matcher) {
+		} else if (method) {
 			config = {
 				routes: [{
 					name: '_mock',
-					matcher: name,
-					response: matcher
+					matcher,
+					response: method
 				}]
 			}
 
-		} else if (name instanceof Array) {
+		} else if (matcher instanceof Array) {
 			config = {
-				routes: name
+				routes: matcher
 			}
-		} else if (name && name.matcher) {
+		} else if (matcher && matcher.matcher) {
 			config = {
-				routes: [name]
+				routes: [matcher]
 			}
 		} else {
-			config = name;
+			config = matcher;
 		}
 
 		debug('mocking fetch');

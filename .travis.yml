@@ -14,8 +14,6 @@ before_deploy:
 deploy:
   provider: npm
   email: wheresrhys@gmail.com
-  api_key:
-    secure: VzENYjzeS/EG6FKLGzapkYij22gCI8x8FPypp2u/9i/e+MZVI0V9AXWGuTu+M8ZObt3j5/VW9jKbc2ns8+Zc/8qZKUQUsVWHwB951IfQD/vZ6w2RHe+fEs8UAAsKhRW+69cy4MLzS7jc6oX+ZkdRUfpkrmxl16tILGFN4AeesgA=
   on:
     all_branches: true
     tags: true

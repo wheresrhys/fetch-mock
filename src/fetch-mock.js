@@ -232,7 +232,40 @@ class FetchMock {
 		this._calls[name].push(call);
 	}
 
-	mock (config) {
+	mock (name, matcher, response) {
+
+		let config;
+		if (response) {
+
+			config = {
+				routes: [{
+					name,
+					matcher,
+					response
+				}]
+			}
+
+		} else if (matcher) {
+			config = {
+				routes: [{
+					name: '_mock',
+					matcher: name,
+					response: matcher
+				}]
+			}
+
+		} else if (name instanceof Array) {
+			config = {
+				routes: name
+			}
+		} else if (name && name.matcher) {
+			config = {
+				routes: [name]
+			}
+		} else {
+			config = name;
+		}
+
 		debug('mocking fetch');
 
 		if (this.isMocking) {
@@ -280,9 +313,9 @@ class FetchMock {
 		debug('fetch restored');
 	}
 
-	reMock (config) {
+	reMock () {
 		this.restore();
-		this.mock(config);
+		this.mock.apply(this, [].slice.apply(arguments));
 	}
 
 	reset () {
@@ -291,7 +324,7 @@ class FetchMock {
 	}
 
 	calls (name) {
-		return this._calls[name] || [];
+		return name ? (this._calls[name] || []) : (this._calls._mock || this._calls);
 	}
 
 	called (name) {

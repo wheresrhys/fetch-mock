@@ -118,6 +118,38 @@ module.exports = function (fetchMock, theGlobal) {
 				});
 			});
 
+			describe('shorthand notation', function () {
+				it('accepts name, matcher, route triples', function () {
+					expect(function () {
+						fetchMock.mock('route', 'http://it.at.there', 'ok');
+					}).not.to.throw();
+					fetch('http://it.at.there');
+					expect(fetchMock.calls('route').length).to.equal(1);
+				});
+
+				it('accepts matcher, route pairs', function () {
+					expect(function () {
+						fetchMock.mock('http://it.at.there', 'ok');
+					}).not.to.throw();
+					fetch('http://it.at.there');
+					expect(fetchMock.calls().length).to.equal(1);
+				});
+
+				it('accepts array of routes', function () {
+					expect(function () {
+						fetchMock.mock([
+							{name: 'route1', matcher: 'http://it.at.there', response: 'ok'},
+							{name: 'route2', matcher: 'http://it.at.where', response: 'ok'}
+						]);
+					}).not.to.throw();
+					fetch('http://it.at.there');
+					fetch('http://it.at.where');
+					expect(fetchMock.calls('route1').length).to.equal(1);
+					expect(fetchMock.calls('route2').length).to.equal(1);
+				});
+
+			});
+
 			describe('unmatched routes', function () {
 				it('record history of unmatched routes', function (done) {
 					fetchMock.mock();
@@ -310,6 +342,7 @@ module.exports = function (fetchMock, theGlobal) {
 						.then(function (res) {
 							expect(fetchMock.called()).to.be.true;
 							expect(fetchMock.called('route')).to.be.true;
+							expect(fetchMock.calls().route).to.exist;
 							expect(fetchMock.calls('route')[0]).to.eql(['http://it.at.there', undefined]);
 							expect(fetchMock.calls('route')[1]).to.eql(['http://it.at.thereabouts', {headers: {head: 'val'}}]);
 							done();

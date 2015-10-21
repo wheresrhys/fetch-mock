@@ -32,14 +32,18 @@ Requests can be mocked based on a wide range of criteria (method, headers, url),
 `require('fetch-mock')` exports a singleton with the following methods
 
 ### `mock(config)`
-Replaces `fetch()` with a stub which records it's calls, grouped by route, and optionally returns a stub response or passes the call through to `fetch()`. `config` is an optional* object with the following properties.
+Replaces `fetch()` with a stub which records it's calls, grouped by route, and optionally returns a stub response or passes the call through to `fetch()`. 
 
-#### *Shorthand notation for simplest use cases*
-The following are also accepted by mock()
+`config` is an optional (when persistent routes are already defined using `registerRoute`) object with properties as below:
+
+> ##### *Shorthand notation for simplest use cases*
+The following are also accepted by mock() and translated into `config` objects with the `routes` property defined using the values passed in to mock as follows:
 * `mock(name, matcher, response)` - configuration for a single named route to be mocked
 * `mock(matcher, response)` - configuration for a single unnamed route to be mocked. To access details of its calls `fetchMock.calls()` should be called without passing a parameter
-* `mock(response)` - configuration object for a single route
-* `mock(responses` - array of route configuration objects
+* `mock(route)` - configuration object for a single route
+* `mock(routes)` - array of route configuration objects
+
+
 
 * `routes`: Either a single object or an array of similar objects each defining how the mock handles a given request. If multiple routes are specified the first matching route will be used to define the response. Each route object must have the following properties.
 	* `name`: A unique string naming the route
@@ -76,9 +80,6 @@ The following are also accepted by mock()
 	* 'none': all unmatched calls get passed through to `fetch()`
 	* 'bad': all unmatched calls result in a rejected promise
 	* 'good': all unmatched calls result in a resolved promise with a 200 status
-
-
-\* `config` is optional only when preconfigured routes have already been setup
 
 
 ### `restore()`

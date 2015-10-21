@@ -1,8 +1,5 @@
 # fetch-mock [![Build Status](https://travis-ci.org/wheresrhys/fetch-mock.svg?branch=master)](https://travis-ci.org/wheresrhys/fetch-mock) [![Coverage Status](https://coveralls.io/repos/wheresrhys/fetch-mock/badge.svg)](https://coveralls.io/r/wheresrhys/fetch-mock)
-Mock http requests made using fetch (or isomorphic-fetch)
-
-## What does it do?
-Provides a versatile range of http mocking utilities, provided all your http calls are done using fetch (or isomorphic-fetch in nodejs). The simplest case is:
+A versatile mocking library for http requests made using fetch (or isomorphic-fetch). The simplest case is:
 
 ```
 const fetchMock = require('fetch-mock');
@@ -12,6 +9,7 @@ it('should pretend to be Rambo', done => {
 		.then(res => {
 			expect(fetchMock.calls().length).to.equal(1);
 			expect(res.status).to.equal(301);
+			fetchMock.restore();
 			done();
 		});
 })
@@ -34,7 +32,14 @@ Requests can be mocked based on a wide range of criteria (method, headers, url),
 `require('fetch-mock')` exports a singleton with the following methods
 
 ### `mock(config)`
-Replaces `fetch()` with a sinon stub which, in addition to the default sinon behaviour, records it's calls, grouped by route, and optionally returns a stub response or passes the call through to `fetch()`. `config` is an optional* object with the following properties.
+Replaces `fetch()` with a stub which records it's calls, grouped by route, and optionally returns a stub response or passes the call through to `fetch()`. `config` is an optional* object with the following properties.
+
+#### *Shorthand notation for simplest use cases*
+The following are also accepted by mock()
+* `mock(name, matcher, response)` - configuration for a single named route to be mocked
+* `mock(matcher, response)` - configuration for a single unnamed route to be mocked. To access details of its calls `fetchMock.calls()` should be called without passing a parameter
+* `mock(response)` - configuration object for a single route
+* `mock(responses` - array of route configuration objects
 
 * `routes`: Either a single object or an array of similar objects each defining how the mock handles a given request. If multiple routes are specified the first matching route will be used to define the response. Each route object must have the following properties.
 	* `name`: A unique string naming the route

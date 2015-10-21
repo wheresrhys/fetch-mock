@@ -38,7 +38,7 @@ Replaces `fetch()` with a stub which records it's calls, grouped by route, and o
 
 > ##### *Shorthand notation for simplest use cases*
 The following are also accepted by mock() and translated into `config` objects with the `routes` property defined using the values passed in to mock as follows:
-* `mock(name, matcher, response)` - configuration for a single named route to be mocked
+* `mock(matcher, method, response)` - configuration for a single unnamed route to be mocked for a given method. To access details of its calls `fetchMock.calls()` should be called without passing a parameter
 * `mock(matcher, response)` - configuration for a single unnamed route to be mocked. To access details of its calls `fetchMock.calls()` should be called without passing a parameter
 * `mock(route)` - configuration object for a single route
 * `mock(routes)` - array of route configuration objects
@@ -47,10 +47,11 @@ The following are also accepted by mock() and translated into `config` objects w
 
 * `routes`: Either a single object or an array of similar objects each defining how the mock handles a given request. If multiple routes are specified the first matching route will be used to define the response. Each route object must have the following properties.
 	* `name`: A unique string naming the route
+	* `method`: If specified will only match requests using the given http method
 	* `matcher`: The rule for matching calls to `fetch()`. Accepts any of the following
 		* `string`: Either an exact url to match e.g. 'http://www.site.com/page.html' or, if the string begins with a `^`, the string following the `^` must begin the url e.g. '^http://www.site.com' would match 'http://www.site.com' or 'http://www.site.com/page.html'
 		* `RegExp`: A regular  expression to test the url against
-		* `Function(url, opts)`: A function that is passed the url and opts `fetch()` is called with and that returns a Boolean
+		* `Function(url, opts)`: A function that is passed the url and opts `fetch()` is called with and that returns a Boolean.
 	* `response`: Configures the response object returned by the mock. Can take any of the following values
 		* `number`: creates a response with the number as the response status
 		* `string`: creates a 200 response with the string as the response body

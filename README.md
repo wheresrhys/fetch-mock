@@ -1,58 +1,26 @@
 # fetch-mock [![Build Status](https://travis-ci.org/wheresrhys/fetch-mock.svg?branch=master)](https://travis-ci.org/wheresrhys/fetch-mock) [![Coverage Status](https://coveralls.io/repos/wheresrhys/fetch-mock/badge.svg)](https://coveralls.io/r/wheresrhys/fetch-mock)
-A versatile mocking library for http requests made using fetch (or isomorphic-fetch). The simplest case is:
-
-```
-const fetchMock = require('fetch-mock');
-it('should pretend to be Rambo', done => {
-	fetchMock.mock('http://rambo.was.ere', 301);
-	fetch('http://rambo.was.ere')
-		.then(res => {
-			expect(fetchMock.calls().length).to.equal(1);
-			expect(res.status).to.equal(301);
-			fetchMock.restore();
-			done();
-		});
-})
-```
-
-Requests can be mocked based on a wide range of criteria (method, headers, url), and return any response needed. Routes can also be persisted over a series of tests and identified by name, with some useful shorthand syntaxes to make common use cases easier to write. See the docs below.
-
-*notes*
-- When using isomorphic-fetch or node-fetch ideally `fetch` should be added as a global. If not possible to do so you can still use fetch-mock in combination with [mockery](https://github.com/mfncooper/mockery) in nodejs (see `useNonGlobalFetch(func)` below)
-- fetch-mock doesn't declare `fetch` or `Promise` as dependencies; as you're testing `fetch` it's assumed you're already taking care of these globals
-- fetch-mock uses [npm debug](https://www.npmjs.com/package/debug). To output useful messages for debugging set the environment variable `DEBUG=fetch-mock`
-- To use fetch-mock on the server simply `npm install fetch-mock` and `require('fetch-mock)`. In the browser either
-	- use browserify + debowerify and both `npm install fetch-mock` and `bower install fetch-mock`, then use `require('fetch-mock)`
-	- use browserify and `npm install fetch-mock` and `require('fetch-mock/client)`
-
-
+Mock http requests made using fetch (or [isomorphic-fetch](https://www.npmjs.com/package/isomorphic-fetch)). As well as shorthand methods for the simplest use cases, it offers a flexible API for customising mocking behaviour, and can also be persisted (with resettable state) over a series of tests.
 
 ## API
 
-`require('fetch-mock')` exports a singleton with the following methods
+- *fetch-mock doesn't declare `fetch` or `Promise` as dependencies; it's assumed you or your environment are already taking care of these globals*
+- *To output useful messages for debugging `export DEBUG=fetch-mock`*
 
-### `mock(config)`
+**`require('fetch-mock')`** exports a singleton with the following methods
+
+### `mock()`
 Replaces `fetch()` with a stub which records it's calls, grouped by route, and optionally returns a stub response or passes the call through to `fetch()`. 
 
-`config` is an optional (when persistent routes are already defined using `registerRoute`) object with properties as below:
-
-> ##### *Shorthand notation for simplest use cases*
-The following are also accepted by mock() and translated into `config` objects with the `routes` property defined using the values passed in to mock as follows:
-* `mock(matcher, method, response)` - configuration for a single unnamed route to be mocked for a given method. To access details of its calls `fetchMock.calls()` should be called without passing a parameter
-* `mock(matcher, response)` - configuration for a single unnamed route to be mocked. To access details of its calls `fetchMock.calls()` should be called without passing a parameter
-* `mock(route)` - configuration object for a single route
-* `mock(routes)` - array of route configuration objects
-
-
-
-* `routes`: Either a single object or an array of similar objects each defining how the mock handles a given request. If multiple routes are specified the first matching route will be used to define the response. Each route object must have the following properties.
-	* `name`: A unique string naming the route
-	* `method`: If specified will only match requests using the given http method
-	* `matcher`: The rule for matching calls to `fetch()`. Accepts any of the following
+* `mock(matcher, response)` - configuration for a single unnamed route to be mocked (shorthand for `mock(route)` - see below)
+* `mock(matcher, method, response)` - configuration for a single unnamed route to be mocked for a given method (shorthand for `mock(route)` - see below) 
+* `mock(route)` - configuration for a single route with the following properties
+	* `name` [required]: A unique string naming the route
+	* `method` [optional]: If specified will only match requests using the given http method
+	* `matcher` [required]: The rule for matching calls to `fetch()`. Accepts any of the following
 		* `string`: Either an exact url to match e.g. 'http://www.site.com/page.html' or, if the string begins with a `^`, the string following the `^` must begin the url e.g. '^http://www.site.com' would match 'http://www.site.com' or 'http://www.site.com/page.html'
 		* `RegExp`: A regular  expression to test the url against
 		* `Function(url, opts)`: A function that is passed the url and opts `fetch()` is called with and that returns a Boolean.
-	* `response`: Configures the response object returned by the mock. Can take any of the following values
+	* `response` [required]: Configures the response object returned by the mock. Can take any of the following values
 		* `number`: creates a response with the number as the response status
 		* `string`: creates a 200 response with the string as the response body
 		* `object`: If the object contains any of the properties body, status, headers, throws; then these properties - all of them optional - are used to construct a response as follows
@@ -63,24 +31,27 @@ The following are also accepted by mock() and translated into `config` objects w
 
 			As long as the object does not contain any of the above properties it is converted into a json string and this is returned as the body of a 200 response
 		* `Function(url, opts)`: A function that is passed the url and opts `fetch()` is called with and that returns any of the responses listed above
-* `responses`: When `registerRoute()` has already been used to register some routes then `responses` can be used to override the default response. Its value should be an object mapping route names to responses, which should be similar to those listed immediately above e.g.
+* `mock(routes)` - array of route configuration objects (see above)
+* `mock(config)` - object containing more complex config for fine grained controlled over mocking behaviour with the following properties
+	- `routes`: Either a single route config object or an array of them (see above)
+	- `responses`: When `registerRoute()` has already been used to register some routes then `responses` can be used to override the default response. Its value should be an object mapping route names to responses, which should be similar to those provided in the `response` property of stanadard route configurations e.g.
 
-```javascript
-  responses: {
-  	session: function (url, opts) {
-  		if (opts.headers.authorized) {
-  			return {user: 'dummy-authorized-user'};
-  		} else {
-  			return {user: 'dummy-unauthorized-user'};
-  		}
-  	}
-  }
-```
+	```javascript
+	  responses: {
+	  	session: function (url, opts) {
+	  		if (opts.headers.authorized) {
+	  			return {user: 'dummy-authorized-user'};
+	  		} else {
+	  			return {user: 'dummy-unauthorized-user'};
+	  		}
+	  	}
+	  }
+	```
 
-* `greed`: Determines how the mock handles unmatched requests
-	* 'none': all unmatched calls get passed through to `fetch()`
-	* 'bad': all unmatched calls result in a rejected promise
-	* 'good': all unmatched calls result in a resolved promise with a 200 status
+	- `greed`: Determines how the mock handles unmatched requests
+		- 'none': all unmatched calls get passed through to `fetch()`
+		- 'bad': all unmatched calls result in a rejected promise
+		- 'good': all unmatched calls result in a resolved promise with a 200 status
 
 
 ### `restore()`
@@ -91,6 +62,8 @@ Clears all data recorded for `fetch()`'s calls
 
 ### `calls(routeName)`
 Returns an array of arrays of the arguments passed to `fetch()` that matched the given route. '__unmatched' can be passed in to return results for calls not matching any route.
+
+When shorthands are used by `mock()` to define unnamed routes `routeName` is not required (but `_mock` can be passed in to distinguish from calls to previously registered routes)
 
 ### `called(routeName)`
 Returns a Boolean denoting whether any calls matched the given route. '__unmatched' can be passed in to return results for calls not matching any route. If no routeName is passed it returns `true` if any fetch calls were made
@@ -110,8 +83,8 @@ Often your application/module will need a mocked response for some http requests
 Unregisters one or more previously registered routes. Accepts either a string or an array of strings
 
 ### `useNonGlobalFetch(func)`
-To use fetch-mock with with [mockery](https://github.com/mfncooper/mockery) you will need to use this function to prevent fetch-mock trying to mock the function globally.
-* `func` Optional reference to `fetch` (or any other function you may want to substitute for `fetch` in your tests). This will be converted to a `sinon.stub` and can be accessed via `fetchMock.fetch`
+When using isomorphic-fetch or node-fetch ideally `fetch` should be added as a global. If not possible to do so you can still use fetch-mock in combination with [mockery](https://github.com/mfncooper/mockery) in nodejs. To use fetch-mock with with [mockery](https://github.com/mfncooper/mockery) you will need to use this function to prevent fetch-mock trying to mock the function globally.
+* `func` Optional reference to `fetch` (or any other function you may want to substitute for `fetch` in your tests).
 
 #### Mockery example
 ```javascript
@@ -129,14 +102,24 @@ it('should make a request', function (done) {
 	mockery.deregisterMock('fetch');
 	done();
 });
-
 ```
 
-
-## More complex examples
+## Examples
 ```javascript
 
 var fetchMock = require('fetch-mock');
+
+// Simplest use case
+it('should pretend to be Rambo', done => {
+	fetchMock.mock('http://rambo.was.ere', 301);
+	fetch('http://rambo.was.ere')
+		.then(res => {
+			expect(fetchMock.calls().length).to.equal(1);
+			expect(res.status).to.equal(301);
+			fetchMock.restore();
+			done();
+		});
+})
 
 // Optionally set up some routes you will always want to mock
 // Accepts an array of config objects or three parameters,

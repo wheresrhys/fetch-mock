@@ -3,7 +3,7 @@ Mock http requests made using fetch (or [isomorphic-fetch](https://www.npmjs.com
 
 ## API
 
-- *ES6 is used extensively, so either upgrade to nodejs >=4.x.x or use babel [example karma config](https://github.com/wheresrhys/fetch-mock/blob/master/karma.conf.js)*
+- *ES6 is used extensively, so either upgrade to nodejs >=4.x.x or use babel ([example karma config](https://github.com/wheresrhys/fetch-mock/blob/master/karma.conf.js))*
 - *You need to ensure `fetch` and `Promise` are already available as globals in your environment*
 - *To output useful messages for debugging `export DEBUG=fetch-mock`*
 

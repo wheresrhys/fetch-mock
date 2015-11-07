@@ -25,7 +25,7 @@ module.exports = function(karma) {
 	};
 
 	if(process.env.TRAVIS){
-		configuration.browsers = ['Chrome_travis_ci'];
+		configuration.browsers = ['PhantomJS', 'Firefox', 'Chrome_travis_ci'];
 	}
 
 	karma.set(configuration);

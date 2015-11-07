@@ -38,10 +38,13 @@
     "karma-browserify": "^4.1.2",
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^0.1.8",
+    "karma-firefox-launcher": "^0.1.6",
     "karma-mocha": "^0.1.10",
+    "karma-phantomjs-launcher": "^0.2.1",
     "mocha": "^2.2.4",
     "mocha-lcov-reporter": "0.0.2",
     "npm-prepublish": "^1.2.0",
+    "phantomjs": "^1.9.18",
     "sinon": "^1.17.0"
   }
 }

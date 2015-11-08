@@ -1,6 +1,6 @@
 {
   "name": "fetch-mock",
-  "version": "2.2.11",
+  "version": "2.2.12",
   "description": "Mock http requests made using fetch (or isomorphic-fetch)",
   "main": "es5/client.js",
   "scripts": {

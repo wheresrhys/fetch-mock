@@ -1,11 +1,16 @@
 # fetch-mock [![Build Status](https://travis-ci.org/wheresrhys/fetch-mock.svg?branch=master)](https://travis-ci.org/wheresrhys/fetch-mock) [![Coverage Status](https://coveralls.io/repos/wheresrhys/fetch-mock/badge.svg)](https://coveralls.io/r/wheresrhys/fetch-mock)
 Mock http requests made using fetch (or [isomorphic-fetch](https://www.npmjs.com/package/isomorphic-fetch)). As well as shorthand methods for the simplest use cases, it offers a flexible API for customising mocking behaviour, and can also be persisted (with resettable state) over a series of tests.
 
-## API
+## Which version to require
+- Browser tests: `require('fetch-mock)` 
+- Server side tests running in nodejs 4 or higher: `require('fetch-mock/server')`
+- Server side tests running in nodejs 0.12 or lower: `require('fetch-mock/es5/server)`
 
-- *ES6 is used extensively, so either upgrade to nodejs >=4.x.x or use babel ([example karma config](https://github.com/wheresrhys/fetch-mock/blob/master/karma.conf.js))*
-- *You need to ensure `fetch` and `Promise` are already available as globals in your environment*
-- *To output useful messages for debugging `export DEBUG=fetch-mock`*
+You will need to ensure `fetch` and `Promise` are already available as globals in your environment
+
+
+## API
+*To output useful messages for debugging `export DEBUG=fetch-mock`*
 
 **`require('fetch-mock')`** exports a singleton with the following methods
 

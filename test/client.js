@@ -1,6 +1,6 @@
 'use strict';
 
-require('fetch');
+require('whatwg-fetch');
 
 var fetchMock = require('../client.js');
 

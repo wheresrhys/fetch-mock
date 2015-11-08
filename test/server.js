@@ -1,7 +1,5 @@
 'use strit';
 
-require('es6-promise').polyfill();
-
 var fetchMock = require('../server.js');
 var fetchCalls = [];
 var expect = require('chai').expect;

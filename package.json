@@ -5,7 +5,7 @@
   "main": "es5/client.js",
   "scripts": {
     "test": "make test",
-    "prepublish": "babel src --out-dir es5"
+    "prepublish": "babel src --out-dir es5 --presets es2015"
   },
   "repository": {
     "type": "git",

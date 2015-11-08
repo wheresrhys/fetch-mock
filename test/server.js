@@ -1,6 +1,6 @@
 'use strit';
 
-var fetchMock = require('../server.js');
+var fetchMock = require('../src/server.js');
 var fetchCalls = [];
 var expect = require('chai').expect;
 var sinon = require('sinon');

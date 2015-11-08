@@ -3,7 +3,7 @@
 const Response = require('node-fetch').Response;
 const Headers = require('node-fetch').Headers;
 const stream = require('stream');
-const FetchMock = require('./src/fetch-mock');
+const FetchMock = require('./fetch-mock');
 
 module.exports = new FetchMock({
 	theGlobal: GLOBAL,

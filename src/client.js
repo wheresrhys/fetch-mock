@@ -1,10 +1,6 @@
 'use strict';
 
-require('babel-core/register')({
-	only: /fetch-mock/
-});
-
-var FetchMock = require('./src/fetch-mock');
+const FetchMock = require('./fetch-mock');
 
 module.exports = new FetchMock({
 	theGlobal: window,

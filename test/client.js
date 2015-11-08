@@ -2,6 +2,6 @@
 
 require('whatwg-fetch');
 
-var fetchMock = require('../client.js');
+var fetchMock = require('../src/client.js');
 
 require('./spec')(fetchMock, window);

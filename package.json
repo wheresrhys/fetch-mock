@@ -1,6 +1,6 @@
 {
   "name": "fetch-mock",
-  "version": "0.0.0",
+  "version": "2.2.11",
   "description": "Mock http requests made using fetch (or isomorphic-fetch)",
   "main": "es5/client.js",
   "scripts": {
@@ -43,7 +43,6 @@
     "karma-mocha": "^0.1.10",
     "karma-phantomjs-launcher": "^0.2.1",
     "mocha": "^2.2.4",
-    "npm-prepublish": "^1.2.0",
     "sinon": "^1.17.0",
     "whatwg-fetch": "^0.10.1"
   }

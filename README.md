@@ -8,12 +8,11 @@ Mock http requests made using fetch (or [isomorphic-fetch](https://www.npmjs.com
 
 You will need to ensure `fetch` and `Promise` are already available as globals in your environment
 
-## API
 *To output useful messages for debugging `export DEBUG=fetch-mock`*
 
 **`require('fetch-mock')`** exports a singleton with the following methods
 
-### Basic usage
+## Basic usage
 
 #### `mock(matcher, response)` or `mock(matcher, method, response)`  
 Replaces `fetch()` with a stub which records it's calls, grouped by route, and optionally returns a mocked `Response` object or passes the call through to `fetch()`. 
@@ -43,7 +42,7 @@ Normally calling `mock()` twice without restoring inbetween will throw an error.
 #### `reset()`
 Clears all data recorded for `fetch()`'s calls
 
-#### `calls(routeName)`
+#### `calls()`
 Returns an array of arrays of the arguments passed to `fetch()` for mocked calls.
 		
 ## Advanced usage

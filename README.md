@@ -54,8 +54,12 @@ Use a configuration object to define a route to mock.
 	* `method` [optional]: http method
 	* `matcher` [required]: as specified above
 	* `response` [required]: as specified above
-* `mock(routes)` - array of route configuration objects
-* `mock(config)` - object containing more complex config for fine grained control over every aspect of mocking behaviour. May have the following properties
+
+#### `mock(routes)`
+Pass in an array of route configuration objects
+
+#### `mock(config)`
+Pas in an object containing more complex config for fine grained control over every aspect of mocking behaviour. May have the following properties
 	- `routes`: Either a single route config object or an array of them (see above)
 	- `responses`: When `registerRoute()` (see below) has already been used to register some routes then `responses` can be used to override the default response. Its value should be an object mapping route names to responses, which should be similar to those provided in the `response` property of stanadard route configurations e.g.
 

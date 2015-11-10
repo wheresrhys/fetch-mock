@@ -8,37 +8,57 @@ Mock http requests made using fetch (or [isomorphic-fetch](https://www.npmjs.com
 
 You will need to ensure `fetch` and `Promise` are already available as globals in your environment
 
-
 ## API
 *To output useful messages for debugging `export DEBUG=fetch-mock`*
 
 **`require('fetch-mock')`** exports a singleton with the following methods
 
-#### `mock()`
-Replaces `fetch()` with a stub which records it's calls, grouped by route, and optionally returns a stub response or passes the call through to `fetch()`. 
+### Basic usage
 
-* `mock(matcher, response)` - configuration for a single unnamed route to be mocked (shorthand for `mock(route)` - see below)
-* `mock(matcher, method, response)` - configuration for a single unnamed route to be mocked for a given method (shorthand for `mock(route)` - see below) 
-* `mock(route)` - configuration for a single route with the following properties
-	* `name` [required]: A unique string naming the route
-	* `method` [optional]: If specified will only match requests using the given http method
-	* `matcher` [required]: The rule for matching calls to `fetch()`. Accepts any of the following
-		* `string`: Either an exact url to match e.g. 'http://www.site.com/page.html' or, if the string begins with a `^`, the string following the `^` must begin the url e.g. '^http://www.site.com' would match 'http://www.site.com' or 'http://www.site.com/page.html'
-		* `RegExp`: A regular  expression to test the url against
-		* `Function(url, opts)`: A function (returning a Boolean) that is passed the url and opts `fetch()` is called with.
-	* `response` [required]: Configures the response object returned by the mock. Can take any of the following values
-		* `number`: Creates a response with this status
-		* `string`: Creates a 200 response with the string as the response body
-		* `object`: As long as the object does not contain any of the properties below it is converted into a json string and returned as the body of a 200 response. If any of the properties below are defined it is used to configure a `Response` object
-			* `body`: Set the response body (`string` or `object`)
-			* `status`: Set the response status (defaut `200`)
-			* `headers`: Set the response headers. (`object`)
-			* `throws`: If this property is present then a `Promise` rejected with the value of `throws` is returned
-		* `Function(url, opts)`: A function that is passed the url and opts `fetch()` is called with and that returns any of the responses listed above
-* `mock(routes)` - array of route configuration objects (see above)
-* `mock(config)` - object containing more complex config for fine grained controlled over mocking behaviour with the following properties
+#### `mock(matcher, response)` or `mock(matcher, method, response)`  
+Replaces `fetch()` with a stub which records it's calls, grouped by route, and optionally returns a mocked `Response` object or passes the call through to `fetch()`. 
+
+* `matcher` [required]: Condition for selecting which requests to mock Accepts any of the following
+	* `string`: Either an exact url to match e.g. 'http://www.site.com/page.html' or, if the string begins with a `^`, the string following the `^` must begin the url e.g. '^http://www.site.com' would match 'http://www.site.com' or 'http://www.site.com/page.html'
+	* `RegExp`: A regular  expression to test the url against
+	* `Function(url, opts)`: A function (returning a Boolean) that is passed the url and opts `fetch()` is called with.
+* `method` [optional]: only matches requests using this http method
+* `response` [required]: Configures the http response returned by the mock. Can take any of the following values
+	* `number`: Creates a response with this status
+	* `string`: Creates a 200 response with the string as the response body
+	* `object`: As long as the object does not contain any of the properties below it is converted into a json string and returned as the body of a 200 response. If any of the properties below are defined it is used to configure a `Response` object
+		* `body`: Set the response body (`string` or `object`)
+		* `status`: Set the response status (defaut `200`)
+		* `headers`: Set the response headers. (`object`)
+		* `throws`: If this property is present then a `Promise` rejected with the value of `throws` is returned
+	* `Function(url, opts)`: A function that is passed the url and opts `fetch()` is called with and that returns any of the responses listed above
+
+
+#### `restore()`
+Restores `fetch()` to its unstubbed state and clears all data recorded for its calls
+
+#### `reMock()`
+Normally calling `mock()` twice without restoring inbetween will throw an error. `reMock()` calls `restore()` internally before calling `mock()` again. This allows you to put a generic call to `mock()` in a `beforeEach()` while retaining the flexibility to vary the responses for some tests
+
+#### `reset()`
+Clears all data recorded for `fetch()`'s calls
+
+#### `calls(routeName)`
+Returns an array of arrays of the arguments passed to `fetch()` for mocked calls.
+		
+## Advanced usage
+
+#### `mock(routeConfig)`
+
+Use a configuration object to define a route to mock.
+	* `name` [required]: A unique string naming the route. Used to subsequently retrieve references to the calls, grouped by name
+	* `method` [optional]: http method
+	* `matcher` [required]: as specified above
+	* `response` [required]: as specified above
+* `mock(routes)` - array of route configuration objects
+* `mock(config)` - object containing more complex config for fine grained control over every aspect of mocking behaviour. May have the following properties
 	- `routes`: Either a single route config object or an array of them (see above)
-	- `responses`: When `registerRoute()` has already been used to register some routes then `responses` can be used to override the default response. Its value should be an object mapping route names to responses, which should be similar to those provided in the `response` property of stanadard route configurations e.g.
+	- `responses`: When `registerRoute()` (see below) has already been used to register some routes then `responses` can be used to override the default response. Its value should be an object mapping route names to responses, which should be similar to those provided in the `response` property of stanadard route configurations e.g.
 
 	```javascript
 	  responses: {
@@ -58,19 +78,8 @@ Replaces `fetch()` with a stub which records it's calls, grouped by route, and o
 		- 'good': all unmatched calls result in a resolved promise with a 200 status
 
 
-#### `restore()`
-Restores `fetch()` to its unstubbed state and clears all data recorded for its calls
-
-#### `reMock()`
-Normally calling `mock()` twice without restoring inbetween will throw an error. `reMock()` calls `restore()` internally before calling `mock()` again. This allows you to put a generic call to `mock()` in a `beforeEach()` while retaining the flexibility to vary the responses for some tests
-
-#### `reset()`
-Clears all data recorded for `fetch()`'s calls
-
 #### `calls(routeName)`
 Returns an array of arrays of the arguments passed to `fetch()` that matched the given route. '__unmatched' can be passed in to return results for calls not matching any route.
-
-When shorthands are used by `mock()` to define unnamed routes `routeName` is not required (but `_mock` can be passed in to distinguish from calls to previously registered routes)
 
 #### `called(routeName)`
 Returns a Boolean denoting whether any calls matched the given route. '__unmatched' can be passed in to return results for calls not matching any route. If no routeName is passed it returns `true` if any fetch calls were made

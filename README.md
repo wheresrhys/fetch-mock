@@ -3,7 +3,7 @@ Mock http requests made using fetch (or [isomorphic-fetch](https://www.npmjs.com
 
 ## Which version to require
 - Browser tests: `require('fetch-mock')` 
-- Server side tests running in nodejs 4 or higher: `require('fetch-mock/server')`
+- Server side tests running in nodejs 4 or higher: `require('fetch-mock/src/server')`
 - Server side tests running in nodejs 0.12 or lower: `require('fetch-mock/es5/server')`
 
 You will need to ensure `fetch` and `Promise` are already available as globals in your environment

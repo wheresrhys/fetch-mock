@@ -1,4 +1,4 @@
-'use strit';
+'use strict';
 
 var fetchMock = require('../src/server.js');
 var fetchCalls = [];

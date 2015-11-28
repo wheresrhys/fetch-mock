@@ -2,8 +2,8 @@
 Mock http requests made using fetch (or [isomorphic-fetch](https://www.npmjs.com/package/isomorphic-fetch)). As well as shorthand methods for the simplest use cases, it offers a flexible API for customising mocking behaviour, and can also be persisted (with resettable state) over a series of tests.
 
 ## Which version to require
-- Browser tests: `require('fetch-mock')` 
-- Server side tests running in nodejs 4 or higher: `require('fetch-mock/src/server')`
+- Browser or nodejs 4 or higher `require('fetch-mock')`
+- Browser tests when not using a loader that respects the `browser` field of package.json: `require('fetch-mock/es5/client')` 
 - Server side tests running in nodejs 0.12 or lower: `require('fetch-mock/es5/server')`
 
 You will need to ensure `fetch` and `Promise` are already available as globals in your environment

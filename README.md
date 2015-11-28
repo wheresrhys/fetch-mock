@@ -1,7 +1,9 @@
 # fetch-mock [![Build Status](https://travis-ci.org/wheresrhys/fetch-mock.svg?branch=master)](https://travis-ci.org/wheresrhys/fetch-mock) [![Coverage Status](https://coveralls.io/repos/wheresrhys/fetch-mock/badge.svg)](https://coveralls.io/r/wheresrhys/fetch-mock)
 Mock http requests made using fetch (or [isomorphic-fetch](https://www.npmjs.com/package/isomorphic-fetch)). As well as shorthand methods for the simplest use cases, it offers a flexible API for customising mocking behaviour, and can also be persisted (with resettable state) over a series of tests.
 
-## Which version to require
+- [V3 changelog](https://github.com/wheresrhys/fetch-mock/pull/35)
+
+## Which file to require
 - Browser or nodejs 4 or higher `require('fetch-mock')`
 - Browser tests when not using a loader that respects the `browser` field of package.json: `require('fetch-mock/es5/client')` 
 - Server side tests running in nodejs 0.12 or lower: `require('fetch-mock/es5/server')`

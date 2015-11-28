@@ -2,7 +2,8 @@
   "name": "fetch-mock",
   "version": "2.3.1",
   "description": "Mock http requests made using fetch (or isomorphic-fetch)",
-  "main": "es5/client.js",
+  "main": "src/server.js",
+  "browser": "es5/client.js",
   "scripts": {
     "test": "make test",
     "prepublish": "babel src --out-dir es5 --presets es2015"

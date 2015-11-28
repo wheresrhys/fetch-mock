@@ -30,12 +30,12 @@ describe('non-global use', function () {
 
 		fetchMock.useNonGlobalFetch(dummyFetch);
 		expect(fetchMock.realFetch).to.equal(dummyFetch);
-		var mock = fetchMock.mock();
+		var mock = fetchMock.mock().getMock();
 		expect(typeof mock).to.equal('function');
 		expect(function () {
 			mock('url', {prop: 'val'})
 		}).not.to.throw();
-		expect(fetchMock.called('__unmatched')).to.be.true;
+		expect(fetchMock.calls().unmatched.length).to.equal(1);
 		expect(fetchCalls.length).to.equal(1);
 		expect(fetchCalls[0]).to.eql(['url', {prop: 'val'}]);
 

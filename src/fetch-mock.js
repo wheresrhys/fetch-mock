@@ -72,12 +72,13 @@ function compileRoute (route) {
 
 	debug('compiling route: ' + route.name);
 
-	if (!route.name) {
-		throw 'each route must be named';
-	}
-
 	if (!route.matcher) {
 		throw 'each route must specify a string, regex or function to match calls to fetch';
+	}
+
+	if (!route.name) {
+		route.name = route.matcher.toString();
+		route.__unnamed = true;
 	}
 
 	if (typeof route.response === 'undefined') {
@@ -195,7 +196,7 @@ class FetchMock {
 			});
 		} else {
 			debug('no one time only routes defined. Using preregistered routes only');
-			routes = this.routes;
+			routes = [].slice.call(this.routes);
 		}
 
 
@@ -209,7 +210,7 @@ class FetchMock {
 
 		config.responses = config.responses || {};
 
-		return (url, opts) => {
+		const router = (url, opts) => {
 			let response;
 			debug('searching for matching route for ' + url);
 			routes.some(route => {
@@ -237,11 +238,22 @@ class FetchMock {
 			debug('returning response for ' + url);
 			return response;
 		};
+
+		router.augment = function (additionalRoutes) {
+			routes = routes.concat(additionalRoutes.map(compileRoute));
+		}
+
+		return router;
 	}
 
 	push (name, call) {
-		this._calls[name] = this._calls[name] || [];
-		this._calls[name].push(call);
+		if (name) {
+			this._calls[name] = this._calls[name] || [];
+			this._calls[name].push(call);
+			this._matchedCalls.push(call);
+		} else {
+			this._unmatchedCalls.push(call);
+		}
 	}
 
 	mock (matcher, method, response) {
@@ -251,7 +263,6 @@ class FetchMock {
 
 			config = {
 				routes: [{
-					name: '_mock',
 					matcher,
 					method,
 					response
@@ -261,7 +272,6 @@ class FetchMock {
 		} else if (method) {
 			config = {
 				routes: [{
-					name: '_mock',
 					matcher,
 					response: method
 				}]
@@ -282,12 +292,16 @@ class FetchMock {
 		debug('mocking fetch');
 
 		if (this.isMocking) {
-			throw 'fetch-mock is already mocking routes. Call .restore() before mocking again or use .reMock() if this is intentional';
+			this.mockedContext.fetch.augment(config.routes);
+			return this;
 		}
 
 		this.isMocking = true;
+		this._matchedCalls = [];
+		this._unmatchedCalls = [];
 
-		return this.mockedContext.fetch = this.constructMock(config);
+		this.mockedContext.fetch = this.constructMock(config);
+		return this;
 	}
 
 	constructMock (config) {
@@ -296,14 +310,14 @@ class FetchMock {
 		const router = this.getRouter(config);
 		config.greed = config.greed || 'none';
 
-		return (url, opts) => {
+		const mock = (url, opts) => {
 			const response = router(url, opts);
 			if (response) {
 				debug('response found for ' + url);
 				return mockResponse(url, response);
 			} else {
 				debug('response not found for ' + url);
-				this.push('__unmatched', [url, opts]);
+				this.push(null, [url, opts]);
 				if (config.greed === 'good') {
 					debug('sending default good response');
 					return mockResponse(url, {body: 'unmocked url: ' + url});
@@ -316,6 +330,12 @@ class FetchMock {
 				}
 			}
 		};
+
+		mock.augment = function (routes) {
+			router.augment(routes);
+		}
+
+		return mock;
 	}
 
 	restore () {
@@ -331,18 +351,27 @@ class FetchMock {
 		this.mock.apply(this, [].slice.apply(arguments));
 	}
 
+	getMock () {
+		return this.fetch;
+	}
+
 	reset () {
 		debug('resetting call logs');
 		this._calls = {};
+		this._matchedCalls = [];
+		this._unmatchedCalls = [];
 	}
 
 	calls (name) {
-		return name ? (this._calls[name] || []) : (this._calls._mock || this._calls);
+		return name ? (this._calls[name] || []) : {
+			matched: this._matchedCalls,
+			unmatched: this._unmatchedCalls
+		};
 	}
 
 	called (name) {
 		if (!name) {
-			return !!Object.keys(this._calls).length;
+			return !!(this._matchedCalls.length);
 		}
 		return !!(this._calls[name] && this._calls[name].length);
 	}

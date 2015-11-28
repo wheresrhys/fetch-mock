@@ -203,20 +203,21 @@ module.exports = function (fetchMock, theGlobal) {
 						fetch('http://2', {method: 'POST'})
 					])
 						.then(function () {
-							expect(fetchMock.called()).to.be.true;
+							expect(fetchMock.called()).to.be.false;
 							var unmatchedCalls = fetchMock.calls().unmatched;
 							expect(unmatchedCalls.length).to.equal(2);
 							expect(unmatchedCalls[0]).to.eql(['http://1', {method: 'GET'}]);
 							expect(unmatchedCalls[1]).to.eql(['http://2', {method: 'POST'}]);
 							done();
-						});
+						})
+
 				});
 
 				it('configure to send good responses', function (done) {
 					fetchMock.mock({greed: 'good'});
 					fetch('http://1')
 						.then(function (res) {
-							expect(fetchMock.called()).to.be.true;
+							expect(fetchMock.called()).to.be.false;
 							expect(fetchMock.calls().unmatched.length).to.equal(1);
 							expect(res.status).to.equal(200);
 							res.text().then(function (text) {
@@ -230,7 +231,7 @@ module.exports = function (fetchMock, theGlobal) {
 					fetchMock.mock({greed: 'bad'});
 					fetch('http://1')
 						.catch(function (res) {
-							expect(fetchMock.called()).to.be.true;
+							expect(fetchMock.called()).to.be.false;
 							expect(res).to.equal('unmocked url: http://1');
 							done();
 						});
@@ -240,12 +241,13 @@ module.exports = function (fetchMock, theGlobal) {
 					fetchMock.mock({greed: 'none'});
 					fetch('http://1')
 						.then(function () {
-							expect(fetchMock.called()).to.be.true;
-							expect(fetchMock.calls().matched.length).to.equal(1);
+							expect(fetchMock.called()).to.be.false;
+							expect(fetchMock.calls().unmatched.length).to.equal(1);
 							expect(fetchCalls.length).to.equal(1);
 							expect(fetchCalls[0].length).to.equal(2);
 							done();
-						})
+						});
+
 				});
 
 			});

@@ -1,24 +1,21 @@
 'use strict';
-
+var expect = require('chai').expect;
+var err = function (err) {
+	console.log(error);
+}
 module.exports = function (fetchMock, theGlobal) {
 
-	var fetchCalls = [];
-	var expect = require('chai').expect;
-
-	// we can't use sinon to spy on fetch in these tests as fetch-mock
-	// uses it internally and sinon doesn't allow spying on a previously
-	// stubbed function, so just use this very basic stub
-	var dummyFetch = theGlobal.fetch = fetchMock.realFetch = function () {
-		fetchCalls.push([].slice.call(arguments));
-		return Promise.resolve(arguments);
-	};
-
-
-	var err = function (err) {
-		console.log(error);
-	}
-
 	describe('fetch-mock', function () {
+
+		var fetchCalls = [];
+		var dummyFetch = function () {
+			fetchCalls.push([].slice.call(arguments));
+			return Promise.resolve(arguments);
+		};
+
+		before(function () {
+			theGlobal.fetch = fetchMock.realFetch = dummyFetch;
+		})
 
 		afterEach(function () {
 			fetchCalls = [];

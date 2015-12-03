@@ -120,7 +120,7 @@ class FetchMock {
 		this.routes = [];
 		this._calls = {};
 		this.mockedContext = theGlobal;
-		this.realFetch = theGlobal.fetch;
+		this.realFetch = theGlobal.fetch && theGlobal.fetch.bind(theGlobal);
 	}
 
 	useNonGlobalFetch (func) {

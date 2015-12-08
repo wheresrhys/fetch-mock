@@ -1,14 +1,11 @@
-# fetch-mock [![Build Status](https://travis-ci.org/wheresrhys/fetch-mock.svg?branch=master)](https://travis-ci.org/wheresrhys/fetch-mock) [![Coverage Status](https://coveralls.io/repos/wheresrhys/fetch-mock/badge.svg)](https://coveralls.io/r/wheresrhys/fetch-mock)
+# fetch-mock [![Build Status](https://travis-ci.org/wheresrhys/fetch-mock.svg?branch=master)](https://travis-ci.org/wheresrhys/fetch-mock)
 Mock http requests made using fetch (or [isomorphic-fetch](https://www.npmjs.com/package/isomorphic-fetch)). As well as shorthand methods for the simplest use cases, it offers a flexible API for customising mocking behaviour, and can also be persisted (with resettable state) over a series of tests.
 
-- [V3 changelog](https://github.com/wheresrhys/fetch-mock/pull/35)
+## Installation and usage
 
-## Which file to require
-- Browser or nodejs 4 or higher `require('fetch-mock')`
-- Browser tests when not using a loader that respects the `browser` field of package.json: `require('fetch-mock/es5/client')` 
-- Server side tests running in nodejs 0.12 or lower: `require('fetch-mock/es5/server')`
+`npm install fetch-mock` then `require('fetch-mock')` in most environments 
 
-You will need to ensure `fetch` and `Promise` are already available as globals in your environment
+[Troubleshooting](#troubleshooting) [V3 changelog](https://github.com/wheresrhys/fetch-mock/pull/35)
 
 *To output useful messages for debugging `export DEBUG=fetch-mock`*
 
@@ -76,7 +73,7 @@ Pas in an object containing more complex config for fine grained control over ev
 	- `routes`: Either a single route config object or an array of them (see above)
 	- `responses`: When `registerRoute()` (see below) has already been used to register some routes then `responses` can be used to override the default response. Its value should be an object mapping route names to responses, which should be similar to those provided in the `response` property of stanadard route configurations e.g.
 
-	```javascript
+	```
 	  responses: {
 	  	session: function (url, opts) {
 	  		if (opts.headers.authorized) {
@@ -116,7 +113,7 @@ When using isomorphic-fetch or node-fetch ideally `fetch` should be added as a g
 Since fetch-mock v3 calls to `mock()` are chainable, so to obtain a reference to the mocked fetch call `getMock()`.
 
 ##### Mockery example
-```javascript
+```
 var fetch = require('node-fetch');
 var fetchMock = require('fetch-mock');
 var mockery = require('mockery');
@@ -132,6 +129,17 @@ it('should make a request', function (done) {
 	done();
 });
 ```
+
+## Troubleshooting
+
+### Environment doesn't support requiring fetch-mock?
+
+- If your client-side code or tests do not use a loader that respects the browser field of package.json use `require('fetch-mock/es5/client')`. This can also be loaded directly in a script tag as `./node_modules/fetch-mock/es5/client.js` (Disclaimer: I haven't actually tried this, but it should work) 
+- For server side tests running in nodejs 0.12 or lower use `require('fetch-mock/es5/server')`
+
+### Polyfilling fetch
+- In nodejs `require('isomorphic-fetch')` before any of your tests.
+- In the browser `require('isomorphic-fetch')` can also be used, but it may be easier to `npm install whatwg-fetch` (the module isomorphic-fetch is built around) and load `./node_modules/whatwg-fetch/fetch.js` directly into the page, either in a script tag or by referencing it your test runner config
 
 ## Examples
 ```javascript

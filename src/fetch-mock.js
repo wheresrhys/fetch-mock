@@ -1,6 +1,7 @@
 'use strict';
 
 let Headers;
+let Request;
 let Response;
 let stream;
 let Blob;
@@ -56,6 +57,16 @@ function mockResponse (url, config) {
 	return Promise.resolve(new Response(body, opts));
 }
 
+function toRequest(url, options) {
+	var request;
+	if (Request.prototype.isPrototypeOf(url) && !options) {
+		request = url;
+	} else {
+		request = new Request(url, options);
+	}
+	return request;
+}
+
 function compileRoute (route) {
 
   var method = route.method;
@@ -91,19 +102,22 @@ function compileRoute (route) {
 			debug('constructing starts with string matcher for route: ' + route.name);
 			expectedUrl = expectedUrl.substr(1);
 			route.matcher = function (url, options) {
-				return matchMethod(options) && url.indexOf(expectedUrl) === 0;
+				var req = toRequest(url, options);
+				return matchMethod(req) && req.url.indexOf(expectedUrl) === 0;
 			};
 		} else {
 			debug('constructing string matcher for route: ' + route.name);
 			route.matcher = function (url, options) {
-				return matchMethod(options) && url === expectedUrl;
+				var req = toRequest(url, options);
+				return matchMethod(req) && req.url === expectedUrl;
 			};
 		}
 	} else if (route.matcher instanceof RegExp) {
 		debug('constructing regex matcher for route: ' + route.name);
 		const urlRX = route.matcher;
 		route.matcher = function (url, options) {
-			return matchMethod(options) && urlRX.test(url);
+			var req = toRequest(url, options);
+			return matchMethod(req) && urlRX.test(req.url);
 		};
 	}
 	return route;
@@ -112,6 +126,7 @@ function compileRoute (route) {
 class FetchMock {
 	constructor (opts) {
 		Headers = opts.Headers;
+		Request = opts.Request;
 		Response = opts.Response;
 		stream = opts.stream;
 		Blob = opts.Blob;

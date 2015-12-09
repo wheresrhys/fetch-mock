@@ -33,11 +33,11 @@ describe('non-global use', function () {
 		var mock = fetchMock.mock().getMock();
 		expect(typeof mock).to.equal('function');
 		expect(function () {
-			mock('url', {prop: 'val'})
+			mock('http://url', {prop: 'val'})
 		}).not.to.throw();
 		expect(fetchMock.calls().unmatched.length).to.equal(1);
 		expect(fetchCalls.length).to.equal(1);
-		expect(fetchCalls[0]).to.eql(['url', {prop: 'val'}]);
+		expect(fetchCalls[0]).to.eql(['http://url', {prop: 'val'}]);
 
 		fetchMock.restore();
 		fetchMock.usesGlobalFetch = true;

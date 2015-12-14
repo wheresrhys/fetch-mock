@@ -59,7 +59,7 @@ function mockResponse (url, config) {
 
 function toRequest(url, options) {
 	var request;
-	if (Request.prototype.isPrototypeOf(url) && !options) {
+	if (Request.prototype.isPrototypeOf(url)) {
 		request = url;
 	} else {
 		request = new Request(url, options);
@@ -73,8 +73,8 @@ function compileRoute (route) {
   var matchMethod;
   if(method) {
     method = method.toLowerCase();
-    matchMethod = function(options) {
-      var m = options && options.method ? options.method.toLowerCase() : 'get';
+    matchMethod = function(req) {
+      var m = req && req.method ? req.method.toLowerCase() : 'get';
       return m === method;
     };
   } else {

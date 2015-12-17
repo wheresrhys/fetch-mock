@@ -19,7 +19,7 @@ Replaces `fetch()` with a stub which records it's calls, grouped by route, and o
 * `matcher` [required]: Condition for selecting which requests to mock Accepts any of the following
 	* `string`: Either an exact url to match e.g. 'http://www.site.com/page.html' or, if the string begins with a `^`, the string following the `^` must begin the url e.g. '^http://www.site.com' would match 'http://www.site.com' or 'http://www.site.com/page.html'
 	* `RegExp`: A regular  expression to test the url against
-	* `Function(url, opts)`: A function (returning a Boolean) that is passed the url and opts `fetch()` is called with.
+	* `Function(url, opts)`: A function (returning a Boolean) that is passed the url and opts `fetch()` is called with (or, if `fetch()` was called with one, the `Request` instance)
 * `method` [optional]: only matches requests using this http method
 * `response` [required]: Configures the http response returned by the mock. Can take any of the following values
 	* `number`: Creates a response with this status

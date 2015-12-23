@@ -134,7 +134,8 @@ it('should make a request', function (done) {
 
 ### Environment doesn't support requiring fetch-mock?
 
-- If your client-side code or tests do not use a loader that respects the browser field of package.json use `require('fetch-mock/es5/client')`. This can also be loaded directly in a script tag as `./node_modules/fetch-mock/es5/client.js` (Disclaimer: I haven't actually tried this, but it should work) 
+- If your client-side code or tests do not use a loader that respects the browser field of package.json use `require('fetch-mock/es5/client')`.
+- If your client-side tests do not run in a browserified environment, you can include the precompiled `node_modules/fetch-mock/es5/client-browserified.js` in a script tag. This loads fetch-mock into the `FetchMock` global variable.
 - For server side tests running in nodejs 0.12 or lower use `require('fetch-mock/es5/server')`
 
 ### Polyfilling fetch

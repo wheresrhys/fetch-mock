@@ -6,7 +6,7 @@
   "browser": "es5/client.js",
   "scripts": {
     "test": "make test",
-    "browserify": "browserify -s FetchMock src/client.js > es5/client-browserified.js",
+    "browserify": "browserify -s fetchMock src/client.js > es5/client-browserified.js",
     "prepublish": "babel src --out-dir es5 --presets es2015 && npm run browserify"
   },
   "repository": {

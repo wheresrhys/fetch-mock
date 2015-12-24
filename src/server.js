@@ -1,8 +1,8 @@
 'use strict';
-
-const Request = require('node-fetch').Request;
-const Response = require('node-fetch').Response;
-const Headers = require('node-fetch').Headers;
+const fetch = require('node-fetch');
+const Request = fetch.Request;
+const Response = fetch.Response;
+const Headers = fetch.Headers;
 const stream = require('stream');
 const FetchMock = require('./fetch-mock');
 

@@ -57,14 +57,18 @@ function mockResponse (url, config) {
 	return Promise.resolve(new Response(body, opts));
 }
 
-function toRequest(url, options) {
-	var request;
+function normalizeRequest(url, options) {
 	if (Request.prototype.isPrototypeOf(url)) {
-		request = url;
+		return {
+			url: url.url,
+			method: url.method
+		};
 	} else {
-		request = new Request(url, options);
+		return {
+			url: url,
+			method: options && options.method || 'GET'
+		};
 	}
-	return request;
 }
 
 function compileRoute (route) {
@@ -102,13 +106,13 @@ function compileRoute (route) {
 			debug('constructing starts with string matcher for route: ' + route.name);
 			expectedUrl = expectedUrl.substr(1);
 			route.matcher = function (url, options) {
-				var req = toRequest(url, options);
+				var req = normalizeRequest(url, options);
 				return matchMethod(req) && req.url.indexOf(expectedUrl) === 0;
 			};
 		} else {
 			debug('constructing string matcher for route: ' + route.name);
 			route.matcher = function (url, options) {
-				var req = toRequest(url, options);
+				var req = normalizeRequest(url, options);
 				return matchMethod(req) && req.url === expectedUrl;
 			};
 		}
@@ -116,7 +120,7 @@ function compileRoute (route) {
 		debug('constructing regex matcher for route: ' + route.name);
 		const urlRX = route.matcher;
 		route.matcher = function (url, options) {
-			var req = toRequest(url, options);
+			var req = normalizeRequest(url, options);
 			return matchMethod(req) && urlRX.test(req.url);
 		};
 	}

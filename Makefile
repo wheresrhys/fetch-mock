@@ -6,6 +6,10 @@ test-dev:
 test-browser:
 	./node_modules/karma/bin/karma start --single-run
 
-test: test-browser
+test-unit:
 	mocha test/server.js
+
+test: test-unit test-browser
+
+
 

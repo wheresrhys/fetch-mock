@@ -60,35 +60,34 @@ Returns a Boolean indicating whether fetch was called and a route was matched. I
 #### `mock(routeConfig)`
 
 Use a configuration object to define a route to mock.
-	* `name` [optional]: A unique string naming the route. Used to subsequently retrieve references to the calls, grouped by name. If not specified defaults to `matcher.toString()`
-	* `method` [optional]: http method
-	* `matcher` [required]: as specified above
-	* `response` [required]: as specified above
+* `name` [optional]: A unique string naming the route. Used to subsequently retrieve references to the calls, grouped by name. If not specified defaults to `matcher.toString()`
+* `method` [optional]: http method
+* `matcher` [required]: as specified above
+* `response` [required]: as specified above
 
 #### `mock(routes)`
 Pass in an array of route configuration objects
 
 #### `mock(config)`
+
 Pas in an object containing more complex config for fine grained control over every aspect of mocking behaviour. May have the following properties
-	- `routes`: Either a single route config object or an array of them (see above)
-	- `responses`: When `registerRoute()` (see below) has already been used to register some routes then `responses` can be used to override the default response. Its value should be an object mapping route names to responses, which should be similar to those provided in the `response` property of stanadard route configurations e.g.
-
-	```
-	  responses: {
-	  	session: function (url, opts) {
-	  		if (opts.headers.authorized) {
-	  			return {user: 'dummy-authorized-user'};
-	  		} else {
-	  			return {user: 'dummy-unauthorized-user'};
-	  		}
-	  	}
-	  }
-	```
-
-	- `greed`: Determines how the mock handles unmatched requests
-		- 'none': all unmatched calls get passed through to `fetch()`
-		- 'bad': all unmatched calls result in a rejected promise
-		- 'good': all unmatched calls result in a resolved promise with a 200 status
+* `routes`: Either a single route config object or an array of them (see above)
+* `responses`: When `registerRoute()` (see below) has already been used to register some routes then `responses` can be used to override the default response. Its value should be an object mapping route names to responses, which should be similar to those provided in the `response` property of stanadard route configurations e.g.  
+```
+  responses: {
+  	session: function (url, opts) {
+  		if (opts.headers.authorized) {
+  			return {user: 'dummy-authorized-user'};
+  		} else {
+  			return {user: 'dummy-unauthorized-user'};
+  		}
+  	}
+  }
+```
+* `greed`: Determines how the mock handles unmatched requests
+	* 'none': all unmatched calls get passed through to `fetch()`
+	* 'bad': all unmatched calls result in a rejected promise
+	* 'good': all unmatched calls result in a resolved promise with a 200 status
 
 #### `calls(routeName)`
 Returns an array of arrays of the arguments passed to `fetch()` that matched the given route.
@@ -110,7 +109,7 @@ Unregisters one or more previously registered routes. Accepts either a string or
 When using isomorphic-fetch or node-fetch ideally `fetch` should be added as a global. If not possible to do so you can still use fetch-mock in combination with [mockery](https://github.com/mfncooper/mockery) in nodejs. To use fetch-mock with with [mockery](https://github.com/mfncooper/mockery) you will need to use this function to prevent fetch-mock trying to mock the function globally.
 * `func` Optional reference to `fetch` (or any other function you may want to substitute for `fetch` in your tests).
 
-Since fetch-mock v3 calls to `mock()` are chainable, so to obtain a reference to the mocked fetch call `getMock()`.
+To obtain a reference to the mock fetch call `getMock()`.
 
 ##### Mockery example
 ```
@@ -133,13 +132,13 @@ it('should make a request', function (done) {
 
 ### Environment doesn't support requiring fetch-mock?
 
-- If your client-side code or tests do not use a loader that respects the browser field of package.json use `require('fetch-mock/es5/client')`.
-- If you need to use fetch-mock without commonjs, you can include the precompiled `node_modules/fetch-mock/es5/client-browserified.js` in a script tag. This loads fetch-mock into the `fetchMock` global variable.
-- For server side tests running in nodejs 0.12 or lower use `require('fetch-mock/es5/server')`
+* If your client-side code or tests do not use a loader that respects the browser field of package.json use `require('fetch-mock/es5/client')`.
+* If you need to use fetch-mock without commonjs, you can include the precompiled `node_modules/fetch-mock/es5/client-browserified.js` in a script tag. This loads fetch-mock into the `fetchMock` global variable.
+* For server side tests running in nodejs 0.12 or lower use `require('fetch-mock/es5/server')`
 
 ### Polyfilling fetch
-- In nodejs `require('isomorphic-fetch')` before any of your tests.
-- In the browser `require('isomorphic-fetch')` can also be used, but it may be easier to `npm install whatwg-fetch` (the module isomorphic-fetch is built around) and load `./node_modules/whatwg-fetch/fetch.js` directly into the page, either in a script tag or by referencing it your test runner config
+* In nodejs `require('isomorphic-fetch')` before any of your tests.
+* In the browser `require('isomorphic-fetch')` can also be used, but it may be easier to `npm install whatwg-fetch` (the module isomorphic-fetch is built around) and load `./node_modules/whatwg-fetch/fetch.js` directly into the page, either in a script tag or by referencing it your test runner config
 
 ## Examples
 ```javascript

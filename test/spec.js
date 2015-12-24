@@ -3,7 +3,7 @@ var expect = require('chai').expect;
 var err = function (err) {
 	console.log(error);
 }
-module.exports = function (fetchMock, theGlobal) {
+module.exports = function (fetchMock, theGlobal, Request) {
 
 	describe('fetch-mock', function () {
 
@@ -265,6 +265,44 @@ module.exports = function (fetchMock, theGlobal) {
 							expect(fetchMock.calls().matched.length).to.equal(1);
 							expect(fetchMock.calls('route').length).to.equal(1);
 							expect(fetchMock.calls().unmatched.length).to.equal(1);
+							done();
+						});
+				});
+
+				it('match when relative url', function (done) {
+					fetchMock.mock({
+						routes: {
+							name: 'route',
+							matcher: '/it.at.there',
+							method: 'POST',
+							response: 'ok'
+						}
+					});
+					fetch('/it.at.there', {method: 'POST'})
+						.then(function (res) {
+							expect(fetchMock.called()).to.be.true;
+							expect(fetchMock.called('route')).to.be.true;
+							expect(fetchMock.calls().matched.length).to.equal(1);
+							expect(fetchMock.calls('route').length).to.equal(1);
+							done();
+						});
+				});
+
+				it('match when Request instance', function (done) {
+					fetchMock.mock({
+						routes: {
+							name: 'route',
+							matcher: 'http://it.at.there/',
+							method: 'POST',
+							response: 'ok'
+						}
+					});
+					fetch(new Request('http://it.at.there/', {method: 'POST'}))
+						.then(function (res) {
+							expect(fetchMock.called()).to.be.true;
+							expect(fetchMock.called('route')).to.be.true;
+							expect(fetchMock.calls().matched.length).to.equal(1);
+							expect(fetchMock.calls('route').length).to.equal(1);
 							done();
 						});
 				});

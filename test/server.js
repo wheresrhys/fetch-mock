@@ -17,7 +17,7 @@ var err = function (err) {
 	console.log(error);
 }
 
-require('./spec')(fetchMock, GLOBAL);
+require('./spec')(fetchMock, GLOBAL, require('node-fetch').Request);
 
 describe('non-global use', function () {
 

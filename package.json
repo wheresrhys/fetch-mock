@@ -6,7 +6,8 @@
   "browser": "es5/client.js",
   "scripts": {
     "test": "make test",
-    "prepublish": "babel src --out-dir es5 --presets es2015"
+    "browserify": "browserify -s FetchMock src/client.js > es5/client-browserified.js",
+    "prepublish": "babel src --out-dir es5 --presets es2015 && npm run browserify"
   },
   "repository": {
     "type": "git",
@@ -46,5 +47,10 @@
     "mocha": "^2.2.4",
     "sinon": "^1.17.0",
     "whatwg-fetch": "^0.10.1"
+  },
+  "browserify": {
+    "transform": [
+      ["babelify", { "presets": ["es2015"] }]
+    ]
   }
 }

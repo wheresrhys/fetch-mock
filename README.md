@@ -74,15 +74,15 @@ Pas in an object containing more complex config for fine grained control over ev
 * `routes`: Either a single route config object or an array of them (see above)
 * `responses`: When `registerRoute()` (see below) has already been used to register some routes then `responses` can be used to override the default response. Its value should be an object mapping route names to responses, which should be similar to those provided in the `response` property of stanadard route configurations e.g.  
 ```
-  responses: {
-  	session: function (url, opts) {
-  		if (opts.headers.authorized) {
-  			return {user: 'dummy-authorized-user'};
-  		} else {
-  			return {user: 'dummy-unauthorized-user'};
+	responses: {
+  		session: function (url, opts) {
+  			if (opts.headers.Authorization) {
+  				return {user: 'dummy-authorized-user'};
+  			} else {
+  				return {user: 'dummy-unauthorized-user'};
+  			}
   		}
-  	}
-  }
+	}
 ```
 * `greed`: Determines how the mock handles unmatched requests
 	* 'none': all unmatched calls get passed through to `fetch()`

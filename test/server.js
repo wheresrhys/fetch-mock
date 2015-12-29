@@ -1,21 +1,16 @@
 'use strict';
 
-var fetchMock = require('../src/server.js');
-var fetchCalls = [];
-var expect = require('chai').expect;
-var sinon = require('sinon');
+const fetchMock = require('../src/server.js');
+const fetchCalls = [];
+const expect = require('chai').expect;
 
 // we can't use sinon to spy on fetch in these tests as fetch-mock
 // uses it internally and sinon doesn't allow spying on a previously
 // stubbed function, so just use this very basic stub
-var dummyFetch = function () {
+const dummyFetch = function () {
 	fetchCalls.push([].slice.call(arguments));
 	return Promise.resolve(arguments);
 };
-
-var err = function (err) {
-	console.log(error);
-}
 
 require('./spec')(fetchMock, GLOBAL, require('node-fetch').Request);
 
@@ -30,7 +25,7 @@ describe('non-global use', function () {
 
 		fetchMock.useNonGlobalFetch(dummyFetch);
 		expect(fetchMock.realFetch).to.equal(dummyFetch);
-		var mock = fetchMock.mock().getMock();
+		const mock = fetchMock.mock().getMock();
 		expect(typeof mock).to.equal('function');
 		expect(function () {
 			mock('http://url', {prop: 'val'})

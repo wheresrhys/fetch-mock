@@ -4,13 +4,24 @@ let Headers;
 let Request;
 let Response;
 let stream;
-let Blob;
 let theGlobal;
 let debug;
 
+/**
+ * mockResponse
+ * Constructs a Response object to return from the mocked fetch
+ * @param  {String} url    url parameter fetch was called with
+ * @param  {Object} config configuration for the response to be constructed
+ * @return {Promise}       Promise for a Response object (or a rejected response to imitate network failure)
+ */
 function mockResponse (url, config) {
 	debug('mocking response for ' + url);
-	// allow just body to be passed in as this is the commonest use case
+
+	if (config.throws) {
+		debug('mocking failed request for ' + url);
+		return Promise.reject(config.throws);
+	}
+
 	if (typeof config === 'number') {
 		debug('status response detected for ' + url);
 		config = {
@@ -25,21 +36,17 @@ function mockResponse (url, config) {
 		debug('full config response detected for ' + url);
 	}
 
-	if (config.throws) {
-		debug('mocking failed request for ' + url);
-		return Promise.reject(config.throws);
-	}
-
 	const opts = config.opts || {};
 	opts.url = url;
 	opts.status = config.status || 200;
-	// the ternary oprator is to cope with new Headers(undefined) throwing in chrome
-	// (unclear to me if this is a bug or if the specification says this is correct behaviour)
+	// The ternary operator is to cope with new Headers(undefined) throwing in Chrome
+	// https://code.google.com/p/chromium/issues/detail?id=335871
 	opts.headers = config.headers ? new Headers(config.headers) : new Headers();
 
 	let body = config.body;
-
+	/*eslint-disable*/
 	if (config.body != null && typeof body === 'object') {
+	/*eslint-enable*/
 		body = JSON.stringify(body);
 	}
 
@@ -47,7 +54,9 @@ function mockResponse (url, config) {
 
 	if (stream) {
 		let s = new stream.Readable();
+		/*eslint-disable*/
 		if (body != null) {
+		/*eslint-enable*/
 			s.push(body, 'utf-8');
 		}
 		s.push(null);
@@ -57,7 +66,15 @@ function mockResponse (url, config) {
 	return Promise.resolve(new Response(body, opts));
 }
 
-function normalizeRequest(url, options) {
+/**
+ * normalizeRequest
+ * Given the parameters fetch was called with, normalises Request or url + options pairs
+ * to a standard container object passed to matcher functions
+ * @param  {String|Request} url
+ * @param  {Object} 				options
+ * @return {Object}         {url, method}
+ */
+function normalizeRequest (url, options) {
 	if (Request.prototype.isPrototypeOf(url)) {
 		return {
 			url: url.url,
@@ -71,24 +88,23 @@ function normalizeRequest(url, options) {
 	}
 }
 
+/**
+ * compileRoute
+ * Given a route configuration object, validates the object structure and compiles
+ * the object into a {name, matcher, response} triple
+ * @param  {Object} route route config
+ * @return {Object}       {name, matcher, response}
+ */
 function compileRoute (route) {
-
-  var method = route.method;
-  var matchMethod;
-  if(method) {
-    method = method.toLowerCase();
-    matchMethod = function(req) {
-      var m = req && req.method ? req.method.toLowerCase() : 'get';
-      return m === method;
-    };
-  } else {
-    matchMethod = function(){ return true; };
-  }
 
 	debug('compiling route: ' + route.name);
 
+	if (typeof route.response === 'undefined') {
+		throw new Error('Each route must define a response');
+	}
+
 	if (!route.matcher) {
-		throw 'each route must specify a string, regex or function to match calls to fetch';
+		throw new Error('each route must specify a string, regex or function to match calls to fetch');
 	}
 
 	if (!route.name) {
@@ -96,100 +112,189 @@ function compileRoute (route) {
 		route.__unnamed = true;
 	}
 
-	if (typeof route.response === 'undefined') {
-		throw 'each route must define a response';
+	// If user has provided a function as a matcher we assume they are handling all the
+	// matching logic they need
+	if (typeof route.matcher === 'function') {
+		return route;
 	}
 
+  const expectedMethod = route.method && route.method.toLowerCase();
+
+  function matchMethod (method) {
+    return !expectedMethod || expectedMethod === (method ? method.toLowerCase() : 'get');
+  };
+
+	let matchUrl;
+
 	if (typeof route.matcher === 'string') {
-		let expectedUrl = route.matcher;
+
 		if (route.matcher.indexOf('^') === 0) {
 			debug('constructing starts with string matcher for route: ' + route.name);
-			expectedUrl = expectedUrl.substr(1);
-			route.matcher = function (url, options) {
-				var req = normalizeRequest(url, options);
-				return matchMethod(req) && req.url.indexOf(expectedUrl) === 0;
+			const expectedUrl = route.matcher.substr(1);
+			matchUrl = function (url) {
+				return url.indexOf(expectedUrl) === 0;
 			};
 		} else {
 			debug('constructing string matcher for route: ' + route.name);
-			route.matcher = function (url, options) {
-				var req = normalizeRequest(url, options);
-				return matchMethod(req) && req.url === expectedUrl;
+			const expectedUrl = route.matcher;
+			matchUrl = function (url) {
+				return url === expectedUrl;
 			};
 		}
 	} else if (route.matcher instanceof RegExp) {
 		debug('constructing regex matcher for route: ' + route.name);
 		const urlRX = route.matcher;
-		route.matcher = function (url, options) {
-			var req = normalizeRequest(url, options);
-			return matchMethod(req) && urlRX.test(req.url);
+		matchUrl = function (url) {
+			return urlRX.test(url);
 		};
 	}
+
+	route.matcher = function (url, options) {
+		const req = normalizeRequest(url, options);
+		return matchMethod(req.method) && matchUrl(req.url);
+	};
+
 	return route;
 }
 
+
 class FetchMock {
+	/**
+	 * constructor
+	 * Sets up scoped references to configuration passed in from client/server bootstrappers
+	 * @param  {Object} opts
+	 */
 	constructor (opts) {
 		Headers = opts.Headers;
 		Request = opts.Request;
 		Response = opts.Response;
 		stream = opts.stream;
-		Blob = opts.Blob;
 		theGlobal = opts.theGlobal;
 		debug = opts.debug;
 		this.routes = [];
 		this._calls = {};
+		this._matchedCalls = [];
+		this._unmatchedCalls = [];
 		this.mockedContext = theGlobal;
 		this.realFetch = theGlobal.fetch && theGlobal.fetch.bind(theGlobal);
 	}
 
+	/**
+	 * useNonGlobalFetch
+	 * Sets fetchMock's default internal reference to native fetch to the given function
+	 * @param  {Function} func
+	 */
 	useNonGlobalFetch (func) {
 		this.mockedContext = this;
 		this.realFetch = func;
 	}
 
-	registerRoute (name, matcher, response) {
-		debug('registering routes');
-		let routes;
-		if (name instanceof Array) {
-			routes = name;
-		} else if (arguments.length === 3 ) {
-			routes = [{
-				name,
-				matcher,
-				response,
-			}];
-		} else {
-			routes = [name];
-		}
+	/**
+	 * mock
+	 * Replaces fetch with a stub which attempts to match calls against configured routes
+	 * See README for details of parameters
+	 * @return {FetchMock}          Returns the FetchMock instance, so can be chained
+	 */
+	mock (matcher, method, response) {
 
-		debug('registering routes: ' + routes.map(r => r.name));
-
-		this.routes = this.routes.concat(routes.map(compileRoute));
-	}
-
-	unregisterRoute (names) {
-
-		if (!names) {
-			debug('unregistering all routes');
-			this.routes = [];
-			return;
-		}
-		if (!(names instanceof Array)) {
-			names = [names];
-		}
-
-		debug('unregistering routes: ' + names);
-
-		this.routes = this.routes.filter(route => {
-			const keep = names.indexOf(route.name) === -1;
-			if (!keep) {
-				debug('unregistering route ' + route.name);
+		let config;
+		// Handle the variety of parameters accepted by mock (see README)
+		if (response) {
+			config = {
+				routes: [{
+					matcher,
+					method,
+					response
+				}]
 			}
-			return keep;
-		});
+		} else if (method) {
+			config = {
+				routes: [{
+					matcher,
+					response: method
+				}]
+			}
+		} else if (matcher instanceof Array) {
+			config = {
+				routes: matcher
+			}
+		} else if (matcher && matcher.matcher) {
+			config = {
+				routes: [matcher]
+			}
+		} else {
+			config = matcher;
+		}
+
+		debug('mocking fetch');
+
+		if (this.isMocking) {
+			this.mockedContext.fetch.augment(config.routes);
+			return this;
+		}
+
+		this.isMocking = true;
+
+		this.mockedContext.fetch = this.constructMock(config);
+		return this;
 	}
 
-	getRouter (config) {
+	/**
+	 * constructMock
+	 * Constructs a function which attempts to match fetch calls against routes (see constructRouter)
+	 * and handles success or failure of that attempt accordingly
+	 * @param  {Object} config See README
+	 * @return {Function}      Function expecting url + options or a Request object, and returning
+	 *                         a promise of a Response, or forwading to native fetch
+	 *                         Has a helper method .augment(routes), which can be used to add additional
+	 *                         routes to the router
+	 */
+	constructMock (config) {
+		debug('constructing mock function');
+		config = config || {};
+		const router = this.constructRouter(config);
+		config.greed = config.greed || 'none';
+
+		const mock = (url, opts) => {
+			const response = router(url, opts);
+			if (response) {
+				debug('response found for ' + url);
+				return mockResponse(url, response);
+			} else {
+				debug('response not found for ' + url);
+				this.push(null, [url, opts]);
+				if (config.greed === 'good') {
+					debug('sending default good response');
+					return mockResponse(url, {body: 'unmocked url: ' + url});
+				} else if (config.greed === 'bad') {
+					debug('sending default bad response');
+					return mockResponse(url, {throws: 'unmocked url: ' + url});
+				} else {
+					debug('forwarding to default fetch');
+					return this.realFetch(url, opts);
+				}
+			}
+		};
+
+		mock.augment = function (routes) {
+			router.augment(routes);
+		}
+
+		return mock;
+	}
+
+	/**
+	 * constructRouter
+	 * Constructs a function which identifies if calls to fetch match any of the configured routes
+	 * and returns the Response defined by the route
+	 * @param  {Object} config Can define routes and/or responses, which will be used to augment any
+	 *                         previously set by registerRoute()
+	 * @return {Function}      Function expecting url + options or a Request object, and returning
+	 *                         a response config or undefined.
+	 *                         Has a helper method .augment(routes), which can be used to add additional
+	 *                         routes to the router
+	 */
+	constructRouter (config) {
 		debug('building router');
 
 		let routes;
@@ -204,6 +309,8 @@ class FetchMock {
 			this.routes.forEach(route => {
 				preRegisteredRoutes[route.name] = route;
 			});
+
+			// Allows selective application of some of the preregistered routes
 			routes = config.routes.map(route => {
 				if (typeof route === 'string') {
 					debug('applying preregistered route ' + route);
@@ -213,16 +320,18 @@ class FetchMock {
 					return compileRoute(route);
 				}
 			});
-		} else {
+		} else if (this.routes.length) {
 			debug('no one time only routes defined. Using preregistered routes only');
 			routes = [].slice.call(this.routes);
+		} else {
+			throw new Error('When no preconfigured routes set using .registerRoute(), .mock() must be passed configuration for routes')
 		}
 
 
 		const routeNames = {};
 		routes.forEach(route => {
 			if (routeNames[route.name]) {
-				throw 'Route names must be unique';
+				throw new Error('Route names must be unique');
 			}
 			routeNames[route.name] = true;
 		});
@@ -265,6 +374,12 @@ class FetchMock {
 		return router;
 	}
 
+	/**
+	 * push
+	 * Records history of fetch calls
+	 * @param  {String} name Name of the route matched by the call
+	 * @param  {Object} call {url, opts} pair
+	 */
 	push (name, call) {
 		if (name) {
 			this._calls[name] = this._calls[name] || [];
@@ -275,88 +390,10 @@ class FetchMock {
 		}
 	}
 
-	mock (matcher, method, response) {
-
-		let config;
-		if (response) {
-
-			config = {
-				routes: [{
-					matcher,
-					method,
-					response
-				}]
-			}
-
-		} else if (method) {
-			config = {
-				routes: [{
-					matcher,
-					response: method
-				}]
-			}
-
-		} else if (matcher instanceof Array) {
-			config = {
-				routes: matcher
-			}
-		} else if (matcher && matcher.matcher) {
-			config = {
-				routes: [matcher]
-			}
-		} else {
-			config = matcher;
-		}
-
-		debug('mocking fetch');
-
-		if (this.isMocking) {
-			this.mockedContext.fetch.augment(config.routes);
-			return this;
-		}
-
-		this.isMocking = true;
-		this._matchedCalls = [];
-		this._unmatchedCalls = [];
-
-		this.mockedContext.fetch = this.constructMock(config);
-		return this;
-	}
-
-	constructMock (config) {
-		debug('constructing mock function');
-		config = config || {};
-		const router = this.getRouter(config);
-		config.greed = config.greed || 'none';
-
-		const mock = (url, opts) => {
-			const response = router(url, opts);
-			if (response) {
-				debug('response found for ' + url);
-				return mockResponse(url, response);
-			} else {
-				debug('response not found for ' + url);
-				this.push(null, [url, opts]);
-				if (config.greed === 'good') {
-					debug('sending default good response');
-					return mockResponse(url, {body: 'unmocked url: ' + url});
-				} else if (config.greed === 'bad') {
-					debug('sending default bad response');
-					return mockResponse(url, {throws: 'unmocked url: ' + url});
-				} else {
-					debug('forwarding to default fetch');
-					return this.realFetch(url, opts);
-				}
-			}
-		};
-
-		mock.augment = function (routes) {
-			router.augment(routes);
-		}
-
-		return mock;
-	}
-
+	/**
+	 * restore
+	 * Restores global fetch to its initial state and resets call history
+	 */
 	restore () {
 		debug('restoring fetch');
 		this.isMocking = false;
@@ -365,15 +402,29 @@ class FetchMock {
 		debug('fetch restored');
 	}
 
+	/**
+	 * reMock
+	 * Same as .mock(), but also calls .restore() internally
+	 * @return {FetchMock}          Returns the FetchMock instance, so can be chained
+	 */
 	reMock () {
 		this.restore();
 		return this.mock.apply(this, [].slice.apply(arguments));
 	}
 
+	/**
+	 * getMock
+	 * Returns a reference to the stub function used to mock fetch
+	 * @return {Function}
+	 */
 	getMock () {
 		return this.fetch;
 	}
 
+	/**
+	 * reset
+	 * Resets call history
+	 */
 	reset () {
 		debug('resetting call logs');
 		this._calls = {};
@@ -381,6 +432,10 @@ class FetchMock {
 		this._unmatchedCalls = [];
 	}
 
+	/**
+	 * calls
+	 * Returns call history. See README
+	 */
 	calls (name) {
 		return name ? (this._calls[name] || []) : {
 			matched: this._matchedCalls,
@@ -388,11 +443,67 @@ class FetchMock {
 		};
 	}
 
+	/**
+	 * called
+	 * Returns whether fetch has been called matching a configured route. See README
+	 */
 	called (name) {
 		if (!name) {
 			return !!(this._matchedCalls.length);
 		}
 		return !!(this._calls[name] && this._calls[name].length);
+	}
+
+	/**
+	 * registerRoute
+	 * Creates a route that will persist even when fetchMock.restore() is called
+	 * See README for details of parameters
+	 */
+	registerRoute (name, matcher, response) {
+		debug('registering routes');
+		let routes;
+		if (name instanceof Array) {
+			routes = name;
+		} else if (arguments.length === 3 ) {
+			routes = [{
+				name,
+				matcher,
+				response,
+			}];
+		} else {
+			routes = [name];
+		}
+
+		debug('registering routes: ' + routes.map(r => r.name));
+
+		this.routes = this.routes.concat(routes.map(compileRoute));
+	}
+
+	/**
+	 * unregisterRoute
+	 * Removes a persistent route
+	 * See README for details of parameters
+	 */
+	unregisterRoute (names) {
+
+		if (!names) {
+			debug('unregistering all routes');
+			this.routes = [];
+			return;
+		}
+		if (!(names instanceof Array)) {
+			names = [names];
+		}
+
+		debug('unregistering routes: ' + names);
+
+		this.routes = this.routes.filter(route => {
+			const keep = names.indexOf(route.name) === -1;
+			if (!keep) {
+				debug('unregistering route ' + route.name);
+			}
+			return keep;
+		});
 	}
 }
 

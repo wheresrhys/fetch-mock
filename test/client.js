@@ -2,13 +2,13 @@
 
 require('whatwg-fetch');
 
-var fetchMock = require('../src/client.js');
-var expect = require('chai').expect;
+const fetchMock = require('../src/client.js');
+const expect = require('chai').expect;
 
 describe('native fetch behaviour', function () {
 
 	it('should not throw when passing unmatched calls through to native fetch', function () {
-		fetchMock.mock();
+		fetchMock.mock(/a/, 200);
 		expect(function () {
 			fetch('http://www.example.com');
 		}).not.to.throw();

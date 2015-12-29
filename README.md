@@ -35,7 +35,7 @@ Replaces `fetch()` with a stub which records its calls, grouped by route, and op
 Restores `fetch()` to its unstubbed state and clears all data recorded for its calls
 
 #### `reMock()`
-Calls `restore()` internally then calls `mock()`. This allows you to put some generic calls to `mock()` in a `beforeEach()` while retaining the flexibility to vary the responses for some tests
+Calls `restore()` internally then calls `mock()`. This allows you to put some generic calls to `mock()` in a `beforeEach()` while retaining the flexibility to vary the responses for some tests. `reMock()` can be chained.
 
 #### `reset()`
 Clears all data recorded for `fetch()`'s calls

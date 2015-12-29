@@ -2,8 +2,8 @@
 
 require('whatwg-fetch');
 
-var fetchMock = require('../src/client.js');
-var expect = require('chai').expect;
+const fetchMock = require('../src/client.js');
+const expect = require('chai').expect;
 
 describe('native fetch behaviour', function () {
 

@@ -4,7 +4,6 @@ let Headers;
 let Request;
 let Response;
 let stream;
-let Blob;
 let theGlobal;
 let debug;
 
@@ -38,8 +37,9 @@ function mockResponse (url, config) {
 	opts.headers = config.headers ? new Headers(config.headers) : new Headers();
 
 	let body = config.body;
-
+	/*eslint-disable*/
 	if (config.body != null && typeof body === 'object') {
+	/*eslint-enable*/
 		body = JSON.stringify(body);
 	}
 
@@ -47,7 +47,9 @@ function mockResponse (url, config) {
 
 	if (stream) {
 		let s = new stream.Readable();
+		/*eslint-disable*/
 		if (body != null) {
+		/*eslint-enable*/
 			s.push(body, 'utf-8');
 		}
 		s.push(null);
@@ -57,7 +59,7 @@ function mockResponse (url, config) {
 	return Promise.resolve(new Response(body, opts));
 }
 
-function normalizeRequest(url, options) {
+function normalizeRequest (url, options) {
 	if (Request.prototype.isPrototypeOf(url)) {
 		return {
 			url: url.url,
@@ -73,16 +75,14 @@ function normalizeRequest(url, options) {
 
 function compileRoute (route) {
 
-  var method = route.method;
-  var matchMethod;
-  if(method) {
-    method = method.toLowerCase();
-    matchMethod = function(req) {
-      var m = req && req.method ? req.method.toLowerCase() : 'get';
-      return m === method;
+  let expectedMethod = route.method && route.method.toLowerCase();
+  let matchMethod;
+  if (expectedMethod) {
+    matchMethod = function (method) {
+      return expectedMethod === (method ? method.toLowerCase() : 'get');
     };
   } else {
-    matchMethod = function(){ return true; };
+    matchMethod = function () { return true; };
   }
 
 	debug('compiling route: ' + route.name);
@@ -100,30 +100,38 @@ function compileRoute (route) {
 		throw 'each route must define a response';
 	}
 
+	if (typeof route.matcher === 'function') {
+		return route;
+	}
+
+	let matchUrl;
 	if (typeof route.matcher === 'string') {
 		let expectedUrl = route.matcher;
 		if (route.matcher.indexOf('^') === 0) {
 			debug('constructing starts with string matcher for route: ' + route.name);
 			expectedUrl = expectedUrl.substr(1);
-			route.matcher = function (url, options) {
-				var req = normalizeRequest(url, options);
-				return matchMethod(req) && req.url.indexOf(expectedUrl) === 0;
+			matchUrl = function (url) {
+				return url.indexOf(expectedUrl) === 0;
 			};
 		} else {
 			debug('constructing string matcher for route: ' + route.name);
-			route.matcher = function (url, options) {
-				var req = normalizeRequest(url, options);
-				return matchMethod(req) && req.url === expectedUrl;
+			matchUrl = function (url) {
+				return url === expectedUrl;
 			};
 		}
 	} else if (route.matcher instanceof RegExp) {
 		debug('constructing regex matcher for route: ' + route.name);
 		const urlRX = route.matcher;
-		route.matcher = function (url, options) {
-			var req = normalizeRequest(url, options);
-			return matchMethod(req) && urlRX.test(req.url);
+		matchUrl = function (url) {
+			return urlRX.test(url);
 		};
 	}
+
+	route.matcher = function (url, options) {
+		const req = normalizeRequest(url, options);
+		return matchMethod(req.method) && matchUrl(req.url);
+	};
+
 	return route;
 }
 
@@ -133,7 +141,6 @@ class FetchMock {
 		Request = opts.Request;
 		Response = opts.Response;
 		stream = opts.stream;
-		Blob = opts.Blob;
 		theGlobal = opts.theGlobal;
 		debug = opts.debug;
 		this.routes = [];

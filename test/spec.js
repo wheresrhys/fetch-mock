@@ -1,14 +1,11 @@
 'use strict';
-var expect = require('chai').expect;
-var err = function (err) {
-	console.log(error);
-}
+const expect = require('chai').expect;
 module.exports = function (fetchMock, theGlobal, Request) {
 
 	describe('fetch-mock', function () {
 
-		var fetchCalls = [];
-		var dummyFetch = function () {
+		const fetchCalls = [];
+		const dummyFetch = function () {
 			fetchCalls.push([].slice.call(arguments));
 			return Promise.resolve(arguments);
 		};
@@ -203,7 +200,7 @@ module.exports = function (fetchMock, theGlobal, Request) {
 					])
 						.then(function () {
 							expect(fetchMock.called()).to.be.false;
-							var unmatchedCalls = fetchMock.calls().unmatched;
+							const unmatchedCalls = fetchMock.calls().unmatched;
 							expect(unmatchedCalls.length).to.equal(2);
 							expect(unmatchedCalls[0]).to.eql(['http://1', {method: 'GET'}]);
 							expect(unmatchedCalls[1]).to.eql(['http://2', {method: 'POST'}]);
@@ -261,7 +258,7 @@ module.exports = function (fetchMock, theGlobal, Request) {
 						}
 					});
 					Promise.all([fetch('http://it.at.there/'), fetch('http://it.at.thereabouts')])
-						.then(function (res) {
+						.then(function () {
 							expect(fetchMock.called()).to.be.true;
 							expect(fetchMock.called('route')).to.be.true;
 							expect(fetchMock.calls().matched.length).to.equal(1);
@@ -281,7 +278,7 @@ module.exports = function (fetchMock, theGlobal, Request) {
 						}
 					});
 					fetch('/it.at.there/', {method: 'POST'})
-						.then(function (res) {
+						.then(function () {
 							expect(fetchMock.called()).to.be.true;
 							expect(fetchMock.called('route')).to.be.true;
 							expect(fetchMock.calls().matched.length).to.equal(1);
@@ -300,7 +297,7 @@ module.exports = function (fetchMock, theGlobal, Request) {
 						}
 					});
 					fetch(new Request('http://it.at.there/', {method: 'POST'}))
-						.then(function (res) {
+						.then(function () {
 							expect(fetchMock.called()).to.be.true;
 							expect(fetchMock.called('route')).to.be.true;
 							expect(fetchMock.calls().matched.length).to.equal(1);
@@ -322,7 +319,7 @@ module.exports = function (fetchMock, theGlobal, Request) {
 						fetch('http://it.at.thereabouts'),
 						fetch('http://it.at.hereabouts')]
 					)
-						.then(function (res) {
+						.then(function () {
 							expect(fetchMock.called()).to.be.true;
 							expect(fetchMock.called('route')).to.be.true;
 							expect(fetchMock.calls().matched.length).to.equal(2);
@@ -341,7 +338,7 @@ module.exports = function (fetchMock, theGlobal, Request) {
 						}
 					});
 					Promise.all([fetch('http://it.at.there/'), fetch('http://it.at.there/12345'), fetch('http://it.at.there/abcde')])
-						.then(function (res) {
+						.then(function () {
 							expect(fetchMock.called()).to.be.true;
 							expect(fetchMock.called('route')).to.be.true;
 							expect(fetchMock.calls('route').length).to.equal(1);
@@ -366,7 +363,7 @@ module.exports = function (fetchMock, theGlobal, Request) {
 						fetch('http://it.at.there/12345', {headers:{authorized: true}}),
 						fetch('http://it.at.there/logged-in')
 					])
-						.then(function (res) {
+						.then(function () {
 							expect(fetchMock.called()).to.be.true;
 							expect(fetchMock.called('route')).to.be.true;
 							expect(fetchMock.calls('route').length).to.equal(1);
@@ -376,7 +373,7 @@ module.exports = function (fetchMock, theGlobal, Request) {
 						});
 				});
 
-        it('match method', function(done) {
+        it('match method', function (done) {
 					fetchMock.mock({
 						routes: [{
 							name: 'route1',
@@ -391,7 +388,7 @@ module.exports = function (fetchMock, theGlobal, Request) {
 						}]
 					});
 					Promise.all([fetch('http://it.at.here/', {method: 'put'}), fetch('http://it.at.here/'), fetch('http://it.at.here/', {method: 'GET'}), fetch('http://it.at.here/', {method: 'delete'})])
-						.then(function (res) {
+						.then(function () {
 							expect(fetchMock.called()).to.be.true;
 							expect(fetchMock.called('route1')).to.be.true;
 							expect(fetchMock.called('route2')).to.be.true;
@@ -416,7 +413,7 @@ module.exports = function (fetchMock, theGlobal, Request) {
 						}]
 					});
 					Promise.all([fetch('http://it.at.there/'), fetch('http://it.at.here/'), fetch('http://it.at.nowhere')])
-						.then(function (res) {
+						.then(function () {
 							expect(fetchMock.called()).to.be.true;
 							expect(fetchMock.called('route1')).to.be.true;
 							expect(fetchMock.called('route2')).to.be.true;
@@ -441,7 +438,7 @@ module.exports = function (fetchMock, theGlobal, Request) {
 						}]
 					});
 					Promise.all([fetch('http://it.at.there/')])
-						.then(function (res) {
+						.then(function () {
 							expect(fetchMock.called()).to.be.true;
 							expect(fetchMock.called('route1')).to.be.true;
 							expect(fetchMock.calls('route1').length).to.equal(1);
@@ -460,7 +457,7 @@ module.exports = function (fetchMock, theGlobal, Request) {
 						}
 					});
 					Promise.all([fetch('http://it.at.there/'), fetch('http://it.at.thereabouts', {headers: {head: 'val'}})])
-						.then(function (res) {
+						.then(function () {
 							expect(fetchMock.called()).to.be.true;
 							expect(fetchMock.called('route')).to.be.true;
 							expect(fetchMock.calls().matched.length).to.equal(2);
@@ -479,7 +476,7 @@ module.exports = function (fetchMock, theGlobal, Request) {
 						}
 					});
 					fetch('http://it.at.there/')
-						.then(function (res) {
+						.then(function () {
 							fetchMock.reset();
 							expect(fetchMock.called()).to.be.false;
 							expect(fetchMock.called('route')).to.be.false;
@@ -498,7 +495,7 @@ module.exports = function (fetchMock, theGlobal, Request) {
 						}
 					});
 					fetch('http://it.at.there/')
-						.then(function (res) {
+						.then(function () {
 							fetchMock.restore();
 							expect(fetchMock.called()).to.be.false;
 							expect(fetchMock.called('route')).to.be.false;
@@ -575,8 +572,7 @@ module.exports = function (fetchMock, theGlobal, Request) {
 						.then(function (res) {
 							expect(res.status).to.equal(404);
 							done();
-						})
-						.catch(err);
+						});
 				});
 
 				it('respond with a complex response, including headers', function (done) {
@@ -692,7 +688,7 @@ module.exports = function (fetchMock, theGlobal, Request) {
 				}]);
 				fetchMock.mock();
 				Promise.all([fetch('http://it.at.there/'),	fetch('http://it.at.here/')])
-					.then(function (res) {
+					.then(function () {
 						expect(fetchMock.calls('route1').length).to.equal(1);
 						expect(fetchMock.calls('route2').length).to.equal(1);
 						expect(fetchMock.calls().matched.length).to.equal(2);
@@ -715,12 +711,12 @@ module.exports = function (fetchMock, theGlobal, Request) {
 				}).to.throw();
 			});
 
-			it('register routes multiple times', function () {
+			it('register routes multiple times', function (done) {
 				fetchMock.registerRoute('route1', 'http://it.at.there/', 'a string');
 				fetchMock.registerRoute('route2', 'http://it.at.here/', 'a string');
 				fetchMock.mock();
 				Promise.all([fetch('http://it.at.there/'),	fetch('http://it.at.here/')])
-					.then(function (res) {
+					.then(function () {
 						expect(fetchMock.calls('route1').length).to.equal(1);
 						expect(fetchMock.calls('route2').length).to.equal(1);
 						expect(fetchMock.calls().matched.length).to.equal(2);
@@ -745,7 +741,7 @@ module.exports = function (fetchMock, theGlobal, Request) {
 				fetchMock.unregisterRoute('route2');
 				fetchMock.mock();
 				Promise.all([fetch('http://it.at.there/'),	fetch('http://it.at.here/')])
-					.then(function (res) {
+					.then(function () {
 						expect(fetchMock.calls('route1').length).to.equal(1);
 						expect(fetchMock.calls('route2').length).to.equal(0);
 						expect(fetchMock.calls().unmatched.length).to.equal(1);
@@ -771,7 +767,7 @@ module.exports = function (fetchMock, theGlobal, Request) {
 				fetchMock.unregisterRoute(['route1', 'route2']);
 				fetchMock.mock();
 				Promise.all([fetch('http://it.at.there/'),	fetch('http://it.at.here/'), fetch('http://it.at.where/')])
-					.then(function (res) {
+					.then(function () {
 						expect(fetchMock.calls('route3').length).to.equal(1);
 						expect(fetchMock.calls('route1').length).to.equal(0);
 						expect(fetchMock.calls('route2').length).to.equal(0);
@@ -817,7 +813,7 @@ module.exports = function (fetchMock, theGlobal, Request) {
 					routes: ['route3', 'route1']
 				});
 				Promise.all([fetch('http://it.at.there/'),	fetch('http://it.at.here/'), fetch('http://it.at.where/')])
-					.then(function (res) {
+					.then(function () {
 						expect(fetchMock.calls('route3').length).to.equal(1);
 						expect(fetchMock.calls('route1').length).to.equal(1);
 						expect(fetchMock.calls('route2').length).to.equal(0);
@@ -841,7 +837,7 @@ module.exports = function (fetchMock, theGlobal, Request) {
 					}, 'route1']
 				});
 				Promise.all([fetch('http://it.at.there/'),	fetch('http://it.at.here/')])
-					.then(function (res) {
+					.then(function () {
 						expect(fetchMock.calls('route2').length).to.equal(1);
 						expect(fetchMock.calls('route1').length).to.equal(1);
 						expect(fetchMock.calls().matched.length).to.equal(2);
@@ -863,7 +859,7 @@ module.exports = function (fetchMock, theGlobal, Request) {
 					}, 'route1']
 				});
 				fetch('http://it.at.here/')
-					.then(function (res) {
+					.then(function () {
 						expect(fetchMock.calls('route2').length).to.equal(1);
 						expect(fetchMock.calls('route1').length).to.equal(0);
 						expect(fetchMock.calls().matched.length).to.equal(1);

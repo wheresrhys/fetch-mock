@@ -7,6 +7,5 @@ module.exports = new FetchMock({
 	Request: window.Request,
 	Response: window.Response,
 	Headers: window.Headers,
-	Blob: window.Blob,
 	debug: function () {}
 });

@@ -70,14 +70,16 @@ module.exports = function (fetchMock, theGlobal, Request) {
 			});
 
 			it('have remocking helper', function () {
-				fetchMock.mock('^http://route1', 200)
+				fetchMock.mock('^http://route1', 200);
+				let fm;
 				expect(function () {
-					fetchMock.reMock('^http://route2', 200)
+					fm = fetchMock.reMock('^http://route2', 200)
 				}).not.to.throw();
 				fetch('http://route1.com')
 				fetch('http://route2.com')
 				expect(fetchMock.calls().matched.length).to.equal(1);
 				expect(fetchMock.calls().matched[0][0]).to.equal('http://route2.com');
+				expect(fm).to.equal(fetchMock);
 			});
 		});
 

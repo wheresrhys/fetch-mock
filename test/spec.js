@@ -4,7 +4,7 @@ module.exports = function (fetchMock, theGlobal, Request) {
 
 	describe('fetch-mock', function () {
 
-		const fetchCalls = [];
+		let fetchCalls = [];
 		const dummyFetch = function () {
 			fetchCalls.push([].slice.call(arguments));
 			return Promise.resolve(arguments);

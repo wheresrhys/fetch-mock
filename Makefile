@@ -9,7 +9,10 @@ test-browser:
 test-unit:
 	mocha test/server.js
 
-test: test-unit test-browser
+lint:
+	eslint src test
+
+test: test-unit lint test-browser
 
 
 

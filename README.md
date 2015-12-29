@@ -14,7 +14,7 @@ Mock http requests made using fetch (or [isomorphic-fetch](https://www.npmjs.com
 ## Basic usage
 
 #### `mock(matcher, response)` or `mock(matcher, method, response)`  
-Replaces `fetch()` with a stub which records it's calls, grouped by route, and optionally returns a mocked `Response` object or passes the call through to `fetch()`. Calls to `.mock()` can be chained.
+Replaces `fetch()` with a stub which records its calls, grouped by route, and optionally returns a mocked `Response` object or passes the call through to `fetch()`. Calls to `.mock()` can be chained.
 
 * `matcher` [required]: Condition for selecting which requests to mock Accepts any of the following
 	* `string`: Either an exact url to match e.g. 'http://www.site.com/page.html' or, if the string begins with a `^`, the string following the `^` must begin the url e.g. '^http://www.site.com' would match 'http://www.site.com' or 'http://www.site.com/page.html'
@@ -31,15 +31,6 @@ Replaces `fetch()` with a stub which records it's calls, grouped by route, and o
 		* `throws`: If this property is present then a `Promise` rejected with the value of `throws` is returned
 	* `Function(url, opts)`: A function that is passed the url and opts `fetch()` is called with and that returns any of the responses listed above
 
-##### Example
-
-```
-const fetchMock = require('fetch-mock');
-fetchMock
-	.mock('http://domain1', 200)
-	.mock('http://domain2', 'DELETE', 204);
-```
-
 #### `restore()`
 Restores `fetch()` to its unstubbed state and clears all data recorded for its calls
 
@@ -55,6 +46,25 @@ Returns an object `{matched: [], unmatched: []}` containing arrays of all calls 
 #### `called(matcher)`
 Returns a Boolean indicating whether fetch was called and a route was matched. If `matcher` is specified and is equal to `matcher.toString()` for any of the mocked routes then only returns `true` if that particular route was matched.
 		
+##### Example
+
+```
+fetchMock
+	.mock('http://domain1', 200)
+	.mock('http://domain2', 'PUT', {
+		affectedRecords: 1
+	});
+
+myModule.onlyCallDomain2()
+	.then(() => {
+		expect(fetchMock.called('http://domain2')).to.be.true;
+		expect(fetchMock.called('http://domain1')).to.be.false;
+		expect(fetchMock.calls().unmatched().length).to.equal(0);
+		expect(JSON.parse(fetchMock.calls('http://domain2'[)[0][1].body)).to.deep.equal({prop: 'val'});
+		fetchMock.restore();
+	})
+```
+
 ## Advanced usage
 
 #### `mock(routeConfig)`

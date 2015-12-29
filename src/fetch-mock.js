@@ -367,7 +367,7 @@ class FetchMock {
 
 	reMock () {
 		this.restore();
-		this.mock.apply(this, [].slice.apply(arguments));
+		return this.mock.apply(this, [].slice.apply(arguments));
 	}
 
 	getMock () {

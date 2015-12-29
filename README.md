@@ -81,7 +81,8 @@ Pass in an array of route configuration objects
 #### `mock(config)`
 
 Pas in an object containing more complex config for fine grained control over every aspect of mocking behaviour. May have the following properties
-* `routes`: Either a single route config object or an array of them (see above)
+* `routes`: Either a single route config object or an array of them (see above). When routes have already been registered using `registerRoute()` they can be selectively applied by referencing their names. e.g. If routes 1 - 4 are defined then `fetchMock.mock({routes: ['route1', 'route4'])` will only attempt to match calls against routes 1 and 4, treating any calls that woudl have matched routes 2 or 3 as unmatched. The array of routes may contain a mixture of route names and route config objects. The default behaviour when routes are passed into `.mock()` is for none of the preregistered routes to be applied.
+
 * `responses`: When `registerRoute()` (see below) has already been used to register some routes then `responses` can be used to override the default response. Its value should be an object mapping route names to responses, which should be similar to those provided in the `response` property of stanadard route configurations e.g.  
 ```
 	responses: {

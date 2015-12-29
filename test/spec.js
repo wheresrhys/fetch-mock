@@ -5,6 +5,11 @@ module.exports = function (fetchMock, theGlobal, Request) {
 	describe('fetch-mock', function () {
 
 		let fetchCalls = [];
+		const dummyRoute = {
+			matcher: /a/,
+			response: 200
+		};
+
 		const dummyFetch = function () {
 			fetchCalls.push([].slice.call(arguments));
 			return Promise.resolve(arguments);
@@ -21,7 +26,7 @@ module.exports = function (fetchMock, theGlobal, Request) {
 		describe('default behaviour', function () {
 
 			it('call fetch if no routes defined', function () {
-				fetchMock.mock();
+				fetchMock.mock(dummyRoute);
 				fetch('url', {prop: 'val'});
 				expect(fetchCalls.length).to.equal(1);
 				expect(fetchCalls[0]).to.eql(['url', {prop: 'val'}]);
@@ -29,7 +34,7 @@ module.exports = function (fetchMock, theGlobal, Request) {
 			});
 
 			it('restores fetch', function () {
-				fetchMock.mock();
+				fetchMock.mock(dummyRoute);
 				fetchMock.restore();
 				expect(fetch).to.equal(dummyFetch);
 			});
@@ -58,10 +63,10 @@ module.exports = function (fetchMock, theGlobal, Request) {
 			});
 
 			it('allow remocking after being restored', function () {
-				fetchMock.mock();
+				fetchMock.mock(dummyRoute);
 				fetchMock.restore();
 				expect(function () {
-					fetchMock.mock();
+					fetchMock.mock(dummyRoute);
 					fetchMock.restore();
 				}).not.to.throw();
 			});
@@ -193,7 +198,7 @@ module.exports = function (fetchMock, theGlobal, Request) {
 
 			describe('unmatched routes', function () {
 				it('record history of unmatched routes', function (done) {
-					fetchMock.mock();
+					fetchMock.mock(dummyRoute);
 					Promise.all([
 						fetch('http://1', {method: 'GET'}),
 						fetch('http://2', {method: 'POST'})
@@ -210,7 +215,7 @@ module.exports = function (fetchMock, theGlobal, Request) {
 				});
 
 				it('configure to send good responses', function (done) {
-					fetchMock.mock({greed: 'good'});
+					fetchMock.mock({routes: dummyRoute, greed: 'good'});
 					fetch('http://1')
 						.then(function (res) {
 							expect(fetchMock.called()).to.be.false;
@@ -224,7 +229,7 @@ module.exports = function (fetchMock, theGlobal, Request) {
 				});
 
 				it('configure to send bad responses', function (done) {
-					fetchMock.mock({greed: 'bad'});
+					fetchMock.mock({routes: dummyRoute, greed: 'bad'});
 					fetch('http://1')
 						.catch(function (res) {
 							expect(fetchMock.called()).to.be.false;
@@ -234,7 +239,7 @@ module.exports = function (fetchMock, theGlobal, Request) {
 				});
 
 				it('configure to pass through to native fetch', function (done) {
-					fetchMock.mock({greed: 'none'});
+					fetchMock.mock({routes: dummyRoute, greed: 'none'});
 					fetch('http://1')
 						.then(function () {
 							expect(fetchMock.called()).to.be.false;

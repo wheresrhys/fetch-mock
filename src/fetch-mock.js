@@ -16,7 +16,12 @@ let debug;
  */
 function mockResponse (url, config) {
 	debug('mocking response for ' + url);
-	// allow just body to be passed in as this is the commonest use case
+
+	if (config.throws) {
+		debug('mocking failed request for ' + url);
+		return Promise.reject(config.throws);
+	}
+
 	if (typeof config === 'number') {
 		debug('status response detected for ' + url);
 		config = {
@@ -31,16 +36,11 @@ function mockResponse (url, config) {
 		debug('full config response detected for ' + url);
 	}
 
-	if (config.throws) {
-		debug('mocking failed request for ' + url);
-		return Promise.reject(config.throws);
-	}
-
 	const opts = config.opts || {};
 	opts.url = url;
 	opts.status = config.status || 200;
-	// the ternary oprator is to cope with new Headers(undefined) throwing in chrome
-	// (unclear to me if this is a bug or if the specification says this is correct behaviour)
+	// The ternary operator is to cope with new Headers(undefined) throwing in Chrome
+	// https://code.google.com/p/chromium/issues/detail?id=335871
 	opts.headers = config.headers ? new Headers(config.headers) : new Headers();
 
 	let body = config.body;
@@ -97,20 +97,14 @@ function normalizeRequest (url, options) {
  */
 function compileRoute (route) {
 
-  let expectedMethod = route.method && route.method.toLowerCase();
-  let matchMethod;
-  if (expectedMethod) {
-    matchMethod = function (method) {
-      return expectedMethod === (method ? method.toLowerCase() : 'get');
-    };
-  } else {
-    matchMethod = function () { return true; };
-  }
-
 	debug('compiling route: ' + route.name);
 
+	if (typeof route.response === 'undefined') {
+		throw new Error('Each route must define a response');
+	}
+
 	if (!route.matcher) {
-		throw 'each route must specify a string, regex or function to match calls to fetch';
+		throw new Error('each route must specify a string, regex or function to match calls to fetch');
 	}
 
 	if (!route.name) {
@@ -118,26 +112,31 @@ function compileRoute (route) {
 		route.__unnamed = true;
 	}
 
-	if (typeof route.response === 'undefined') {
-		throw 'each route must define a response';
-	}
-
+	// If user has provided a function as a matcher we assume they are handling all the
+	// matching logic they need
 	if (typeof route.matcher === 'function') {
 		return route;
 	}
 
+  const expectedMethod = route.method && route.method.toLowerCase();
+
+  function matchMethod (method) {
+    return !expectedMethod || expectedMethod === (method ? method.toLowerCase() : 'get');
+  };
+
 	let matchUrl;
 
 	if (typeof route.matcher === 'string') {
-		let expectedUrl = route.matcher;
+
 		if (route.matcher.indexOf('^') === 0) {
 			debug('constructing starts with string matcher for route: ' + route.name);
-			expectedUrl = expectedUrl.substr(1);
+			const expectedUrl = route.matcher.substr(1);
 			matchUrl = function (url) {
 				return url.indexOf(expectedUrl) === 0;
 			};
 		} else {
 			debug('constructing string matcher for route: ' + route.name);
+			const expectedUrl = route.matcher;
 			matchUrl = function (url) {
 				return url === expectedUrl;
 			};
@@ -174,6 +173,8 @@ class FetchMock {
 		debug = opts.debug;
 		this.routes = [];
 		this._calls = {};
+		this._matchedCalls = [];
+		this._unmatchedCalls = [];
 		this.mockedContext = theGlobal;
 		this.realFetch = theGlobal.fetch && theGlobal.fetch.bind(theGlobal);
 	}
@@ -197,8 +198,8 @@ class FetchMock {
 	mock (matcher, method, response) {
 
 		let config;
+		// Handle the variety of parameters accepted by mock (see README)
 		if (response) {
-
 			config = {
 				routes: [{
 					matcher,
@@ -206,7 +207,6 @@ class FetchMock {
 					response
 				}]
 			}
-
 		} else if (method) {
 			config = {
 				routes: [{
@@ -214,7 +214,6 @@ class FetchMock {
 					response: method
 				}]
 			}
-
 		} else if (matcher instanceof Array) {
 			config = {
 				routes: matcher
@@ -235,8 +234,6 @@ class FetchMock {
 		}
 
 		this.isMocking = true;
-		this._matchedCalls = [];
-		this._unmatchedCalls = [];
 
 		this.mockedContext.fetch = this.constructMock(config);
 		return this;
@@ -293,7 +290,7 @@ class FetchMock {
 	 * @param  {Object} config Can define routes and/or responses, which will be used to augment any
 	 *                         previously set by registerRoute()
 	 * @return {Function}      Function expecting url + options or a Request object, and returning
-	 *                         a promise of a Response or undefined.
+	 *                         a response config or undefined.
 	 *                         Has a helper method .augment(routes), which can be used to add additional
 	 *                         routes to the router
 	 */
@@ -312,6 +309,8 @@ class FetchMock {
 			this.routes.forEach(route => {
 				preRegisteredRoutes[route.name] = route;
 			});
+
+			// Allows selective application of some of the preregistered routes
 			routes = config.routes.map(route => {
 				if (typeof route === 'string') {
 					debug('applying preregistered route ' + route);
@@ -321,16 +320,18 @@ class FetchMock {
 					return compileRoute(route);
 				}
 			});
-		} else {
+		} else if (this.routes.length) {
 			debug('no one time only routes defined. Using preregistered routes only');
 			routes = [].slice.call(this.routes);
+		} else {
+			throw new Error('When no preconfigured routes set using .registerRoute(), .mock() must be passed configuration for routes')
 		}
 
 
 		const routeNames = {};
 		routes.forEach(route => {
 			if (routeNames[route.name]) {
-				throw 'Route names must be unique';
+				throw new Error('Route names must be unique');
 			}
 			routeNames[route.name] = true;
 		});

@@ -228,8 +228,9 @@ class FetchMock {
 
 		debug('mocking fetch');
 
+		this.addRoutes(config.routes);
+
 		if (this.isMocking) {
-			this.mockedContext.fetch.augment(config.routes);
 			return this;
 		}
 
@@ -246,17 +247,15 @@ class FetchMock {
 	 * @param  {Object} config See README
 	 * @return {Function}      Function expecting url + options or a Request object, and returning
 	 *                         a promise of a Response, or forwading to native fetch
-	 *                         Has a helper method .augment(routes), which can be used to add additional
-	 *                         routes to the router
 	 */
 	constructMock (config) {
 		debug('constructing mock function');
 		config = config || {};
-		const router = this.constructRouter(config);
+		this.addRoutes(config.routes);
 		config.greed = config.greed || 'none';
 
 		const mock = (url, opts) => {
-			const response = router(url, opts);
+			const response = this.router(url, opts);
 			if (response) {
 				debug('response found for ' + url);
 				return mockResponse(url, response);
@@ -276,68 +275,58 @@ class FetchMock {
 			}
 		};
 
-		mock.augment = function (routes) {
-			router.augment(routes);
-		}
-
 		return mock;
+	}
+	/**
+	 * router
+	 * Given url + options or a Request object, checks to see if ait is matched by any routes and returns
+	 * config for a response or undefined.
+	 * @param  {String|Request} url
+	 * @param  {Object}
+	 * @return {Object}
+	 */
+	router (url, opts) {
+		let response;
+		debug('searching for matching route for ' + url);
+		this.routes.some(route => {
+
+			if (route.matcher(url, opts)) {
+				debug('Found matching route (' + route.name + ') for ' + url);
+				this.push(route.name, [url, opts]);
+
+				debug('Setting response for ' + route.name);
+				response = route.response;
+
+				if (typeof response === 'function') {
+					debug('Constructing dynamic response for ' + route.name);
+					response = response(url, opts);
+				}
+				return true;
+			}
+		});
+
+		debug('returning response for ' + url);
+		return response;
 	}
 
 	/**
-	 * constructRouter
-	 * Constructs a function which identifies if calls to fetch match any of the configured routes
-	 * and returns the Response defined by the route
-	 * @param  {Object} config Can define routes and/or responses, which will be used to augment any
-	 *                         previously set by registerRoute()
-	 * @return {Function}      Function expecting url + options or a Request object, and returning
-	 *                         a response config or undefined.
-	 *                         Has a helper method .augment(routes), which can be used to add additional
-	 *                         routes to the router
+	 * addRoutes
+	 * Adds routes to those used by fetchMock to match fetch calls
+	 * @param  {Object|Array} routes 	route configurations
 	 */
-	constructRouter (config) {
-		debug('building router');
+	addRoutes (routes) {
 
-		if (!config.routes) {
+		if (!routes) {
 			throw new Error('.mock() must be passed configuration for routes')
 		}
 
 		debug('applying one time only routes');
-		if (!(config.routes instanceof Array)) {
-			config.routes = [config.routes];
+		if (!(routes instanceof Array)) {
+			routes = [routes];
 		}
 
 		// Allows selective application of some of the preregistered routes
-		let routes = config.routes.map(compileRoute);
-
-		const router = (url, opts) => {
-			let response;
-			debug('searching for matching route for ' + url);
-			routes.some(route => {
-
-				if (route.matcher(url, opts)) {
-					debug('Found matching route (' + route.name + ') for ' + url);
-					this.push(route.name, [url, opts]);
-
-					debug('Setting response for ' + route.name);
-					response = route.response;
-
-					if (typeof response === 'function') {
-						debug('Constructing dynamic response for ' + route.name);
-						response = response(url, opts);
-					}
-					return true;
-				}
-			});
-
-			debug('returning response for ' + url);
-			return response;
-		};
-
-		router.augment = function (additionalRoutes) {
-			routes = routes.concat(additionalRoutes.map(compileRoute));
-		}
-
-		return router;
+		this.routes = this.routes.concat(routes.map(compileRoute));
 	}
 
 	/**
@@ -365,6 +354,7 @@ class FetchMock {
 		this.isMocking = false;
 		this.mockedContext.fetch = this.realFetch;
 		this.reset();
+		this.routes = [];
 		debug('fetch restored');
 	}
 

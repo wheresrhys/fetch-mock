@@ -333,7 +333,7 @@ class FetchMock {
 	 * push
 	 * Records history of fetch calls
 	 * @param  {String} name Name of the route matched by the call
-	 * @param  {Object} call {url, opts} pair
+	 * @param  {Array} call [url, opts] pair
 	 */
 	push (name, call) {
 		if (name) {
@@ -397,6 +397,25 @@ class FetchMock {
 			matched: this._matchedCalls,
 			unmatched: this._unmatchedCalls
 		};
+	}
+
+	lastCall (name) {
+		const calls = name ? this.calls(name) : this.calls().matched;
+		if (calls && calls.length) {
+			return calls[calls.length - 1];
+		} else {
+			return undefined;
+		}
+	}
+
+	lastUrl (name) {
+		const call = this.lastCall(name);
+		return call && call[0];
+	}
+
+	lastOptions (name) {
+		const call = this.lastCall(name);
+		return call && call[1];
 	}
 
 	/**

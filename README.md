@@ -40,12 +40,23 @@ Calls `restore()` internally then calls `mock()`. This allows you to put some ge
 #### `reset()`
 Clears all data recorded for `fetch()`'s calls
 
+**For the methods below `matcher`, if given, should be either the name of a route (see advanced usage below) or equal to `matcher.toString()` for any unnamed route**
+
 #### `calls(matcher)`
-Returns an object `{matched: [], unmatched: []}` containing arrays of all calls to fetch, grouped by whether fetch-mock matched them or not. If `matcher` is specified and is equal to `matcher.toString()` for any of the mocked routes then only calls to fetch matching that route are returned.
+Returns an object `{matched: [], unmatched: []}` containing arrays of all calls to fetch, grouped by whether fetch-mock matched them or not. If `matcher` is specified then only calls to fetch matching that route are returned.
 
 #### `called(matcher)`
-Returns a Boolean indicating whether fetch was called and a route was matched. If `matcher` is specified and is equal to `matcher.toString()` for any of the mocked routes then only returns `true` if that particular route was matched.
-		
+Returns a Boolean indicating whether fetch was called and a route was matched. If `matcher` is specified it only returns `true` if that particular route was matched.
+
+#### `lastCall(matcher)`
+Returns the arguments for the last matched call to fetch	
+
+#### `lastUrl(matcher)`
+Returns the url for the last matched call to fetch	
+
+#### `lastOptions(matcher)`
+Returns the options for the last matched call to fetch	
+
 ##### Example
 
 ```
@@ -60,7 +71,8 @@ myModule.onlyCallDomain2()
 		expect(fetchMock.called('http://domain2')).to.be.true;
 		expect(fetchMock.called('http://domain1')).to.be.false;
 		expect(fetchMock.calls().unmatched().length).to.equal(0);
-		expect(JSON.parse(fetchMock.calls('http://domain2'[)[0][1].body)).to.deep.equal({prop: 'val'});
+		expect(JSON.parse(fetchMock.lastUrl('http://domain2'))).to.equal('http://domain2/endpoint');
+		expect(JSON.parse(fetchMock.lastOptions('http://domain2').body)).to.deep.equal({prop: 'val'});
 		fetchMock.restore();
 	})
 ```
@@ -86,12 +98,6 @@ Pass in an object containing more complex config for fine grained control over e
 	* 'none': all unmatched calls get passed through to `fetch()`
 	* 'bad': all unmatched calls result in a rejected promise
 	* 'good': all unmatched calls result in a resolved promise with a 200 status
-
-#### `calls(routeName)`
-Returns an array of arrays of the arguments passed to `fetch()` that matched the given route.
-
-#### `called(routeName)`
-Returns a Boolean denoting whether any calls matched the given route.
 
 #### `useNonGlobalFetch(func)`
 When using isomorphic-fetch or node-fetch ideally `fetch` should be added as a global. If not possible to do so you can still use fetch-mock in combination with [mockery](https://github.com/mfncooper/mockery) in nodejs. To use fetch-mock with with [mockery](https://github.com/mfncooper/mockery) you will need to use this function to prevent fetch-mock trying to mock the function globally.
@@ -147,3 +153,4 @@ it('should make a request', function (done) {
 	});
 	```
 * Defining two routes with the same name will no longer throw an error (previous implementation was buggy anyway)
+* Added `lastCall()`, `lastUrl()` and `lastOptions()` utilities

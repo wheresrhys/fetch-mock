@@ -461,6 +461,34 @@ module.exports = function (fetchMock, theGlobal, Request) {
 						});
 				});
 
+				it('have helpers to retrieve paramaters pf last call', function (done) {
+					fetchMock.mock({
+						routes: {
+							name: 'route',
+							matcher: '^http://it.at.there',
+							response: 200
+						}
+					});
+					// fail gracefully
+					expect(function () {
+						fetchMock.lastCall();
+						fetchMock.lastUrl();
+						fetchMock.lastOptions();
+					}).to.not.throw;
+					Promise.all([
+						fetch('http://it.at.there/first', {method: 'DELETE'}),
+						fetch('http://it.at.there/second', {method: 'GET'})
+					])
+						.then(function () {
+							expect(fetchMock.lastCall('route')).to.deep.equal(['http://it.at.there/second', {method: 'GET'}]);
+							expect(fetchMock.lastCall()).to.deep.equal(['http://it.at.there/second', {method: 'GET'}]);
+							expect(fetchMock.lastUrl()).to.equal('http://it.at.there/second');
+							expect(fetchMock.lastOptions()).to.deep.equal({method: 'GET'});
+							done();
+						});
+
+				})
+
 				it('be possible to reset call history', function (done) {
 					fetchMock.mock({
 						routes: {

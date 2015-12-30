@@ -228,8 +228,9 @@ class FetchMock {
 
 		debug('mocking fetch');
 
+		this.addRoutes(config.routes);
+
 		if (this.isMocking) {
-			this.mockedContext.fetch.augment(config.routes);
 			return this;
 		}
 
@@ -246,17 +247,15 @@ class FetchMock {
 	 * @param  {Object} config See README
 	 * @return {Function}      Function expecting url + options or a Request object, and returning
 	 *                         a promise of a Response, or forwading to native fetch
-	 *                         Has a helper method .augment(routes), which can be used to add additional
-	 *                         routes to the router
 	 */
 	constructMock (config) {
 		debug('constructing mock function');
 		config = config || {};
-		const router = this.constructRouter(config);
+		this.addRoutes(config.routes);
 		config.greed = config.greed || 'none';
 
 		const mock = (url, opts) => {
-			const response = router(url, opts);
+			const response = this.router(url, opts);
 			if (response) {
 				debug('response found for ' + url);
 				return mockResponse(url, response);
@@ -276,109 +275,65 @@ class FetchMock {
 			}
 		};
 
-		mock.augment = function (routes) {
-			router.augment(routes);
-		}
-
 		return mock;
+	}
+	/**
+	 * router
+	 * Given url + options or a Request object, checks to see if ait is matched by any routes and returns
+	 * config for a response or undefined.
+	 * @param  {String|Request} url
+	 * @param  {Object}
+	 * @return {Object}
+	 */
+	router (url, opts) {
+		let response;
+		debug('searching for matching route for ' + url);
+		this.routes.some(route => {
+
+			if (route.matcher(url, opts)) {
+				debug('Found matching route (' + route.name + ') for ' + url);
+				this.push(route.name, [url, opts]);
+
+				debug('Setting response for ' + route.name);
+				response = route.response;
+
+				if (typeof response === 'function') {
+					debug('Constructing dynamic response for ' + route.name);
+					response = response(url, opts);
+				}
+				return true;
+			}
+		});
+
+		debug('returning response for ' + url);
+		return response;
 	}
 
 	/**
-	 * constructRouter
-	 * Constructs a function which identifies if calls to fetch match any of the configured routes
-	 * and returns the Response defined by the route
-	 * @param  {Object} config Can define routes and/or responses, which will be used to augment any
-	 *                         previously set by registerRoute()
-	 * @return {Function}      Function expecting url + options or a Request object, and returning
-	 *                         a response config or undefined.
-	 *                         Has a helper method .augment(routes), which can be used to add additional
-	 *                         routes to the router
+	 * addRoutes
+	 * Adds routes to those used by fetchMock to match fetch calls
+	 * @param  {Object|Array} routes 	route configurations
 	 */
-	constructRouter (config) {
-		debug('building router');
+	addRoutes (routes) {
 
-		let routes;
-
-		if (config.routes) {
-			debug('applying one time only routes');
-			if (!(config.routes instanceof Array)) {
-				config.routes = [config.routes];
-			}
-
-			const preRegisteredRoutes = {};
-			this.routes.forEach(route => {
-				preRegisteredRoutes[route.name] = route;
-			});
-
-			// Allows selective application of some of the preregistered routes
-			routes = config.routes.map(route => {
-				if (typeof route === 'string') {
-					debug('applying preregistered route ' + route);
-					return preRegisteredRoutes[route];
-				} else {
-					debug('applying one time route ' + route.name);
-					return compileRoute(route);
-				}
-			});
-		} else if (this.routes.length) {
-			debug('no one time only routes defined. Using preregistered routes only');
-			routes = [].slice.call(this.routes);
-		} else {
-			throw new Error('When no preconfigured routes set using .registerRoute(), .mock() must be passed configuration for routes')
+		if (!routes) {
+			throw new Error('.mock() must be passed configuration for routes')
 		}
 
-
-		const routeNames = {};
-		routes.forEach(route => {
-			if (routeNames[route.name]) {
-				throw new Error('Route names must be unique');
-			}
-			routeNames[route.name] = true;
-		});
-
-		config.responses = config.responses || {};
-
-		const router = (url, opts) => {
-			let response;
-			debug('searching for matching route for ' + url);
-			routes.some(route => {
-
-				if (route.matcher(url, opts)) {
-					debug('Found matching route (' + route.name + ') for ' + url);
-					this.push(route.name, [url, opts]);
-
-					if (config.responses[route.name]) {
-						debug('Overriding response for ' + route.name);
-						response = config.responses[route.name];
-					} else {
-						debug('Using default response for ' + route.name);
-						response = route.response;
-					}
-
-					if (typeof response === 'function') {
-						debug('Constructing dynamic response for ' + route.name);
-						response = response(url, opts);
-					}
-					return true;
-				}
-			});
-
-			debug('returning response for ' + url);
-			return response;
-		};
-
-		router.augment = function (additionalRoutes) {
-			routes = routes.concat(additionalRoutes.map(compileRoute));
+		debug('applying one time only routes');
+		if (!(routes instanceof Array)) {
+			routes = [routes];
 		}
 
-		return router;
+		// Allows selective application of some of the preregistered routes
+		this.routes = this.routes.concat(routes.map(compileRoute));
 	}
 
 	/**
 	 * push
 	 * Records history of fetch calls
 	 * @param  {String} name Name of the route matched by the call
-	 * @param  {Object} call {url, opts} pair
+	 * @param  {Array} call [url, opts] pair
 	 */
 	push (name, call) {
 		if (name) {
@@ -399,6 +354,7 @@ class FetchMock {
 		this.isMocking = false;
 		this.mockedContext.fetch = this.realFetch;
 		this.reset();
+		this.routes = [];
 		debug('fetch restored');
 	}
 
@@ -443,6 +399,25 @@ class FetchMock {
 		};
 	}
 
+	lastCall (name) {
+		const calls = name ? this.calls(name) : this.calls().matched;
+		if (calls && calls.length) {
+			return calls[calls.length - 1];
+		} else {
+			return undefined;
+		}
+	}
+
+	lastUrl (name) {
+		const call = this.lastCall(name);
+		return call && call[0];
+	}
+
+	lastOptions (name) {
+		const call = this.lastCall(name);
+		return call && call[1];
+	}
+
 	/**
 	 * called
 	 * Returns whether fetch has been called matching a configured route. See README
@@ -452,58 +427,6 @@ class FetchMock {
 			return !!(this._matchedCalls.length);
 		}
 		return !!(this._calls[name] && this._calls[name].length);
-	}
-
-	/**
-	 * registerRoute
-	 * Creates a route that will persist even when fetchMock.restore() is called
-	 * See README for details of parameters
-	 */
-	registerRoute (name, matcher, response) {
-		debug('registering routes');
-		let routes;
-		if (name instanceof Array) {
-			routes = name;
-		} else if (arguments.length === 3 ) {
-			routes = [{
-				name,
-				matcher,
-				response,
-			}];
-		} else {
-			routes = [name];
-		}
-
-		debug('registering routes: ' + routes.map(r => r.name));
-
-		this.routes = this.routes.concat(routes.map(compileRoute));
-	}
-
-	/**
-	 * unregisterRoute
-	 * Removes a persistent route
-	 * See README for details of parameters
-	 */
-	unregisterRoute (names) {
-
-		if (!names) {
-			debug('unregistering all routes');
-			this.routes = [];
-			return;
-		}
-		if (!(names instanceof Array)) {
-			names = [names];
-		}
-
-		debug('unregistering routes: ' + names);
-
-		this.routes = this.routes.filter(route => {
-			const keep = names.indexOf(route.name) === -1;
-			if (!keep) {
-				debug('unregistering route ' + route.name);
-			}
-			return keep;
-		});
 	}
 }
 

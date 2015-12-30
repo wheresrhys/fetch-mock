@@ -25,7 +25,7 @@ describe('non-global use', function () {
 
 		fetchMock.useNonGlobalFetch(dummyFetch);
 		expect(fetchMock.realFetch).to.equal(dummyFetch);
-		const mock = fetchMock.mock().getMock();
+		const mock = fetchMock.mock(/a/,200).getMock();
 		expect(typeof mock).to.equal('function');
 		expect(function () {
 			mock('http://url', {prop: 'val'})

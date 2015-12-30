@@ -297,46 +297,17 @@ class FetchMock {
 	constructRouter (config) {
 		debug('building router');
 
-		let routes;
-
-		if (config.routes) {
-			debug('applying one time only routes');
-			if (!(config.routes instanceof Array)) {
-				config.routes = [config.routes];
-			}
-
-			const preRegisteredRoutes = {};
-			this.routes.forEach(route => {
-				preRegisteredRoutes[route.name] = route;
-			});
-
-			// Allows selective application of some of the preregistered routes
-			routes = config.routes.map(route => {
-				if (typeof route === 'string') {
-					debug('applying preregistered route ' + route);
-					return preRegisteredRoutes[route];
-				} else {
-					debug('applying one time route ' + route.name);
-					return compileRoute(route);
-				}
-			});
-		} else if (this.routes.length) {
-			debug('no one time only routes defined. Using preregistered routes only');
-			routes = [].slice.call(this.routes);
-		} else {
-			throw new Error('When no preconfigured routes set using .registerRoute(), .mock() must be passed configuration for routes')
+		if (!config.routes) {
+			throw new Error('.mock() must be passed configuration for routes')
 		}
 
+		debug('applying one time only routes');
+		if (!(config.routes instanceof Array)) {
+			config.routes = [config.routes];
+		}
 
-		const routeNames = {};
-		routes.forEach(route => {
-			if (routeNames[route.name]) {
-				throw new Error('Route names must be unique');
-			}
-			routeNames[route.name] = true;
-		});
-
-		config.responses = config.responses || {};
+		// Allows selective application of some of the preregistered routes
+		let routes = config.routes.map(compileRoute);
 
 		const router = (url, opts) => {
 			let response;
@@ -347,13 +318,8 @@ class FetchMock {
 					debug('Found matching route (' + route.name + ') for ' + url);
 					this.push(route.name, [url, opts]);
 
-					if (config.responses[route.name]) {
-						debug('Overriding response for ' + route.name);
-						response = config.responses[route.name];
-					} else {
-						debug('Using default response for ' + route.name);
-						response = route.response;
-					}
+					debug('Setting response for ' + route.name);
+					response = route.response;
 
 					if (typeof response === 'function') {
 						debug('Constructing dynamic response for ' + route.name);
@@ -452,58 +418,6 @@ class FetchMock {
 			return !!(this._matchedCalls.length);
 		}
 		return !!(this._calls[name] && this._calls[name].length);
-	}
-
-	/**
-	 * registerRoute
-	 * Creates a route that will persist even when fetchMock.restore() is called
-	 * See README for details of parameters
-	 */
-	registerRoute (name, matcher, response) {
-		debug('registering routes');
-		let routes;
-		if (name instanceof Array) {
-			routes = name;
-		} else if (arguments.length === 3 ) {
-			routes = [{
-				name,
-				matcher,
-				response,
-			}];
-		} else {
-			routes = [name];
-		}
-
-		debug('registering routes: ' + routes.map(r => r.name));
-
-		this.routes = this.routes.concat(routes.map(compileRoute));
-	}
-
-	/**
-	 * unregisterRoute
-	 * Removes a persistent route
-	 * See README for details of parameters
-	 */
-	unregisterRoute (names) {
-
-		if (!names) {
-			debug('unregistering all routes');
-			this.routes = [];
-			return;
-		}
-		if (!(names instanceof Array)) {
-			names = [names];
-		}
-
-		debug('unregistering routes: ' + names);
-
-		this.routes = this.routes.filter(route => {
-			const keep = names.indexOf(route.name) === -1;
-			if (!keep) {
-				debug('unregistering route ' + route.name);
-			}
-			return keep;
-		});
 	}
 }
 

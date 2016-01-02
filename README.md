@@ -110,13 +110,14 @@ To obtain a reference to the mock fetch call `getMock()`.
 var fetch = require('node-fetch');
 var fetchMock = require('fetch-mock');
 var mockery = require('mockery');
+
 fetchMock.useNonGlobalFetch(fetch);
 
-fetchMock.registerRoute([
- ...
-])
 it('should make a request', function (done) {
-	mockery.registerMock('fetch', fetchMock.mock().getMock());
+	mockery.registerMock('fetch', fetchMock
+		.mock('http://domain.com/', 200)
+		.getMock()
+	);
 	// test code goes in here
 	mockery.deregisterMock('fetch');
 	done();

@@ -46,6 +46,7 @@
     "karma-mocha": "^0.1.10",
     "karma-phantomjs-launcher": "^0.2.1",
     "mocha": "^2.2.4",
+    "mockery": "^1.4.0",
     "sinon": "^1.17.0",
     "whatwg-fetch": "^0.10.1"
   },

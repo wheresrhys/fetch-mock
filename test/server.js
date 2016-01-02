@@ -3,6 +3,7 @@
 const fetchMock = require('../src/server.js');
 const fetchCalls = [];
 const expect = require('chai').expect;
+const mockery = require('mockery');
 
 // we can't use sinon to spy on fetch in these tests as fetch-mock
 // uses it internally and sinon doesn't allow spying on a previously
@@ -27,6 +28,7 @@ describe('non-global use', function () {
 		expect(fetchMock.realFetch).to.equal(dummyFetch);
 		const mock = fetchMock.mock(/a/,200).getMock();
 		expect(typeof mock).to.equal('function');
+		expect(mock).to.not.equal(dummyFetch);
 		expect(function () {
 			mock('http://url', {prop: 'val'})
 		}).not.to.throw();
@@ -37,6 +39,24 @@ describe('non-global use', function () {
 		fetchMock.restore();
 		fetchMock.usesGlobalFetch = true;
 	});
+
+
+  it('should work well with mockery', function () {
+    mockery.enable({
+      useCleanCache: true,
+      warnOnUnregistered: false
+    });
+    const myMock = fetchMock
+      .useNonGlobalFetch(require('node-fetch'))
+      .mock('http://auth.service.com/user', '{"foo": 1}')
+      .getMock();
+    mockery.registerMock('node-fetch', myMock);
+    expect(require('./fixtures/fetch-proxy')).to.equal(myMock);
+    fetchMock.restore();
+    mockery.deregisterMock('node-fetch');
+    mockery.disable();
+  });
+
 });
 
 

@@ -187,6 +187,7 @@ class FetchMock {
 	useNonGlobalFetch (func) {
 		this.mockedContext = this;
 		this.realFetch = func;
+		return this;
 	}
 
 	/**

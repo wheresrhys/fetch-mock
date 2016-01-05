@@ -59,7 +59,7 @@ Returns the options for the last matched call to fetch
 
 ##### Example
 
-```
+```js
 fetchMock
 	.mock('http://domain1', 200)
 	.mock('http://domain2', 'PUT', {
@@ -106,7 +106,7 @@ When using isomorphic-fetch or node-fetch ideally `fetch` should be added as a g
 To obtain a reference to the mock fetch call `getMock()`.
 
 ##### Mockery example
-```
+```js
 var fetch = require('node-fetch');
 var fetchMock = require('fetch-mock');
 var mockery = require('mockery');
@@ -136,22 +136,23 @@ it('should make a request', function (done) {
 
 ## V4 changelog
 * `registerRoute()` and `unregisterRoute()` have been removed to simplify the API. Since V3, calls to `.mock()` can be chained, so persisting routes over a series of tests can easily be achieved by means of a beforeEach or helper e.g.
-	```
-	beforeEach(() => {
-		fetchMock
-			.mock('http://auth.service.com/user', 200)
-			.mock('http://mvt.service.com/session', {test1: true, test2: false})
-	});
 
-	afterEach(() => {
-		fetchMock.restore();
-	});
+```js
+beforeEach(() => {
+	fetchMock
+		.mock('http://auth.service.com/user', 200)
+		.mock('http://mvt.service.com/session', {test1: true, test2: false})
+});
 
-	it('should be possible to augment persistent set of routes', () => {
-		fetchMock.mock('http://content.service.com/contentid', {content: 'blah blah'})
-		page.init();
-		expect(fetchMock.called('http://content.service.com/contentid')).to.be.true;
-	});
-	```
+afterEach(() => {
+	fetchMock.restore();
+});
+
+it('should be possible to augment persistent set of routes', () => {
+	fetchMock.mock('http://content.service.com/contentid', {content: 'blah blah'})
+	page.init();
+	expect(fetchMock.called('http://content.service.com/contentid')).to.be.true;
+});
+```
 * Defining two routes with the same name will no longer throw an error (previous implementation was buggy anyway)
 * Added `lastCall()`, `lastUrl()` and `lastOptions()` utilities

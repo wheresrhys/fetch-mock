@@ -661,6 +661,179 @@ module.exports = function (fetchMock, theGlobal, Request) {
 
 			});
 
+			describe('strict matching', function () {
+
+				it('can expect all routes to have been called', function () {
+					fetchMock.mock({
+						routes: [{
+							name: 'route1',
+							matcher: 'http://it.at.there1/',
+							response: 200
+						},{
+							name: 'route2',
+							matcher: 'http://it.at.there2/',
+							response: 200
+						}]
+					});
+					fetch('http://it.at.there1/')
+					expect(fetchMock.called()).to.be.true;
+					expect(fetchMock.called(true)).to.be.false;
+					fetch('http://it.at.there2/')
+					expect(fetchMock.called(true)).to.be.true;
+				});
+
+				it('can expect a route to have been called exactly n times', function () {
+					fetchMock.mock({
+						routes: [{
+							name: 'route1',
+							matcher: 'http://it.at.there1/',
+							response: 200,
+							times: 2
+						}]
+					});
+					fetch('http://it.at.there1/')
+					expect(fetchMock.called()).to.be.true;
+					expect(fetchMock.called(true)).to.be.false;
+					expect(fetchMock.called('route1')).to.be.true;
+					expect(fetchMock.called('route1', true)).to.be.false;
+					fetch('http://it.at.there1/')
+					expect(fetchMock.called(true)).to.be.true;
+					expect(fetchMock.called('route1')).to.be.true;
+					expect(fetchMock.called('route1', true)).to.be.true;
+					fetch('http://it.at.there1/');
+					expect(fetchMock.called(true)).to.be.false;
+					expect(fetchMock.called('route1')).to.be.true;
+					expect(fetchMock.called('route1', true)).to.be.false;
+				});
+
+				it('can expect all routes to have been called m, n ... times', function () {
+					fetchMock.mock({
+						routes: [{
+							name: 'route1',
+							matcher: 'http://it.at.there1/',
+							response: 200,
+							times: 2
+						},{
+							name: 'route2',
+							matcher: 'http://it.at.there2/',
+							response: 200,
+							times: 2
+						}]
+					});
+					fetch('http://it.at.there1/')
+					fetch('http://it.at.there2/')
+					expect(fetchMock.called()).to.be.true;
+					expect(fetchMock.called(true)).to.be.false;
+					expect(fetchMock.called('route1', true)).to.be.false;
+					expect(fetchMock.called('route2', true)).to.be.false;
+					fetch('http://it.at.there1/')
+					expect(fetchMock.called(true)).to.be.false;
+					expect(fetchMock.called('route1', true)).to.be.true;
+					expect(fetchMock.called('route2', true)).to.be.false;
+					fetch('http://it.at.there2/')
+					expect(fetchMock.called(true)).to.be.true;
+					expect(fetchMock.called('route1', true)).to.be.true;
+					expect(fetchMock.called('route2', true)).to.be.true;
+					fetch('http://it.at.there1/');
+					expect(fetchMock.called(true)).to.be.false;
+					expect(fetchMock.called('route1', true)).to.be.false;
+					expect(fetchMock.called('route2', true)).to.be.true;
+				});
+
+				it('possible to set up using matcher, response, times triples', function () {
+					fetchMock.mock('http://it.at.there1/', 200, 2);
+					fetch('http://it.at.there1/')
+					expect(fetchMock.called()).to.be.true;
+					expect(fetchMock.called(true)).to.be.false;
+					expect(fetchMock.called('http://it.at.there1/', true)).to.be.false;
+					fetch('http://it.at.there1/')
+					expect(fetchMock.called(true)).to.be.true;
+					expect(fetchMock.called('http://it.at.there1/', true)).to.be.true;
+				});
+
+				it('possible to set up using matcher, method, response, times quadruples', function () {
+					fetchMock.mock('http://it.at.there1/', 'POST', 200, 2);
+					fetch('http://it.at.there1/', {method: 'POST'});
+					expect(fetchMock.called()).to.be.true;
+					expect(fetchMock.called(true)).to.be.false;
+					expect(fetchMock.called('http://it.at.there1/', true)).to.be.false;
+					fetch('http://it.at.there1/', {method: 'POST'});
+					expect(fetchMock.called(true)).to.be.true;
+					expect(fetchMock.called('http://it.at.there1/', true)).to.be.true;
+				});
+
+
+				it('won\'t mock if route already matched enough times', function () {
+					fetchMock.mock({
+						routes: {
+							name: 'route1',
+							matcher: 'http://it.at.there1/',
+							response: 200,
+							times: 1
+						},
+						greed: 'bad'
+					})
+					return fetch('http://it.at.there1/')
+						.then(res => {
+							expect(res.status).to.equal(200);
+							return fetch('http://it.at.there1/')
+								.then(res => {
+									expect(true).to.be.false;
+								}, err => {
+									expect(true).to.be.true;
+								})
+						})
+				});
+
+				it('falls back to second route if first route already matched enough times', function () {
+					fetchMock
+						.mock('http://it.at.there1/', 404, 1)
+						.mock('http://it.at.there1/', 200);
+					return fetch('http://it.at.there1/')
+						.then(res => {
+							expect(res.status).to.equal(404);
+							return fetch('http://it.at.there1/')
+								.then(res => {
+									expect(res.status).to.equal(200);
+								})
+						})
+				});
+
+				it('deals with when multiple call-limited routes share a name', function () {
+					fetchMock
+						.mock('http://it.at.there1/', 404, 1)
+						.mock('http://it.at.there1/', 200, 1);
+
+					fetch('http://it.at.there1/');
+
+					expect(fetchMock.called(true)).to.be.false;
+					expect(fetchMock.called('http://it.at.there1/')).to.be.true;
+					expect(fetchMock.called('http://it.at.there1/', true)).to.be.false;
+					fetch('http://it.at.there1/');
+					expect(fetchMock.called(true)).to.be.true;
+					expect(fetchMock.called('http://it.at.there1/', true)).to.be.true;
+					fetch('http://it.at.there1/');
+					expect(fetchMock.called(true)).to.be.false;
+					expect(fetchMock.called('http://it.at.there1/', true)).to.be.false;
+				});
+
+				it('deals with when one call-limited, and one non-limited route share a name', function () {
+					fetchMock
+						.mock('http://it.at.there1/', 404, 1)
+						.mock('http://it.at.there1/', 200);
+
+					fetch('http://it.at.there1/');
+					expect(fetchMock.called(true)).to.be.false;
+					expect(fetchMock.called('http://it.at.there1/', true)).to.be.false;
+					fetch('http://it.at.there1/');
+					expect(fetchMock.called(true)).to.be.true;
+					expect(fetchMock.called('http://it.at.there1/', true)).to.be.true;
+					fetch('http://it.at.there1/');
+					expect(fetchMock.called(true)).to.be.true;
+					expect(fetchMock.called('http://it.at.there1/', true)).to.be.true;
+				});
+
+			});
 		});
 
 	});

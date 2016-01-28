@@ -38,6 +38,7 @@ function mockResponse (url, config) {
 
 	const opts = config.opts || {};
 	opts.url = url;
+	opts.sendAsJson = config.sendAsJson === undefined ? true : config.sendAsJson;
 	opts.status = config.status || 200;
 	// The ternary operator is to cope with new Headers(undefined) throwing in Chrome
 	// https://code.google.com/p/chromium/issues/detail?id=335871
@@ -45,7 +46,7 @@ function mockResponse (url, config) {
 
 	let body = config.body;
 	/*eslint-disable*/
-	if (config.body != null && typeof body === 'object') {
+	if (opts.sendAsJson && config.body != null && typeof body === 'object') {
 	/*eslint-enable*/
 		body = JSON.stringify(body);
 	}

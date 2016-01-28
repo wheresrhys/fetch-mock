@@ -14,7 +14,29 @@ describe('native fetch behaviour', function () {
 		}).not.to.throw();
 		fetchMock.restore();
 	});
-})
+});
+
+describe('request types that only work in the browser', function () {
+
+	it('respond with blob', function (done) {
+		const blob = new Blob();
+		fetchMock.mock({
+			routes: {
+				name: 'route',
+				matcher: 'http://it.at.there/',
+				response: {body: blob, sendAsJson: false}
+			}
+		});
+		fetch('http://it.at.there/')
+			.then(function (res) {
+				expect(res.status).to.equal(200);
+				res.blob().then(function (blobData) {
+					expect(blobData).to.eql(blob);
+					done();
+				});
+			});
+	});
+});
 
 require('./spec')(fetchMock, window, window.Request);
 

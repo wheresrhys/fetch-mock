@@ -3,7 +3,7 @@ Mock http requests made using fetch (or [isomorphic-fetch](https://www.npmjs.com
 
 ## Installation and usage
 
-`npm install fetch-mock` then `require('fetch-mock')` in most environments 
+`npm install fetch-mock` then `require('fetch-mock')` in most environments.
 
 [Troubleshooting](#troubleshooting), [V4 changelog](#v4-changelog)
 
@@ -125,6 +125,11 @@ it('should make a request', function (done) {
 });
 ```
 ## Troubleshooting
+
+### `import` syntax (ES6 modules)
+For `fetch-mock` to work, you need to use the `require` syntax to obtain the `fetch` reference from `isomorphic-fetch`, so that the reference is actually shared between all the modules that use it.
+
+If you use `import fetch from 'isomorphic-fetch'`, for example, the `fetch` reference is isolated and won't be mocked.
 
 ### Environment doesn't support requiring fetch-mock?
 * If your client-side code or tests do not use a loader that respects the browser field of package.json use `require('fetch-mock/es5/client')`.

@@ -127,9 +127,9 @@ it('should make a request', function (done) {
 ## Troubleshooting
 
 ### `import` syntax (ES6 modules)
-For `fetch-mock` to work, you need to use the `require` syntax to obtain the `fetch` reference from `isomorphic-fetch`, so that the reference is actually shared between all the modules that use it.
+For `fetch-mock` to work with the `import` syntax, you need to `import` the module without assigning it a name for the module to actually set a global.
 
-If you use `import fetch from 'isomorphic-fetch'`, for example, the `fetch` reference is isolated and won't be mocked.
+If you use `import fetch from 'isomorphic-fetch'`, for example, the `fetch` reference is isolated and won't be mocked. You need to use `import 'isomorphic-fetch'` to update the global `fetch` reference.
 
 ### Environment doesn't support requiring fetch-mock?
 * If your client-side code or tests do not use a loader that respects the browser field of package.json use `require('fetch-mock/es5/client')`.

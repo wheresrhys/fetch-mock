@@ -71,7 +71,7 @@ myModule.onlyCallDomain2()
 	.then(() => {
 		expect(fetchMock.called('http://domain2')).to.be.true;
 		expect(fetchMock.called('http://domain1')).to.be.false;
-		expect(fetchMock.calls().unmatched().length).to.equal(0);
+		expect(fetchMock.calls().unmatched.length).to.equal(0);
 		expect(JSON.parse(fetchMock.lastUrl('http://domain2'))).to.equal('http://domain2/endpoint');
 		expect(JSON.parse(fetchMock.lastOptions('http://domain2').body)).to.deep.equal({prop: 'val'});
 		fetchMock.restore();

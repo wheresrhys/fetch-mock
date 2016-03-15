@@ -115,10 +115,12 @@ var mockery = require('mockery');
 fetchMock.useNonGlobalFetch(fetch);
 
 it('should make a request', function (done) {
-	mockery.registerMock('fetch', fetchMock
-		.mock('http://domain.com/', 200)
-		.getMock()
+	mockery.registerMock('fetch', 
+		fetchMock
+			.mock('http://domain.com/', 200)
+			.getMock()
 	);
+	const myModule = require('./src/my-mod'); // this module requires node-fetch and assigns to a variable
 	// test code goes in here
 	mockery.deregisterMock('fetch');
 	done();
@@ -126,10 +128,9 @@ it('should make a request', function (done) {
 ```
 ## Troubleshooting
 
-### `import` syntax (ES6 modules)
-For `fetch-mock` to work with the `import` syntax, you need to `import` the module without assigning it a name for the module to actually set a global.
-
-If you use `import fetch from 'isomorphic-fetch'`, for example, the `fetch` reference is isolated and won't be mocked. You need to use `import 'isomorphic-fetch'` to update the global `fetch` reference.
+### `fetch` doesn't seem to be getting mocked?
+* Are you assigning `fetch`, `isomorphic-fetch` or `node-fetch` to a variable before using it in your application code? If you are you will need to either stop doing this (`isomorphic-fetch`, `whatwg-fetch` and native browser `fetch` implementations all have `fetch` available as a global) or use the `useNonGlobalFetch()` method and a mock loading library such as [`mockery`](https://www.npmjs.com/package/mockery) (see above for example) 
+* If using `useNonGlobalFetch()` and a mock loading library, are you requiring the module you're testing after registering `fetch-mock` with the mock loader? You probably should be ([Example incorrect usage](https://github.com/wheresrhys/fetch-mock/issues/70)). If you're using ES6 `import` it may not be possible to do this without reverting to using `require()` sometimes.
 
 ### Environment doesn't support requiring fetch-mock?
 * If your client-side code or tests do not use a loader that respects the browser field of package.json use `require('fetch-mock/es5/client')`.

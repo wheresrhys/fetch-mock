@@ -7,13 +7,11 @@ Mock http requests made using fetch (or [isomorphic-fetch](https://www.npmjs.com
 
 [Troubleshooting](#troubleshooting), [V4 changelog](#v4-changelog)
 
-*To output useful messages for debugging `export DEBUG=fetch-mock`*
-
 ## Basic usage
 
 **`require('fetch-mock')` exports a singleton with the following methods**
 
-#### `mock(matcher, response)` or `mock(matcher, method, response)`  
+#### `mock(matcher, response)` or `mock(matcher, method, response)`
 Replaces `fetch()` with a stub which records its calls, grouped by route, and optionally returns a mocked `Response` object or passes the call through to `fetch()`. Calls to `.mock()` can be chained.
 
 * `matcher` [required]: Condition for selecting which requests to mock Accepts any of the following
@@ -50,13 +48,13 @@ Returns an object `{matched: [], unmatched: []}` containing arrays of all calls 
 Returns a Boolean indicating whether fetch was called and a route was matched. If `matcher` is specified it only returns `true` if that particular route was matched.
 
 #### `lastCall(matcher)`
-Returns the arguments for the last matched call to fetch	
+Returns the arguments for the last matched call to fetch
 
 #### `lastUrl(matcher)`
-Returns the url for the last matched call to fetch	
+Returns the url for the last matched call to fetch
 
 #### `lastOptions(matcher)`
-Returns the options for the last matched call to fetch	
+Returns the options for the last matched call to fetch
 
 ##### Example
 
@@ -115,7 +113,7 @@ var mockery = require('mockery');
 fetchMock.useNonGlobalFetch(fetch);
 
 it('should make a request', function (done) {
-	mockery.registerMock('fetch', 
+	mockery.registerMock('fetch',
 		fetchMock
 			.mock('http://domain.com/', 200)
 			.getMock()
@@ -129,7 +127,7 @@ it('should make a request', function (done) {
 ## Troubleshooting
 
 ### `fetch` doesn't seem to be getting mocked?
-* Are you assigning `fetch`, `isomorphic-fetch` or `node-fetch` to a variable before using it in your application code? If you are you will need to either stop doing this (`isomorphic-fetch`, `whatwg-fetch` and native browser `fetch` implementations all have `fetch` available as a global) or use the `useNonGlobalFetch()` method and a mock loading library such as [`mockery`](https://www.npmjs.com/package/mockery) (see above for example) 
+* Are you assigning `fetch`, `isomorphic-fetch` or `node-fetch` to a variable before using it in your application code? If you are you will need to either stop doing this (`isomorphic-fetch`, `whatwg-fetch` and native browser `fetch` implementations all have `fetch` available as a global) or use the `useNonGlobalFetch()` method and a mock loading library such as [`mockery`](https://www.npmjs.com/package/mockery) (see above for example)
 * If using `useNonGlobalFetch()` and a mock loading library, are you requiring the module you're testing after registering `fetch-mock` with the mock loader? You probably should be ([Example incorrect usage](https://github.com/wheresrhys/fetch-mock/issues/70)). If you're using ES6 `import` it may not be possible to do this without reverting to using `require()` sometimes.
 
 ### Environment doesn't support requiring fetch-mock?

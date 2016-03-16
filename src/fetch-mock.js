@@ -160,7 +160,7 @@ class FetchMock {
 		this._calls = {};
 		this._matchedCalls = [];
 		this._unmatchedCalls = [];
-		this.mockedContext = theGlobal;
+		this.fetchMock = this.fetchMock.bind(this);
 		this.realFetch = theGlobal.fetch && theGlobal.fetch.bind(theGlobal);
 	}
 
@@ -212,16 +212,9 @@ class FetchMock {
 			config = matcher;
 		}
 
-
 		this.addRoutes(config.routes);
-
-		if (this.isMocking) {
-			return this;
-		}
-
-		this.isMocking = true;
-
-		this.mockedContext.fetch = this.constructMock(config);
+		this.greed = config.greed || this.greed || 'none';
+		theGlobal.fetch = this.fetchMock;
 		return this;
 	}
 
@@ -233,30 +226,25 @@ class FetchMock {
 	 * @return {Function}      Function expecting url + options or a Request object, and returning
 	 *                         a promise of a Response, or forwading to native fetch
 	 */
-	constructMock (config) {
-		config = config || {};
-		this.addRoutes(config.routes);
-		config.greed = config.greed || 'none';
+	fetchMock (url, opts) {
 
-		return (url, opts) => {
-			const response = this.router(url, opts);
-			if (response) {
-				if (response instanceof Promise) {
-					return response.then(response => mockResponse(url, response, opts))
-				} else {
-					return mockResponse(url, response, opts)
-				}
+		const response = this.router(url, opts);
+		if (response) {
+			if (response instanceof Promise) {
+				return response.then(response => mockResponse(url, response, opts))
 			} else {
-				this.push(null, [url, opts]);
-				if (config.greed === 'good') {
-					return mockResponse(url, {body: 'unmocked url: ' + url});
-				} else if (config.greed === 'bad') {
-					return mockResponse(url, {throws: 'unmocked url: ' + url});
-				} else {
-					return this.realFetch(url, opts);
-				}
+				return mockResponse(url, response, opts)
 			}
-		};
+		} else {
+			this.push(null, [url, opts]);
+			if (this.greed === 'good') {
+				return mockResponse(url, {body: 'unmocked url: ' + url});
+			} else if (this.greed === 'bad') {
+				return mockResponse(url, {throws: 'unmocked url: ' + url});
+			} else {
+				return this.realFetch(url, opts);
+			}
+		}
 
 	}
 	/**
@@ -318,8 +306,7 @@ class FetchMock {
 	 * Restores global fetch to its initial state and resets call history
 	 */
 	restore () {
-		this.isMocking = false;
-		this.mockedContext.fetch = this.realFetch;
+		theGlobal.fetch = this.realFetch;
 		this.reset();
 		this.routes = [];
 	}
@@ -340,7 +327,7 @@ class FetchMock {
 	 * @return {Function}
 	 */
 	getMock () {
-		return this.fetch;
+		return this.fetchMock;
 	}
 
 	/**

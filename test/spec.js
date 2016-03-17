@@ -580,7 +580,7 @@ module.exports = function (fetchMock, theGlobal, Request) {
 							expect(res.statusText).to.equal('OK');
 							return res.json();
 						})
-						.then(function(json) {
+						.then(function (json) {
 							expect(json).to.eql({an: 'object'});
 						});
 				});

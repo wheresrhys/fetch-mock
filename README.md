@@ -114,18 +114,27 @@ var mockery = require('mockery');
 
 fetchMock.useNonGlobalFetch(fetch);
 
-it('should make a request', function (done) {
-	mockery.registerMock('fetch', 
+beforeEach(function(done) {
+	mockery.registerMock('node-fetch', 
 		fetchMock
 			.mock('http://domain.com/', 200)
 			.getMock()
 	);
+});
+
+it('should make a request', function (done) {
 	const myModule = require('./src/my-mod'); // this module requires node-fetch and assigns to a variable
 	// test code goes in here
-	mockery.deregisterMock('fetch');
 	done();
 });
+
+afterEach(function(done) {
+	mockery.deregisterMock('node-fetch');
+})
 ```
+
+**HINT:** To make `fetch-mock` work properly with `mockery`, you need to use `require` instead of `import` to require the you modoule. For more detail, checkout [Troubleshooting](#fetch-doesnt-seem-to-be-getting-mocked).
+
 ## Troubleshooting
 
 ### `fetch` doesn't seem to be getting mocked?

@@ -1,6 +1,6 @@
 'use strict';
 
-const STATUS_TEXT = {
+const statusTextMap = {
   '100': 'Continue',
   '101': 'Switching Protocols',
   '102': 'Processing',
@@ -65,4 +65,4 @@ const STATUS_TEXT = {
   '511': 'Network Authentication Required'
 };
 
-module.exports = STATUS_TEXT;
+module.exports = statusTextMap;

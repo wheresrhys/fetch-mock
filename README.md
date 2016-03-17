@@ -133,7 +133,7 @@ afterEach(function(done) {
 })
 ```
 
-**HINT:** You need to user `require` instead of `import` to require the you modoule, since `mockery` strongly depends the order of execution. To mock `fetch` properly, `registerMock` must happens before `require` the module. And `import` will be always executed as the very first statements of the file.
+**HINT:** To make `fetch-mock` work properly with `mockery`, you need to use `require` instead of `import` to require the you modoule. For more detail, checkout [Troubleshooting](#fetch-doesnt-seem-to-be-getting-mocked).
 
 ## Troubleshooting
 

@@ -5,15 +5,13 @@ Mock http requests made using fetch (or [isomorphic-fetch](https://www.npmjs.com
 
 `npm install fetch-mock` then `require('fetch-mock')` in most environments.
 
-[Troubleshooting](#troubleshooting), [V4 changelog](#v4-changelog)
-
-*To output useful messages for debugging `export DEBUG=fetch-mock`*
+[Troubleshooting and alternative installation](#troubleshooting), [V4 changelog](#v4-changelog)
 
 ## Basic usage
 
 **`require('fetch-mock')` exports a singleton with the following methods**
 
-#### `mock(matcher, response)` or `mock(matcher, method, response)`  
+#### `mock(matcher, response)` or `mock(matcher, method, response)`
 Replaces `fetch()` with a stub which records its calls, grouped by route, and optionally returns a mocked `Response` object or passes the call through to `fetch()`. Calls to `.mock()` can be chained.
 
 * `matcher` [required]: Condition for selecting which requests to mock Accepts any of the following
@@ -21,7 +19,7 @@ Replaces `fetch()` with a stub which records its calls, grouped by route, and op
 	* `RegExp`: A regular  expression to test the url against
 	* `Function(url, opts)`: A function (returning a Boolean) that is passed the url and opts `fetch()` is called with (or, if `fetch()` was called with one, the `Request` instance)
 * `method` [optional]: only matches requests using this http method
-* `response` [required]: Configures the http response returned by the mock. Can take any of the following values
+* `response` [required]: Configures the http response returned by the mock. Can take any of the following values (or be a `Promise` for any of them, enabling full control when testing race conditions etc.)
 	* `number`: Creates a response with this status
 	* `string`: Creates a 200 response with the string as the response body
 	* `object`: As long as the object does not contain any of the properties below it is converted into a json string and returned as the body of a 200 response. If any of the properties below are defined it is used to configure a `Response` object
@@ -30,7 +28,7 @@ Replaces `fetch()` with a stub which records its calls, grouped by route, and op
 		* `headers`: Set the response headers. (`object`)
 		* `throws`: If this property is present then a `Promise` rejected with the value of `throws` is returned
 		* `sendAsJson`: This property determines whether or not the request body should be JSON.stringified before being sent (defaults to true).
-	* `Function(url, opts)`: A function that is passed the url and opts `fetch()` is called with and that returns any of the responses listed above
+	* `Function(url, opts)`: A function that is passed the url and opts `fetch()` is called with and that returns any of the responses listed above  
 
 #### `restore()`
 Restores `fetch()` to its unstubbed state and clears all data recorded for its calls
@@ -50,13 +48,13 @@ Returns an object `{matched: [], unmatched: []}` containing arrays of all calls 
 Returns a Boolean indicating whether fetch was called and a route was matched. If `matcher` is specified it only returns `true` if that particular route was matched.
 
 #### `lastCall(matcher)`
-Returns the arguments for the last matched call to fetch	
+Returns the arguments for the last matched call to fetch
 
 #### `lastUrl(matcher)`
-Returns the url for the last matched call to fetch	
+Returns the url for the last matched call to fetch
 
 #### `lastOptions(matcher)`
-Returns the options for the last matched call to fetch	
+Returns the options for the last matched call to fetch
 
 ##### Example
 
@@ -100,11 +98,22 @@ Pass in an object containing more complex config for fine grained control over e
 	* 'bad': all unmatched calls result in a rejected promise
 	* 'good': all unmatched calls result in a resolved promise with a 200 status
 
-#### `useNonGlobalFetch(func)`
-When using isomorphic-fetch or node-fetch ideally `fetch` should be added as a global. If not possible to do so you can still use fetch-mock in combination with [mockery](https://github.com/mfncooper/mockery) in nodejs. To use fetch-mock with with [mockery](https://github.com/mfncooper/mockery) you will need to use this function to prevent fetch-mock trying to mock the function globally.
-* `func` Optional reference to `fetch` (or any other function you may want to substitute for `fetch` in your tests).
+#### *deprecated* `useNonGlobalFetch(func)`
+When using isomorphic-fetch or node-fetch ideally `fetch` should be added as a global. If not possible to do so you can still use fetch-mock in combination with [mockery](https://github.com/mfncooper/mockery) or similar in nodejs. To use fetch-mock with with [mockery](https://github.com/mfncooper/mockery) you may use this function to prevent fetch-mock trying to mock the function globally.
+* `func` Optional reference to `fetch` (or any other function you may want to substitute for `fetch` in your tests). This will probably have zero effect on your tests unless you are deliberately using the `greed: 'none'` config option to let some requests pass through to the original `fetch` implementation
 
-To obtain a reference to the mock fetch call `getMock()`.
+## Troubleshooting and alternative installation
+
+### `fetch` is assigned to a local variable, not a global
+
+First of all, consider whether you could just use `fetch` as a global. Here are 3 reasons why this is a good idea:
+- The `fetch` standard defines it as a global (and in some cases it won't work unless bound to `window`), so to write isomorphic code it's probably best to stick to this pattern
+- [`isomorphic-fetch`](https://www.npmjs.com/package/isomorphic-fetch) takes care of installing it as a global in nodejs or the browser, so there's no effort on your part to do so.
+- `fetch-mock` is primarily designed to work with `fetch` as a global and your experience of using it will be far more straightforward if you follow this pattern
+
+Still not convinced?
+
+In that case `fetchMock.fetchMock` (or *[deprecated]* call `getMock()`) gives you access to the mock implementation of `fetch` which you can pass in to a mock loading library such as [`mockery`](https://www.npmjs.com/package/mockery)
 
 ##### Mockery example
 ```js
@@ -112,25 +121,17 @@ var fetch = require('node-fetch');
 var fetchMock = require('fetch-mock');
 var mockery = require('mockery');
 
-fetchMock.useNonGlobalFetch(fetch);
-
 it('should make a request', function (done) {
-	mockery.registerMock('fetch', 
-		fetchMock
-			.mock('http://domain.com/', 200)
-			.getMock()
-	);
+	mockery.registerMock('node-fetch', fetchMock.fetchMock);
+	fetchMock.mock('http://domain.com/', 200)
 	const myModule = require('./src/my-mod'); // this module requires node-fetch and assigns to a variable
 	// test code goes in here
 	mockery.deregisterMock('fetch');
 	done();
 });
 ```
-## Troubleshooting
-
 ### `fetch` doesn't seem to be getting mocked?
-* Are you assigning `fetch`, `isomorphic-fetch` or `node-fetch` to a variable before using it in your application code? If you are you will need to either stop doing this (`isomorphic-fetch`, `whatwg-fetch` and native browser `fetch` implementations all have `fetch` available as a global) or use the `useNonGlobalFetch()` method and a mock loading library such as [`mockery`](https://www.npmjs.com/package/mockery) (see above for example) 
-* If using `useNonGlobalFetch()` and a mock loading library, are you requiring the module you're testing after registering `fetch-mock` with the mock loader? You probably should be ([Example incorrect usage](https://github.com/wheresrhys/fetch-mock/issues/70)). If you're using ES6 `import` it may not be possible to do this without reverting to using `require()` sometimes.
+If using a mock loading library such as `mockery`, are you requiring the module you're testing after registering `fetch-mock` with the mock loader? You probably should be ([Example incorrect usage](https://github.com/wheresrhys/fetch-mock/issues/70)). If you're using ES6 `import` it may not be possible to do this without reverting to using `require()` sometimes. I *did* warn you about not using `fetch` as a global (...sigh)
 
 ### Environment doesn't support requiring fetch-mock?
 * If your client-side code or tests do not use a loader that respects the browser field of package.json use `require('fetch-mock/es5/client')`.

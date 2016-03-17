@@ -15,10 +15,55 @@ const dummyFetch = function () {
 
 require('./spec')(fetchMock, GLOBAL, require('node-fetch').Request);
 
-describe('non-global use', function () {
+describe('new non-global use', function () {
 
 	before(function () {
 		try {
+			fetchMock.restore();
+		} catch (e) {}
+	});
+	it('stubs non global fetch if function passed in', function () {
+
+		fetchMock.useNonGlobalFetch(dummyFetch);
+		expect(fetchMock.realFetch).to.equal(dummyFetch);
+		fetchMock.mock(/a/,200);
+		expect(typeof fetchMock.fetchMock).to.equal('function');
+		expect(fetchMock.fetchMock).to.not.equal(dummyFetch);
+		expect(function () {
+			fetchMock.fetchMock('http://url', {prop: 'val'})
+		}).not.to.throw();
+		expect(fetchMock.calls().unmatched.length).to.equal(1);
+		expect(fetchCalls.length).to.equal(1);
+		expect(fetchCalls[0]).to.eql(['http://url', {prop: 'val'}]);
+
+		fetchMock.restore();
+		fetchMock.usesGlobalFetch = true;
+	});
+
+
+  it('should work well with mockery', function () {
+    mockery.enable({
+      useCleanCache: true,
+      warnOnUnregistered: false
+    });
+    fetchMock
+      .useNonGlobalFetch(require('node-fetch'))
+      .mock('http://auth.service.com/user', '{"foo": 1}')
+    mockery.registerMock('node-fetch', fetchMock.fetchMock);
+    expect(require('./fixtures/fetch-proxy')).to.equal(fetchMock.fetchMock);
+    fetchMock.restore();
+    mockery.deregisterMock('node-fetch');
+    mockery.disable();
+  });
+
+});
+
+
+describe('deprecated non-global use', function () {
+
+	before(function () {
+		try {
+			fetchCalls.pop();
 			fetchMock.restore();
 		} catch (e) {}
 	});

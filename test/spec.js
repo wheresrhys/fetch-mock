@@ -542,11 +542,12 @@ module.exports = function (fetchMock, theGlobal, Request) {
 					fetch('http://it.at.there/')
 						.then(function (res) {
 							expect(res.status).to.equal(300);
+							expect(res.statusText).to.equal('Multiple Choices');
 							done();
 						});
 				});
 
-				it('respond with a string', function (done) {
+				it('respond with a string', function () {
 					fetchMock.mock({
 						routes: {
 							name: 'route',
@@ -554,17 +555,18 @@ module.exports = function (fetchMock, theGlobal, Request) {
 							response: 'a string'
 						}
 					});
-					fetch('http://it.at.there/')
+					return fetch('http://it.at.there/')
 						.then(function (res) {
 							expect(res.status).to.equal(200);
-							res.text().then(function (text) {
-								expect(text).to.equal('a string');
-								done();
-							});
+							expect(res.statusText).to.equal('OK');
+							return res.text()
+						})
+						.then(function (text) {
+							expect(text).to.equal('a string');
 						});
 				});
 
-				it('respond with a json', function (done) {
+				it('respond with a json', function () {
 					fetchMock.mock({
 						routes: {
 							name: 'route',
@@ -572,17 +574,18 @@ module.exports = function (fetchMock, theGlobal, Request) {
 							response: {an: 'object'}
 						}
 					});
-					fetch('http://it.at.there/')
+					return fetch('http://it.at.there/')
 						.then(function (res) {
 							expect(res.status).to.equal(200);
-							res.json().then(function (json) {
-								expect(json).to.eql({an: 'object'});
-								done();
-							});
+							expect(res.statusText).to.equal('OK');
+							return res.json();
+						})
+						.then(function (json) {
+							expect(json).to.eql({an: 'object'});
 						});
 				});
 
-				it('respond with a status', function (done) {
+				it('respond with a status', function () {
 					fetchMock.mock({
 						routes: {
 							name: 'route',
@@ -590,10 +593,10 @@ module.exports = function (fetchMock, theGlobal, Request) {
 							response: {status: 404}
 						}
 					});
-					fetch('http://it.at.there/')
+					return fetch('http://it.at.there/')
 						.then(function (res) {
 							expect(res.status).to.equal(404);
-							done();
+							expect(res.statusText).to.equal('Not Found');
 						});
 				});
 

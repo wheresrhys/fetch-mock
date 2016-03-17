@@ -6,6 +6,7 @@ let Response;
 let stream;
 let theGlobal;
 let debug;
+let STATUS_TEXT;
 
 /**
  * mockResponse
@@ -40,6 +41,7 @@ function mockResponse (url, config) {
 	opts.url = url;
 	opts.sendAsJson = config.sendAsJson === undefined ? true : config.sendAsJson;
 	opts.status = config.status || 200;
+	opts.statusText = STATUS_TEXT['' + opts.status];
 	// The ternary operator is to cope with new Headers(undefined) throwing in Chrome
 	// https://code.google.com/p/chromium/issues/detail?id=335871
 	opts.headers = config.headers ? new Headers(config.headers) : new Headers();
@@ -172,6 +174,7 @@ class FetchMock {
 		stream = opts.stream;
 		theGlobal = opts.theGlobal;
 		debug = opts.debug;
+		STATUS_TEXT = opts.STATUS_TEXT;
 		this.routes = [];
 		this._calls = {};
 		this._matchedCalls = [];

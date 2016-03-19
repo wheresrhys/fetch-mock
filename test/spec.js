@@ -1,5 +1,7 @@
 'use strict';
 const expect = require('chai').expect;
+const sinon = require('sinon');
+
 module.exports = function (fetchMock, theGlobal, Request) {
 
 	describe('fetch-mock', function () {
@@ -662,6 +664,63 @@ module.exports = function (fetchMock, theGlobal, Request) {
 						});
 				});
 
+				it('respond with a promise of a response', function (done) {
+					let resolve;
+					const promise = new Promise(res => { resolve = res})
+					fetchMock.mock({
+						routes: {
+							name: 'route',
+							matcher: 'http://it.at.there/',
+							response: promise.then(() => 200)
+						}
+					});
+					const stub = sinon.spy(res => res);
+
+					fetch('http://it.at.there/', {headers: {header: 'val'}})
+						.then(stub)
+						.then(function (res) {
+							expect(res.status).to.equal(200);
+						});
+
+					setTimeout(() => {
+						expect(stub.called).to.be.false;
+						resolve();
+						setTimeout(() => {
+							expect(stub.called).to.be.true;
+							done();
+						}, 10)
+					}, 10)
+				});
+				it('respond with a promise of a complex response', function (done) {
+					let resolve;
+					const promise = new Promise(res => {resolve = res})
+					fetchMock.mock({
+						routes: {
+							name: 'route',
+							matcher: 'http://it.at.there/',
+							response: promise.then(() => function (url, opts) {
+								return url + opts.headers.header;
+							})
+						}
+					});
+					const stub = sinon.spy(res => res);
+					fetch('http://it.at.there/', {headers: {header: 'val'}})
+						.then(stub)
+						.then(function (res) {
+							expect(res.status).to.equal(200);
+							return res.text().then(function (text) {
+								expect(text).to.equal('http://it.at.there/val');
+							});
+						});
+					setTimeout(() => {
+						expect(stub.called).to.be.false;
+						resolve();
+						setTimeout(() => {
+							expect(stub.called).to.be.true;
+							done();
+						}, 10)
+					}, 10)
+				});
 			});
 
 		});

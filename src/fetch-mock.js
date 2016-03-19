@@ -5,7 +5,6 @@ let Request;
 let Response;
 let stream;
 let theGlobal;
-let debug;
 let statusTextMap;
 
 /**
@@ -15,51 +14,43 @@ let statusTextMap;
  * @param  {Object} config configuration for the response to be constructed
  * @return {Promise}       Promise for a Response object (or a rejected response to imitate network failure)
  */
-function mockResponse (url, config) {
-	debug('mocking response for ' + url);
+function mockResponse (url, responseConfig, fetchOpts) {
 
-	if (config.throws) {
-		debug('mocking failed request for ' + url);
-		return Promise.reject(config.throws);
+	if (typeof responseConfig === 'function') {
+		responseConfig = responseConfig(url, fetchOpts);
 	}
 
-	if (typeof config === 'number') {
-		debug('status response detected for ' + url);
-		config = {
-			status: config
-		};
-	} else if (typeof config === 'string' || !(config.body || config.headers || config.throws || config.status)) {
-		debug('body response detected for ' + url);
-		config = {
-			body: config
-		};
-	} else {
-		debug('full config response detected for ' + url);
+	if (responseConfig.throws) {
+		return Promise.reject(responseConfig.throws);
 	}
 
-	const opts = config.opts || {};
+	if (typeof responseConfig === 'number') {
+		responseConfig = {
+			status: responseConfig
+		};
+	} else if (typeof responseConfig === 'string' || !(responseConfig.body || responseConfig.headers || responseConfig.throws || responseConfig.status)) {
+		responseConfig = {
+			body: responseConfig
+		};
+	}
+
+	const opts = responseConfig.opts || {};
 	opts.url = url;
-	opts.sendAsJson = config.sendAsJson === undefined ? true : config.sendAsJson;
-	opts.status = config.status || 200;
+	opts.sendAsJson = responseConfig.sendAsJson === undefined ? true : responseConfig.sendAsJson;
+	opts.status = responseConfig.status || 200;
 	opts.statusText = statusTextMap['' + opts.status];
 	// The ternary operator is to cope with new Headers(undefined) throwing in Chrome
 	// https://code.google.com/p/chromium/issues/detail?id=335871
-	opts.headers = config.headers ? new Headers(config.headers) : new Headers();
+	opts.headers = responseConfig.headers ? new Headers(responseConfig.headers) : new Headers();
 
-	let body = config.body;
-	/*eslint-disable*/
-	if (opts.sendAsJson && config.body != null && typeof body === 'object') {
-	/*eslint-enable*/
+	let body = responseConfig.body;
+	if (opts.sendAsJson && responseConfig.body != null && typeof body === 'object') { //eslint-disable-line
 		body = JSON.stringify(body);
 	}
 
-	debug('sending body "' + body + '"" for ' + url);
-
 	if (stream) {
 		let s = new stream.Readable();
-		/*eslint-disable*/
-		if (body != null) {
-		/*eslint-enable*/
+		if (body != null) { //eslint-disable-line
 			s.push(body, 'utf-8');
 		}
 		s.push(null);
@@ -100,8 +91,6 @@ function normalizeRequest (url, options) {
  */
 function compileRoute (route) {
 
-	debug('compiling route: ' + route.name);
-
 	if (typeof route.response === 'undefined') {
 		throw new Error('Each route must define a response');
 	}
@@ -132,20 +121,17 @@ function compileRoute (route) {
 	if (typeof route.matcher === 'string') {
 
 		if (route.matcher.indexOf('^') === 0) {
-			debug('constructing starts with string matcher for route: ' + route.name);
 			const expectedUrl = route.matcher.substr(1);
 			matchUrl = function (url) {
 				return url.indexOf(expectedUrl) === 0;
 			};
 		} else {
-			debug('constructing string matcher for route: ' + route.name);
 			const expectedUrl = route.matcher;
 			matchUrl = function (url) {
 				return url === expectedUrl;
 			};
 		}
 	} else if (route.matcher instanceof RegExp) {
-		debug('constructing regex matcher for route: ' + route.name);
 		const urlRX = route.matcher;
 		matchUrl = function (url) {
 			return urlRX.test(url);
@@ -160,7 +146,6 @@ function compileRoute (route) {
 	return route;
 }
 
-
 class FetchMock {
 	/**
 	 * constructor
@@ -173,13 +158,12 @@ class FetchMock {
 		Response = opts.Response;
 		stream = opts.stream;
 		theGlobal = opts.theGlobal;
-		debug = opts.debug;
 		statusTextMap = opts.statusTextMap;
 		this.routes = [];
 		this._calls = {};
 		this._matchedCalls = [];
 		this._unmatchedCalls = [];
-		this.mockedContext = theGlobal;
+		this.fetchMock = this.fetchMock.bind(this);
 		this.realFetch = theGlobal.fetch && theGlobal.fetch.bind(theGlobal);
 	}
 
@@ -231,17 +215,9 @@ class FetchMock {
 			config = matcher;
 		}
 
-		debug('mocking fetch');
-
 		this.addRoutes(config.routes);
-
-		if (this.isMocking) {
-			return this;
-		}
-
-		this.isMocking = true;
-
-		this.mockedContext.fetch = this.constructMock(config);
+		this.greed = config.greed || this.greed || 'none';
+		theGlobal.fetch = this.fetchMock;
 		return this;
 	}
 
@@ -253,34 +229,26 @@ class FetchMock {
 	 * @return {Function}      Function expecting url + options or a Request object, and returning
 	 *                         a promise of a Response, or forwading to native fetch
 	 */
-	constructMock (config) {
-		debug('constructing mock function');
-		config = config || {};
-		this.addRoutes(config.routes);
-		config.greed = config.greed || 'none';
+	fetchMock (url, opts) {
 
-		const mock = (url, opts) => {
-			const response = this.router(url, opts);
-			if (response) {
-				debug('response found for ' + url);
-				return mockResponse(url, response);
+		const response = this.router(url, opts);
+		if (response) {
+			if (response instanceof Promise) {
+				return response.then(response => mockResponse(url, response, opts))
 			} else {
-				debug('response not found for ' + url);
-				this.push(null, [url, opts]);
-				if (config.greed === 'good') {
-					debug('sending default good response');
-					return mockResponse(url, {body: 'unmocked url: ' + url});
-				} else if (config.greed === 'bad') {
-					debug('sending default bad response');
-					return mockResponse(url, {throws: 'unmocked url: ' + url});
-				} else {
-					debug('forwarding to default fetch');
-					return this.realFetch(url, opts);
-				}
+				return mockResponse(url, response, opts)
 			}
-		};
+		} else {
+			this.push(null, [url, opts]);
+			if (this.greed === 'good') {
+				return mockResponse(url, {body: 'unmocked url: ' + url});
+			} else if (this.greed === 'bad') {
+				return mockResponse(url, {throws: 'unmocked url: ' + url});
+			} else {
+				return this.realFetch(url, opts);
+			}
+		}
 
-		return mock;
 	}
 	/**
 	 * router
@@ -291,27 +259,14 @@ class FetchMock {
 	 * @return {Object}
 	 */
 	router (url, opts) {
-		let response;
-		debug('searching for matching route for ' + url);
-		this.routes.some(route => {
-
+		let route;
+		for (let i = 0, il = this.routes.length; i < il ; i++) {
+			route = this.routes[i];
 			if (route.matcher(url, opts)) {
-				debug('Found matching route (' + route.name + ') for ' + url);
 				this.push(route.name, [url, opts]);
-
-				debug('Setting response for ' + route.name);
-				response = route.response;
-
-				if (typeof response === 'function') {
-					debug('Constructing dynamic response for ' + route.name);
-					response = response(url, opts);
-				}
-				return true;
+				return route.response;
 			}
-		});
-
-		debug('returning response for ' + url);
-		return response;
+		}
 	}
 
 	/**
@@ -325,7 +280,6 @@ class FetchMock {
 			throw new Error('.mock() must be passed configuration for routes')
 		}
 
-		debug('applying one time only routes');
 		if (!(routes instanceof Array)) {
 			routes = [routes];
 		}
@@ -355,12 +309,9 @@ class FetchMock {
 	 * Restores global fetch to its initial state and resets call history
 	 */
 	restore () {
-		debug('restoring fetch');
-		this.isMocking = false;
-		this.mockedContext.fetch = this.realFetch;
+		theGlobal.fetch = this.realFetch;
 		this.reset();
 		this.routes = [];
-		debug('fetch restored');
 	}
 
 	/**
@@ -379,7 +330,7 @@ class FetchMock {
 	 * @return {Function}
 	 */
 	getMock () {
-		return this.fetch;
+		return this.fetchMock;
 	}
 
 	/**
@@ -387,7 +338,6 @@ class FetchMock {
 	 * Resets call history
 	 */
 	reset () {
-		debug('resetting call logs');
 		this._calls = {};
 		this._matchedCalls = [];
 		this._unmatchedCalls = [];

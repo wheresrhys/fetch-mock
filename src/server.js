@@ -13,10 +13,5 @@ module.exports = new FetchMock({
 	Response: Response,
 	Headers: Headers,
 	stream: stream,
-	statusTextMap: http.STATUS_CODES,
-	debug: function () {
-		if (process.env.DEBUG && process.env.DEBUG.indexOf('fetch-mock') > -1) {
-			console.log.apply(console, [].slice.call(arguments)); //eslint-disable-line
-		}
-	}
+	statusTextMap: http.STATUS_CODES
 });

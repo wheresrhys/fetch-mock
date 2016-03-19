@@ -8,6 +8,5 @@ module.exports = new FetchMock({
 	Request: window.Request,
 	Response: window.Response,
 	Headers: window.Headers,
-	statusTextMap: statusTextMap,
-	debug: function () {}
+	statusTextMap: statusTextMap
 });

@@ -8,7 +8,7 @@ const FetchMock = require('./fetch-mock');
 const http = require('http');
 
 module.exports = new FetchMock({
-	theGlobal: GLOBAL,
+	theGlobal: global,
 	Request: Request,
 	Response: Response,
 	Headers: Headers,

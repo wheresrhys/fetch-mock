@@ -39,6 +39,8 @@ Calls `restore()` internally then calls `mock()`. This allows you to put some ge
 #### `reset()`
 Clears all data recorded for `fetch()`'s calls
 
+*Note that `restore()`, `reMock()` and `reset()` are all bound to fetchMock, and can be used directly as callbacks e.g. `afterEach(fetchMock.restore)` will work just fine. There is no need for `afterEach(function () {fetchMock.restore()})`*
+
 **For the methods below `matcher`, if given, should be either the name of a route (see advanced usage below) or equal to `matcher.toString()` for any unnamed route**
 
 #### `calls(matcher)`
@@ -72,8 +74,8 @@ myModule.onlyCallDomain2()
 		expect(fetchMock.calls().unmatched.length).to.equal(0);
 		expect(JSON.parse(fetchMock.lastUrl('http://domain2'))).to.equal('http://domain2/endpoint');
 		expect(JSON.parse(fetchMock.lastOptions('http://domain2').body)).to.deep.equal({prop: 'val'});
-		fetchMock.restore();
 	})
+	.then(fetchMock.restore)
 ```
 
 ## Advanced usage

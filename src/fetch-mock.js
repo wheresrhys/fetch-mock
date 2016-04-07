@@ -164,6 +164,9 @@ class FetchMock {
 		this._matchedCalls = [];
 		this._unmatchedCalls = [];
 		this.fetchMock = this.fetchMock.bind(this);
+		this.restore = this.restore.bind(this);
+		this.reMock = this.reMock.bind(this);
+		this.reset = this.reset.bind(this);
 		this.realFetch = theGlobal.fetch && theGlobal.fetch.bind(theGlobal);
 	}
 

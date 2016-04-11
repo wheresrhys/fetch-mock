@@ -368,7 +368,6 @@ module.exports = function (fetchMock, theGlobal, Request) {
 							done();
 						});
 				});
-
         it('match method', function (done) {
 					fetchMock.mock({
 						routes: [{
@@ -530,7 +529,162 @@ module.exports = function (fetchMock, theGlobal, Request) {
 				});
 
 			});
+			describe('call matching', function () {
+				it('match exact strings', function (done) {
+					fetchMock.mock({
+						routes: {
+							name: 'route',
+							matcher: 'http://it.at.there/',
+							response: 'ok'
+						}
+					});
+					Promise.all([fetch('http://it.at.there/'), fetch('http://it.at.thereabouts')])
+						.then(function () {
+							expect(fetchMock.calledMatching('route')).to.be.false;
+							expect(fetchMock.calledMatching('http://it.at.there/')).to.be.true;
+							expect(fetchMock.calledMatching('http://it.at.thereabouts')).to.be.true;
+							expect(fetchMock.callsMatching('route').routed.length).to.equal(0);
+							expect(fetchMock.callsMatching('http://it.at.there/').routed.length).to.equal(1);
+							expect(fetchMock.callsMatching('http://it.at.thereabouts').unrouted.length).to.equal(1);
+							done();
+						});
+				});
 
+				it('match when relative url', function (done) {
+					fetchMock.mock({
+						routes: {
+							name: 'route',
+							matcher: '/it.at.there/',
+							method: 'POST',
+							response: 'ok'
+						}
+					});
+					fetch('/it.at.there/', {method: 'POST'})
+						.then(function () {
+							expect(fetchMock.calledMatching('route')).to.be.false;
+							expect(fetchMock.calledMatching('/it.at.there/')).to.be.true;
+							expect(fetchMock.callsMatching('route').routed.length).to.equal(0);
+							expect(fetchMock.callsMatching('/it.at.there/').routed.length).to.equal(1);
+							done();
+						});
+				});
+
+				it('match when Request instance', function (done) {
+					fetchMock.mock({
+						routes: {
+							name: 'route',
+							matcher: 'http://it.at.there/',
+							method: 'POST',
+							response: 'ok'
+						}
+					});
+					fetch(new Request('http://it.at.there/', {method: 'POST'}))
+						.then(function () {
+							expect(fetchMock.calledMatching('route')).to.be.false;
+							expect(fetchMock.calledMatching('http://it.at.there/')).to.be.true;
+							expect(fetchMock.callsMatching('route').routed.length).to.equal(0);
+							expect(fetchMock.callsMatching('http://it.at.there/').routed.length).to.equal(1);
+							done();
+						});
+				});
+
+				it('match strings starting with a string', function (done) {
+					fetchMock.mock({
+						routes: {
+							name: 'route',
+							matcher: '^http://it.at.there',
+							response: 'ok'
+						}
+					});
+					Promise.all([
+						fetch('http://it.at.there'),
+						fetch('http://it.at.thereabouts'),
+						fetch('http://it.at.hereabouts')]
+					)
+						.then(function () {
+							expect(fetchMock.calledMatching('route')).to.be.false;
+							expect(fetchMock.calledMatching('http://it.at.there')).to.be.true;
+							expect(fetchMock.calledMatching('http://it.at.thereabouts')).to.be.true;
+							expect(fetchMock.calledMatching('http://it.at.hereabouts')).to.be.true;
+							expect(fetchMock.calledMatching('^http://it')).to.be.true;
+							expect(fetchMock.calledMatching('^http://it.at.there')).to.be.true;
+							expect(fetchMock.calledMatching('^http://it.at.therewego')).to.be.false;
+							expect(fetchMock.callsMatching('route').routed.length).to.equal(0);
+							expect(fetchMock.callsMatching('http://it.at.there').routed.length).to.equal(1);
+							expect(fetchMock.callsMatching('http://it.at.thereabouts').routed.length).to.equal(1);
+							expect(fetchMock.callsMatching('http://it.at.hereabouts').unrouted.length).to.equal(1);
+							expect(fetchMock.callsMatching('^http://it').routed.length).to.equal(2);
+							expect(fetchMock.callsMatching('^http://it').unrouted.length).to.equal(1);
+							expect(fetchMock.callsMatching('^http://it.at.there').routed.length).to.equal(2);
+							expect(fetchMock.callsMatching('^http://it.at.therewego').routed.length).to.equal(0);
+							done();
+						});
+				});
+
+				it('match regular expressions', function (done) {
+					fetchMock.mock({
+						routes: {
+							name: 'route',
+							matcher: /http\:\/\/it\.at\.there\/\d+/,
+							response: 'ok'
+						}
+					});
+					Promise.all([fetch('http://it.at.there/'), fetch('http://it.at.there/12345'), fetch('http://it.at.there/abcde')])
+						.then(function () {
+							expect(fetchMock.calledMatching('route')).to.be.false;
+							expect(fetchMock.calledMatching(/http\:\/\/it\.at\.there\/\d+/)).to.be.true;
+							expect(fetchMock.calledMatching(/http\:\/\/it\.at\.there\/[a-e]+/)).to.be.true;
+							expect(fetchMock.calledMatching(/http\:\/\/it\.at\.there\/[f-z]+/)).to.be.false;
+							expect(fetchMock.callsMatching('route').routed.length).to.equal(0);
+							expect(fetchMock.callsMatching(/http\:\/\/it\.at\.there\/\d+/).routed.length).to.equal(1);
+							expect(fetchMock.callsMatching(/http\:\/\/it\.at\.there\/[a-e]+/).routed.length).to.equal(0);
+							expect(fetchMock.callsMatching(/http\:\/\/it\.at\.there\/[a-e]+/).unrouted.length).to.equal(1);
+							expect(fetchMock.callsMatching(/http\:\/\/it\.at\.there\/[f-z]+/).routed.length).to.equal(0);
+							done();
+						});
+				});
+
+				it('match using custom functions', function (done) {
+					fetchMock.mock({
+						routes: {
+							name: 'route',
+							matcher: function (url, opts) {
+								return url.indexOf('logged-in') > -1 && opts && opts.headers && opts.headers.authorized === true;
+							},
+							response: 'ok'
+						}
+					});
+					Promise.all([
+						fetch('http://it.at.there/logged-in', {headers:{authorized: true}}),
+						fetch('http://it.at.there/12345', {headers:{authorized: true}}),
+						fetch('http://it.at.there/logged-in')
+					])
+						.then(function () {
+							expect(fetchMock.calledMatching('route')).to.be.false;
+							expect(fetchMock.calledMatching(function (url, opts) {
+								return url.indexOf('logged-in') > -1 && opts && opts.headers && opts.headers.authorized === true;
+							})).to.be.true;
+							expect(fetchMock.calledMatching(function (url, opts) {
+								return url.indexOf('12345') > -1 && opts && opts.headers && opts.headers.authorized === true;
+							})).to.be.true;
+							expect(fetchMock.calledMatching(function (url, opts) {
+								return url.indexOf('67890') > -1 && opts && opts.headers && opts.headers.authorized === true;
+							})).to.be.false;
+
+							expect(fetchMock.callsMatching('route').routed.length).to.equal(0);							
+							expect(fetchMock.callsMatching(function (url, opts) {
+								return url.indexOf('logged-in') > -1 && opts && opts.headers && opts.headers.authorized === true;
+							}).routed.length).to.equal(1);
+							expect(fetchMock.callsMatching(function (url, opts) {
+								return url.indexOf('12345') > -1 && opts && opts.headers && opts.headers.authorized === true;
+							}).unrouted.length).to.equal(1);
+							expect(fetchMock.callsMatching(function (url, opts) {
+								return url.indexOf('67890') > -1 && opts && opts.headers && opts.headers.authorized === true;
+							}).routed.length).to.equal(0);
+							done();
+						});
+				});
+			});
 			describe('responses', function () {
 
 				it('respond with a status', function (done) {

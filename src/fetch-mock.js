@@ -83,6 +83,55 @@ function normalizeRequest (url, options) {
 }
 
 /**
+ * compileUrlMatcher
+ * Compiles a URL matching function.
+ * @param  {String|RegExp|Function(String, Object=):Boolean} matcher
+ * @return {Function(String, Object=):Boolean}
+ */
+function compileUrlMatcher (matcher) {
+	if (typeof matcher === 'function') {
+		return matcher;
+	}
+	else if (typeof matcher === 'string') {
+
+		if (matcher.indexOf('^') === 0) {
+			const expectedUrl = matcher.substr(1);
+			return function (url) {
+				return url.indexOf(expectedUrl) === 0;
+			};
+		} else {
+			const expectedUrl = matcher;
+			return function (url) {
+				return url === expectedUrl;
+			};
+		}
+	} else if (matcher instanceof RegExp) {
+		const urlRX = matcher;
+		return function (url) {
+			return urlRX.test(url);
+		};
+	}
+	else {
+		throw new Error('URL matcher must be a function, string, or RegExp');
+	}
+}
+
+/**
+ * compileUserUrlMatcher
+ * Compiles a URL matching function that also normalizes Request objects
+ * @param  {String|RegExp|Function(String, Object=):Boolean} matcher
+ * @return {Function(String, Object=):Boolean}
+ */
+function compileUserUrlMatcher (matcher) {
+	matcher = compileUrlMatcher(matcher);
+	return function (url, options) {
+		const req = normalizeRequest(url, options);
+		return matcher(req.url, options);
+	};
+}
+
+
+/**
  * compileRoute
  * Given a route configuration object, validates the object structure and compiles
  * the object into a {name, matcher, response} triple
@@ -116,27 +165,7 @@ function compileRoute (route) {
     return !expectedMethod || expectedMethod === (method ? method.toLowerCase() : 'get');
   };
 
-	let matchUrl;
-
-	if (typeof route.matcher === 'string') {
-
-		if (route.matcher.indexOf('^') === 0) {
-			const expectedUrl = route.matcher.substr(1);
-			matchUrl = function (url) {
-				return url.indexOf(expectedUrl) === 0;
-			};
-		} else {
-			const expectedUrl = route.matcher;
-			matchUrl = function (url) {
-				return url === expectedUrl;
-			};
-		}
-	} else if (route.matcher instanceof RegExp) {
-		const urlRX = route.matcher;
-		matchUrl = function (url) {
-			return urlRX.test(url);
-		};
-	}
+	let matchUrl = compileUrlMatcher(route.matcher);
 
 	route.matcher = function (url, options) {
 		const req = normalizeRequest(url, options);
@@ -385,6 +414,27 @@ class FetchMock {
 			return !!(this._matchedCalls.length);
 		}
 		return !!(this._calls[name] && this._calls[name].length);
+	}
+
+	/**
+	 * callsMatching
+	 * Returns call history filtered by matcher. See README
+	 */
+	callsMatching (matcher) {
+		matcher = compileUserUrlMatcher(matcher);
+		return {
+			routed: this._matchedCalls.filter(call => matcher(call[0], call[1])),
+			unrouted: this._unmatchedCalls.filter(call => matcher(call[0], call[1]))
+		};
+	}
+
+	/**
+	 * calledMatching
+	 * Returns whether fetch has been called with a matching URL. See README
+	 */
+	calledMatching (matcher) {
+		matcher = compileUserUrlMatcher(matcher);
+		return [this._matchedCalls, this._unmatchedCalls].some(calls => calls.some(call => matcher(call[0], call[1])));
 	}
 }
 

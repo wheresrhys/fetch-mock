@@ -450,7 +450,7 @@ module.exports = function (fetchMock, theGlobal, Request) {
 						});
 				});
 
-				it('have helpers to retrieve paramaters pf last call', function () {
+				it('have helpers to retrieve parameters of last call', function () {
 					fetchMock.mock({
 						routes: {
 							name: 'route',

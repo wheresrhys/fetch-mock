@@ -407,6 +407,9 @@ module.exports = function (fetchMock, theGlobal, Request) {
 							expect(fetchMock.calls('route2').length).to.equal(1);
 							expect(fetchMock.calls().matched.length).to.equal(2);
 							expect(fetchMock.calls().unmatched.length).to.equal(1);
+							expect(fetchMock.calledMatching('^http://it')).to.be.true;
+							expect(fetchMock.callsMatching('^http://it').routed.length).to.equal(2);
+							expect(fetchMock.callsMatching('^http://it').unrouted.length).to.equal(1);
 						});
 				});
 
@@ -429,6 +432,9 @@ module.exports = function (fetchMock, theGlobal, Request) {
 							expect(fetchMock.calls('route1').length).to.equal(1);
 							expect(fetchMock.calls().matched.length).to.equal(1);
 							expect(fetchMock.calls('route2').length).to.equal(0);
+							expect(fetchMock.calledMatching('^http://it')).to.be.true;
+							expect(fetchMock.callsMatching('^http://it').routed.length).to.equal(1);
+							expect(fetchMock.callsMatching('^http://it').unrouted.length).to.equal(0);
 						});
 				});
 

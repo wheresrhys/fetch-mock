@@ -58,12 +58,12 @@ Returns the url for the last matched call to fetch
 #### `lastOptions(name)`
 Returns the options for the last matched call to fetch
 
-**In the following methods, `matcher` can be a `string`, `RegExp` or `Function(url, opts)` and will attempt to match against all calls regardless of whether they match any configured routes**
+**In the following methods, `matcher` can be a `string`, `RegExp` or `Function(url, opts)` and will be used to search through _all_ calls, regardless of whether they previously matched any configured routes**
 
-#### `callsMatching(matcher)`
+#### `filterCalls(matcher)`
 Returns an object `{routed: [], unrouted: []}` containing arrays of all matching calls to fetch, grouped by whether they matched any routes or not. `routed` and `unrouted` here are analogous to `matched` and `unmatched` as returned by `calls(name)`.
 
-#### `calledMatching(matcher)`
+#### `testCalls(matcher)`
 Returns a Boolean indicating whether fetch was called with a URL matching `matcher`.
 
 

@@ -417,10 +417,10 @@ class FetchMock {
 	}
 
 	/**
-	 * callsMatching
+	 * filterCalls
 	 * Returns call history filtered by matcher. See README
 	 */
-	callsMatching (matcher) {
+	filterCalls (matcher) {
 		matcher = compileUserUrlMatcher(matcher);
 		return {
 			routed: this._matchedCalls.filter(call => matcher(call[0], call[1])),
@@ -429,10 +429,10 @@ class FetchMock {
 	}
 
 	/**
-	 * calledMatching
+	 * testCalls
 	 * Returns whether fetch has been called with a matching URL. See README
 	 */
-	calledMatching (matcher) {
+	testCalls (matcher) {
 		matcher = compileUserUrlMatcher(matcher);
 		return [this._matchedCalls, this._unmatchedCalls].some(calls => calls.some(call => matcher(call[0], call[1])));
 	}

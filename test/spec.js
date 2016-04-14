@@ -407,9 +407,9 @@ module.exports = function (fetchMock, theGlobal, Request) {
 							expect(fetchMock.calls('route2').length).to.equal(1);
 							expect(fetchMock.calls().matched.length).to.equal(2);
 							expect(fetchMock.calls().unmatched.length).to.equal(1);
-							expect(fetchMock.calledMatching('^http://it')).to.be.true;
-							expect(fetchMock.callsMatching('^http://it').routed.length).to.equal(2);
-							expect(fetchMock.callsMatching('^http://it').unrouted.length).to.equal(1);
+							expect(fetchMock.testCalls('^http://it')).to.be.true;
+							expect(fetchMock.filterCalls('^http://it').routed.length).to.equal(2);
+							expect(fetchMock.filterCalls('^http://it').unrouted.length).to.equal(1);
 						});
 				});
 
@@ -432,9 +432,9 @@ module.exports = function (fetchMock, theGlobal, Request) {
 							expect(fetchMock.calls('route1').length).to.equal(1);
 							expect(fetchMock.calls().matched.length).to.equal(1);
 							expect(fetchMock.calls('route2').length).to.equal(0);
-							expect(fetchMock.calledMatching('^http://it')).to.be.true;
-							expect(fetchMock.callsMatching('^http://it').routed.length).to.equal(1);
-							expect(fetchMock.callsMatching('^http://it').unrouted.length).to.equal(0);
+							expect(fetchMock.testCalls('^http://it')).to.be.true;
+							expect(fetchMock.filterCalls('^http://it').routed.length).to.equal(1);
+							expect(fetchMock.filterCalls('^http://it').unrouted.length).to.equal(0);
 						});
 				});
 
@@ -531,12 +531,12 @@ module.exports = function (fetchMock, theGlobal, Request) {
 					});
 					return Promise.all([fetch('http://it.at.there/'), fetch('http://it.at.thereabouts')])
 						.then(function () {
-							expect(fetchMock.calledMatching('route')).to.be.false;
-							expect(fetchMock.calledMatching('http://it.at.there/')).to.be.true;
-							expect(fetchMock.calledMatching('http://it.at.thereabouts')).to.be.true;
-							expect(fetchMock.callsMatching('route').routed.length).to.equal(0);
-							expect(fetchMock.callsMatching('http://it.at.there/').routed.length).to.equal(1);
-							expect(fetchMock.callsMatching('http://it.at.thereabouts').unrouted.length).to.equal(1);
+							expect(fetchMock.testCalls('route')).to.be.false;
+							expect(fetchMock.testCalls('http://it.at.there/')).to.be.true;
+							expect(fetchMock.testCalls('http://it.at.thereabouts')).to.be.true;
+							expect(fetchMock.filterCalls('route').routed.length).to.equal(0);
+							expect(fetchMock.filterCalls('http://it.at.there/').routed.length).to.equal(1);
+							expect(fetchMock.filterCalls('http://it.at.thereabouts').unrouted.length).to.equal(1);
 						});
 				});
 
@@ -551,10 +551,10 @@ module.exports = function (fetchMock, theGlobal, Request) {
 					});
 					return fetch('/it.at.there/', {method: 'POST'})
 						.then(function () {
-							expect(fetchMock.calledMatching('route')).to.be.false;
-							expect(fetchMock.calledMatching('/it.at.there/')).to.be.true;
-							expect(fetchMock.callsMatching('route').routed.length).to.equal(0);
-							expect(fetchMock.callsMatching('/it.at.there/').routed.length).to.equal(1);
+							expect(fetchMock.testCalls('route')).to.be.false;
+							expect(fetchMock.testCalls('/it.at.there/')).to.be.true;
+							expect(fetchMock.filterCalls('route').routed.length).to.equal(0);
+							expect(fetchMock.filterCalls('/it.at.there/').routed.length).to.equal(1);
 						});
 				});
 
@@ -569,10 +569,10 @@ module.exports = function (fetchMock, theGlobal, Request) {
 					});
 					return fetch(new Request('http://it.at.there/', {method: 'POST'}))
 						.then(function () {
-							expect(fetchMock.calledMatching('route')).to.be.false;
-							expect(fetchMock.calledMatching('http://it.at.there/')).to.be.true;
-							expect(fetchMock.callsMatching('route').routed.length).to.equal(0);
-							expect(fetchMock.callsMatching('http://it.at.there/').routed.length).to.equal(1);
+							expect(fetchMock.testCalls('route')).to.be.false;
+							expect(fetchMock.testCalls('http://it.at.there/')).to.be.true;
+							expect(fetchMock.filterCalls('route').routed.length).to.equal(0);
+							expect(fetchMock.filterCalls('http://it.at.there/').routed.length).to.equal(1);
 						});
 				});
 
@@ -590,21 +590,21 @@ module.exports = function (fetchMock, theGlobal, Request) {
 						fetch('http://it.at.hereabouts')]
 					)
 						.then(function () {
-							expect(fetchMock.calledMatching('route')).to.be.false;
-							expect(fetchMock.calledMatching('http://it.at.there')).to.be.true;
-							expect(fetchMock.calledMatching('http://it.at.thereabouts')).to.be.true;
-							expect(fetchMock.calledMatching('http://it.at.hereabouts')).to.be.true;
-							expect(fetchMock.calledMatching('^http://it')).to.be.true;
-							expect(fetchMock.calledMatching('^http://it.at.there')).to.be.true;
-							expect(fetchMock.calledMatching('^http://it.at.therewego')).to.be.false;
-							expect(fetchMock.callsMatching('route').routed.length).to.equal(0);
-							expect(fetchMock.callsMatching('http://it.at.there').routed.length).to.equal(1);
-							expect(fetchMock.callsMatching('http://it.at.thereabouts').routed.length).to.equal(1);
-							expect(fetchMock.callsMatching('http://it.at.hereabouts').unrouted.length).to.equal(1);
-							expect(fetchMock.callsMatching('^http://it').routed.length).to.equal(2);
-							expect(fetchMock.callsMatching('^http://it').unrouted.length).to.equal(1);
-							expect(fetchMock.callsMatching('^http://it.at.there').routed.length).to.equal(2);
-							expect(fetchMock.callsMatching('^http://it.at.therewego').routed.length).to.equal(0);
+							expect(fetchMock.testCalls('route')).to.be.false;
+							expect(fetchMock.testCalls('http://it.at.there')).to.be.true;
+							expect(fetchMock.testCalls('http://it.at.thereabouts')).to.be.true;
+							expect(fetchMock.testCalls('http://it.at.hereabouts')).to.be.true;
+							expect(fetchMock.testCalls('^http://it')).to.be.true;
+							expect(fetchMock.testCalls('^http://it.at.there')).to.be.true;
+							expect(fetchMock.testCalls('^http://it.at.therewego')).to.be.false;
+							expect(fetchMock.filterCalls('route').routed.length).to.equal(0);
+							expect(fetchMock.filterCalls('http://it.at.there').routed.length).to.equal(1);
+							expect(fetchMock.filterCalls('http://it.at.thereabouts').routed.length).to.equal(1);
+							expect(fetchMock.filterCalls('http://it.at.hereabouts').unrouted.length).to.equal(1);
+							expect(fetchMock.filterCalls('^http://it').routed.length).to.equal(2);
+							expect(fetchMock.filterCalls('^http://it').unrouted.length).to.equal(1);
+							expect(fetchMock.filterCalls('^http://it.at.there').routed.length).to.equal(2);
+							expect(fetchMock.filterCalls('^http://it.at.therewego').routed.length).to.equal(0);
 						});
 				});
 
@@ -618,15 +618,15 @@ module.exports = function (fetchMock, theGlobal, Request) {
 					});
 					return Promise.all([fetch('http://it.at.there/'), fetch('http://it.at.there/12345'), fetch('http://it.at.there/abcde')])
 						.then(function () {
-							expect(fetchMock.calledMatching('route')).to.be.false;
-							expect(fetchMock.calledMatching(/http\:\/\/it\.at\.there\/\d+/)).to.be.true;
-							expect(fetchMock.calledMatching(/http\:\/\/it\.at\.there\/[a-e]+/)).to.be.true;
-							expect(fetchMock.calledMatching(/http\:\/\/it\.at\.there\/[f-z]+/)).to.be.false;
-							expect(fetchMock.callsMatching('route').routed.length).to.equal(0);
-							expect(fetchMock.callsMatching(/http\:\/\/it\.at\.there\/\d+/).routed.length).to.equal(1);
-							expect(fetchMock.callsMatching(/http\:\/\/it\.at\.there\/[a-e]+/).routed.length).to.equal(0);
-							expect(fetchMock.callsMatching(/http\:\/\/it\.at\.there\/[a-e]+/).unrouted.length).to.equal(1);
-							expect(fetchMock.callsMatching(/http\:\/\/it\.at\.there\/[f-z]+/).routed.length).to.equal(0);
+							expect(fetchMock.testCalls('route')).to.be.false;
+							expect(fetchMock.testCalls(/http\:\/\/it\.at\.there\/\d+/)).to.be.true;
+							expect(fetchMock.testCalls(/http\:\/\/it\.at\.there\/[a-e]+/)).to.be.true;
+							expect(fetchMock.testCalls(/http\:\/\/it\.at\.there\/[f-z]+/)).to.be.false;
+							expect(fetchMock.filterCalls('route').routed.length).to.equal(0);
+							expect(fetchMock.filterCalls(/http\:\/\/it\.at\.there\/\d+/).routed.length).to.equal(1);
+							expect(fetchMock.filterCalls(/http\:\/\/it\.at\.there\/[a-e]+/).routed.length).to.equal(0);
+							expect(fetchMock.filterCalls(/http\:\/\/it\.at\.there\/[a-e]+/).unrouted.length).to.equal(1);
+							expect(fetchMock.filterCalls(/http\:\/\/it\.at\.there\/[f-z]+/).routed.length).to.equal(0);
 						});
 				});
 
@@ -646,25 +646,25 @@ module.exports = function (fetchMock, theGlobal, Request) {
 						fetch('http://it.at.there/logged-in')
 					])
 						.then(function () {
-							expect(fetchMock.calledMatching('route')).to.be.false;
-							expect(fetchMock.calledMatching(function (url, opts) {
+							expect(fetchMock.testCalls('route')).to.be.false;
+							expect(fetchMock.testCalls(function (url, opts) {
 								return url.indexOf('logged-in') > -1 && opts && opts.headers && opts.headers.authorized === true;
 							})).to.be.true;
-							expect(fetchMock.calledMatching(function (url, opts) {
+							expect(fetchMock.testCalls(function (url, opts) {
 								return url.indexOf('12345') > -1 && opts && opts.headers && opts.headers.authorized === true;
 							})).to.be.true;
-							expect(fetchMock.calledMatching(function (url, opts) {
+							expect(fetchMock.testCalls(function (url, opts) {
 								return url.indexOf('67890') > -1 && opts && opts.headers && opts.headers.authorized === true;
 							})).to.be.false;
 
-							expect(fetchMock.callsMatching('route').routed.length).to.equal(0);							
-							expect(fetchMock.callsMatching(function (url, opts) {
+							expect(fetchMock.filterCalls('route').routed.length).to.equal(0);							
+							expect(fetchMock.filterCalls(function (url, opts) {
 								return url.indexOf('logged-in') > -1 && opts && opts.headers && opts.headers.authorized === true;
 							}).routed.length).to.equal(1);
-							expect(fetchMock.callsMatching(function (url, opts) {
+							expect(fetchMock.filterCalls(function (url, opts) {
 								return url.indexOf('12345') > -1 && opts && opts.headers && opts.headers.authorized === true;
 							}).unrouted.length).to.equal(1);
-							expect(fetchMock.callsMatching(function (url, opts) {
+							expect(fetchMock.filterCalls(function (url, opts) {
 								return url.indexOf('67890') > -1 && opts && opts.headers && opts.headers.authorized === true;
 							}).routed.length).to.equal(0);
 						});

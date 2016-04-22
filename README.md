@@ -142,7 +142,8 @@ If using a mock loading library such as `mockery`, are you requiring the module 
 
 ### Polyfilling fetch
 * In nodejs `require('isomorphic-fetch')` before any of your tests.
-* In the browser `require('isomorphic-fetch')` can also be used, but it may be easier to `npm install whatwg-fetch` (the module isomorphic-fetch is built around) and load `./node_modules/whatwg-fetch/fetch.js` directly into the page, either in a script tag or by referencing it your test runner config
+* In the browser `require('isomorphic-fetch')` can also be used, but it may be easier to `npm install whatwg-fetch` (the module isomorphic-fetch is built around) and load `./node_modules/whatwg-fetch/fetch.js` directly into the page, either in a script tag or by referencing it your test runner config. 
+* When using karma-webpack it's best not to use the `webpack.ProvidePlugin` for this. Instead just add `node_modules/whatwg-fetch/fetch.js` to your list of files to include, or require it directly into your tests before requiring fetch-mock.
 
 ## V4 changelog
 * `registerRoute()` and `unregisterRoute()` have been removed to simplify the API. Since V3, calls to `.mock()` can be chained, so persisting routes over a series of tests can easily be achieved by means of a beforeEach or helper e.g.

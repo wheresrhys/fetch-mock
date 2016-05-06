@@ -5,7 +5,7 @@ Mock http requests made using fetch (or [isomorphic-fetch](https://www.npmjs.com
 
 `npm install fetch-mock` then `require('fetch-mock')` in most environments.
 
-[Troubleshooting and alternative installation](#troubleshooting), [V4 changelog](#v4-changelog)
+[Troubleshooting and alternative installation](#troubleshooting-and-alternative-installation), [V4 changelog](#v4-changelog)
 
 ## Basic usage
 

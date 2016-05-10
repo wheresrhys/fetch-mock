@@ -645,6 +645,25 @@ module.exports = function (fetchMock, theGlobal, Request) {
 						});
 				});
 
+				it('construct a promised response based on the request', function () {
+					fetchMock.mock({
+						routes: {
+							name: 'route',
+							matcher: 'http://it.at.there/',
+							response: function (url, opts) {
+								return Promise.resolve(url + opts.headers.header);
+							}
+						}
+					});
+					return fetch('http://it.at.there/', {headers: {header: 'val'}})
+						.then(function (res) {
+							expect(res.status).to.equal(200);
+							return res.text().then(function (text) {
+								expect(text).to.equal('http://it.at.there/val');
+							});
+						});
+				});
+
 				it('respond with a promise of a response', function (done) {
 					let resolve;
 					const promise = new Promise(res => { resolve = res})
@@ -672,9 +691,12 @@ module.exports = function (fetchMock, theGlobal, Request) {
 						}, 10)
 					}, 10)
 				});
-				it('respond with a promise of a complex response', function (done) {
+
+				it ('respond with a promise of a complex response', function (done) {
 					let resolve;
+
 					const promise = new Promise(res => {resolve = res})
+
 					fetchMock.mock({
 						routes: {
 							name: 'route',
@@ -685,6 +707,7 @@ module.exports = function (fetchMock, theGlobal, Request) {
 						}
 					});
 					const stub = sinon.spy(res => res);
+
 					fetch('http://it.at.there/', {headers: {header: 'val'}})
 						.then(stub)
 						.then(function (res) {
@@ -705,6 +728,5 @@ module.exports = function (fetchMock, theGlobal, Request) {
 			});
 
 		});
-
 	});
 }

@@ -28,7 +28,7 @@ Replaces `fetch()` with a stub which records its calls, grouped by route, and op
 		* `headers`: Set the response headers. (`object`)
 		* `throws`: If this property is present then a `Promise` rejected with the value of `throws` is returned
 		* `sendAsJson`: This property determines whether or not the request body should be JSON.stringified before being sent (defaults to true).
-	* `Function(url, opts)`: A function that is passed the url and opts `fetch()` is called with and that returns any of the responses listed above  
+	* `Function(url, opts)`: A function that is passed the url and opts `fetch()` is called with and that returns any of the responses listed above (or a `Promise` for any of them)
 
 #### `restore()`
 Restores `fetch()` to its unstubbed state and clears all data recorded for its calls

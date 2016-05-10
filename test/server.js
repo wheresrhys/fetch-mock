@@ -13,17 +13,20 @@ const dummyFetch = function () {
 	return Promise.resolve(arguments);
 };
 
-require('./spec')(fetchMock, GLOBAL, require('node-fetch').Request);
+require('./spec')(fetchMock, global, require('node-fetch').Request);
 
 describe('new non-global use', function () {
 
 	before(function () {
+
 		try {
 			fetchMock.restore();
 		} catch (e) {}
+		delete global.fetch;
+		delete fetchMock.realFetch;
 	});
-	it('stubs non global fetch if function passed in', function () {
 
+	it('stubs non global fetch if function passed in', function () {
 		fetchMock.useNonGlobalFetch(dummyFetch);
 		expect(fetchMock.realFetch).to.equal(dummyFetch);
 		fetchMock.mock(/a/,200);

@@ -40,3 +40,22 @@ describe('request types that only work in the browser', function () {
 
 require('./spec')(fetchMock, window, window.Request);
 
+describe('no real fetch', function () {
+	it('should cope when there is no global fetch defined', function () {
+		const fetchCache = window.fetch;
+		delete window.fetch;
+		const realFetchCache = fetchMock.realFetch;
+		delete fetchMock.realFetch;
+		fetchMock.mock(/a/, 200);
+		expect(function () {
+			fetch('http://www.example.com');
+		}).not.to.throw();
+
+		expect(function () {
+			fetchMock.calls();
+		}).not.to.throw();
+		fetchMock.restore();
+		fetchMock.realFetch = realFetchCache;
+		window.fetch = fetchCache;
+	});
+});

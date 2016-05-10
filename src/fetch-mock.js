@@ -16,6 +16,10 @@ let statusTextMap;
  */
 function mockResponse (url, responseConfig, fetchOpts) {
 
+	// It seems odd to call this in here even though it's already called within fetchMock
+	// It's to handle the fact that because we want to support making it very easy to add a
+	// delay to any sort of response (including responses which are defined with a function)
+	// while also allowing function responses to return a Promise for a response config.
 	if (typeof responseConfig === 'function') {
 		responseConfig = responseConfig(url, fetchOpts);
 	}
@@ -110,11 +114,11 @@ function compileRoute (route) {
 		return route;
 	}
 
-  const expectedMethod = route.method && route.method.toLowerCase();
+	const expectedMethod = route.method && route.method.toLowerCase();
 
-  function matchMethod (method) {
-    return !expectedMethod || expectedMethod === (method ? method.toLowerCase() : 'get');
-  };
+	function matchMethod (method) {
+		return !expectedMethod || expectedMethod === (method ? method.toLowerCase() : 'get');
+	};
 
 	let matchUrl;
 
@@ -234,8 +238,14 @@ class FetchMock {
 	 */
 	fetchMock (url, opts) {
 
-		const response = this.router(url, opts);
+		let response = this.router(url, opts);
+
 		if (response) {
+
+			if (typeof response === 'function') {
+				response = response (url, opts);
+			}
+
 			if (response instanceof Promise) {
 				return response.then(response => mockResponse(url, response, opts))
 			} else {

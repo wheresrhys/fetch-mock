@@ -15,6 +15,20 @@ const dummyFetch = function () {
 
 require('./spec')(fetchMock, global, require('node-fetch').Request);
 
+describe('support for Buffers', function () {
+	it('can respond with a buffer', function () {
+		fetchMock.mock(/a/, {
+			sendAsJson: false,
+			body: new Buffer('buffer')
+		})
+		return fetch('http://a.com')
+			.then(res => res.text())
+			.then(txt => {
+				expect(txt).to.equal('buffer');
+			});
+	});
+});
+
 describe('new non-global use', function () {
 
 	before(function () {

@@ -140,6 +140,9 @@ If using a mock loading library such as `mockery`, are you requiring the module 
 * If you need to use fetch-mock without commonjs, you can include the precompiled `node_modules/fetch-mock/es5/client-browserified.js` in a script tag. This loads fetch-mock into the `fetchMock` global variable.
 * For server side tests running in nodejs 0.12 or lower use `require('fetch-mock/es5/server')`
 
+### Matching `Request` objects in node fails
+In node, if using npm at a version less than 2 the `Request` constructor used by `fetch-mock` won't necessarily be the same as the one used by `isomorphic-fetch`. To fix this upgrade to npm@3.
+
 ### Polyfilling fetch
 * In nodejs `require('isomorphic-fetch')` before any of your tests.
 * In the browser `require('isomorphic-fetch')` can also be used, but it may be easier to `npm install whatwg-fetch` (the module isomorphic-fetch is built around) and load `./node_modules/whatwg-fetch/fetch.js` directly into the page, either in a script tag or by referencing it your test runner config. 

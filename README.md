@@ -41,22 +41,32 @@ Clears all data recorded for `fetch()`'s calls
 
 *Note that `restore()`, `reMock()` and `reset()` are all bound to fetchMock, and can be used directly as callbacks e.g. `afterEach(fetchMock.restore)` will work just fine. There is no need for `afterEach(function () {fetchMock.restore()})`*
 
-**For the methods below `matcher`, if given, should be either the name of a route (see advanced usage below) or equal to `matcher.toString()` for any unnamed route**
+**For the methods below `name`, if given, should be either the name of a route (see advanced usage below) or equal to `matcher.toString()` for any unnamed route**
 
-#### `calls(matcher)`
-Returns an object `{matched: [], unmatched: []}` containing arrays of all calls to fetch, grouped by whether fetch-mock matched them or not. If `matcher` is specified then only calls to fetch matching that route are returned.
+#### `calls(name)`
+Returns an object `{matched: [], unmatched: []}` containing arrays of all calls to fetch, grouped by whether fetch-mock matched them or not. If `name` is specified then only calls to fetch matching that route are returned.
 
-#### `called(matcher)`
-Returns a Boolean indicating whether fetch was called and a route was matched. If `matcher` is specified it only returns `true` if that particular route was matched.
+#### `called(name)`
+Returns a Boolean indicating whether fetch was called and a route was matched. If `name` is specified it only returns `true` if that particular route was matched.
 
-#### `lastCall(matcher)`
+#### `lastCall(name)`
 Returns the arguments for the last matched call to fetch
 
-#### `lastUrl(matcher)`
+#### `lastUrl(name)`
 Returns the url for the last matched call to fetch
 
-#### `lastOptions(matcher)`
+#### `lastOptions(name)`
 Returns the options for the last matched call to fetch
+
+**In the following methods, `matcher` can be a `string`, `RegExp` or `Function(url, opts)` and will be used to search through _all_ calls, regardless of whether they previously matched any configured routes**
+
+#### `filterCalls(matcher)`
+Returns an object `{routed: [], unrouted: []}` containing arrays of all matching calls to fetch, grouped by whether they matched any routes or not. `routed` and `unrouted` here are analogous to `matched` and `unmatched` as returned by `calls(name)`.
+
+#### `testCalls(matcher)`
+Returns a Boolean indicating whether fetch was called with a URL matching `matcher`.
+
+
 
 ##### Example
 

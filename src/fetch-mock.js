@@ -252,12 +252,16 @@ class FetchMock {
 				return mockResponse(url, response, opts)
 			}
 		} else {
+			console.warn(`unmatched call to ${url}`);
 			this.push(null, [url, opts]);
 			if (this.greed === 'good') {
 				return mockResponse(url, {body: 'unmocked url: ' + url});
 			} else if (this.greed === 'bad') {
 				return mockResponse(url, {throws: 'unmocked url: ' + url});
 			} else {
+				if (!this.realFetch) {
+					throw new Error('fetch not defined in this environment. To mock unmatched calls set `greed: good` in your options');
+				}
 				return this.realFetch(url, opts);
 			}
 		}

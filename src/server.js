@@ -1,4 +1,6 @@
 'use strict';
+const path = require('path');
+require('protips')(path.join(__dirname, '../', 'PROTIPS.md'));
 const fetch = require('node-fetch');
 const Request = fetch.Request;
 const Response = fetch.Response;

@@ -171,7 +171,6 @@ class FetchMock {
 		this.restore = this.restore.bind(this);
 		this.reMock = this.reMock.bind(this);
 		this.reset = this.reset.bind(this);
-		this.realFetch = theGlobal.fetch && theGlobal.fetch.bind(theGlobal);
 	}
 
 	/**
@@ -192,7 +191,8 @@ class FetchMock {
 	 * @return {FetchMock}          Returns the FetchMock instance, so can be chained
 	 */
 	mock (matcher, method, response) {
-
+		// Do this here rather than in the constructor to ensure it's scoped to the test
+		this.realFetch = this.realFetch || (theGlobal.fetch && theGlobal.fetch.bind(theGlobal));
 		let config;
 		// Handle the variety of parameters accepted by mock (see README)
 		if (response) {
@@ -326,7 +326,9 @@ class FetchMock {
 	 * Restores global fetch to its initial state and resets call history
 	 */
 	restore () {
-		theGlobal.fetch = this.realFetch;
+		if (this.realFetch) {
+			theGlobal.fetch = this.realFetch;
+		}
 		this.reset();
 		this.routes = [];
 	}

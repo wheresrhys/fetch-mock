@@ -65,19 +65,18 @@ module.exports = function (fetchMock, theGlobal, Request, Response) {
 				}).not.to.throw();
 			});
 
-			it('have remocking helper', function () {
-				fetchMock.mock('^http://route1', 200);
-				let fm;
+			it('restore is chainable', function () {
+				fetchMock.mock(dummyRoute);
 				expect(function () {
-					fm = fetchMock
-						.reMock('^http://route2', 200)
-						.catch()
+					fetchMock.restore().mock(dummyRoute);
 				}).not.to.throw();
-				fetch('http://route1.com')
-				fetch('http://route2.com')
-				expect(fetchMock.calls().matched.length).to.equal(1);
-				expect(fetchMock.calls().matched[0][0]).to.equal('http://route2.com');
-				expect(fm).to.equal(fetchMock);
+			});
+
+			it('reset is chainable', function () {
+				fetchMock.mock(dummyRoute);
+				expect(function () {
+					fetchMock.reset().mock(dummyRoute);
+				}).not.to.throw();
 			});
 		});
 

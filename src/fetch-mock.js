@@ -169,7 +169,6 @@ class FetchMock {
 		this._unmatchedCalls = [];
 		this.fetchMock = this.fetchMock.bind(this);
 		this.restore = this.restore.bind(this);
-		this.reMock = this.reMock.bind(this);
 		this.reset = this.reset.bind(this);
 	}
 
@@ -253,6 +252,14 @@ class FetchMock {
 
 	}
 
+	/**
+	 * getMock
+	 * Returns a reference to the stub function used to mock fetch
+	 * @return {Function}
+	 */
+	getMock () {
+		return this.fetchMock;
+	}
 
 	/**
 	 * router
@@ -319,25 +326,7 @@ class FetchMock {
 		this.fallbackResponse = null;
 		this.reset();
 		this.routes = [];
-	}
-
-	/**
-	 * reMock
-	 * Same as .mock(), but also calls .restore() internally
-	 * @return {FetchMock}          Returns the FetchMock instance, so can be chained
-	 */
-	reMock () {
-		this.restore();
-		return this.mock.apply(this, [].slice.apply(arguments));
-	}
-
-	/**
-	 * getMock
-	 * Returns a reference to the stub function used to mock fetch
-	 * @return {Function}
-	 */
-	getMock () {
-		return this.fetchMock;
+		return this;
 	}
 
 	/**
@@ -348,6 +337,7 @@ class FetchMock {
 		this._calls = {};
 		this._matchedCalls = [];
 		this._unmatchedCalls = [];
+		return this;
 	}
 
 	/**

@@ -31,15 +31,12 @@ Replaces `fetch()` with a stub which records its calls, grouped by route, and op
 	* `Function(url, opts)`: A function that is passed the url and opts `fetch()` is called with and that returns any of the responses listed above (or a `Promise` for any of them)
 
 #### `restore()`
-Restores `fetch()` to its unstubbed state and clears all data recorded for its calls
-
-#### `reMock()`
-Calls `restore()` internally then calls `mock()`. This allows you to put some generic calls to `mock()` in a `beforeEach()` while retaining the flexibility to vary the responses for some tests. `reMock()` can be chained.
+Chainable method that restores `fetch()` to its unstubbed state and clears all data recorded for its calls.
 
 #### `reset()`
-Clears all data recorded for `fetch()`'s calls
+Chainable method that clears all data recorded for `fetch()`'s calls
 
-*Note that `restore()`, `reMock()` and `reset()` are all bound to fetchMock, and can be used directly as callbacks e.g. `afterEach(fetchMock.restore)` will work just fine. There is no need for `afterEach(function () {fetchMock.restore()})`*
+*Note that `restore()` and `reset()` are both bound to fetchMock, and can be used directly as callbacks e.g. `afterEach(fetchMock.restore)` will work just fine. There is no need for `afterEach(function () {fetchMock.restore()})`*
 
 **For the methods below `matcherName`, if given, should be either the name of a route (see advanced usage below) or equal to `matcher.toString()` for any unnamed route**
 

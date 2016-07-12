@@ -191,9 +191,7 @@ module.exports = function (fetchMock, theGlobal, Request, Response) {
 
 				it('can catch unmatched calls with function', () => {
 					fetchMock
-						.catch(() => {
-							return new Response('i am text');
-						})
+						.catch(() => Promise.resolve(new Response('i am text')))
 						.mock(dummyRoute);
 					return fetch('http://1')
 						.then(function (res) {

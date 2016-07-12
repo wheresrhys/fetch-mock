@@ -191,38 +191,32 @@ class FetchMock {
 	 * @return {FetchMock}          Returns the FetchMock instance, so can be chained
 	 */
 	mock (matcher, method, response) {
+
 		// Do this here rather than in the constructor to ensure it's scoped to the test
 		this.realFetch = this.realFetch || (theGlobal.fetch && theGlobal.fetch.bind(theGlobal));
-		let config;
+
+		let routes;
 		// Handle the variety of parameters accepted by mock (see README)
 		if (response) {
-			config = {
-				routes: [{
-					matcher,
-					method,
-					response
-				}]
-			}
+			routes = [{
+				matcher,
+				method,
+				response
+			}];
 		} else if (method) {
-			config = {
-				routes: [{
-					matcher,
-					response: method
-				}]
-			}
+			routes = [{
+				matcher,
+				response: method
+			}]
 		} else if (matcher instanceof Array) {
-			config = {
-				routes: matcher
-			}
+			routes = matcher
 		} else if (matcher && matcher.matcher) {
-			config = {
-				routes: [matcher]
-			}
+			routes = [matcher]
 		} else {
-			config = matcher;
+			throw new Error('Invalid parameters passed to fetch-mock')
 		}
 
-		this.addRoutes(config.routes);
+		this.addRoutes(routes);
 		theGlobal.fetch = this.fetchMock;
 		return this;
 	}

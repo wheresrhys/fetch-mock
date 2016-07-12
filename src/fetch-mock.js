@@ -25,7 +25,6 @@ function mockResponse (url, responseConfig, fetchOpts) {
 	}
 
 	if (Response.prototype.isPrototypeOf(responseConfig)) {
-		console.log('egg', responseConfig)
 		return Promise.resolve(responseConfig);
 	}
 
@@ -188,28 +187,26 @@ class FetchMock {
 		// Do this here rather than in the constructor to ensure it's scoped to the test
 		this.realFetch = theGlobal.fetch;
 
-		let routes;
+		let route;
 		// Handle the variety of parameters accepted by mock (see README)
 		if (response) {
-			routes = [{
+			route = {
 				matcher,
 				method,
 				response
-			}];
+			};
 		} else if (method) {
-			routes = [{
+			route = {
 				matcher,
 				response: method
-			}]
-		} else if (matcher instanceof Array) {
-			routes = matcher
+			}
 		} else if (matcher && matcher.matcher) {
-			routes = [matcher]
+			route = matcher
 		} else {
 			throw new Error('Invalid parameters passed to fetch-mock')
 		}
 
-		this.addRoutes(routes);
+		this.addRoute(route);
 		theGlobal.fetch = this.fetchMock;
 		return this;
 	}
@@ -290,18 +287,14 @@ class FetchMock {
 	 * Adds routes to those used by fetchMock to match fetch calls
 	 * @param  {Object|Array} routes 	route configurations
 	 */
-	addRoutes (routes) {
+	addRoute (route) {
 
-		if (!routes) {
-			throw new Error('.mock() must be passed configuration for routes')
-		}
-
-		if (!(routes instanceof Array)) {
-			routes = [routes];
+		if (!route) {
+			throw new Error('.mock() must be passed configuration for a route')
 		}
 
 		// Allows selective application of some of the preregistered routes
-		this.routes = this.routes.concat(routes.map(compileRoute));
+		this.routes.push(compileRoute(route));
 	}
 
 	/**

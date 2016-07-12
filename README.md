@@ -20,6 +20,7 @@ Replaces `fetch()` with a stub which records its calls, grouped by route, and op
 	* `Function(url, opts)`: A function (returning a Boolean) that is passed the url and opts `fetch()` is called with (or, if `fetch()` was called with one, the `Request` instance)
 * `method` [optional]: only matches requests using this http method
 * `response` [required]: Configures the http response returned by the mock. Can take any of the following values (or be a `Promise` for any of them, enabling full control when testing race conditions etc.)
+	* `Response`: A `Response` instance - will be used unaltered
 	* `number`: Creates a response with this status
 	* `string`: Creates a 200 response with the string as the response body
 	* `object`: As long as the object does not contain any of the properties below it is converted into a json string and returned as the body of a 200 response. If any of the properties below are defined it is used to configure a `Response` object
@@ -84,9 +85,6 @@ Use a configuration object to define a route to mock.
 * `method` [optional]: http method
 * `matcher` [required]: as specified above
 * `response` [required]: as specified above
-
-#### `mock(routes)`
-Pass in an array of route configuration objects
 
 ## Troubleshooting and alternative installation
 

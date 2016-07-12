@@ -225,7 +225,7 @@ class FetchMock {
 		if (this.fallbackResponse) {
 			console.warn(`calling fetchMock.catch() twice - are you sure you want to overwrite the previous fallback response`);
 		}
-		this.fallbackResponse = response || 200;
+		this.fallbackResponse = response || 'ok';
 		return this;
 	}
 

@@ -21,11 +21,9 @@ describe('request types that only work in the browser', function () {
 	it('respond with blob', function (done) {
 		const blob = new Blob();
 		fetchMock.mock({
-			routes: {
-				name: 'route',
-				matcher: 'http://it.at.there/',
-				response: {body: blob, sendAsJson: false}
-			}
+			name: 'route',
+			matcher: 'http://it.at.there/',
+			response: {body: blob, sendAsJson: false}
 		});
 		fetch('http://it.at.there/')
 			.then(function (res) {

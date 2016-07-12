@@ -191,7 +191,7 @@ module.exports = function (fetchMock, theGlobal, Request, Response) {
 
 				it('can catch unmatched calls with function', () => {
 					fetchMock
-						.catch(() => Promise.resolve(new Response('i am text')))
+						.catch(() => new Response('i am text'))
 						.mock(dummyRoute);
 					return fetch('http://1')
 						.then(function (res) {
@@ -477,6 +477,38 @@ module.exports = function (fetchMock, theGlobal, Request, Response) {
 			});
 
 			describe('responses', function () {
+
+				it('respond with a Response', function () {
+					fetchMock.mock({
+						name: 'route',
+						matcher: 'http://it.at.there/',
+						response: new Response('i am text')
+					});
+					return fetch('http://it.at.there/')
+						.then(function (res) {
+							expect(res.status).to.equal(200);
+							return res.text()
+								.then(text => {
+									expect(text).to.equal('i am text');
+								})
+						});
+				});
+
+				it('respond with a generated Response', function () {
+					fetchMock.mock({
+						name: 'route',
+						matcher: 'http://it.at.there/',
+						response: () => new Response('i am text too')
+					});
+					return fetch('http://it.at.there/')
+						.then(function (res) {
+							expect(res.status).to.equal(200);
+							return res.text()
+								.then(text => {
+									expect(text).to.equal('i am text too');
+								})
+						});
+				});
 
 				it('respond with a status', function () {
 					fetchMock.mock({

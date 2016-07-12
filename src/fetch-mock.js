@@ -24,6 +24,11 @@ function mockResponse (url, responseConfig, fetchOpts) {
 		responseConfig = responseConfig(url, fetchOpts);
 	}
 
+	if (Response.prototype.isPrototypeOf(responseConfig)) {
+		console.log('egg', responseConfig)
+		return Promise.resolve(responseConfig);
+	}
+
 	if (responseConfig.throws) {
 		return Promise.reject(responseConfig.throws);
 	}

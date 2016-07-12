@@ -1,6 +1,9 @@
 'use strict';
 const path = require('path');
-require('protips')(path.join(__dirname, '../', 'PROTIPS.md'));
+if (!(process.env.CI || process.env.CONTINUOUS_INTEGRATION || process.env.NO_PROTIPS)) {
+	// See https://github.com/wheresrhys/fetch-mock/issues/108
+	require('protips')(path.join(__dirname, '..', 'PROTIPS.md'));
+}
 const fetch = require('node-fetch');
 const Request = fetch.Request;
 const Response = fetch.Response;

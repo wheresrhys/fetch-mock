@@ -174,17 +174,6 @@ class FetchMock {
 	}
 
 	/**
-	 * useNonGlobalFetch
-	 * Sets fetchMock's default internal reference to native fetch to the given function
-	 * @param  {Function} func
-	 */
-	useNonGlobalFetch (func) {
-		this.mockedContext = this;
-		this.realFetch = func;
-		return this;
-	}
-
-	/**
 	 * mock
 	 * Replaces fetch with a stub which attempts to match calls against configured routes
 	 * See README for details of parameters
@@ -193,7 +182,7 @@ class FetchMock {
 	mock (matcher, method, response) {
 
 		// Do this here rather than in the constructor to ensure it's scoped to the test
-		this.realFetch = this.realFetch || (theGlobal.fetch && theGlobal.fetch.bind(theGlobal));
+		this.realFetch = theGlobal.fetch;
 
 		let routes;
 		// Handle the variety of parameters accepted by mock (see README)

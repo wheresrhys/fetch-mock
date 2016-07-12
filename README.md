@@ -91,10 +91,6 @@ Use a configuration object to define a route to mock.
 #### `mock(routes)`
 Pass in an array of route configuration objects
 
-#### *deprecated* `useNonGlobalFetch(func)`
-When using isomorphic-fetch or node-fetch ideally `fetch` should be added as a global. If not possible to do so you can still use fetch-mock in combination with [mockery](https://github.com/mfncooper/mockery) or similar in nodejs. To use fetch-mock with with [mockery](https://github.com/mfncooper/mockery) you may use this function to prevent fetch-mock trying to mock the function globally.
-* `func` Optional reference to `fetch` (or any other function you may want to substitute for `fetch` in your tests). This will probably have zero effect on your tests unless you are deliberately using the `greed: 'none'` config option to let some requests pass through to the original `fetch` implementation
-
 ## Troubleshooting and alternative installation
 
 ### `fetch` is assigned to a local variable, not a global

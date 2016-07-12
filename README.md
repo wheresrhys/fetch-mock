@@ -91,15 +91,6 @@ Use a configuration object to define a route to mock.
 #### `mock(routes)`
 Pass in an array of route configuration objects
 
-#### `mock(config)`
-
-Pass in an object containing more complex config for fine grained control over every aspect of mocking behaviour. May have the following properties
-* `routes`: Either a single route config object or an array of them (see above).
-* `greed`: Determines how the mock handles unmatched requests
-	* 'none': all unmatched calls get passed through to `fetch()`
-	* 'bad': all unmatched calls result in a rejected promise
-	* 'good': all unmatched calls result in a resolved promise with a 200 status
-
 #### *deprecated* `useNonGlobalFetch(func)`
 When using isomorphic-fetch or node-fetch ideally `fetch` should be added as a global. If not possible to do so you can still use fetch-mock in combination with [mockery](https://github.com/mfncooper/mockery) or similar in nodejs. To use fetch-mock with with [mockery](https://github.com/mfncooper/mockery) you may use this function to prevent fetch-mock trying to mock the function globally.
 * `func` Optional reference to `fetch` (or any other function you may want to substitute for `fetch` in your tests). This will probably have zero effect on your tests unless you are deliberately using the `greed: 'none'` config option to let some requests pass through to the original `fetch` implementation
@@ -145,7 +136,7 @@ In node, if using npm at a version less than 2 the `Request` constructor used by
 
 ### Polyfilling fetch
 * In nodejs `require('isomorphic-fetch')` before any of your tests.
-* In the browser `require('isomorphic-fetch')` can also be used, but it may be easier to `npm install whatwg-fetch` (the module isomorphic-fetch is built around) and load `./node_modules/whatwg-fetch/fetch.js` directly into the page, either in a script tag or by referencing it your test runner config. 
+* In the browser `require('isomorphic-fetch')` can also be used, but it may be easier to `npm install whatwg-fetch` (the module isomorphic-fetch is built around) and load `./node_modules/whatwg-fetch/fetch.js` directly into the page, either in a script tag or by referencing it your test runner config.
 * When using karma-webpack it's best not to use the `webpack.ProvidePlugin` for this. Instead just add `node_modules/whatwg-fetch/fetch.js` to your list of files to include, or require it directly into your tests before requiring fetch-mock.
 
 ## V4 changelog

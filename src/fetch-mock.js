@@ -223,8 +223,15 @@ class FetchMock {
 		}
 
 		this.addRoutes(config.routes);
-		this.greed = config.greed || this.greed || 'none';
 		theGlobal.fetch = this.fetchMock;
+		return this;
+	}
+
+	catch (response) {
+		if (this.fallbackResponse) {
+			console.warn(`calling fetchMock.catch() twice - are you sure you want to overwrite the previous fallback response`);
+		}
+		this.fallbackResponse = response || 200;
 		return this;
 	}
 
@@ -240,33 +247,30 @@ class FetchMock {
 
 		let response = this.router(url, opts);
 
-		if (response) {
-
-			if (typeof response === 'function') {
-				response = response (url, opts);
-			}
-
-			if (response instanceof Promise) {
-				return response.then(response => mockResponse(url, response, opts))
-			} else {
-				return mockResponse(url, response, opts)
-			}
-		} else {
+		if (!response) {
 			console.warn(`unmatched call to ${url}`);
 			this.push(null, [url, opts]);
-			if (this.greed === 'good') {
-				return mockResponse(url, {body: 'unmocked url: ' + url});
-			} else if (this.greed === 'bad') {
-				return mockResponse(url, {throws: 'unmocked url: ' + url});
+
+			if (this.fallbackResponse) {
+				response = this.fallbackResponse;
 			} else {
-				if (!this.realFetch) {
-					throw new Error('fetch not defined in this environment. To mock unmatched calls set `greed: good` in your options');
-				}
-				return this.realFetch(url, opts);
+				throw new Error(`unmatched call to ${url}`)
 			}
 		}
 
+		if (typeof response === 'function') {
+			response = response (url, opts);
+		}
+
+		if (response instanceof Promise) {
+			return response.then(response => mockResponse(url, response, opts))
+		} else {
+			return mockResponse(url, response, opts)
+		}
+
 	}
+
+
 	/**
 	 * router
 	 * Given url + options or a Request object, checks to see if ait is matched by any routes and returns
@@ -329,6 +333,7 @@ class FetchMock {
 		if (this.realFetch) {
 			theGlobal.fetch = this.realFetch;
 		}
+		this.fallbackResponse = null;
 		this.reset();
 		this.routes = [];
 	}

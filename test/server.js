@@ -13,7 +13,7 @@ const dummyFetch = function () {
 	return Promise.resolve(arguments);
 };
 
-require('./spec')(fetchMock, global, require('node-fetch').Request);
+require('./spec')(fetchMock, global, require('node-fetch').Request, require('node-fetch').Response);
 
 describe('support for Buffers', function () {
 	it('can respond with a buffer', function () {
@@ -43,7 +43,7 @@ describe('new non-global use', function () {
 	it('stubs non global fetch if function passed in', function () {
 		fetchMock.useNonGlobalFetch(dummyFetch);
 		expect(fetchMock.realFetch).to.equal(dummyFetch);
-		fetchMock.mock(/a/,200);
+		fetchMock.mock(/a/,200).catch(dummyFetch);
 		expect(typeof fetchMock.fetchMock).to.equal('function');
 		expect(fetchMock.fetchMock).to.not.equal(dummyFetch);
 		expect(function () {
@@ -88,7 +88,7 @@ describe('deprecated non-global use', function () {
 
 		fetchMock.useNonGlobalFetch(dummyFetch);
 		expect(fetchMock.realFetch).to.equal(dummyFetch);
-		const mock = fetchMock.mock(/a/,200).getMock();
+		const mock = fetchMock.mock(/a/,200).catch(dummyFetch).getMock();
 		expect(typeof mock).to.equal('function');
 		expect(mock).to.not.equal(dummyFetch);
 		expect(function () {

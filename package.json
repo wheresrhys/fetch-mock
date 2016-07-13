@@ -1,6 +1,6 @@
 {
   "name": "fetch-mock",
-  "version": "4.6.0",
+  "version": "4.6.1",
   "description": "Mock http requests made using fetch (or isomorphic-fetch)",
   "main": "src/server.js",
   "browser": "es5/client.js",
@@ -27,8 +27,7 @@
   },
   "homepage": "https://github.com/wheresrhys/fetch-mock",
   "dependencies": {
-    "node-fetch": "^1.3.3",
-    "protips": "^1.1.0"
+    "node-fetch": "^1.3.3"
   },
   "devDependencies": {
     "babel": "^6.0.15",

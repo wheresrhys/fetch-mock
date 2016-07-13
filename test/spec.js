@@ -169,6 +169,20 @@ module.exports = function (fetchMock, theGlobal, Request, Response) {
 				});
 			});
 
+			describe.only('method shorthands', function () {
+				'get,post,put,delete, head'.split(',')
+					.forEach(method => {
+						it(`has shorthand for ${method.toUpperCase()}`, () => {
+							sinon.stub(fetchMock, 'mock');
+							fetchMock[method]('a', 'b');
+							fetchMock[method]('a', 'b', {opt: 'c'});
+							expect(fetchMock.mock.calledWith('a', 'b', {method: method.toUpperCase()})).to.be.true;
+							expect(fetchMock.mock.calledWith('a', 'b', {opt: 'c', method: method.toUpperCase()})).to.be.true;
+							fetchMock.mock.restore();
+						});
+					})
+			});
+
 			describe('unmatched routes', () => {
 
 				it('throws if any calls unmatched', () => {

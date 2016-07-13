@@ -35,6 +35,16 @@ Replaces `fetch()` with a stub which records its calls, grouped by route, and op
 	* `matcher`: as specified above
 	* `response`: as specified above
 
+#### `get()`, `post()`, `put()`, `delete()`, `head()`
+Shorthands for `mock()` restricted to a particular method *Tip: if you use some other method a lot you can easily define your own shorthands e.g.:*
+
+```
+fetchMock.purge = function (matcher, response, options) {
+	return this.mock(matcher, response, Object.assign({}, options, {method: 'PURGE'}));
+}
+
+```
+
 #### `restore()`
 Chainable method that restores `fetch()` to its unstubbed state and clears all data recorded for its calls.
 

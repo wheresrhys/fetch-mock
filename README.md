@@ -11,15 +11,14 @@ Mock http requests made using fetch (or [isomorphic-fetch](https://www.npmjs.com
 
 **`require('fetch-mock')` exports a singleton with the following methods**
 
-#### `mock(matcher, response)` or `mock(matcher, method, response)`
+#### `mock(matcher, response, options)` or `mock(options)`
 Replaces `fetch()` with a stub which records its calls, grouped by route, and optionally returns a mocked `Response` object or passes the call through to `fetch()`. Calls to `.mock()` can be chained.
 
-* `matcher` [required]: Condition for selecting which requests to mock Accepts any of the following
+* `matcher`: Condition for selecting which requests to mock Accepts any of the following
 	* `string`: Either an exact url to match e.g. 'http://www.site.com/page.html' or, if the string begins with a `^`, the string following the `^` must begin the url e.g. '^http://www.site.com' would match 'http://www.site.com' or 'http://www.site.com/page.html'
 	* `RegExp`: A regular  expression to test the url against
 	* `Function(url, opts)`: A function (returning a Boolean) that is passed the url and opts `fetch()` is called with (or, if `fetch()` was called with one, the `Request` instance)
-* `method` [optional]: only matches requests using this http method
-* `response` [required]: Configures the http response returned by the mock. Can take any of the following values (or be a `Promise` for any of them, enabling full control when testing race conditions etc.)
+* `response`: Configures the http response returned by the mock. Can take any of the following values (or be a `Promise` for any of them, enabling full control when testing race conditions etc.)
 	* `Response`: A `Response` instance - will be used unaltered
 	* `number`: Creates a response with this status
 	* `string`: Creates a 200 response with the string as the response body
@@ -30,6 +29,11 @@ Replaces `fetch()` with a stub which records its calls, grouped by route, and op
 		* `throws`: If this property is present then a `Promise` rejected with the value of `throws` is returned
 		* `sendAsJson`: This property determines whether or not the request body should be JSON.stringified before being sent (defaults to true).
 	* `Function(url, opts)`: A function that is passed the url and opts `fetch()` is called with and that returns any of the responses listed above (or a `Promise` for any of them)
+* `options`: A configuration object with all/additional properties to define a route to mock
+	* `name`: A unique string naming the route. Used to subsequently retrieve references to the calls, grouped by name. If not specified defaults to `matcher.toString()` *Note: If a non-unique name is provided no error will be thrown (because names are optional, so auto-generated ones may legitimately clash)*
+	* `method`: http method to match
+	* `matcher`: as specified above
+	* `response`: as specified above
 
 #### `restore()`
 Chainable method that restores `fetch()` to its unstubbed state and clears all data recorded for its calls.
@@ -75,16 +79,6 @@ myModule.onlyCallDomain2()
 	})
 	.then(fetchMock.restore)
 ```
-
-## Advanced usage
-
-#### `mock(routeConfig)`
-
-Use a configuration object to define a route to mock.
-* `name` [optional]: A unique string naming the route. Used to subsequently retrieve references to the calls, grouped by name. If not specified defaults to `matcher.toString()` *Note: If a non-unique name is provided no error will be thrown (because names are optional, so auto-generated ones may legitimately clash)*
-* `method` [optional]: http method
-* `matcher` [required]: as specified above
-* `response` [required]: as specified above
 
 ## Troubleshooting and alternative installation
 

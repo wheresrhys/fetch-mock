@@ -182,23 +182,29 @@ class FetchMock {
 	 * See README for details of parameters
 	 * @return {FetchMock}          Returns the FetchMock instance, so can be chained
 	 */
-	mock (matcher, method, response) {
+	mock (matcher, response, options) {
 
 		// Do this here rather than in the constructor to ensure it's scoped to the test
 		this.realFetch = theGlobal.fetch;
 
 		let route;
+
 		// Handle the variety of parameters accepted by mock (see README)
-		if (response) {
-			route = {
+
+		// Old method matching signature
+		if (options && /[A-Z]+/.test(response)) {
+			throw new Error(`The API for method matching has changed.
+				Now use .get(), .post(), .put(), .delete() and .head() shorthand methods,
+				or pass in, e.g. {method: 'PATCH'} as a thrd paramter`);
+		} else if (options) {
+			route = Object.assign({
 				matcher,
-				method,
 				response
-			};
-		} else if (method) {
+			}, options);
+		} else if (response) {
 			route = {
 				matcher,
-				response: method
+				response
 			}
 		} else if (matcher && matcher.matcher) {
 			route = matcher

@@ -133,9 +133,16 @@ module.exports = function (fetchMock, theGlobal, Request, Response) {
 				});
 
 
+				it('throws helpful error matcher, method, route triples', function () {
+					expect(function () {
+						fetchMock.mock('http://it.at.there/', 'PUT', 'ok');
+					}).to.throw(/API for method matching has changed/);
+				});
+
+
 				it('accepts matcher, method, route triples', function () {
 					expect(function () {
-						fetchMock.mock('http://it.at.there/', 'PUT', 'ok').catch();
+						fetchMock.mock('http://it.at.there/', 'ok', {method: 'PUT'}).catch();
 					}).not.to.throw();
 					fetch('http://it.at.there/', {method: 'PUT'});
 					fetch('http://it.at.there/', {method: 'POST'});

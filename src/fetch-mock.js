@@ -72,14 +72,10 @@ function compileRoute (route) {
 			matchUrl = () => true;
 		} else if (route.matcher.indexOf('^') === 0) {
 			const expectedUrl = route.matcher.substr(1);
-			matchUrl = function (url) {
-				return url.indexOf(expectedUrl) === 0;
-			};
+			matchUrl = url => url.indexOf(expectedUrl) === 0;
 		} else {
 			const expectedUrl = route.matcher;
-			matchUrl = function (url) {
-				return url === expectedUrl;
-			};
+			matchUrl = url => url === expectedUrl;
 		}
 	} else if (route.matcher instanceof RegExp) {
 		const urlRX = route.matcher;
@@ -88,7 +84,7 @@ function compileRoute (route) {
 		};
 	}
 
-	route.matcher = function (url, options) {
+	route.matcher = (url, options) => {
 		const req = normalizeRequest(url, options);
 		return matchMethod(req.method) && matchUrl(req.url);
 	};

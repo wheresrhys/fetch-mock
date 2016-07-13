@@ -5,7 +5,7 @@ Mock http requests made using fetch (or [isomorphic-fetch](https://www.npmjs.com
 
 `npm install fetch-mock` then `require('fetch-mock')` in most environments.
 
-[Troubleshooting and alternative installation](#troubleshooting-and-alternative-installation), [V4 - V5 upgrade guide](https://github.com/wheresrhys/fetch-mock/blob/master/V4_V5_UPGRADE_NOTES.md)
+[Troubleshooting and alternative installation](#troubleshooting-and-alternative-installation), [V4 - V5 upgrade guide](https://github.com/wheresrhys/fetch-mock/blob/master/V4_V5_UPGRADE_NOTES.md) [V4 docs](https://github.com/wheresrhys/fetch-mock/blob/95d79052efffef5c80b3d87d5050392293e1bfaa/README.md)
 
 **`require('fetch-mock')` exports a singleton with the following methods**
 

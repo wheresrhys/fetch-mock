@@ -144,26 +144,3 @@ In node, if using npm at a version less than 2 the `Request` constructor used by
 * In nodejs `require('isomorphic-fetch')` before any of your tests.
 * In the browser `require('isomorphic-fetch')` can also be used, but it may be easier to `npm install whatwg-fetch` (the module isomorphic-fetch is built around) and load `./node_modules/whatwg-fetch/fetch.js` directly into the page, either in a script tag or by referencing it your test runner config.
 * When using karma-webpack it's best not to use the `webpack.ProvidePlugin` for this. Instead just add `node_modules/whatwg-fetch/fetch.js` to your list of files to include, or require it directly into your tests before requiring fetch-mock.
-
-## V4 changelog
-* `registerRoute()` and `unregisterRoute()` have been removed to simplify the API. Since V3, calls to `.mock()` can be chained, so persisting routes over a series of tests can easily be achieved by means of a beforeEach or helper e.g.
-
-```js
-beforeEach(() => {
-	fetchMock
-		.mock('http://auth.service.com/user', 200)
-		.mock('http://mvt.service.com/session', {test1: true, test2: false})
-});
-
-afterEach(() => {
-	fetchMock.restore();
-});
-
-it('should be possible to augment persistent set of routes', () => {
-	fetchMock.mock('http://content.service.com/contentid', {content: 'blah blah'})
-	page.init();
-	expect(fetchMock.called('http://content.service.com/contentid')).to.be.true;
-});
-```
-* Defining two routes with the same name will no longer throw an error (previous implementation was buggy anyway)
-* Added `lastCall()`, `lastUrl()` and `lastOptions()` utilities

@@ -327,6 +327,25 @@ module.exports = function (fetchMock, theGlobal, Request, Response) {
 						});
 				});
 
+				it('match wildcard string', function () {
+					fetchMock.mock({
+						name: 'route',
+						matcher: '*',
+						response: 'ok'
+					}).catch();
+					return Promise.all([
+						fetch('http://it.at.there'),
+						fetch('http://it.at.thereabouts'),
+						fetch('http://it.at.hereabouts')]
+					)
+						.then(function () {
+							expect(fetchMock.called()).to.be.true;
+							expect(fetchMock.called('route')).to.be.true;
+							expect(fetchMock.calls().matched.length).to.equal(3);
+							expect(fetchMock.calls('route').length).to.equal(3);
+						});
+				});
+
 				it('match regular expressions', function () {
 					fetchMock.mock({
 						name: 'route',

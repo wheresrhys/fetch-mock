@@ -68,7 +68,9 @@ function compileRoute (route) {
 
 	if (typeof route.matcher === 'string') {
 
-		if (route.matcher.indexOf('^') === 0) {
+		if (route.matcher === '*') {
+			matchUrl = () => true;
+		} else if (route.matcher.indexOf('^') === 0) {
 			const expectedUrl = route.matcher.substr(1);
 			matchUrl = function (url) {
 				return url.indexOf(expectedUrl) === 0;

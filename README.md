@@ -5,17 +5,20 @@ Mock http requests made using fetch (or [isomorphic-fetch](https://www.npmjs.com
 
 `npm install fetch-mock` then `require('fetch-mock')` in most environments.
 
-[Troubleshooting and alternative installation](#troubleshooting-and-alternative-installation), [V4 changelog](#v4-changelog)
-
-## Basic usage
+[Troubleshooting and alternative installation](#troubleshooting-and-alternative-installation), [V4 - V5 upgrade guide](https://github.com/wheresrhys/fetch-mock/blob/master/V4_V5_UPGRADE_NOTES.md)
 
 **`require('fetch-mock')` exports a singleton with the following methods**
+
+### Mocking `fetch` calls
 
 #### `mock(matcher, response, options)` or `mock(options)`
 Replaces `fetch()` with a stub which records its calls, grouped by route, and optionally returns a mocked `Response` object or passes the call through to `fetch()`. Calls to `.mock()` can be chained.
 
 * `matcher`: Condition for selecting which requests to mock Accepts any of the following
-	* `string`: Either an exact url to match e.g. 'http://www.site.com/page.html' or, if the string begins with a `^`, the string following the `^` must begin the url e.g. '^http://www.site.com' would match 'http://www.site.com' or 'http://www.site.com/page.html'
+	* `string`: Either
+		* an exact url to match e.g. 'http://www.site.com/page.html'
+		* if the string begins with a `^`, the string following the `^` must begin the url e.g. '^http://www.site.com' would match 'http://www.site.com' or 'http://www.site.com/page.html'
+		* '*' to match any url
 	* `RegExp`: A regular  expression to test the url against
 	* `Function(url, opts)`: A function (returning a Boolean) that is passed the url and opts `fetch()` is called with (or, if `fetch()` was called with one, the `Request` instance)
 * `response`: Configures the http response returned by the mock. Can take any of the following values (or be a `Promise` for any of them, enabling full control when testing race conditions etc.)
@@ -53,9 +56,7 @@ Chainable method that clears all data recorded for `fetch()`'s calls
 
 *Note that `restore()` and `reset()` are both bound to fetchMock, and can be used directly as callbacks e.g. `afterEach(fetchMock.restore)` will work just fine. There is no need for `afterEach(function () {fetchMock.restore()})`*
 
-#### `configure(opts)`
-Set some global config options, which include
-* `sendAsJson` [default `true`] - by default fetchMock will convert objects to JSON before sending. This is overrideable fro each call but for some scenarios e.g. when dealing with a lot of array buffers, it can be useful to default to `false`
+### Retrieving content of `fetch` calls
 
 **For the methods below `matcherName`, if given, should be either the name of a route (see advanced usage below) or equal to `matcher.toString()` for any unnamed route**
 
@@ -73,6 +74,12 @@ Returns the url for the last matched call to fetch
 
 #### `lastOptions(matcherName)`
 Returns the options for the last matched call to fetch
+
+## Utilities
+
+#### `configure(opts)`
+Set some global config options, which include
+* `sendAsJson` [default `true`] - by default fetchMock will convert objects to JSON before sending. This is overrideable fro each call but for some scenarios e.g. when dealing with a lot of array buffers, it can be useful to default to `false`
 
 ##### Example
 

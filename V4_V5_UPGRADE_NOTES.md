@@ -41,7 +41,7 @@ arrayOfRoutes.map(fetchMock.mock);
 ```
 
 ### Using non-global fetch
-It's already extensively documented in the README why it's a bad idea to do so, and the `useNonGlobalFetch` method has finally been removed. Since a [bugfix](https://github.com/wheresrhys/fetch-mock/pull/102) a few months ago it should no longer be necessary even when using a non-global fetch with fetch-mock's `getMock()` method.
+It's already extensively documented in the README why it's a bad idea to do so, and the `useNonGlobalFetch` method has finally been removed. Since a [bugfix](https://github.com/wheresrhys/fetch-mock/pull/102) a few months ago it should no longer be necessary even when using a non-global fetch. `getMock()` has also been removed, and now `fetchMock.fetchMock` can be used directly as a mock for `fetch`.
 
 ### restoring/resetting before continuing to mock (`reMock()`)
 Previously the `reMock()` method provided a shorthand for `restore()` followed by `mock()`. Now both `.reset()` and `.restore()` are chainable, so

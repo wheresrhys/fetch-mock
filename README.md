@@ -5,13 +5,16 @@ Mock http requests made using fetch (or [isomorphic-fetch](https://www.npmjs.com
 
 `npm install fetch-mock` then `require('fetch-mock')` in most environments.
 
-[Troubleshooting and alternative installation](#troubleshooting-and-alternative-installation), [V4 - V5 upgrade guide](https://github.com/wheresrhys/fetch-mock/blob/master/V4_V5_UPGRADE_NOTES.md) [V4 docs](https://github.com/wheresrhys/fetch-mock/blob/95d79052efffef5c80b3d87d5050392293e1bfaa/README.md)
+* [Troubleshooting and alternative installation](#troubleshooting-and-alternative-installation)
 
-**`require('fetch-mock')` exports a singleton with the following methods**
+## API
 
-### Mocking `fetch` calls
+* [V4 - V5 upgrade guide](https://github.com/wheresrhys/fetch-mock/blob/master/V4_V5_UPGRADE_NOTES.md)
+* [V4 docs](https://github.com/wheresrhys/fetch-mock/blob/95d79052efffef5c80b3d87d5050392293e1bfaa/README.md)
 
-#### `mock(matcher, response, options)` or `mock(options)`
+### Mocking calls to `fetch`
+
+##### `mock(matcher, response, options)` or `mock(options)`
 Replaces `fetch()` with a stub which records its calls, grouped by route, and optionally returns a mocked `Response` object or passes the call through to `fetch()`. Calls to `.mock()` can be chained.
 
 * `matcher`: Condition for selecting which requests to mock Accepts any of the following
@@ -38,7 +41,11 @@ Replaces `fetch()` with a stub which records its calls, grouped by route, and op
 	* `matcher`: as specified above
 	* `response`: as specified above
 
-#### `get()`, `post()`, `put()`, `delete()`, `head()`
+##### `get()`
+##### `post()`
+##### `put()`
+##### `delete()`
+##### `head()`
 Shorthands for `mock()` restricted to a particular method *Tip: if you use some other method a lot you can easily define your own shorthands e.g.:*
 
 ```
@@ -48,10 +55,10 @@ fetchMock.purge = function (matcher, response, options) {
 
 ```
 
-#### `restore()`
+##### `restore()`
 Chainable method that restores `fetch()` to its unstubbed state and clears all data recorded for its calls.
 
-#### `reset()`
+##### `reset()`
 Chainable method that clears all data recorded for `fetch()`'s calls
 
 *Note that `restore()` and `reset()` are both bound to fetchMock, and can be used directly as callbacks e.g. `afterEach(fetchMock.restore)` will work just fine. There is no need for `afterEach(function () {fetchMock.restore()})`*
@@ -60,24 +67,24 @@ Chainable method that clears all data recorded for `fetch()`'s calls
 
 **For the methods below `matcherName`, if given, should be either the name of a route (see advanced usage below) or equal to `matcher.toString()` for any unnamed route**
 
-#### `calls(matcherName)`
+##### `calls(matcherName)`
 Returns an object `{matched: [], unmatched: []}` containing arrays of all calls to fetch, grouped by whether fetch-mock matched them or not. If `matcherName` is specified then only calls to fetch matching that route are returned.
 
-#### `called(matcherName)`
+##### `called(matcherName)`
 Returns a Boolean indicating whether fetch was called and a route was matched. If `matcherName` is specified it only returns `true` if that particular route was matched.
 
-#### `lastCall(matcherName)`
+##### `lastCall(matcherName)`
 Returns the arguments for the last matched call to fetch
 
-#### `lastUrl(matcherName)`
+##### `lastUrl(matcherName)`
 Returns the url for the last matched call to fetch
 
-#### `lastOptions(matcherName)`
+##### `lastOptions(matcherName)`
 Returns the options for the last matched call to fetch
 
-## Utilities
+### Utilities
 
-#### `configure(opts)`
+##### `configure(opts)`
 Set some global config options, which include
 * `sendAsJson` [default `true`] - by default fetchMock will convert objects to JSON before sending. This is overrideable fro each call but for some scenarios e.g. when dealing with a lot of array buffers, it can be useful to default to `false`
 
@@ -112,7 +119,7 @@ First of all, consider whether you could just use `fetch` as a global. Here are 
 
 Still not convinced?
 
-In that case `fetchMock.fetchMock` (or *[deprecated]* call `getMock()`) gives you access to the mock implementation of `fetch` which you can pass in to a mock loading library such as [`mockery`](https://www.npmjs.com/package/mockery)
+In that case `fetchMock.fetchMock` gives you access to the mock implementation of `fetch` which you can pass in to a mock loading library such as [`mockery`](https://www.npmjs.com/package/mockery)
 
 ##### Mockery example
 ```js

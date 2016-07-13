@@ -223,15 +223,6 @@ class FetchMock {
 	}
 
 	/**
-	 * getMock
-	 * Returns a reference to the stub function used to mock fetch
-	 * @return {Function}
-	 */
-	getMock () {
-		return this.fetchMock;
-	}
-
-	/**
 	 * router
 	 * Given url + options or a Request object, checks to see if ait is matched by any routes and returns
 	 * config for a response or undefined.

@@ -217,6 +217,26 @@ class FetchMock {
 		return this;
 	}
 
+	get (matcher, response, options) {
+		return this.mock(matcher, response, Object.assign({}, options, {method: 'GET'}));
+	}
+
+	post (matcher, response, options) {
+		return this.mock(matcher, response, Object.assign({}, options, {method: 'POST'}));
+	}
+
+	put (matcher, response, options) {
+		return this.mock(matcher, response, Object.assign({}, options, {method: 'PUT'}));
+	}
+
+	delete (matcher, response, options) {
+		return this.mock(matcher, response, Object.assign({}, options, {method: 'DELETE'}));
+	}
+
+	head (matcher, response, options) {
+		return this.mock(matcher, response, Object.assign({}, options, {method: 'HEAD'}));
+	}
+
 	catch (response) {
 		if (this.fallbackResponse) {
 			console.warn(`calling fetchMock.catch() twice - are you sure you want to overwrite the previous fallback response`);

@@ -169,8 +169,8 @@ module.exports = function (fetchMock, theGlobal, Request, Response) {
 				});
 			});
 
-			describe.only('method shorthands', function () {
-				'get,post,put,delete, head'.split(',')
+			describe('method shorthands', function () {
+				'get,post,put,delete,head'.split(',')
 					.forEach(method => {
 						it(`has shorthand for ${method.toUpperCase()}`, () => {
 							sinon.stub(fetchMock, 'mock');

@@ -53,6 +53,10 @@ Chainable method that clears all data recorded for `fetch()`'s calls
 
 *Note that `restore()` and `reset()` are both bound to fetchMock, and can be used directly as callbacks e.g. `afterEach(fetchMock.restore)` will work just fine. There is no need for `afterEach(function () {fetchMock.restore()})`*
 
+#### `configure(opts)`
+Set some global config options, which include
+* `sendAsJson` [default `true`] - by default fetchMock will convert objects to JSON before sending. This is overrideable fro each call but for some scenarios e.g. when dealing with a lot of array buffers, it can be useful to default to `false`
+
 **For the methods below `matcherName`, if given, should be either the name of a route (see advanced usage below) or equal to `matcher.toString()` for any unnamed route**
 
 #### `calls(matcherName)`

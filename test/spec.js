@@ -731,5 +731,29 @@ module.exports = function (fetchMock, theGlobal, Request, Response) {
 			});
 
 		});
+
+		describe('configurability', () => {
+			it('can configure sendAsJson off', () => {
+				sinon.spy(JSON, 'stringify');
+				fetchMock.configure({
+					sendAsJson: false
+				});
+				fetchMock.mock('http://it.at.there/', {not: 'an object'});
+				try {
+					// it should throw as we're trying to respond with unstringified junk
+					// ideally we'd use a buffer in the test, but the browser and node APIs differ
+					fetch('http://it.at.there/')
+					expect(false).to.be.true;
+				} catch (e) {
+					expect(JSON.stringify.calledWith({not: 'an object'})).to.be.false;
+					JSON.stringify.restore();
+					fetchMock.configure({
+						sendAsJson: true
+					});
+				}
+
+
+			});
+		})
 	});
 }

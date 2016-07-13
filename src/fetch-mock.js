@@ -7,66 +7,6 @@ let stream;
 let theGlobal;
 let statusTextMap;
 
-/**
- * mockResponse
- * Constructs a Response object to return from the mocked fetch
- * @param  {String} url    url parameter fetch was called with
- * @param  {Object} config configuration for the response to be constructed
- * @return {Promise}       Promise for a Response object (or a rejected response to imitate network failure)
- */
-function mockResponse (url, responseConfig, fetchOpts) {
-
-	// It seems odd to call this in here even though it's already called within fetchMock
-	// It's to handle the fact that because we want to support making it very easy to add a
-	// delay to any sort of response (including responses which are defined with a function)
-	// while also allowing function responses to return a Promise for a response config.
-	if (typeof responseConfig === 'function') {
-		responseConfig = responseConfig(url, fetchOpts);
-	}
-
-	if (Response.prototype.isPrototypeOf(responseConfig)) {
-		return Promise.resolve(responseConfig);
-	}
-
-	if (responseConfig.throws) {
-		return Promise.reject(responseConfig.throws);
-	}
-
-	if (typeof responseConfig === 'number') {
-		responseConfig = {
-			status: responseConfig
-		};
-	} else if (typeof responseConfig === 'string' || !(responseConfig.body || responseConfig.headers || responseConfig.throws || responseConfig.status)) {
-		responseConfig = {
-			body: responseConfig
-		};
-	}
-
-	const opts = responseConfig.opts || {};
-	opts.url = url;
-	opts.sendAsJson = responseConfig.sendAsJson === undefined ? true : responseConfig.sendAsJson;
-	opts.status = responseConfig.status || 200;
-	opts.statusText = statusTextMap['' + opts.status];
-	// The ternary operator is to cope with new Headers(undefined) throwing in Chrome
-	// https://code.google.com/p/chromium/issues/detail?id=335871
-	opts.headers = responseConfig.headers ? new Headers(responseConfig.headers) : new Headers();
-
-	let body = responseConfig.body;
-	if (opts.sendAsJson && responseConfig.body != null && typeof body === 'object') { //eslint-disable-line
-		body = JSON.stringify(body);
-	}
-
-	if (stream) {
-		let s = new stream.Readable();
-		if (body != null) { //eslint-disable-line
-			s.push(body, 'utf-8');
-		}
-		s.push(null);
-		body = s;
-	}
-
-	return Promise.resolve(new Response(body, opts));
-}
 
 /**
  * normalizeRequest
@@ -161,6 +101,9 @@ class FetchMock {
 	 * @param  {Object} opts
 	 */
 	constructor (opts) {
+		this.config = {
+			sendAsJson: true
+		}
 		Headers = opts.Headers;
 		Request = opts.Request;
 		Response = opts.Response;
@@ -174,6 +117,7 @@ class FetchMock {
 		this.fetchMock = this.fetchMock.bind(this);
 		this.restore = this.restore.bind(this);
 		this.reset = this.reset.bind(this);
+
 	}
 
 	/**
@@ -273,9 +217,9 @@ class FetchMock {
 		}
 
 		if (response instanceof Promise) {
-			return response.then(response => mockResponse(url, response, opts))
+			return response.then(response => this.mockResponse(url, response, opts))
 		} else {
-			return mockResponse(url, response, opts)
+			return this.mockResponse(url, response, opts)
 		}
 
 	}
@@ -321,6 +265,68 @@ class FetchMock {
 
 		// Allows selective application of some of the preregistered routes
 		this.routes.push(compileRoute(route));
+	}
+
+
+	/**
+	 * mockResponse
+	 * Constructs a Response object to return from the mocked fetch
+	 * @param  {String} url    url parameter fetch was called with
+	 * @param  {Object} config configuration for the response to be constructed
+	 * @return {Promise}       Promise for a Response object (or a rejected response to imitate network failure)
+	 */
+	mockResponse (url, responseConfig, fetchOpts) {
+
+		// It seems odd to call this in here even though it's already called within fetchMock
+		// It's to handle the fact that because we want to support making it very easy to add a
+		// delay to any sort of response (including responses which are defined with a function)
+		// while also allowing function responses to return a Promise for a response config.
+		if (typeof responseConfig === 'function') {
+			responseConfig = responseConfig(url, fetchOpts);
+		}
+
+		if (Response.prototype.isPrototypeOf(responseConfig)) {
+			return Promise.resolve(responseConfig);
+		}
+
+		if (responseConfig.throws) {
+			return Promise.reject(responseConfig.throws);
+		}
+
+		if (typeof responseConfig === 'number') {
+			responseConfig = {
+				status: responseConfig
+			};
+		} else if (typeof responseConfig === 'string' || !(responseConfig.body || responseConfig.headers || responseConfig.throws || responseConfig.status)) {
+			responseConfig = {
+				body: responseConfig
+			};
+		}
+
+		const opts = responseConfig.opts || {};
+		opts.url = url;
+		opts.sendAsJson = responseConfig.sendAsJson === undefined ? this.config.sendAsJson : responseConfig.sendAsJson;
+		opts.status = responseConfig.status || 200;
+		opts.statusText = statusTextMap['' + opts.status];
+		// The ternary operator is to cope with new Headers(undefined) throwing in Chrome
+		// https://code.google.com/p/chromium/issues/detail?id=335871
+		opts.headers = responseConfig.headers ? new Headers(responseConfig.headers) : new Headers();
+
+		let body = responseConfig.body;
+		if (opts.sendAsJson && responseConfig.body != null && typeof body === 'object') { //eslint-disable-line
+			body = JSON.stringify(body);
+		}
+
+		if (stream) {
+			let s = new stream.Readable();
+			if (body != null) { //eslint-disable-line
+				s.push(body, 'utf-8');
+			}
+			s.push(null);
+			body = s;
+		}
+
+		return Promise.resolve(new Response(body, opts));
 	}
 
 	/**
@@ -403,6 +409,10 @@ class FetchMock {
 			return !!(this._matchedCalls.length);
 		}
 		return !!(this._calls[name] && this._calls[name].length);
+	}
+
+	configure (opts) {
+		Object.assign(this.config, opts);
 	}
 }
 

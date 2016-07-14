@@ -7,62 +7,6 @@ let stream;
 let theGlobal;
 let statusTextMap;
 
-/**
- * mockResponse
- * Constructs a Response object to return from the mocked fetch
- * @param  {String} url    url parameter fetch was called with
- * @param  {Object} config configuration for the response to be constructed
- * @return {Promise}       Promise for a Response object (or a rejected response to imitate network failure)
- */
-function mockResponse (url, responseConfig, fetchOpts) {
-
-	// It seems odd to call this in here even though it's already called within fetchMock
-	// It's to handle the fact that because we want to support making it very easy to add a
-	// delay to any sort of response (including responses which are defined with a function)
-	// while also allowing function responses to return a Promise for a response config.
-	if (typeof responseConfig === 'function') {
-		responseConfig = responseConfig(url, fetchOpts);
-	}
-
-	if (responseConfig.throws) {
-		return Promise.reject(responseConfig.throws);
-	}
-
-	if (typeof responseConfig === 'number') {
-		responseConfig = {
-			status: responseConfig
-		};
-	} else if (typeof responseConfig === 'string' || !(responseConfig.body || responseConfig.headers || responseConfig.throws || responseConfig.status)) {
-		responseConfig = {
-			body: responseConfig
-		};
-	}
-
-	const opts = responseConfig.opts || {};
-	opts.url = url;
-	opts.sendAsJson = responseConfig.sendAsJson === undefined ? true : responseConfig.sendAsJson;
-	opts.status = responseConfig.status || 200;
-	opts.statusText = statusTextMap['' + opts.status];
-	// The ternary operator is to cope with new Headers(undefined) throwing in Chrome
-	// https://code.google.com/p/chromium/issues/detail?id=335871
-	opts.headers = responseConfig.headers ? new Headers(responseConfig.headers) : new Headers();
-
-	let body = responseConfig.body;
-	if (opts.sendAsJson && responseConfig.body != null && typeof body === 'object') { //eslint-disable-line
-		body = JSON.stringify(body);
-	}
-
-	if (stream) {
-		let s = new stream.Readable();
-		if (body != null) { //eslint-disable-line
-			s.push(body, 'utf-8');
-		}
-		s.push(null);
-		body = s;
-	}
-
-	return Promise.resolve(new Response(body, opts));
-}
 
 /**
  * normalizeRequest
@@ -124,16 +68,14 @@ function compileRoute (route) {
 
 	if (typeof route.matcher === 'string') {
 
-		if (route.matcher.indexOf('^') === 0) {
+		if (route.matcher === '*') {
+			matchUrl = () => true;
+		} else if (route.matcher.indexOf('^') === 0) {
 			const expectedUrl = route.matcher.substr(1);
-			matchUrl = function (url) {
-				return url.indexOf(expectedUrl) === 0;
-			};
+			matchUrl = url => url.indexOf(expectedUrl) === 0;
 		} else {
 			const expectedUrl = route.matcher;
-			matchUrl = function (url) {
-				return url === expectedUrl;
-			};
+			matchUrl = url => url === expectedUrl;
 		}
 	} else if (route.matcher instanceof RegExp) {
 		const urlRX = route.matcher;
@@ -142,7 +84,7 @@ function compileRoute (route) {
 		};
 	}
 
-	route.matcher = function (url, options) {
+	route.matcher = (url, options) => {
 		const req = normalizeRequest(url, options);
 		return matchMethod(req.method) && matchUrl(req.url);
 	};
@@ -157,6 +99,9 @@ class FetchMock {
 	 * @param  {Object} opts
 	 */
 	constructor (opts) {
+		this.config = {
+			sendAsJson: true
+		}
 		Headers = opts.Headers;
 		Request = opts.Request;
 		Response = opts.Response;
@@ -169,19 +114,8 @@ class FetchMock {
 		this._unmatchedCalls = [];
 		this.fetchMock = this.fetchMock.bind(this);
 		this.restore = this.restore.bind(this);
-		this.reMock = this.reMock.bind(this);
 		this.reset = this.reset.bind(this);
-	}
 
-	/**
-	 * useNonGlobalFetch
-	 * Sets fetchMock's default internal reference to native fetch to the given function
-	 * @param  {Function} func
-	 */
-	useNonGlobalFetch (func) {
-		this.mockedContext = this;
-		this.realFetch = func;
-		return this;
 	}
 
 	/**
@@ -190,41 +124,66 @@ class FetchMock {
 	 * See README for details of parameters
 	 * @return {FetchMock}          Returns the FetchMock instance, so can be chained
 	 */
-	mock (matcher, method, response) {
+	mock (matcher, response, options) {
+
 		// Do this here rather than in the constructor to ensure it's scoped to the test
-		this.realFetch = this.realFetch || (theGlobal.fetch && theGlobal.fetch.bind(theGlobal));
-		let config;
+		this.realFetch = theGlobal.fetch;
+
+		let route;
+
 		// Handle the variety of parameters accepted by mock (see README)
-		if (response) {
-			config = {
-				routes: [{
-					matcher,
-					method,
-					response
-				}]
-			}
-		} else if (method) {
-			config = {
-				routes: [{
-					matcher,
-					response: method
-				}]
-			}
-		} else if (matcher instanceof Array) {
-			config = {
-				routes: matcher
+
+		// Old method matching signature
+		if (options && /[A-Z]+/.test(response)) {
+			throw new Error(`The API for method matching has changed.
+				Now use .get(), .post(), .put(), .delete() and .head() shorthand methods,
+				or pass in, e.g. {method: 'PATCH'} as a thrd paramter`);
+		} else if (options) {
+			route = Object.assign({
+				matcher,
+				response
+			}, options);
+		} else if (response) {
+			route = {
+				matcher,
+				response
 			}
 		} else if (matcher && matcher.matcher) {
-			config = {
-				routes: [matcher]
-			}
+			route = matcher
 		} else {
-			config = matcher;
+			throw new Error('Invalid parameters passed to fetch-mock')
 		}
 
-		this.addRoutes(config.routes);
-		this.greed = config.greed || this.greed || 'none';
+		this.addRoute(route);
 		theGlobal.fetch = this.fetchMock;
+		return this;
+	}
+
+	get (matcher, response, options) {
+		return this.mock(matcher, response, Object.assign({}, options, {method: 'GET'}));
+	}
+
+	post (matcher, response, options) {
+		return this.mock(matcher, response, Object.assign({}, options, {method: 'POST'}));
+	}
+
+	put (matcher, response, options) {
+		return this.mock(matcher, response, Object.assign({}, options, {method: 'PUT'}));
+	}
+
+	delete (matcher, response, options) {
+		return this.mock(matcher, response, Object.assign({}, options, {method: 'DELETE'}));
+	}
+
+	head (matcher, response, options) {
+		return this.mock(matcher, response, Object.assign({}, options, {method: 'HEAD'}));
+	}
+
+	catch (response) {
+		if (this.fallbackResponse) {
+			console.warn(`calling fetchMock.catch() twice - are you sure you want to overwrite the previous fallback response`);
+		}
+		this.fallbackResponse = response || 'ok';
 		return this;
 	}
 
@@ -240,33 +199,29 @@ class FetchMock {
 
 		let response = this.router(url, opts);
 
-		if (response) {
-
-			if (typeof response === 'function') {
-				response = response (url, opts);
-			}
-
-			if (response instanceof Promise) {
-				return response.then(response => mockResponse(url, response, opts))
-			} else {
-				return mockResponse(url, response, opts)
-			}
-		} else {
+		if (!response) {
 			console.warn(`unmatched call to ${url}`);
 			this.push(null, [url, opts]);
-			if (this.greed === 'good') {
-				return mockResponse(url, {body: 'unmocked url: ' + url});
-			} else if (this.greed === 'bad') {
-				return mockResponse(url, {throws: 'unmocked url: ' + url});
+
+			if (this.fallbackResponse) {
+				response = this.fallbackResponse;
 			} else {
-				if (!this.realFetch) {
-					throw new Error('fetch not defined in this environment. To mock unmatched calls set `greed: good` in your options');
-				}
-				return this.realFetch(url, opts);
+				throw new Error(`unmatched call to ${url}`)
 			}
 		}
 
+		if (typeof response === 'function') {
+			response = response (url, opts);
+		}
+
+		if (response instanceof Promise) {
+			return response.then(response => this.mockResponse(url, response, opts))
+		} else {
+			return this.mockResponse(url, response, opts)
+		}
+
 	}
+
 	/**
 	 * router
 	 * Given url + options or a Request object, checks to see if ait is matched by any routes and returns
@@ -291,18 +246,76 @@ class FetchMock {
 	 * Adds routes to those used by fetchMock to match fetch calls
 	 * @param  {Object|Array} routes 	route configurations
 	 */
-	addRoutes (routes) {
+	addRoute (route) {
 
-		if (!routes) {
-			throw new Error('.mock() must be passed configuration for routes')
-		}
-
-		if (!(routes instanceof Array)) {
-			routes = [routes];
+		if (!route) {
+			throw new Error('.mock() must be passed configuration for a route')
 		}
 
 		// Allows selective application of some of the preregistered routes
-		this.routes = this.routes.concat(routes.map(compileRoute));
+		this.routes.push(compileRoute(route));
+	}
+
+
+	/**
+	 * mockResponse
+	 * Constructs a Response object to return from the mocked fetch
+	 * @param  {String} url    url parameter fetch was called with
+	 * @param  {Object} config configuration for the response to be constructed
+	 * @return {Promise}       Promise for a Response object (or a rejected response to imitate network failure)
+	 */
+	mockResponse (url, responseConfig, fetchOpts) {
+
+		// It seems odd to call this in here even though it's already called within fetchMock
+		// It's to handle the fact that because we want to support making it very easy to add a
+		// delay to any sort of response (including responses which are defined with a function)
+		// while also allowing function responses to return a Promise for a response config.
+		if (typeof responseConfig === 'function') {
+			responseConfig = responseConfig(url, fetchOpts);
+		}
+
+		if (Response.prototype.isPrototypeOf(responseConfig)) {
+			return Promise.resolve(responseConfig);
+		}
+
+		if (responseConfig.throws) {
+			return Promise.reject(responseConfig.throws);
+		}
+
+		if (typeof responseConfig === 'number') {
+			responseConfig = {
+				status: responseConfig
+			};
+		} else if (typeof responseConfig === 'string' || !(responseConfig.body || responseConfig.headers || responseConfig.throws || responseConfig.status)) {
+			responseConfig = {
+				body: responseConfig
+			};
+		}
+
+		const opts = responseConfig.opts || {};
+		opts.url = url;
+		opts.sendAsJson = responseConfig.sendAsJson === undefined ? this.config.sendAsJson : responseConfig.sendAsJson;
+		opts.status = responseConfig.status || 200;
+		opts.statusText = statusTextMap['' + opts.status];
+		// The ternary operator is to cope with new Headers(undefined) throwing in Chrome
+		// https://code.google.com/p/chromium/issues/detail?id=335871
+		opts.headers = responseConfig.headers ? new Headers(responseConfig.headers) : new Headers();
+
+		let body = responseConfig.body;
+		if (opts.sendAsJson && responseConfig.body != null && typeof body === 'object') { //eslint-disable-line
+			body = JSON.stringify(body);
+		}
+
+		if (stream) {
+			let s = new stream.Readable();
+			if (body != null) { //eslint-disable-line
+				s.push(body, 'utf-8');
+			}
+			s.push(null);
+			body = s;
+		}
+
+		return Promise.resolve(new Response(body, opts));
 	}
 
 	/**
@@ -329,27 +342,10 @@ class FetchMock {
 		if (this.realFetch) {
 			theGlobal.fetch = this.realFetch;
 		}
+		this.fallbackResponse = null;
 		this.reset();
 		this.routes = [];
-	}
-
-	/**
-	 * reMock
-	 * Same as .mock(), but also calls .restore() internally
-	 * @return {FetchMock}          Returns the FetchMock instance, so can be chained
-	 */
-	reMock () {
-		this.restore();
-		return this.mock.apply(this, [].slice.apply(arguments));
-	}
-
-	/**
-	 * getMock
-	 * Returns a reference to the stub function used to mock fetch
-	 * @return {Function}
-	 */
-	getMock () {
-		return this.fetchMock;
+		return this;
 	}
 
 	/**
@@ -360,6 +356,7 @@ class FetchMock {
 		this._calls = {};
 		this._matchedCalls = [];
 		this._unmatchedCalls = [];
+		return this;
 	}
 
 	/**
@@ -401,6 +398,10 @@ class FetchMock {
 			return !!(this._matchedCalls.length);
 		}
 		return !!(this._calls[name] && this._calls[name].length);
+	}
+
+	configure (opts) {
+		Object.assign(this.config, opts);
 	}
 }
 

@@ -770,9 +770,17 @@ module.exports = function (fetchMock, theGlobal, Request, Response) {
 						sendAsJson: true
 					});
 				}
-
-
 			});
+		})
+
+		describe.only('regressions', () => {
+			it('should accept object respones when passing options', () => {
+
+				expect(() => {
+					fetchMock.mock('http://foo.com', { foo: 'bar' }, { method: 'GET' })
+				}).to.not.throw();
+			})
+
 		})
 	});
 }

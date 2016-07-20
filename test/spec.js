@@ -773,7 +773,7 @@ module.exports = function (fetchMock, theGlobal, Request, Response) {
 			});
 		})
 
-		describe.only('regressions', () => {
+		describe('regressions', () => {
 			it('should accept object respones when passing options', () => {
 
 				expect(() => {

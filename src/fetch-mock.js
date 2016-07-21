@@ -295,6 +295,11 @@ class FetchMock {
 		const opts = responseConfig.opts || {};
 		opts.url = url;
 		opts.sendAsJson = responseConfig.sendAsJson === undefined ? this.config.sendAsJson : responseConfig.sendAsJson;
+		if (responseConfig.status && (typeof responseConfig.status !== 'number' || parseInt(responseConfig.status, 10) !== responseConfig.status || responseConfig.status < 200 || responseConfig.status > 599)) {
+			throw new TypeError(`Invalid status ${responseConfig.status} passed on response object.
+To respond with a JSON object that has status as a property assign the object to body
+e.g. {"body": {"status: "registered"}}`);
+		}
 		opts.status = responseConfig.status || 200;
 		opts.statusText = statusTextMap['' + opts.status];
 		// The ternary operator is to cope with new Headers(undefined) throwing in Chrome

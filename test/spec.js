@@ -775,10 +775,19 @@ module.exports = function (fetchMock, theGlobal, Request, Response) {
 
 		describe('regressions', () => {
 			it('should accept object respones when passing options', () => {
-
 				expect(() => {
 					fetchMock.mock('http://foo.com', { foo: 'bar' }, { method: 'GET' })
 				}).to.not.throw();
+				fetchMock.restore();
+			})
+
+			it('should expect valid statuses', () => {
+				fetchMock.mock('http://foo.com', { status: 'not number' })
+				expect(() => fetch('http://foo.com'))
+					.to.throw(`Invalid status not number passed on response object.
+To respond with a JSON object that has status as a property assign the object to body
+e.g. {"body": {"status: "registered"}}`);
+				fetchMock.restore();
 			})
 
 		})

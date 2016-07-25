@@ -30,6 +30,19 @@ function normalizeRequest (url, options) {
 	}
 }
 
+const stringMatchers = {
+	begin: string => {
+		const targetUrl = string.replace(/^begin:/, '')
+		return url => url.indexOf(targetUrl) === 0
+	},
+	end: string => {
+		const targetUrl = string.replace(/^end:/, '')
+		return url => url.substr(-targetUrl.length) === targetUrl
+	}
+	// glob: ,
+	// express:
+}
+
 /**
  * compileRoute
  * Given a route configuration object, validates the object structure and compiles
@@ -65,23 +78,30 @@ function compileRoute (route) {
 	};
 
 	let matchUrl;
-
-	if (typeof route.matcher === 'string') {
-
-		if (route.matcher === '*') {
-			matchUrl = () => true;
-		} else if (route.matcher.indexOf('^') === 0) {
-			const expectedUrl = route.matcher.substr(1);
-			matchUrl = url => url.indexOf(expectedUrl) === 0;
-		} else {
-			const expectedUrl = route.matcher;
-			matchUrl = url => url === expectedUrl;
-		}
-	} else if (route.matcher instanceof RegExp) {
+	if (route.matcher instanceof RegExp) {
 		const urlRX = route.matcher;
 		matchUrl = function (url) {
 			return urlRX.test(url);
 		};
+	} else if (typeof route.matcher === 'string') {
+		Object.keys(stringMatchers).some(name => {
+			if (route.matcher.indexOf(name + ':') === 0) {
+				matchUrl = stringMatchers[name](route.matcher);
+				return true
+			}
+		})
+
+		if (!matchUrl) {
+			if (route.matcher === '*') {
+				matchUrl = () => true;
+			} else if (route.matcher.indexOf('^') === 0) {
+				const expectedUrl = route.matcher.substr(1);
+				matchUrl = url => url.indexOf(expectedUrl) === 0;
+			} else {
+				const expectedUrl = route.matcher;
+				matchUrl = url => url === expectedUrl;
+			}
+		}
 	}
 
 	route.matcher = (url, options) => {

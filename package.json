@@ -18,7 +18,9 @@
     "http",
     "mock",
     "testing",
-    "spy"
+    "spy",
+    "ajax",
+    "xhr"
   ],
   "author": "Rhys Evans",
   "license": "ISC",

@@ -23,7 +23,7 @@
     "xhr"
   ],
   "author": "Rhys Evans",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/wheresrhys/fetch-mock/issues"
   },

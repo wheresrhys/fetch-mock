@@ -137,7 +137,10 @@ it('should make a request', function (done) {
 });
 ```
 ### `fetch` doesn't seem to be getting mocked?
-If using a mock loading library such as `mockery`, are you requiring the module you're testing after registering `fetch-mock` with the mock loader? You probably should be ([Example incorrect usage](https://github.com/wheresrhys/fetch-mock/issues/70)). If you're using ES6 `import` it may not be possible to do this without reverting to using `require()` sometimes. I *did* warn you about not using `fetch` as a global (...sigh)
+* If using a mock loading library such as `mockery`, are you requiring the module you're testing after registering `fetch-mock` with the mock loader? You probably should be ([Example incorrect usage](https://github.com/wheresrhys/fetch-mock/issues/70)). If you're using ES6 `import` it may not be possible to do this without reverting to using `require()` sometimes. I *did* warn you about not using `fetch` as a global (...sigh)
+* If using `isomorphic-fetch` in your source, are you assigning it to a `fetch` variable? You *shouldn't* be i.e. 
+  * `import 'isomorphic-fetch'`, not `import fetch from 'isomorphic-fetch'`
+  * `require('isomorphic-fetch')`, not `const fetch = require('isomorphic-fetch')`
 
 ### Environment doesn't support requiring fetch-mock?
 * If your client-side code or tests do not use a loader that respects the browser field of package.json use `require('fetch-mock/es5/client')`.

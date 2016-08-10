@@ -5,7 +5,7 @@ module.exports = function(karma) {
 
 		frameworks: [ 'mocha', 'chai', 'browserify'],
 		files: [
-			'http://polyfill.webservices.ft.com/v1/polyfill.min.js?libVersion=v1.3.0&features=default,modernizr:promises',
+			'http://polyfill.webservices.ft.com/v2/polyfill.min.js?features=default,Promise,fetch',
 			'test/client.js'
 		],
 		preprocessors: {

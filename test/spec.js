@@ -221,7 +221,7 @@ module.exports = function (fetchMock, theGlobal, Request, Response) {
 
 				it('can catch unmatched calls with function', () => {
 					fetchMock
-						.catch(() => new Response('i am text'))
+						.catch(() => new Response('i am text', {status: 200	}))
 						.mock(dummyRoute);
 					return fetch('http://1')
 						.then(function (res) {
@@ -531,7 +531,7 @@ module.exports = function (fetchMock, theGlobal, Request, Response) {
 					fetchMock.mock({
 						name: 'route',
 						matcher: 'http://it.at.there/',
-						response: new Response('i am text')
+						response: new Response('i am text', {status: 200})
 					});
 					return fetch('http://it.at.there/')
 						.then(function (res) {
@@ -547,7 +547,7 @@ module.exports = function (fetchMock, theGlobal, Request, Response) {
 					fetchMock.mock({
 						name: 'route',
 						matcher: 'http://it.at.there/',
-						response: () => new Response('i am text too')
+						response: () => new Response('i am text too', {status: 200})
 					});
 					return fetch('http://it.at.there/')
 						.then(function (res) {

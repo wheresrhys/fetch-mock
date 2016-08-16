@@ -340,7 +340,7 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
         });
 
 
-				it.only('match headers', () => {
+				it('match headers', () => {
 					fetchMock.mock({
 							name: 'route1',
 							headers: {
@@ -368,9 +368,9 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 							expect(fetchMock.called('route1')).to.be.true;
 							expect(fetchMock.called('route2')).to.be.true;
 							expect(fetchMock.calls('route1').length).to.equal(1);
-							expect(fetchMock.calls('route2').length).to.equal(2);
-							expect(fetchMock.calls().matched.length).to.equal(3);
-							expect(fetchMock.calls().unmatched.length).to.equal(1);
+							expect(fetchMock.calls('route2').length).to.equal(1);
+							expect(fetchMock.calls().matched.length).to.equal(2);
+							expect(fetchMock.calls().unmatched.length).to.equal(2);
 						});
         });
 

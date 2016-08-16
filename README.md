@@ -38,6 +38,7 @@ Replaces `fetch()` with a stub which records its calls, grouped by route, and op
 * `options`: A configuration object with all/additional properties to define a route to mock
 	* `name`: A unique string naming the route. Used to subsequently retrieve references to the calls, grouped by name. If not specified defaults to `matcher.toString()` *Note: If a non-unique name is provided no error will be thrown (because names are optional, so auto-generated ones may legitimately clash)*
 	* `method`: http method to match
+	* `headers`: key/value map of headers to match
 	* `matcher`: as specified above
 	* `response`: as specified above
 

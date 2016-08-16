@@ -20,13 +20,37 @@ function normalizeRequest (url, options) {
 	if (Request.prototype.isPrototypeOf(url)) {
 		return {
 			url: url.url,
-			method: url.method
+			method: url.method,
+			headers: (() => {
+				const headers = {};
+				url.headers.forEach(name => headers[name] = url.headers.name);
+				return headers;
+			})()
 		};
 	} else {
 		return {
 			url: url,
-			method: options && options.method || 'GET'
+			method: options && options.method || 'GET',
+			headers: options && options.headers
 		};
+	}
+}
+
+function getHeaderMatcher (expectedHeaders) {
+	const expectation = Object.keys(expectedHeaders).map(k => {
+		return {key: k.toLowerCase(), val: expectedHeaders[k]}
+	})
+	return headers => {
+		if (!headers) {
+			headers = {};
+		}
+		const lowerCaseHeaders = Object.keys(headers).reduce((obj, k) => {
+			obj[k.toLowerCase()] = headers[k]
+			return obj;
+		}, {});
+		return expectation.every(header => {
+			return lowerCaseHeaders[header.key] === header.val;
+		})
 	}
 }
 
@@ -64,6 +88,8 @@ function compileRoute (route) {
 		return !expectedMethod || expectedMethod === (method ? method.toLowerCase() : 'get');
 	};
 
+	const matchHeaders = route.headers ? getHeaderMatcher(route.headers) : (() => true);
+
 	let matchUrl;
 
 	if (typeof route.matcher === 'string') {
@@ -86,7 +112,7 @@ function compileRoute (route) {
 
 	route.matcher = (url, options) => {
 		const req = normalizeRequest(url, options);
-		return matchMethod(req.method) && matchUrl(req.url);
+		return matchHeaders(req.headers) && matchMethod(req.method) && matchUrl(req.url);
 	};
 
 	return route;

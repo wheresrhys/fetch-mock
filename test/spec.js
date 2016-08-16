@@ -25,7 +25,7 @@ module.exports = function (fetchMock, theGlobal, Request, Response) {
 			fetchCalls = [];
 		});
 
-		describe('default behaviour', function () {
+		describe('Interface', function () {
 
 			it('restores fetch', function () {
 				fetchMock.mock(dummyRoute);
@@ -102,7 +102,7 @@ module.exports = function (fetchMock, theGlobal, Request, Response) {
 
 		});
 
-		describe('mocking fetch calls', function () {
+		describe('mock()', function () {
 
 			beforeEach(function () {
 				try {
@@ -110,15 +110,8 @@ module.exports = function (fetchMock, theGlobal, Request, Response) {
 				} catch (e) {}
 			});
 
-			describe('api parameters', function () {
+			describe('parameters', function () {
 
-				it('falls back to matcher.toString() as a name', function () {
-					expect(function () {
-						fetchMock.mock({matcher: 'http://it.at.there/', response: 'ok'});
-					}).not.to.throw();
-					fetch('http://it.at.there/');
-					expect(fetchMock.calls('http://it.at.there/').length).to.equal(1);
-				});
 
 				it('expects a matcher', function () {
 					expect(function () {
@@ -132,24 +125,6 @@ module.exports = function (fetchMock, theGlobal, Request, Response) {
 					}).to.throw();
 				});
 
-
-				it('throws helpful error matcher, method, route triples', function () {
-					expect(function () {
-						fetchMock.mock('http://it.at.there/', 'PUT', 'ok');
-					}).to.throw(/API for method matching has changed/);
-				});
-
-
-				it('accepts matcher, method, route triples', function () {
-					expect(function () {
-						fetchMock.mock('http://it.at.there/', 'ok', {method: 'PUT'}).catch();
-					}).not.to.throw();
-					fetch('http://it.at.there/', {method: 'PUT'});
-					fetch('http://it.at.there/', {method: 'POST'});
-					expect(fetchMock.calls().matched.length).to.equal(1);
-					expect(fetchMock.calls('http://it.at.there/').length).to.equal(1);
-				});
-
 				it('accepts matcher, route pairs', function () {
 					expect(function () {
 						fetchMock.mock('http://it.at.there/', 'ok');
@@ -159,7 +134,23 @@ module.exports = function (fetchMock, theGlobal, Request, Response) {
 					expect(fetchMock.calls('http://it.at.there/').length).to.equal(1);
 				});
 
-				it('accepts single route', function () {
+				it('accepts matcher, response, config triples', function () {
+					expect(function () {
+						fetchMock.mock('http://it.at.there/', 'ok', {method: 'PUT'}).catch();
+					}).not.to.throw();
+					fetch('http://it.at.there/', {method: 'PUT'});
+					fetch('http://it.at.there/', {method: 'POST'});
+					expect(fetchMock.calls().matched.length).to.equal(1);
+					expect(fetchMock.calls('http://it.at.there/').length).to.equal(1);
+				});
+
+				it('throws helpful error on matcher, method, route triples', function () {
+					expect(function () {
+						fetchMock.mock('http://it.at.there/', 'PUT', 'ok');
+					}).to.throw(/API for method matching has changed/);
+				});
+
+				it('accepts single config object', function () {
 					expect(function () {
 						fetchMock.mock({name: 'route', matcher: 'http://it.at.there/', response: 'ok'});
 					}).not.to.throw();
@@ -449,6 +440,15 @@ module.exports = function (fetchMock, theGlobal, Request, Response) {
 							expect(fetchMock.calls('route2').length).to.equal(0);
 						});
 				});
+
+				it('falls back to matcher.toString() as a name', function () {
+					expect(function () {
+						fetchMock.mock({matcher: 'http://it.at.there/', response: 'ok'});
+					}).not.to.throw();
+					fetch('http://it.at.there/');
+					expect(fetchMock.calls('http://it.at.there/').length).to.equal(1);
+				});
+
 
 				it('record history of calls to matched routes', function () {
 					fetchMock.mock({
@@ -788,6 +788,15 @@ module.exports = function (fetchMock, theGlobal, Request, Response) {
 To respond with a JSON object that has status as a property assign the object to body
 e.g. {"body": {"status: "registered"}}`);
 				fetchMock.restore();
+			})
+
+			it('should restore successfully after multiple mocks', () => {
+				const realFetch = theGlobal.fetch;
+				fetchMock
+					.mock('http://foo.com', { status: 'not number' })
+					.mock('http://foo2.com', { status: 'not number' })
+				fetchMock.restore();
+				expect(realFetch).to.equal(theGlobal.fetch);
 			})
 
 		})

@@ -127,7 +127,7 @@ class FetchMock {
 	mock (matcher, response, options) {
 
 		// Do this here rather than in the constructor to ensure it's scoped to the test
-		this.realFetch = theGlobal.fetch;
+		this.realFetch = this.realFetch || theGlobal.fetch;
 
 		let route;
 
@@ -346,6 +346,7 @@ e.g. {"body": {"status: "registered"}}`);
 	restore () {
 		if (this.realFetch) {
 			theGlobal.fetch = this.realFetch;
+			this.realfetch = null;
 		}
 		this.fallbackResponse = null;
 		this.reset();

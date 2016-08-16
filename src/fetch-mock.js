@@ -126,9 +126,6 @@ class FetchMock {
 	 */
 	mock (matcher, response, options) {
 
-		// Do this here rather than in the constructor to ensure it's scoped to the test
-		this.realFetch = this.realFetch || theGlobal.fetch;
-
 		let route;
 
 		// Handle the variety of parameters accepted by mock (see README)
@@ -143,7 +140,7 @@ class FetchMock {
 				matcher,
 				response
 			}, options);
-		} else if (response) {
+		} else if (matcher && response) {
 			route = {
 				matcher,
 				response
@@ -154,7 +151,11 @@ class FetchMock {
 			throw new Error('Invalid parameters passed to fetch-mock')
 		}
 
+
 		this.addRoute(route);
+
+		// Do this here rather than in the constructor to ensure it's scoped to the test
+		this.realFetch = this.realFetch || theGlobal.fetch;
 		theGlobal.fetch = this.fetchMock;
 		return this;
 	}

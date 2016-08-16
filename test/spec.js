@@ -322,13 +322,53 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 							matcher: 'http://it.at.here/',
 							response: 'ok'
 						}).catch();
-					return Promise.all([fetch('http://it.at.here/', {method: 'put'}), fetch('http://it.at.here/'), fetch('http://it.at.here/', {method: 'GET'}), fetch('http://it.at.here/', {method: 'delete'})])
+					return Promise.all([
+						fetch('http://it.at.here/', {method: 'put'}),
+						fetch('http://it.at.here/'),
+						fetch('http://it.at.here/', {method: 'GET'}),
+						fetch('http://it.at.here/', {method: 'delete'})
+					])
 						.then(() => {
 							expect(fetchMock.called()).to.be.true;
 							expect(fetchMock.called('route1')).to.be.true;
 							expect(fetchMock.called('route2')).to.be.true;
 							expect(fetchMock.calls('route1').length).to.equal(2);
 							expect(fetchMock.calls('route2').length).to.equal(1);
+							expect(fetchMock.calls().matched.length).to.equal(3);
+							expect(fetchMock.calls().unmatched.length).to.equal(1);
+						});
+        });
+
+
+				it.only('match headers', () => {
+					fetchMock.mock({
+							name: 'route1',
+							headers: {
+								test: 'yes'
+							},
+							matcher: 'http://it.at.here/',
+							response: 'ok'
+						}).mock({
+							name: 'route2',
+							headers: {
+								test: 'else',
+								again: 'oh yes'
+							},
+							matcher: 'http://it.at.here/',
+							response: 'ok'
+						}).catch();
+					return Promise.all([
+						fetch('http://it.at.here/', {headers: {test: 'yes'}}),
+						fetch('http://it.at.here/', {headers: {test: 'else'}}),
+						fetch('http://it.at.here/', {headers: {test: 'else', AGAIN: 'oh yes'}}),
+						fetch('http://it.at.here/')
+					])
+						.then(() => {
+							expect(fetchMock.called()).to.be.true;
+							expect(fetchMock.called('route1')).to.be.true;
+							expect(fetchMock.called('route2')).to.be.true;
+							expect(fetchMock.calls('route1').length).to.equal(1);
+							expect(fetchMock.calls('route2').length).to.equal(2);
 							expect(fetchMock.calls().matched.length).to.equal(3);
 							expect(fetchMock.calls().unmatched.length).to.equal(1);
 						});

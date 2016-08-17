@@ -2,12 +2,17 @@
   "name": "fetch-mock",
   "version": "5.1.0",
   "description": "Mock http requests made using fetch (or isomorphic-fetch)",
-  "main": "src/server.js",
+  "files": [
+    "*.md",
+    "es5"
+  ],
+  "main": "es5/server.js",
   "browser": "es5/client.js",
   "scripts": {
+    "build": "rimraf es5 && babel ./src -d es5 && npm run browserify",
     "test": "make test",
-    "browserify": "browserify -s fetchMock src/client.js > es5/client-browserified.js",
-    "prepublish": "babel src --out-dir es5 --plugins transform-object-assign --presets es2015 && npm run browserify"
+    "browserify": "browserify -s fetchMock src/client.js -t [ babelify ] > es5/client-browserified.js",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -49,22 +54,8 @@
     "karma-phantomjs-launcher": "^0.2.1",
     "mocha": "^2.2.4",
     "mockery": "^1.4.0",
+    "rimraf": "^2.5.4",
     "sinon": "^1.17.0",
     "whatwg-fetch": "^0.10.1"
-  },
-  "browserify": {
-    "transform": [
-      [
-        "babelify",
-        {
-          "plugins": [
-            "transform-object-assign"
-          ],
-          "presets": [
-            "es2015"
-          ]
-        }
-      ]
-    ]
   }
 }

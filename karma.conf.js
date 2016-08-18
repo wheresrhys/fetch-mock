@@ -9,11 +9,25 @@ module.exports = function(karma) {
 			'test/client.js'
 		],
 		preprocessors: {
-			'test/client.js': ['browserify']
+			'src/**/*.js': ['babel', 'browserify'],
+			'test/**/*.js': ['babel', 'browserify']
 		},
 		browserify: {
 			debug: true
 		},
+		babelPreprocessor: {
+      options: {
+        presets: ['es2015'],
+        plugins: ['transform-object-assign'],
+        sourceMap: 'inline'
+      },
+      // filename: function (file) {
+      //   return file.originalPath.replace(/\.js$/, '.es5.js');
+      // },
+      // sourceFileName: function (file) {
+      //   return file.originalPath;
+      // }
+    },
 		browsers: ['Chrome'],
 		customLaunchers: {
 			Chrome_travis_ci: {

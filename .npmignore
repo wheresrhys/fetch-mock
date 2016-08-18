@@ -1,0 +1,10 @@
+/test/
+.travis.yml
+.eslintrc
+ISSUE_TEMPLATE
+karma.conf.js
+LICENSE
+Makefile
+PROTIPS.md
+README.md
+V4_V5_UPGRADE_NOTES.md

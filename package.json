@@ -51,20 +51,5 @@
     "mockery": "^1.4.0",
     "sinon": "^1.17.0",
     "whatwg-fetch": "^0.10.1"
-  },
-  "browserify": {
-    "transform": [
-      [
-        "babelify",
-        {
-          "plugins": [
-            "transform-object-assign"
-          ],
-          "presets": [
-            "es2015"
-          ]
-        }
-      ]
-    ]
   }
 }

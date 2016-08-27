@@ -3,7 +3,42 @@ Mock http requests made using fetch (or [isomorphic-fetch](https://www.npmjs.com
 
 ## Installation and usage
 
-`npm install fetch-mock` then `require('fetch-mock')` in most environments.
+Install with `npm install fetch-mock`.
+
+Example with node: suppose we have a file `make-request.js` with a function that calls `fetch`:
+
+```js
+module.exports = function makeRequest() {
+  return fetch("http://httpbin.org/get").then(function(response) {
+    return response.json();
+  });
+};
+```
+
+We can use fetch-mock to patch `fetch`. In `patched.js`:
+
+```js
+var fetchMock = require('fetch-mock');
+var makeRequest = require('./make-request');
+
+// Patch the fetch() global to always return the same value for GET
+// requests to all URLs.
+fetchMock.get('*', {hello: 'world'});
+
+makeRequest().then(function(data) {
+  console.log(['got data', data]);
+});
+
+// Unpatch.
+fetchMock.restore();
+```
+
+Result:
+
+```bash
+$ node patched.js
+[ 'got data', { hello: 'world' } ]
+```
 
 * [Troubleshooting and alternative installation](#troubleshooting-and-alternative-installation)
 

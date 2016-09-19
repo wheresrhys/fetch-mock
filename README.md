@@ -91,6 +91,15 @@ fetchMock.purge = function (matcher, response, options) {
 
 ```
 
+##### `catch(response)`
+This is used to define how to respond to calls to fetch that don't match any of the defined mocks. It accepts the same types of response as a normal call to `.mock(matcher, response)`. It can also take an arbitrary function to completely customise behaviour of unmatched calls. It is chainable and can be called before or after other calls to `.mock()`. If `.catch() ` is called without any parameters then every unmatched call will receive a `200` response e.g.
+
+```
+fetchMock
+	.mock('http://my-api.com', 200)
+	.catch(503)
+```
+
 ##### `restore()`
 Chainable method that restores `fetch()` to its unstubbed state and clears all data recorded for its calls.
 

@@ -108,6 +108,44 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 
 		});
 
+		describe('catch()', () => {
+			beforeEach(() => {
+				fetchMock.restore();
+			});
+
+			it('can catch all calls to fetch with good response by default', () => {
+				fetchMock.catch();
+				return fetch('http://place.com/')
+					.then(res => {
+						expect(res.status).to.equal(200);
+						expect(fetchMock.calls().unmatched[0]).to.eql([ 'http://place.com/', undefined ])
+					})
+			})
+
+			it('can catch all calls to fetch with custom response', () => {
+				fetchMock.catch(Promise.resolve('carrot'));
+				return fetch('http://place.com/')
+					.then(res => {
+						expect(res.status).to.equal(200);
+						expect(fetchMock.calls().unmatched[0]).to.eql([ 'http://place.com/', undefined ])
+						return res.text()
+							.then(text => expect(text).to.equal('carrot'))
+					})
+			})
+
+			it('can call catch after calls to mock', () => {
+				fetchMock
+					.mock('http://other-place.com', 404)
+					.catch();
+				return fetch('http://place.com/')
+					.then(res => {
+						expect(res.status).to.equal(200);
+						expect(fetchMock.calls().unmatched[0]).to.eql([ 'http://place.com/', undefined ])
+					})
+			})
+
+		})
+
 		describe('mock()', () => {
 
 			beforeEach(() => {

@@ -180,6 +180,10 @@ class FetchMock {
 
 		this.addRoute(route);
 
+		return this._mock();
+	}
+
+	_mock () {
 		// Do this here rather than in the constructor to ensure it's scoped to the test
 		this.realFetch = this.realFetch || theGlobal.fetch;
 		theGlobal.fetch = this.fetchMock;
@@ -211,7 +215,7 @@ class FetchMock {
 			console.warn(`calling fetchMock.catch() twice - are you sure you want to overwrite the previous fallback response`);
 		}
 		this.fallbackResponse = response || 'ok';
-		return this;
+		return this._mock();
 	}
 
 	/**
@@ -292,7 +296,6 @@ class FetchMock {
 	 * @return {Promise}       Promise for a Response object (or a rejected response to imitate network failure)
 	 */
 	mockResponse (url, responseConfig, fetchOpts) {
-
 		// It seems odd to call this in here even though it's already called within fetchMock
 		// It's to handle the fact that because we want to support making it very easy to add a
 		// delay to any sort of response (including responses which are defined with a function)

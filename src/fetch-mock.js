@@ -245,7 +245,8 @@ class FetchMock {
 			response = response (url, opts);
 		}
 
-		if (response instanceof Promise) {
+		// Checks if the response is a promise without using Promise builtin
+		if (typeof response.then === 'function') {
 			return response.then(response => this.mockResponse(url, response, opts))
 		} else {
 			return this.mockResponse(url, response, opts)

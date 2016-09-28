@@ -885,6 +885,19 @@ e.g. {"body": {"status: "registered"}}`);
 				expect(realFetch).to.equal(theGlobal.fetch);
 			})
 
+			it('should allow non native Promises as responses', () => {
+				const stub = sinon.spy(() => Promise.resolve(new Response('', {status: 203})));
+				fetchMock.mock(/.*/, {
+					then: stub
+				})
+				return fetch('http://thing.place')
+					.then(res => {
+						expect(stub.calledOnce).to.be.true
+						expect(res.status).to.equal(203);
+						fetchMock.restore();
+					})
+			})
+
 		})
 	});
 }

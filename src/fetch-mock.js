@@ -245,7 +245,7 @@ class FetchMock {
 			response = response (url, opts);
 		}
 
-		if (response instanceof Promise) {
+		if (typeof response.then === 'function') {
 			return response.then(response => this.mockResponse(url, response, opts))
 		} else {
 			return this.mockResponse(url, response, opts)

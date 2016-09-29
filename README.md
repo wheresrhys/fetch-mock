@@ -65,7 +65,7 @@ Replaces `fetch()` with a stub which records its calls, grouped by route, and op
 	* `string`: Creates a 200 response with the string as the response body
 	* `object`: As long as the object does not contain any of the properties below it is converted into a json string and returned as the body of a 200 response. If any of the properties below are defined it is used to configure a `Response` object
 		* `body`: Set the response body (`string` or `object`)
-		* `status`: Set the response status (defaut `200`)
+		* `status`: Set the response status (default `200`)
 		* `headers`: Set the response headers. (`object`)
 		* `throws`: If this property is present then a `Promise` rejected with the value of `throws` is returned
 		* `sendAsJson`: This property determines whether or not the request body should be JSON.stringified before being sent (defaults to true).

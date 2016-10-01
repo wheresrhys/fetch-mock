@@ -207,6 +207,14 @@ class FetchMock {
 		return this;
 	}
 
+	_unMock () {
+		if (this.realFetch) {
+			theGlobal.fetch = this.realFetch;
+			this.realfetch = null;
+		}
+		return this;
+	}
+
 	catch (response) {
 		if (this.fallbackResponse) {
 			console.warn(`calling fetchMock.catch() twice - are you sure you want to overwrite the previous fallback response`);
@@ -371,10 +379,7 @@ e.g. {"body": {"status: "registered"}}`);
 	 * Restores global fetch to its initial state and resets call history
 	 */
 	restore () {
-		if (this.realFetch) {
-			theGlobal.fetch = this.realFetch;
-			this.realfetch = null;
-		}
+		this._unMock();
 		this.fallbackResponse = null;
 		this.reset();
 		this.routes = [];
@@ -435,13 +440,16 @@ e.g. {"body": {"status: "registered"}}`);
 
 	done (name) {
 		const names = name ? [name] : this.routes.map(r => r.name);
-		return names.every(name => {
+		// Ideally would use array.every, but not widely supported
+		return names.map(name => {
 			if (!this.called(name)) {
 				return false
 			}
-			const expectedTimes = this.routes.find(r => r.name === name).times;
+			// would use array.find... but again not so widely supported
+			const expectedTimes = (this.routes.filter(r => r.name === name) || [{}])[0].times;
 			return !expectedTimes || (expectedTimes <= this.calls(name).length)
 		})
+			.filter(bool => !bool).length === 0
 	}
 
 	configure (opts) {

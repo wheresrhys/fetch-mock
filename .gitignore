@@ -3,3 +3,4 @@
 npm-debug.log
 /es5/
 /dist/
+test/fixtures/built-sw.js

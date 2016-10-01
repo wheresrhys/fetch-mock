@@ -13,31 +13,41 @@ const dummyFetch = function () {
 	return Promise.resolve(arguments);
 };
 
-require('./spec')(fetchMock, GLOBAL, require('node-fetch').Request);
 
-describe('non-global use', function () {
+require('./spec')(fetchMock, global, require('node-fetch').Request, require('node-fetch').Response);
+
+describe('support for Buffers', function () {
+	it('can respond with a buffer', function () {
+		fetchMock.mock(/a/, {
+			sendAsJson: false,
+			body: new Buffer('buffer')
+		})
+		return fetch('http://a.com')
+			.then(res => res.text())
+			.then(txt => {
+				expect(txt).to.equal('buffer');
+			});
+	});
+});
+
+describe('new non-global use', function () {
 
 	before(function () {
 		try {
 			fetchMock.restore();
 		} catch (e) {}
+		delete global.fetch;
 	});
-	it('stubs non global fetch if function passed in', function () {
 
-		fetchMock.useNonGlobalFetch(dummyFetch);
-		expect(fetchMock.realFetch).to.equal(dummyFetch);
-		const mock = fetchMock.mock(/a/,200).getMock();
-		expect(typeof mock).to.equal('function');
-		expect(mock).to.not.equal(dummyFetch);
+	it('stubs non global fetch if function passed in', function () {
+		fetchMock.mock(/a/,200).catch(dummyFetch);
 		expect(function () {
-			mock('http://url', {prop: 'val'})
+			fetchMock.fetchMock('http://url', {prop: 'val'})
 		}).not.to.throw();
 		expect(fetchMock.calls().unmatched.length).to.equal(1);
 		expect(fetchCalls.length).to.equal(1);
 		expect(fetchCalls[0]).to.eql(['http://url', {prop: 'val'}]);
-
 		fetchMock.restore();
-		fetchMock.usesGlobalFetch = true;
 	});
 
 
@@ -46,18 +56,21 @@ describe('non-global use', function () {
       useCleanCache: true,
       warnOnUnregistered: false
     });
-    const myMock = fetchMock
-      .useNonGlobalFetch(require('node-fetch'))
+    fetchMock
       .mock('http://auth.service.com/user', '{"foo": 1}')
-      .getMock();
-    mockery.registerMock('node-fetch', myMock);
-    expect(require('./fixtures/fetch-proxy')).to.equal(myMock);
+    mockery.registerMock('node-fetch', fetchMock.fetchMock);
+    expect(require('./fixtures/fetch-proxy')).to.equal(fetchMock.fetchMock);
     fetchMock.restore();
     mockery.deregisterMock('node-fetch');
     mockery.disable();
   });
 
 });
+
+
+
+
+
 
 
 

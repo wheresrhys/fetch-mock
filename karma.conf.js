@@ -5,11 +5,16 @@ module.exports = function(karma) {
 
 		frameworks: [ 'mocha', 'chai', 'browserify'],
 		files: [
-			'http://polyfill.webservices.ft.com/v2/polyfill.min.js?features=default,Promise,fetch',
-			'test/client.js'
+			'http://cdn.polyfill.io/v2/polyfill.min.js?features=default,Promise,fetch',
+			'test/client.js',
+			'test/sw.js',
+			{pattern: 'test/fixtures/built-sw.js', served: true, included: false},
 		],
+		proxies: {
+			'/__sw.js': '/base/test/fixtures/built-sw.js'
+		},
 		preprocessors: {
-			'test/client.js': ['browserify']
+			'test/*.js': ['browserify']
 		},
 		browserify: {
 			debug: true,

@@ -102,6 +102,7 @@ Shorthand for `mock()` which limits to being called one time only. (see `times` 
 ##### `put()`
 ##### `delete()`
 ##### `head()`
+##### `patch()`
 Shorthands for `mock()` restricted to a particular method *Tip: if you use some other method a lot you can easily define your own shorthands e.g.:*
 
 ```
@@ -116,6 +117,7 @@ fetchMock.purge = function (matcher, response, options) {
 ##### `putOnce()`
 ##### `deleteOnce()`
 ##### `headOnce()`
+##### `patchOnce()`
 Shorthands for `mock()` restricted to a particular method and that can only be called one time only
 
 ##### `catch(response)`

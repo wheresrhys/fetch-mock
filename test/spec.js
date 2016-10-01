@@ -202,7 +202,7 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 				});
 
 				describe('method shorthands', () => {
-					'get,post,put,delete,head'.split(',')
+					'get,post,put,delete,head,patch'.split(',')
 						.forEach(method => {
 							it(`has shorthand for ${method.toUpperCase()}`, () => {
 								sinon.stub(fetchMock, 'mock');
@@ -901,7 +901,7 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 						fetchMock.mock.restore();
 					});
 
-					'get,post,put,delete,head'.split(',')
+					'get,post,put,delete,head,patch'.split(',')
 						.forEach(method => {
 							it(`has once shorthand for ${method.toUpperCase()}`, () => {
 								sinon.stub(fetchMock, 'mock');
@@ -924,9 +924,9 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 							expect(res.status).to.equal(200);
 						})
 						.then(() => fetch('http://it.at.there1/'))
-						.then(res => {
+						.then(() => {
 							expect(true).to.be.false;
-						}, err => {
+						}, () => {
 							expect(true).to.be.true;
 						})
 				});

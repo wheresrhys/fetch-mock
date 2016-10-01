@@ -449,7 +449,7 @@ e.g. {"body": {"status: "registered"}}`);
 	}
 }
 
-['get','post','put','delete','head']
+['get','post','put','delete','head', 'patch']
 	.forEach(method => {
 		FetchMock.prototype[method] = function (matcher, response, options) {
 			return this.mock(matcher, response, Object.assign({}, options, {method: method.toUpperCase()}));

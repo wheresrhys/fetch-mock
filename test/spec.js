@@ -835,9 +835,9 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 				});
 			});
 
-			describe.only('strict matching', function () {
+			describe('strict matching', function () {
 
-				it.only('can expect all routes to have been called', function () {
+				it('can expect all routes to have been called', function () {
 
 					fetchMock
 						.mock('http://it.at.there1/', 200)
@@ -853,7 +853,7 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 				it('can expect a route to have been called exactly n times', function () {
 
 					fetchMock
-						.mock('http://it.at.there1/', 200, {times: 2})
+						.mock('http://it.at.there1/', 200, {times: 3})
 
 					fetch('http://it.at.there1/')
 					expect(fetchMock.called()).to.be.true;
@@ -862,12 +862,10 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 					expect(fetchMock.done('http://it.at.there1/')).to.be.false;
 					fetch('http://it.at.there1/')
 					expect(fetchMock.done()).to.be.false;
-					expect(fetchMock.called('http://it.at.there1/')).to.be.true;
-					expect(fetchMock.done('http://it.at.there1/')).to.be.true;
+					expect(fetchMock.done('http://it.at.there1/')).to.be.false;
 					fetch('http://it.at.there1/');
 					expect(fetchMock.done()).to.be.true;
-					expect(fetchMock.called('http://it.at.there1/')).to.be.true;
-					expect(fetchMock.done('http://it.at.there1/')).to.be.false;
+					expect(fetchMock.done('http://it.at.there1/')).to.be.true;
 				});
 
 				it('can expect all routes to have been called m, n ... times', function () {
@@ -876,8 +874,6 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 						.mock('http://it.at.there2/', 200, {times: 2})
 
 					fetch('http://it.at.there1/')
-					fetch('http://it.at.there2/')
-					expect(fetchMock.called()).to.be.true;
 					expect(fetchMock.done()).to.be.false;
 					expect(fetchMock.done('http://it.at.there1/')).to.be.false;
 					expect(fetchMock.done('http://it.at.there2/')).to.be.false;
@@ -886,11 +882,11 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 					expect(fetchMock.done('http://it.at.there1/')).to.be.true;
 					expect(fetchMock.done('http://it.at.there2/')).to.be.false;
 					fetch('http://it.at.there2/')
-					expect(fetchMock.done()).to.be.true;
+					expect(fetchMock.done()).to.be.false;
 					expect(fetchMock.done('http://it.at.there1/')).to.be.true;
 					expect(fetchMock.done('http://it.at.there2/')).to.be.false;
-					fetch('http://it.at.there1/');
-					expect(fetchMock.done()).to.be.false;
+					fetch('http://it.at.there2/');
+					expect(fetchMock.done()).to.be.true;
 					expect(fetchMock.done('http://it.at.there1/')).to.be.true;
 					expect(fetchMock.done('http://it.at.there2/')).to.be.true;
 				});
@@ -921,7 +917,7 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 
 				it('won\'t mock if route already matched enough times', function () {
 					fetchMock
-						.mock('http://it.at.there1/', 200)
+						.mock('http://it.at.there1/', 200, {times: 1})
 
 					return fetch('http://it.at.there1/')
 						.then(res => {
@@ -937,7 +933,7 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 
 				it('falls back to second route if first route already matched enough times', function () {
 					fetchMock
-						.mock('http://it.at.there1/', 404, 1)
+						.mock('http://it.at.there1/', 404, {times: 1})
 						.mock('http://it.at.there1/', 200);
 
 					return fetch('http://it.at.there1/')
@@ -949,39 +945,6 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 							expect(res.status).to.equal(200);
 						})
 				});
-
-				it.skip('warns when call-limited routes shares a name with other routes', function () {
-					fetchMock
-						.mock('http://it.at.there1/', 404, 1)
-						.mock('http://it.at.there1/', 200, 1);
-
-					fetch('http://it.at.there1/');
-					expect(fetchMock.done(true)).to.be.false;
-					expect(fetchMock.called('http://it.at.there1/')).to.be.true;
-					expect(fetchMock.done('http://it.at.there1/')).to.be.false;
-					fetch('http://it.at.there1/');
-					expect(fetchMock.called(true)).to.be.true;
-					expect(fetchMock.done('http://it.at.there1/')).to.be.true;
-					fetch('http://it.at.there1/');
-					expect(fetchMock.called(true)).to.be.false;
-					expect(fetchMock.done('http://it.at.there1/')).to.be.false;
-				});
-
-				// it('warns with when one call-limited, and one non-limited route share a name', function () {
-				// 	fetchMock
-				// 		.mock('http://it.at.there1/', 404, 1)
-				// 		.mock('http://it.at.there1/', 200);
-
-				// 	fetch('http://it.at.there1/');
-				// 	expect(fetchMock.called(true)).to.be.false;
-				// 	expect(fetchMock.done('http://it.at.there1/')).to.be.false;
-				// 	fetch('http://it.at.there1/');
-				// 	expect(fetchMock.called(true)).to.be.true;
-				// 	expect(fetchMock.done('http://it.at.there1/')).to.be.true;
-				// 	fetch('http://it.at.there1/');
-				// 	expect(fetchMock.called(true)).to.be.true;
-				// 	expect(fetchMock.done('http://it.at.there1/')).to.be.true;
-				// });
 
 			});
 		});

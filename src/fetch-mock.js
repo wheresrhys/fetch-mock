@@ -110,10 +110,23 @@ function compileRoute (route) {
 		};
 	}
 
-	route.matcher = (url, options) => {
+	const matcher = (url, options) => {
 		const req = normalizeRequest(url, options);
 		return matchHeaders(req.headers) && matchMethod(req.method) && matchUrl(req.url);
 	};
+
+	if (route.times) {
+		let timesLeft = route.times;
+		route.matcher = (url, options) => {
+			const match = timesLeft && matcher(url, options);
+			if (match) {
+				timesLeft--;
+				return true;
+			}
+		}
+	} else {
+		route.matcher = matcher;
+	}
 
 	return route;
 }
@@ -183,31 +196,15 @@ class FetchMock {
 		return this._mock();
 	}
 
+	once (matcher, response, options) {
+		return this.mock(matcher, response, Object.assign({}, options, {times: 1}));
+	}
+
 	_mock () {
 		// Do this here rather than in the constructor to ensure it's scoped to the test
 		this.realFetch = this.realFetch || theGlobal.fetch;
 		theGlobal.fetch = this.fetchMock;
 		return this;
-	}
-
-	get (matcher, response, options) {
-		return this.mock(matcher, response, Object.assign({}, options, {method: 'GET'}));
-	}
-
-	post (matcher, response, options) {
-		return this.mock(matcher, response, Object.assign({}, options, {method: 'POST'}));
-	}
-
-	put (matcher, response, options) {
-		return this.mock(matcher, response, Object.assign({}, options, {method: 'PUT'}));
-	}
-
-	delete (matcher, response, options) {
-		return this.mock(matcher, response, Object.assign({}, options, {method: 'DELETE'}));
-	}
-
-	head (matcher, response, options) {
-		return this.mock(matcher, response, Object.assign({}, options, {method: 'HEAD'}));
 	}
 
 	catch (response) {
@@ -436,9 +433,30 @@ e.g. {"body": {"status: "registered"}}`);
 		return !!(this._calls[name] && this._calls[name].length);
 	}
 
+	done (name) {
+		const names = name ? [name] : this.routes.map(r => r.name);
+		return names.every(name => {
+			if (!this.called(name)) {
+				return false
+			}
+			const expectedTimes = this.routes.find(r => r.name === name).times;
+			return !expectedTimes || (expectedTimes <= this.calls(name).length)
+		})
+	}
+
 	configure (opts) {
 		Object.assign(this.config, opts);
 	}
 }
+
+['get','post','put','delete','head']
+	.forEach(method => {
+		FetchMock.prototype[method] = function (matcher, response, options) {
+			return this.mock(matcher, response, Object.assign({}, options, {method: method.toUpperCase()}));
+		}
+		FetchMock.prototype[`${method}Once`] = function (matcher, response, options) {
+			return this.once(matcher, response, Object.assign({}, options, {method: method.toUpperCase()}));
+		}
+	})
 
 module.exports = FetchMock;

@@ -30,6 +30,7 @@ describe('request types that only work in the browser', function () {
 				expect(res.status).to.equal(200);
 				res.blob().then(function (blobData) {
 					expect(blobData).to.eql(blob);
+					fetchMock.restore();
 					done();
 				});
 			});

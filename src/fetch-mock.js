@@ -69,8 +69,9 @@ class FetchMock {
 	_unMock () {
 		if (this.realFetch) {
 			this.global.fetch = this.realFetch;
-			this.realfetch = null;
+			this.realFetch = null;
 		}
+		this.fallbackResponse = null;
 		return this;
 	}
 
@@ -80,6 +81,11 @@ class FetchMock {
 		}
 		this.fallbackResponse = response || 'ok';
 		return this._mock();
+	}
+
+	spy () {
+		this._mock();
+		return this.catch(this.realFetch)
 	}
 
 	fetchMock (url, opts) {
@@ -201,7 +207,6 @@ e.g. {"body": {"status: "registered"}}`);
 
 	restore () {
 		this._unMock();
-		this.fallbackResponse = null;
 		this.reset();
 		this.routes = [];
 		return this;
@@ -243,7 +248,7 @@ e.g. {"body": {"status: "registered"}}`);
 
 	called (name) {
 		if (!name) {
-			return !!(this._matchedCalls.length);
+			return !!(this._matchedCalls.length || this._unmatchedCalls.length);
 		}
 		return !!(this._calls[name] && this._calls[name].length);
 	}

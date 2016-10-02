@@ -6,24 +6,16 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 
 	describe('fetch-mock', () => {
 
-		let fetchCalls = [];
 		const dummyRoute = {
 			matcher: /a/,
 			response: 200
 		};
 
-		const dummyFetch = () => {
-			fetchCalls.push([].slice.call(arguments));
-			return Promise.resolve(arguments);
-		};
+		const dummyFetch = () => Promise.resolve(arguments);
 
 		before(() => {
-			theGlobal.fetch = fetchMock.realFetch = dummyFetch;
+			theGlobal.fetch = dummyFetch;
 		})
-
-		afterEach(() => {
-			fetchCalls = [];
-		});
 
 		describe('Interface', () => {
 
@@ -108,7 +100,7 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 
 		});
 
-		describe('catch()', () => {
+		describe('catch() and spy()', () => {
 			beforeEach(() => {
 				fetchMock.restore();
 			});
@@ -142,6 +134,22 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 						expect(res.status).to.equal(200);
 						expect(fetchMock.calls().unmatched[0]).to.eql([ 'http://place.com/', undefined ])
 					})
+			})
+
+			it('can spy on all unmatched calls to fetch', () => {
+				const theFetch = theGlobal.fetch
+				const fetchSpy = theGlobal.fetch = sinon.spy(() => Promise.resolve());
+				fetchMock
+					.spy();
+
+				fetch('http://apples.and.pears')
+				expect(fetchSpy.calledWith('http://apples.and.pears')).to.be.true
+				expect(fetchMock.called()).to.be.true;
+				expect(fetchMock.calls().unmatched[0]).to.eql(['http://apples.and.pears', undefined]);
+				fetchMock.restore();
+				expect(theGlobal.fetch).to.equal(fetchSpy)
+				theGlobal.fetch = theFetch;
+
 			})
 
 		})
@@ -552,7 +560,7 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 						.mock(dummyRoute);
 					return fetch('http://1')
 						.then(res => {
-							expect(fetchMock.called()).to.be.false;
+							expect(fetchMock.called()).to.be.true;
 							expect(fetchMock.calls().unmatched.length).to.equal(1);
 							expect(res.status).to.equal(200);
 						});
@@ -564,7 +572,7 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 						.mock(dummyRoute);
 					return fetch('http://1')
 						.then(res => {
-							expect(fetchMock.called()).to.be.false;
+							expect(fetchMock.called()).to.be.true;
 							expect(fetchMock.calls().unmatched.length).to.equal(1);
 							expect(res.status).to.equal(200);
 							return res.json().then(json => {
@@ -579,7 +587,7 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 						.mock(dummyRoute);
 					return fetch('http://1')
 						.then(res => {
-							expect(fetchMock.called()).to.be.false;
+							expect(fetchMock.called()).to.be.true;
 							expect(fetchMock.calls().unmatched.length).to.equal(1);
 							expect(res.status).to.equal(200);
 							return res.text().then(text => {
@@ -598,7 +606,7 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 						fetch('http://2', {method: 'POST'})
 					])
 						.then(() => {
-							expect(fetchMock.called()).to.be.false;
+							expect(fetchMock.called()).to.be.true;
 							const unmatchedCalls = fetchMock.calls().unmatched;
 							expect(unmatchedCalls.length).to.equal(2);
 							expect(unmatchedCalls[0]).to.eql(['http://1', {method: 'GET'}]);

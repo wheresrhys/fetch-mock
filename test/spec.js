@@ -1010,6 +1010,30 @@ e.g. {"body": {"status: "registered"}}`);
 					})
 			})
 
+			it('record history of calls to unnamed matched routes', function () {
+					const fourth = function (url) { return /fourth/.test(url) };
+
+					fetchMock
+						.mock('http://it.at.there/first', 200)
+						.mock('^http://it.at.there', 200)
+						.mock(/third/, 200)
+						.mock(fourth, 200)
+
+					return Promise.all([
+						fetch('http://it.at.there/first'),
+						fetch('http://it.at.there/second'),
+						fetch('http://it.at.here/third'),
+						fetch('http://it.at.here/fourth')
+					])
+						.then(function () {
+							expect(fetchMock.called('http://it.at.there/first')).to.be.true;
+							expect(fetchMock.called('^http://it.at.there')).to.be.true;
+							expect(fetchMock.called('/third/')).to.be.true;
+							// cope with babelified and various browser quirks version of the function
+							expect(Object.keys(fetchMock._calls).some(key => key === fourth.toString())).to.be.true;
+						});
+				});
+
 		})
 	});
 }

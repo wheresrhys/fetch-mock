@@ -946,6 +946,23 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 						})
 				});
 
+				it('reset() resets count', () => {
+					fetchMock
+						.once('http://it.at.there1/', 200);
+					return fetch('http://it.at.there1/')
+						.then(() => {
+							expect(fetchMock.done()).to.be.true;
+							fetchMock.reset();
+							expect(fetchMock.done()).to.be.false;
+							expect(fetchMock.done('http://it.at.there1/')).to.be.false;
+							return fetch('http://it.at.there1/')
+								.then(() => {
+									expect(fetchMock.done()).to.be.true;
+									expect(fetchMock.done('http://it.at.there1/')).to.be.true;
+								})
+						});
+				})
+
 			});
 		});
 

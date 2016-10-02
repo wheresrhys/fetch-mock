@@ -8,8 +8,6 @@ As well as shorthand methods for the simplest use cases, it offers a flexible AP
 Install with `npm install fetch-mock`.
 
 * [Troubleshooting and alternative installation](#troubleshooting-and-alternative-installation)
-* Breaking changes in **v6**
-	* When `catch()` or `spy()` are used *any* call to `fetch()` will result in `.called()` returning `true`
 
 ## Quickstart
 Here are some common use cases - see the full API docs below for advanced usage

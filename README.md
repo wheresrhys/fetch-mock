@@ -165,26 +165,6 @@ Returns the options for the last matched call to fetch
 Set some global config options, which include
 * `sendAsJson` [default `true`] - by default fetchMock will convert objects to JSON before sending. This is overrideable fro each call but for some scenarios e.g. when dealing with a lot of array buffers, it can be useful to default to `false`
 
-##### Example
-
-```js
-fetchMock
-	.mock('http://domain1', 200)
-	.mock('http://domain2', 'PUT', {
-		affectedRecords: 1
-	});
-
-myModule.onlyCallDomain2()
-	.then(() => {
-		expect(fetchMock.called('http://domain2')).to.be.true;
-		expect(fetchMock.called('http://domain1')).to.be.false;
-		expect(fetchMock.calls().unmatched.length).to.equal(0);
-		expect(JSON.parse(fetchMock.lastUrl('http://domain2'))).to.equal('http://domain2/endpoint');
-		expect(JSON.parse(fetchMock.lastOptions('http://domain2').body)).to.deep.equal({prop: 'val'});
-	})
-	.then(fetchMock.restore)
-```
-
 ## Troubleshooting and alternative installation
 
 ### `fetch` is assigned to a local variable, not a global

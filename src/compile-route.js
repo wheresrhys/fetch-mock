@@ -1,3 +1,5 @@
+'use strict';
+
 function getHeaderMatcher (expectedHeaders) {
 	const expectation = Object.keys(expectedHeaders).map(k => {
 		return {key: k.toLowerCase(), val: expectedHeaders[k]}

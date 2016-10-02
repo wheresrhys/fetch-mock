@@ -8,6 +8,8 @@ As well as shorthand methods for the simplest use cases, it offers a flexible AP
 Install with `npm install fetch-mock`.
 
 * [Troubleshooting and alternative installation](#troubleshooting-and-alternative-installation)
+* V6 changelog
+	- unmatched calls, when `.catch()` or `.spy()` are used to record them, will now result in `.called()` returning `true`
 
 ## Quickstart
 Here are some common use cases - see the full API docs below for advanced usage

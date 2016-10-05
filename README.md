@@ -97,12 +97,7 @@ Replaces `fetch()` with a stub which records its calls, grouped by route, and op
 ##### `once()`
 Shorthand for `mock()` which limits to being called one time only. (see `times` option above)
 
-##### `get()`
-##### `post()`
-##### `put()`
-##### `delete()`
-##### `head()`
-##### `patch()`
+##### `get()`, `post()`, `put()`, `delete()`, `head()`, `patch()`
 Shorthands for `mock()` restricted to a particular method *Tip: if you use some other method a lot you can easily define your own shorthands e.g.:*
 
 ```
@@ -112,12 +107,7 @@ fetchMock.purge = function (matcher, response, options) {
 
 ```
 
-##### `getOnce()`
-##### `postOnce()`
-##### `putOnce()`
-##### `deleteOnce()`
-##### `headOnce()`
-##### `patchOnce()`
+##### `getOnce()`, `postOnce()`, `putOnce()`, `deleteOnce()`, `headOnce()`, `patchOnce()`
 Shorthands for `mock()` restricted to a particular method and that can only be called one time only
 
 ##### `catch(response)`

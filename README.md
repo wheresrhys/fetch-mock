@@ -113,14 +113,14 @@ Shorthands for `mock()` restricted to a particular method and that can only be c
 ##### `catch(response)`
 This is used to define how to respond to calls to fetch that don't match any of the defined mocks. It accepts the same types of response as a normal call to `.mock(matcher, response)`. It can also take an arbitrary function to completely customise behaviour of unmatched calls. It is chainable and can be called before or after other calls to `.mock()`. If `.catch() ` is called without any parameters then every unmatched call will receive a `200` response e.g.
 
-##### `spy()`
-Similar to `catch()`, this records the call history of unmatched calls, but instead of responding with a stubbed response, the request is passed through to native `fetch()` and is allowed to communicate over the network.
-
 ```
 fetchMock
 	.mock('http://my-api.com', 200)
 	.catch(503)
 ```
+
+##### `spy()`
+Similar to `catch()`, this records the call history of unmatched calls, but instead of responding with a stubbed response, the request is passed through to native `fetch()` and is allowed to communicate over the network.
 
 ##### `restore()`
 Chainable method that restores `fetch()` to its unstubbed state and clears all data recorded for its calls.

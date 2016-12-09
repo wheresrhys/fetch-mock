@@ -23,6 +23,9 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 				fetchMock.mock(dummyRoute);
 				fetchMock.restore();
 				expect(fetch).to.equal(dummyFetch);
+				expect(fetchMock.realFetch).to.not.exist;
+				expect(fetchMock.routes.length).to.equal(0)
+				expect(fetchMock.fallbackresponse).to.not.exist;
 			});
 
 			it('allow multiple mocking calls', () => {
@@ -97,6 +100,8 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 				expect(fetchMock.reset.lastCall.thisValue).to.equal(fetchMock);
 				fetchMock.reset.restore();
 			});
+
+
 
 		});
 
@@ -993,6 +998,56 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 						sendAsJson: true
 					});
 				}
+			});
+		})
+
+		describe('sandbox', () => {
+			it('return function', () => {
+				const sbx = fetchMock.sandbox();
+				expect(typeof sbx).to.equal('function');
+			});
+
+			it('port settings from parent instance', () => {
+				const sbx = fetchMock.sandbox();
+				expect(sbx.Headers).to.equal(fetchMock.Headers)
+			});
+
+			it('disallow calling on part configured parent', () => {
+				expect(() => fetchMock.mock('url', 200).sandbox()).to.throw
+			});
+
+			it('implement full fetch-mock api', () => {
+				const sbx = fetchMock.sandbox();
+				expect(typeof sbx.mock).to.equal('function');
+			});
+
+			it.only('be a mock fetch implementation', () => {
+				const sbx = fetchMock
+					.sandbox()
+					.mock('http://domain.url', 200)
+				return sbx('http://domain.url')
+					.then(res => {
+						console.log(res)
+					})
+			});
+
+			it('don\'t interfere with global fetch', () => {
+
+			});
+
+			it('don\'t interfere with global fetch-mock', () => {
+
+			});
+
+			it('don\'t interfere with other sandboxes', () => {
+
+			});
+			it('don\'t interfere with global fetch-mock routes', () => {
+
+			});
+
+			it('don\'t interfere with other sandboxes\' routes', () => {
+
 			});
 		})
 

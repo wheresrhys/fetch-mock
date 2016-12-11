@@ -1044,12 +1044,15 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 				const sbx = fetchMock
 					.sandbox()
 					.mock('http://domain.url', 200)
+					.catch(302)
 
 				fetchMock
-					.mock('http://domain2.url', 200);
+					.mock('http://domain2.url', 200)
+					.catch(301)
 
 				expect(theGlobal.fetch).to.equal(fetchMock.fetchMock);
 				expect(fetchMock.fetchMock).not.to.equal(sbx);
+				expect(fetchMock.fallbackResponse).not.to.equal(sbx.fallbackResponse)
 
 				return Promise.all([
 					sbx('http://domain.url'),
@@ -1071,12 +1074,15 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 				const sbx = fetchMock
 					.sandbox()
 					.mock('http://domain.url', 200)
+					.catch(301)
 
 				const sbx2 = fetchMock
 					.sandbox()
 					.mock('http://domain2.url', 200)
+					.catch(302)
 
 				expect(sbx2).not.to.equal(sbx);
+				expect(sbx2.fallbackResponse).not.to.equal(sbx.fallbackResponse)
 
 				return Promise.all([
 					sbx('http://domain.url'),

@@ -998,6 +998,7 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 						sendAsJson: true
 					});
 				}
+				fetchMock.restore();
 			});
 		})
 
@@ -1021,34 +1022,76 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 				expect(typeof sbx.mock).to.equal('function');
 			});
 
-			it.only('be a mock fetch implementation', () => {
+			it('be a mock fetch implementation', () => {
 				const sbx = fetchMock
 					.sandbox()
 					.mock('http://domain.url', 200)
 				return sbx('http://domain.url')
 					.then(res => {
-						console.log(res)
+						expect(res.status).to.equal(200);
 					})
 			});
 
 			it('don\'t interfere with global fetch', () => {
-
+				const sbx = fetchMock
+					.sandbox()
+					.mock('http://domain.url', 200)
+				expect(theGlobal.fetch).to.equal(dummyFetch);
+				expect(theGlobal.fetch).not.to.equal(sbx);
 			});
 
 			it('don\'t interfere with global fetch-mock', () => {
+				const sbx = fetchMock
+					.sandbox()
+					.mock('http://domain.url', 200)
 
+				fetchMock
+					.mock('http://domain2.url', 200);
+
+				expect(theGlobal.fetch).to.equal(fetchMock.fetchMock);
+				expect(fetchMock.fetchMock).not.to.equal(sbx);
+
+				return Promise.all([
+					sbx('http://domain.url'),
+					fetch('http://domain2.url')
+				])
+					.then(responses => {
+						expect(responses[0].status).to.equal(200);
+						expect(responses[1].status).to.equal(200);
+						expect(sbx.called('http://domain.url')).to.be.true;
+						expect(sbx.called('http://domain2.url')).to.be.false;
+						expect(fetchMock.called('http://domain2.url')).to.be.true;
+						expect(fetchMock.called('http://domain.url')).to.be.false;
+						fetchMock.restore();
+						expect(sbx.called('http://domain.url')).to.be.true;
+					})
 			});
 
 			it('don\'t interfere with other sandboxes', () => {
+				const sbx = fetchMock
+					.sandbox()
+					.mock('http://domain.url', 200)
 
+				const sbx2 = fetchMock
+					.sandbox()
+					.mock('http://domain2.url', 200)
+
+				expect(sbx2).not.to.equal(sbx);
+
+				return Promise.all([
+					sbx('http://domain.url'),
+					sbx2('http://domain2.url')
+				])
+					.then(responses => {
+						expect(responses[0].status).to.equal(200);
+						expect(responses[1].status).to.equal(200);
+						expect(sbx.called('http://domain.url')).to.be.true;
+						expect(sbx.called('http://domain2.url')).to.be.false;
+						expect(sbx2.called('http://domain2.url')).to.be.true;
+						expect(sbx2.called('http://domain.url')).to.be.false;
+					})
 			});
-			it('don\'t interfere with global fetch-mock routes', () => {
 
-			});
-
-			it('don\'t interfere with other sandboxes\' routes', () => {
-
-			});
 		})
 
 		describe('regressions', () => {

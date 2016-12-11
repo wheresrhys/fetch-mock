@@ -2,20 +2,20 @@
 
 const compileRoute = require('./compile-route');
 
-const FetchMock = function (opts) {
+const FetchMock = function () {
 
 	this.config = {
 		sendAsJson: true
 	}
 
-	if (opts) {
-		this.Headers = opts.Headers;
-		this.Request = opts.Request;
-		this.Response = opts.Response;
-		this.stream = opts.stream;
-		this.global = opts.global;
-		this.statusTextMap = opts.statusTextMap;
-	}
+	// if (opts) {
+	// 	FetchMock.Headers = opts.Headers;
+	// 	FetchMock.Request = opts.Request;
+	// 	FetchMock.Response = opts.Response;
+	// 	FetchMock.stream = opts.stream;
+	// 	FetchMock.global = opts.global;
+	// 	FetchMock.statusTextMap = opts.statusTextMap;
+	// }
 
 	this.routes = [];
 	this._calls = {};
@@ -68,15 +68,17 @@ FetchMock.prototype.once = function (matcher, response, options) {
 }
 
 FetchMock.prototype._mock = function () {
-	// Do this here rather than in the constructor to ensure it's scoped to the test
-	this.realFetch = this.realFetch || this.global.fetch;
-	this.global.fetch = this.fetchMock;
+	if (!this.isSandbox) {
+		// Do this here rather than in the constructor to ensure it's scoped to the test
+		this.realFetch = this.realFetch || FetchMock.global.fetch;
+		FetchMock.global.fetch = this.fetchMock;
+	}
 	return this;
 }
 
 FetchMock.prototype._unMock = function () {
 	if (this.realFetch) {
-		this.global.fetch = this.realFetch;
+		FetchMock.global.fetch = this.realFetch;
 		this.realFetch = null;
 	}
 	this.fallbackResponse = null;
@@ -140,7 +142,7 @@ FetchMock.prototype.addRoute = function (route) {
 	}
 
 	// Allows selective application of some of the preregistered routes
-	this.routes.push(compileRoute(route, this.Request));
+	this.routes.push(compileRoute(route, FetchMock.Request));
 }
 
 
@@ -152,8 +154,8 @@ FetchMock.prototype.mockResponse = function (url, responseConfig, fetchOpts) {
 	if (typeof responseConfig === 'function') {
 		responseConfig = responseConfig(url, fetchOpts);
 	}
-	console.log(this)
-	if (this.Response.prototype.isPrototypeOf(responseConfig)) {
+
+	if (FetchMock.Response.prototype.isPrototypeOf(responseConfig)) {
 		return Promise.resolve(responseConfig);
 	}
 
@@ -180,18 +182,18 @@ To respond with a JSON object that has status as a property assign the object to
 e.g. {"body": {"status: "registered"}}`);
 	}
 	opts.status = responseConfig.status || 200;
-	opts.statusText = this.statusTextMap['' + opts.status];
+	opts.statusText = FetchMock.statusTextMap['' + opts.status];
 	// The ternary operator is to cope with new Headers(undefined) throwing in Chrome
 	// https://code.google.com/p/chromium/issues/detail?id=335871
-	opts.headers = responseConfig.headers ? new this.Headers(responseConfig.headers) : new this.Headers();
+	opts.headers = responseConfig.headers ? new FetchMock.Headers(responseConfig.headers) : new FetchMock.Headers();
 
 	let body = responseConfig.body;
 	if (opts.sendAsJson && responseConfig.body != null && typeof body === 'object') { //eslint-disable-line
 		body = JSON.stringify(body);
 	}
 
-	if (this.stream) {
-		let s = new this.stream.Readable();
+	if (FetchMock.stream) {
+		let s = new FetchMock.stream.Readable();
 		if (body != null) { //eslint-disable-line
 			s.push(body, 'utf-8');
 		}
@@ -199,7 +201,7 @@ e.g. {"body": {"status: "registered"}}`);
 		body = s;
 	}
 
-	return Promise.resolve(new this.Response(body, opts));
+	return Promise.resolve(new FetchMock.Response(body, opts));
 }
 
 FetchMock.prototype.push = function (name, call) {
@@ -286,12 +288,16 @@ FetchMock.prototype.sandbox = function () {
 	Object.assign(
 		instance.fetchMock, // the function
 		FetchMock.prototype, // all prototype methods
-		this, // settings
 		instance // instance data
 	);
 	instance.fetchMock.bindMethods();
+	instance.fetchMock.isSandbox = true;
 	this.restore();
 	return instance.fetchMock
+};
+
+FetchMock.setGlobals = function (globals) {
+	Object.assign(FetchMock, globals)
 };
 
 ['get','post','put','delete','head', 'patch']
@@ -304,6 +310,4 @@ FetchMock.prototype.sandbox = function () {
 		}
 	})
 
-module.exports = function (opts) {
-	return new FetchMock(opts);
-}
+module.exports = FetchMock;

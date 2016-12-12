@@ -4,10 +4,10 @@ const Request = fetch.Request;
 const Response = fetch.Response;
 const Headers = fetch.Headers;
 const stream = require('stream');
-const fetchMock = require('./fetch-mock');
+const FetchMock = require('./fetch-mock');
 const http = require('http');
 
-module.exports = fetchMock({
+FetchMock.setGlobals({
 	global: global,
 	Request: Request,
 	Response: Response,
@@ -15,3 +15,5 @@ module.exports = fetchMock({
 	stream: stream,
 	statusTextMap: http.STATUS_CODES
 });
+
+module.exports = new FetchMock()

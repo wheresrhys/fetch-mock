@@ -4,19 +4,6 @@ const compileRoute = require('./compile-route');
 
 const FetchMock = function () {
 
-	this.config = {
-		sendAsJson: true
-	}
-
-	// if (opts) {
-	// 	FetchMock.Headers = opts.Headers;
-	// 	FetchMock.Request = opts.Request;
-	// 	FetchMock.Response = opts.Response;
-	// 	FetchMock.stream = opts.stream;
-	// 	FetchMock.global = opts.global;
-	// 	FetchMock.statusTextMap = opts.statusTextMap;
-	// }
-
 	this.routes = [];
 	this._calls = {};
 	this._matchedCalls = [];
@@ -35,13 +22,7 @@ FetchMock.prototype.mock = function (matcher, response, options) {
 	let route;
 
 	// Handle the variety of parameters accepted by mock (see README)
-
-	// Old method matching signature
-	if (options && /^[A-Z]+$/.test(response)) {
-		throw new Error(`The API for method matching has changed.
-			Now use .get(), .post(), .put(), .delete() and .head() shorthand methods,
-			or pass in, e.g. {method: 'PATCH'} as a third paramter`);
-	} else if (options) {
+	if (matcher && response && options) {
 		route = Object.assign({
 			matcher,
 			response
@@ -175,7 +156,7 @@ FetchMock.prototype.mockResponse = function (url, responseConfig, fetchOpts) {
 
 	const opts = responseConfig.opts || {};
 	opts.url = url;
-	opts.sendAsJson = responseConfig.sendAsJson === undefined ? this.config.sendAsJson : responseConfig.sendAsJson;
+	opts.sendAsJson = responseConfig.sendAsJson === undefined ? FetchMock.config.sendAsJson : responseConfig.sendAsJson;
 	if (responseConfig.status && (typeof responseConfig.status !== 'number' || parseInt(responseConfig.status, 10) !== responseConfig.status || responseConfig.status < 200 || responseConfig.status > 599)) {
 		throw new TypeError(`Invalid status ${responseConfig.status} passed on response object.
 To respond with a JSON object that has status as a property assign the object to body
@@ -276,8 +257,16 @@ FetchMock.prototype.done = function (name) {
 		.filter(bool => !bool).length === 0
 }
 
+FetchMock.config = {
+	sendAsJson: true
+}
+
 FetchMock.prototype.configure = function (opts) {
-	Object.assign(this.config, opts);
+	Object.assign(FetchMock.config, opts);
+}
+
+FetchMock.setGlobals = function (globals) {
+	Object.assign(FetchMock, globals)
 }
 
 FetchMock.prototype.sandbox = function () {
@@ -294,10 +283,6 @@ FetchMock.prototype.sandbox = function () {
 	instance.fetchMock.isSandbox = true;
 	this.restore();
 	return instance.fetchMock
-};
-
-FetchMock.setGlobals = function (globals) {
-	Object.assign(FetchMock, globals)
 };
 
 ['get','post','put','delete','head', 'patch']

@@ -22,13 +22,7 @@ FetchMock.prototype.mock = function (matcher, response, options) {
 	let route;
 
 	// Handle the variety of parameters accepted by mock (see README)
-
-	// Old method matching signature
-	if (options && /^[A-Z]+$/.test(response)) {
-		throw new Error(`The API for method matching has changed.
-			Now use .get(), .post(), .put(), .delete() and .head() shorthand methods,
-			or pass in, e.g. {method: 'PATCH'} as a third paramter`);
-	} else if (options) {
+	if (matcher && response && options) {
 		route = Object.assign({
 			matcher,
 			response

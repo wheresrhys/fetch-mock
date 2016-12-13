@@ -196,12 +196,6 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 					expect(fetchMock.addRoute.calledWith({matcher: 'http://it.at.there/', response: 'ok', method: 'PUT', some: 'prop'}));
 				});
 
-				it('throws helpful error on matcher, method, route triples', () => {
-					expect(() => {
-						fetchMock.mock('http://it.at.there/', 'PUT', 'ok');
-					}).to.throw(/API for method matching has changed/);
-				});
-
 				it('expects a matcher', () => {
 					expect(() => {
 						fetchMock.mock(null, 'ok');

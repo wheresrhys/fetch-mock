@@ -83,13 +83,13 @@ FetchMock.prototype.fetchMock = function (url, opts) {
 	let response = this.router(url, opts);
 
 	if (!response) {
-		console.warn(`unmatched call to ${url}`);
+		console.warn(`Unmatched ${opts && opts.method || 'GET'} to ${url}`);
 		this.push(null, [url, opts]);
 
 		if (this.fallbackResponse) {
 			response = this.fallbackResponse;
 		} else {
-			throw new Error(`unmatched call to ${url}`)
+			throw new Error(`No fallback response defined for ${opts && opts.method || 'GET'} to ${url}`)
 		}
 	}
 

@@ -128,7 +128,7 @@ FetchMock.prototype.addRoute = function (route) {
 
 
 FetchMock.prototype.mockResponse = function (url, responseConfig, fetchOpts) {
-	let Promise = this.fetchMock.promise || FetchMock.global.Promise;
+	let Promise = this.fetchMock.Promise || FetchMock.global.Promise;
 
 	// It seems odd to call this in here even though it's already called within fetchMock
 	// It's to handle the fact that because we want to support making it very easy to add a
@@ -271,7 +271,7 @@ FetchMock.setGlobals = function (globals) {
 	Object.assign(FetchMock, globals)
 }
 
-FetchMock.prototype.sandbox = function (promise) {
+FetchMock.prototype.sandbox = function (Promise) {
 	if (this.routes.length || this.fallbackResponse) {
 		throw new Error('.sandbox() can only be called on fetch-mock instances that don\'t have routes configured already')
 	}
@@ -283,7 +283,7 @@ FetchMock.prototype.sandbox = function (promise) {
 	);
 	instance.fetchMock.bindMethods();
 	instance.fetchMock.isSandbox = true;
-	instance.fetchMock.promise = promise;
+	instance.fetchMock.Promise = Promise;
 	this.restore();
 	return instance.fetchMock;
 };

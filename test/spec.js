@@ -2,6 +2,9 @@
 const expect = require('chai').expect;
 const sinon = require('sinon');
 
+const BluebirdPromise = require('bluebird');
+const GlobalPromise = Promise;
+
 module.exports = (fetchMock, theGlobal, Request, Response) => {
 
 	describe('fetch-mock', () => {
@@ -1093,12 +1096,25 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 			});
 
 			it('takes an optional Promise to use', () => {
-				const BluebirdPromise = require('bluebird');
 				const sbx = fetchMock
 					.sandbox(BluebirdPromise)
 					.mock('http://example.com', 200);
 
 				expect(sbx('http://example.com')).to.be.instanceof(BluebirdPromise);
+			});
+
+			it('doesn\'t change the global promise', () => {
+				fetchMock.sandbox(BluebirdPromise);
+				expect(fetch('http://example.com')).to.be.instanceof(GlobalPromise);
+			});
+
+			it('doesn\'t change the promise used by other sandboxes', () => {
+				fetchMock.sandbox(BluebirdPromise);
+				const sbx = fetchMock
+					.sandbox()
+					.mock('http://example.com', 200);
+
+				expect(sbx('http://example.com')).to.be.instanceof(GlobalPromise);
 			});
 
 		})

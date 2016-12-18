@@ -3,20 +3,18 @@ const glob = require('glob-to-regexp')
 const express = require('path-to-regexp');
 
 const stringMatchers = {
-	begin: string => {
-		const targetUrl = string.replace(/^begin:/, '')
-		return url => url.indexOf(targetUrl) === 0
+	begin: targetString => {
+		return url => url.indexOf(targetString) === 0
 	},
-	end: string => {
-		const targetUrl = string.replace(/^end:/, '')
-		return url => url.substr(-targetUrl.length) === targetUrl
+	end: targetString => {
+		return url => url.substr(-targetString.length) === targetString
 	},
-	glob: string => {
-		const urlRX = glob(string.replace(/^glob:/, ''))
+	glob: targetString => {
+		const urlRX = glob(targetString.replace(/^glob:/, ''))
 		return url => urlRX.test(url)
 	},
-	express: string => {
-		const urlRX = express(string.replace(/^express:/, ''))
+	express: targetString => {
+		const urlRX = express(targetString.replace(/^express:/, ''))
 		return url => urlRX.test(url)
 	}
 }
@@ -95,7 +93,8 @@ module.exports = function (route, Request) {
 
 		Object.keys(stringMatchers).some(name => {
 			if (route.matcher.indexOf(name + ':') === 0) {
-				matchUrl = stringMatchers[name](route.matcher);
+				const url = route.matcher.replace(new RegExp(`^${name}:`), '')
+				matchUrl = stringMatchers[name](url);
 				return true
 			}
 		})

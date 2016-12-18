@@ -1,12 +1,12 @@
 {
   "name": "fetch-mock",
-  "version": "5.0.3",
+  "version": "5.6.2",
   "description": "Mock http requests made using fetch (or isomorphic-fetch)",
   "main": "src/server.js",
   "browser": "es5/client.js",
   "scripts": {
     "test": "make test",
-    "browserify": "browserify -s fetchMock src/client.js > es5/client-browserified.js",
+    "browserify": "browserify -s fetchMock es5/client.js > es5/client-browserified.js",
     "prepublish": "babel src --out-dir es5 --plugins transform-object-assign --presets es2015 && npm run browserify"
   },
   "repository": {
@@ -18,10 +18,12 @@
     "http",
     "mock",
     "testing",
-    "spy"
+    "spy",
+    "ajax",
+    "xhr"
   ],
   "author": "Rhys Evans",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/wheresrhys/fetch-mock/issues"
   },
@@ -34,35 +36,21 @@
     "babel-cli": "^6.1.2",
     "babel-plugin-transform-object-assign": "^6.8.0",
     "babel-preset-es2015": "^6.1.2",
-    "babelify": "^7.2.0",
-    "browserify": "^12.0.0",
+    "babelify": "^7.3.0",
+    "browserify": "^13.1.0",
     "chai": "^2.3.0",
     "eslint": "^1.10.3",
-    "karma": "^0.12.31",
-    "karma-browserify": "^4.1.2",
+    "karma": "^1.3.0",
+    "karma-browserify": "^5.1.0",
     "karma-chai": "^0.1.0",
-    "karma-chrome-launcher": "^0.1.8",
-    "karma-firefox-launcher": "^0.1.6",
-    "karma-mocha": "^0.1.10",
-    "karma-phantomjs-launcher": "^0.2.1",
+    "karma-chrome-launcher": "^2.0.0",
+    "karma-firefox-launcher": "^1.0.0",
+    "karma-mocha": "^1.2.0",
+    "karma-phantomjs-launcher": "^1.0.2",
     "mocha": "^2.2.4",
     "mockery": "^1.4.0",
     "sinon": "^1.17.0",
+    "watchify": "^3.7.0",
     "whatwg-fetch": "^0.10.1"
-  },
-  "browserify": {
-    "transform": [
-      [
-        "babelify",
-        {
-          "plugins": [
-            "transform-object-assign"
-          ],
-          "presets": [
-            "es2015"
-          ]
-        }
-      ]
-    ]
   }
 }

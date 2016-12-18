@@ -1,11 +1,62 @@
 # fetch-mock [![Build Status](https://travis-ci.org/wheresrhys/fetch-mock.svg?branch=master)](https://travis-ci.org/wheresrhys/fetch-mock)
-Mock http requests made using fetch (or [isomorphic-fetch](https://www.npmjs.com/package/isomorphic-fetch)). As well as shorthand methods for the simplest use cases, it offers a flexible API for customising all aspects of 	mocking behaviour.
+Mock http requests made using fetch (or [isomorphic-fetch](https://www.npmjs.com/package/isomorphic-fetch)) in nodejs or the browser (including web workers and service workers)
 
-## Installation and usage
+As well as shorthand methods for the simplest use cases, it offers a flexible API for customising all aspects of mocking behaviour.
 
-`npm install fetch-mock` then `require('fetch-mock')` in most environments.
+## Installation
+
+Install with `npm install fetch-mock`.
 
 * [Troubleshooting and alternative installation](#troubleshooting-and-alternative-installation)
+
+## Quickstart
+Here are some common use cases - see the full API docs below for advanced usage
+
+### Setting up your mock
+
+The commonest use case is `fetchMock.mock(matcher, response)`, where `matcher` is a string or regex to match and `response` is a statusCode, string or object literal. You can also use `fetchMock.once(url ...)` to limit to a single call or `fetchMock.get()`, `fetchMock.post()` etc. to limit to a method. All these methods are chainable so you can easily define several mocks in a single test.
+
+### Analysing calls to your mock
+`fetchMock.called(matcher)` reports if any calls matched your mock (or leave `matcher` out if you just want to check `fetch` was called at all). `fetchMock.lastCall()`, `fetchMock.lastUrl()` or `fetchMock.lastOptions()` give you access to the parameters last passed in to `fetch`. `fetchMock.done()` will tell you if `fetch` was called the expected number of times.
+
+### Tearing down your mock
+`fetchMock.reset()` resets the call history. `fetchMock.restore()` will also restore `fetch()` to its native implementation
+
+### Example
+Example with node: suppose we have a file `make-request.js` with a function that calls `fetch`:
+
+```js
+module.exports = function makeRequest() {
+  return fetch("http://httpbin.org/get").then(function(response) {
+    return response.json();
+  });
+};
+```
+
+We can use fetch-mock to patch `fetch`. In `patched.js`:
+
+```js
+var fetchMock = require('fetch-mock');
+var makeRequest = require('./make-request');
+
+// Patch the fetch() global to always return the same value for GET
+// requests to all URLs.
+fetchMock.get('*', {hello: 'world'});
+
+makeRequest().then(function(data) {
+  console.log(['got data', data]);
+});
+
+// Unpatch.
+fetchMock.restore();
+```
+
+Result:
+
+```bash
+$ node patched.js
+[ 'got data', { hello: 'world' } ]
+```
 
 ## API
 
@@ -30,7 +81,7 @@ Replaces `fetch()` with a stub which records its calls, grouped by route, and op
 	* `string`: Creates a 200 response with the string as the response body
 	* `object`: As long as the object does not contain any of the properties below it is converted into a json string and returned as the body of a 200 response. If any of the properties below are defined it is used to configure a `Response` object
 		* `body`: Set the response body (`string` or `object`)
-		* `status`: Set the response status (defaut `200`)
+		* `status`: Set the response status (default `200`)
 		* `headers`: Set the response headers. (`object`)
 		* `throws`: If this property is present then a `Promise` rejected with the value of `throws` is returned
 		* `sendAsJson`: This property determines whether or not the request body should be JSON.stringified before being sent (defaults to true).
@@ -38,14 +89,15 @@ Replaces `fetch()` with a stub which records its calls, grouped by route, and op
 * `options`: A configuration object with all/additional properties to define a route to mock
 	* `name`: A unique string naming the route. Used to subsequently retrieve references to the calls, grouped by name. If not specified defaults to `matcher.toString()` *Note: If a non-unique name is provided no error will be thrown (because names are optional, so auto-generated ones may legitimately clash)*
 	* `method`: http method to match
+	* `headers`: key/value map of headers to match
 	* `matcher`: as specified above
 	* `response`: as specified above
+	* `times`: An integer, `n`, limiting the number of times the matcher can be used. If the route has already been called `n` times the route will be ignored and the call to `fetch()` will fall through to be handled by any other routes defined (which may eventually result in an error if nothing matches it)
 
-##### `get()`
-##### `post()`
-##### `put()`
-##### `delete()`
-##### `head()`
+##### `once()`
+Shorthand for `mock()` which limits to being called one time only. (see `times` option above)
+
+##### `get()`, `post()`, `put()`, `delete()`, `head()`, `patch()`
 Shorthands for `mock()` restricted to a particular method *Tip: if you use some other method a lot you can easily define your own shorthands e.g.:*
 
 ```
@@ -53,6 +105,28 @@ fetchMock.purge = function (matcher, response, options) {
 	return this.mock(matcher, response, Object.assign({}, options, {method: 'PURGE'}));
 }
 
+```
+
+##### `getOnce()`, `postOnce()`, `putOnce()`, `deleteOnce()`, `headOnce()`, `patchOnce()`
+Shorthands for `mock()` restricted to a particular method and that can only be called one time only
+
+##### `catch(response)`
+This is used to define how to respond to calls to fetch that don't match any of the defined mocks. It accepts the same types of response as a normal call to `.mock(matcher, response)`. It can also take an arbitrary function to completely customise behaviour of unmatched calls. It is chainable and can be called before or after other calls to `.mock()`. If `.catch() ` is called without any parameters then every unmatched call will receive a `200` response e.g.
+
+```
+fetchMock
+	.mock('http://my-api.com', 200)
+	.catch(503)
+```
+
+##### `spy()`
+Similar to `catch()`, this records the call history of unmatched calls, but instead of responding with a stubbed response, the request is passed through to native `fetch()` and is allowed to communicate over the network.
+
+##### `sandbox()` *experimental*
+This returns a drop-in mock for fetch which can be passed to other mocking libraries. It implements the full fetch-mock api and maintains its own state independent of other instances, so tests can be run in parallel. e.g.
+
+```
+	fetchMock.sandbox().mock('http://domain.com', 200)
 ```
 
 ##### `restore()`
@@ -63,15 +137,18 @@ Chainable method that clears all data recorded for `fetch()`'s calls
 
 *Note that `restore()` and `reset()` are both bound to fetchMock, and can be used directly as callbacks e.g. `afterEach(fetchMock.restore)` will work just fine. There is no need for `afterEach(function () {fetchMock.restore()})`*
 
-### Retrieving content of `fetch` calls
+### Analysing how `fetch()` has been called
 
-**For the methods below `matcherName`, if given, should be either the name of a route (see advanced usage below) or equal to `matcher.toString()` for any unnamed route**
-
-##### `calls(matcherName)`
-Returns an object `{matched: [], unmatched: []}` containing arrays of all calls to fetch, grouped by whether fetch-mock matched them or not. If `matcherName` is specified then only calls to fetch matching that route are returned.
+**For the methods below `matcherName`, if given, should be either the name of a route (see advanced usage below) or equal to `matcher.toString()` for any unnamed route. You _can_ pass in the original regex or function used as a matcher, but they will be converted to strings and used to look up values in fetch-mock's internal maps of calls, rather than used as regexes or functions**
 
 ##### `called(matcherName)`
 Returns a Boolean indicating whether fetch was called and a route was matched. If `matcherName` is specified it only returns `true` if that particular route was matched.
+
+##### `done(matcherName)`
+Returns a Boolean indicating whether fetch was called the expected number of times (or at least once if the route defines no expectation is set for the route). If no `matcherName` is passed it returns `true` if every route has been called the number of expected times.
+
+##### `calls(matcherName)`
+Returns an object `{matched: [], unmatched: []}` containing arrays of all calls to fetch, grouped by whether fetch-mock matched them or not. If `matcherName` is specified then only calls to fetch matching that route are returned.
 
 ##### `lastCall(matcherName)`
 Returns the arguments for the last matched call to fetch
@@ -87,26 +164,6 @@ Returns the options for the last matched call to fetch
 ##### `configure(opts)`
 Set some global config options, which include
 * `sendAsJson` [default `true`] - by default fetchMock will convert objects to JSON before sending. This is overrideable fro each call but for some scenarios e.g. when dealing with a lot of array buffers, it can be useful to default to `false`
-
-##### Example
-
-```js
-fetchMock
-	.mock('http://domain1', 200)
-	.mock('http://domain2', 'PUT', {
-		affectedRecords: 1
-	});
-
-myModule.onlyCallDomain2()
-	.then(() => {
-		expect(fetchMock.called('http://domain2')).to.be.true;
-		expect(fetchMock.called('http://domain1')).to.be.false;
-		expect(fetchMock.calls().unmatched.length).to.equal(0);
-		expect(JSON.parse(fetchMock.lastUrl('http://domain2'))).to.equal('http://domain2/endpoint');
-		expect(JSON.parse(fetchMock.lastOptions('http://domain2').body)).to.deep.equal({prop: 'val'});
-	})
-	.then(fetchMock.restore)
-```
 
 ## Troubleshooting and alternative installation
 
@@ -137,7 +194,10 @@ it('should make a request', function (done) {
 });
 ```
 ### `fetch` doesn't seem to be getting mocked?
-If using a mock loading library such as `mockery`, are you requiring the module you're testing after registering `fetch-mock` with the mock loader? You probably should be ([Example incorrect usage](https://github.com/wheresrhys/fetch-mock/issues/70)). If you're using ES6 `import` it may not be possible to do this without reverting to using `require()` sometimes. I *did* warn you about not using `fetch` as a global (...sigh)
+* If using a mock loading library such as `mockery`, are you requiring the module you're testing after registering `fetch-mock` with the mock loader? You probably should be ([Example incorrect usage](https://github.com/wheresrhys/fetch-mock/issues/70)). If you're using ES6 `import` it may not be possible to do this without reverting to using `require()` sometimes. I *did* warn you about not using `fetch` as a global (...sigh)
+* If using `isomorphic-fetch` in your source, are you assigning it to a `fetch` variable? You *shouldn't* be i.e. 
+  * `import 'isomorphic-fetch'`, not `import fetch from 'isomorphic-fetch'`
+  * `require('isomorphic-fetch')`, not `const fetch = require('isomorphic-fetch')`
 
 ### Environment doesn't support requiring fetch-mock?
 * If your client-side code or tests do not use a loader that respects the browser field of package.json use `require('fetch-mock/es5/client')`.

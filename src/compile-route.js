@@ -1,5 +1,6 @@
 'use strict';
-
+const glob = require('glob-to-regexp')
+const express = require('path-to-regexp');
 
 const stringMatchers = {
 	begin: string => {
@@ -9,9 +10,15 @@ const stringMatchers = {
 	end: string => {
 		const targetUrl = string.replace(/^end:/, '')
 		return url => url.substr(-targetUrl.length) === targetUrl
+	},
+	glob: string => {
+		const urlRX = glob(string.replace(/^glob:/, ''))
+		return url => urlRX.test(url)
+	},
+	express: string => {
+		const urlRX = express(string.replace(/^express:/, ''))
+		return url => urlRX.test(url)
 	}
-	// glob: ,
-	// express:
 }
 
 function getHeaderMatcher (expectedHeaders) {

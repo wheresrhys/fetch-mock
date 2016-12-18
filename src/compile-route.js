@@ -1,4 +1,23 @@
 'use strict';
+const glob = require('glob-to-regexp')
+const express = require('path-to-regexp');
+
+const stringMatchers = {
+	begin: targetString => {
+		return url => url.indexOf(targetString) === 0
+	},
+	end: targetString => {
+		return url => url.substr(-targetString.length) === targetString
+	},
+	glob: targetString => {
+		const urlRX = glob(targetString.replace(/^glob:/, ''))
+		return url => urlRX.test(url)
+	},
+	express: targetString => {
+		const urlRX = express(targetString.replace(/^express:/, ''))
+		return url => urlRX.test(url)
+	}
+}
 
 function getHeaderMatcher (expectedHeaders) {
 	const expectation = Object.keys(expectedHeaders).map(k => {
@@ -72,14 +91,24 @@ module.exports = function (route, Request) {
 
 	if (typeof route.matcher === 'string') {
 
-		if (route.matcher === '*') {
-			matchUrl = () => true;
-		} else if (route.matcher.indexOf('^') === 0) {
-			const expectedUrl = route.matcher.substr(1);
-			matchUrl = url => url.indexOf(expectedUrl) === 0;
-		} else {
-			const expectedUrl = route.matcher;
-			matchUrl = url => url === expectedUrl;
+		Object.keys(stringMatchers).some(name => {
+			if (route.matcher.indexOf(name + ':') === 0) {
+				const url = route.matcher.replace(new RegExp(`^${name}:`), '')
+				matchUrl = stringMatchers[name](url);
+				return true
+			}
+		})
+		if (!matchUrl) {
+			if (route.matcher === '*') {
+				matchUrl = () => true;
+			} else if (route.matcher.indexOf('^') === 0) {
+				console.warn('Using \'^\' to denote the start of a url is deprecated. Use \'begin:\' instead');
+				const expectedUrl = route.matcher.substr(1);
+				matchUrl = url => url.indexOf(expectedUrl) === 0;
+			} else {
+				const expectedUrl = route.matcher;
+				matchUrl = url => url === expectedUrl;
+			}
 		}
 	} else if (route.matcher instanceof RegExp) {
 		const urlRX = route.matcher;

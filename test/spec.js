@@ -298,6 +298,82 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 						});
 				});
 
+				describe('string matcher keywords', () => {
+					it('match begin: keyword', () => {
+						fetchMock.mock({
+							name: 'route',
+							matcher: 'begin:http://it.at.there',
+							response: 'ok'
+						}).catch();
+						return Promise.all([
+							fetch('http://it.at.there'),
+							fetch('http://it.at.thereabouts'),
+							fetch('http://it.at.hereabouts')
+						])
+							.then(function () {
+								expect(fetchMock.called('route')).to.be.true;
+								expect(fetchMock.calls('route').length).to.equal(2);
+								expect(fetchMock.calls('route')[0][0]).to.equal('http://it.at.there');
+							});
+					});
+
+					it('match end: keyword', () => {
+						fetchMock.mock({
+							name: 'route',
+							matcher: 'end:hereabouts',
+							response: 'ok'
+						}).catch();
+						return Promise.all([
+							fetch('http://it.at.there'),
+							fetch('http://it.at.thereabouts'),
+							fetch('http://it.at.hereabouts')
+						])
+							.then(function () {
+								expect(fetchMock.called('route')).to.be.true;
+								expect(fetchMock.calls('route').length).to.equal(2);
+								expect(fetchMock.calls('route')[0][0]).to.equal('http://it.at.thereabouts');
+							});
+					});
+
+					it('match glob: keyword', () => {
+						fetchMock.mock({
+							name: 'route',
+							matcher: 'glob:/its/*/*',
+							response: 'ok'
+						}).catch();
+						return Promise.all([
+							fetch('/its/a/boy'),
+							fetch('/its/a/girl'),
+							fetch('/its/alive')
+						])
+							.then(function () {
+								expect(fetchMock.called('route')).to.be.true;
+								expect(fetchMock.calls('route').length).to.equal(2);
+								expect(fetchMock.calls('route')[0][0]).to.equal('/its/a/boy');
+							});
+					});
+
+					it('match express: keyword', () => {
+						fetchMock.mock({
+							name: 'route',
+							matcher: 'express:/its/:word',
+							response: 'ok'
+						}).catch();
+						return Promise.all([
+							fetch('/its/a/boy'),
+							fetch('/its/a/girl'),
+							fetch('/its/alive')
+						])
+							.then(function () {
+								expect(fetchMock.called('route')).to.be.true;
+								expect(fetchMock.calls('route').length).to.equal(1);
+								expect(fetchMock.calls('route')[0][0]).to.equal('/its/alive');
+							});
+					});
+
+				});
+
+
 				it('match wildcard string', () => {
 					fetchMock.mock({
 						name: 'route',

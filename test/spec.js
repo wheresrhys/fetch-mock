@@ -371,10 +371,6 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 							});
 					});
 
-					it('match custom keyword', () => {
-
-					});
-
 				});
 
 

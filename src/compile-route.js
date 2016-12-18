@@ -103,6 +103,7 @@ module.exports = function (route, Request) {
 			if (route.matcher === '*') {
 				matchUrl = () => true;
 			} else if (route.matcher.indexOf('^') === 0) {
+				console.warn('Using \'^\' to denote the start of a url is deprecated. Use \'begin:\' instead');
 				const expectedUrl = route.matcher.substr(1);
 				matchUrl = url => url.indexOf(expectedUrl) === 0;
 			} else {

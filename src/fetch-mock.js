@@ -80,6 +80,7 @@ FetchMock.prototype.spy = function () {
 }
 
 FetchMock.prototype.fetchMock = function (url, opts) {
+	const Promise = this.fetchMock.Promise || FetchMock.global.Promise;
 	let response = this.router(url, opts);
 
 	if (!response) {
@@ -98,9 +99,10 @@ FetchMock.prototype.fetchMock = function (url, opts) {
 	}
 
 	if (typeof response.then === 'function') {
-		return response.then(response => this.mockResponse(url, response, opts))
+		let responsePromise = response.then(response => this.mockResponse(url, response, opts));
+		return Promise.resolve(responsePromise); // Ensure Promise is always our implementation.
 	} else {
-		return this.mockResponse(url, response, opts)
+		return this.mockResponse(url, response, opts);
 	}
 
 }
@@ -128,6 +130,8 @@ FetchMock.prototype.addRoute = function (route) {
 
 
 FetchMock.prototype.mockResponse = function (url, responseConfig, fetchOpts) {
+	const Promise = this.fetchMock.Promise || FetchMock.global.Promise;
+
 	// It seems odd to call this in here even though it's already called within fetchMock
 	// It's to handle the fact that because we want to support making it very easy to add a
 	// delay to any sort of response (including responses which are defined with a function)
@@ -269,7 +273,7 @@ FetchMock.setGlobals = function (globals) {
 	Object.assign(FetchMock, globals)
 }
 
-FetchMock.prototype.sandbox = function () {
+FetchMock.prototype.sandbox = function (Promise) {
 	if (this.routes.length || this.fallbackResponse) {
 		throw new Error('.sandbox() can only be called on fetch-mock instances that don\'t have routes configured already')
 	}
@@ -281,8 +285,9 @@ FetchMock.prototype.sandbox = function () {
 	);
 	instance.fetchMock.bindMethods();
 	instance.fetchMock.isSandbox = true;
+	instance.fetchMock.Promise = Promise;
 	this.restore();
-	return instance.fetchMock
+	return instance.fetchMock;
 };
 
 ['get','post','put','delete','head', 'patch']

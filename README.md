@@ -126,12 +126,14 @@ fetchMock
 ##### `spy()`
 Similar to `catch()`, this records the call history of unmatched calls, but instead of responding with a stubbed response, the request is passed through to native `fetch()` and is allowed to communicate over the network.
 
-##### `sandbox()` *experimental*
+##### `sandbox(Promise)` *experimental*
 This returns a drop-in mock for fetch which can be passed to other mocking libraries. It implements the full fetch-mock api and maintains its own state independent of other instances, so tests can be run in parallel. e.g.
 
 ```
 	fetchMock.sandbox().mock('http://domain.com', 200)
 ```
+
+`sandbox()` can optionally be passed a custom promise implementation. If not provided, the `Promise` global is used.
 
 ##### `restore()`
 Chainable method that restores `fetch()` to its unstubbed state and clears all data recorded for its calls.

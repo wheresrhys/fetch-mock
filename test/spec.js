@@ -2,6 +2,9 @@
 const expect = require('chai').expect;
 const sinon = require('sinon');
 
+const BluebirdPromise = require('bluebird');
+const GlobalPromise = Promise;
+
 module.exports = (fetchMock, theGlobal, Request, Response) => {
 
 	describe('fetch-mock', () => {
@@ -1166,6 +1169,68 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 						expect(sbx2.called('http://domain2.url')).to.be.true;
 						expect(sbx2.called('http://domain.url')).to.be.false;
 					})
+			});
+
+			it('takes an optional promise to use', () => {
+				const sbx = fetchMock
+					.sandbox(BluebirdPromise)
+					.mock('http://example.com', 200);
+
+				expect(sbx('http://example.com')).to.be.instanceof(BluebirdPromise);
+			});
+
+			it('doesn\'t interfere with the global promise', () => {
+				fetchMock.sandbox(BluebirdPromise);
+				expect(fetch('http://example.com')).to.be.instanceof(GlobalPromise);
+			});
+
+			it('doesn\'t interfere with the promise used by other sandboxes', () => {
+				fetchMock.sandbox(BluebirdPromise);
+				const sbx = fetchMock
+					.sandbox()
+					.mock('http://example.com', 200);
+
+				expect(sbx('http://example.com')).to.be.instanceof(GlobalPromise);
+			});
+
+			it('works with global promise responses when using the global promise', () => {
+				const sbx = fetchMock
+					.sandbox()
+					.mock('http://example.com', GlobalPromise.resolve(200));
+
+				const responsePromise = sbx('http://example.com')
+				expect(responsePromise).to.be.instanceof(GlobalPromise);
+				return responsePromise.then(res => expect(res.status).to.equal(200));
+			});
+
+			it('works with custom promise responses when using the global promise', () => {
+				const sbx = fetchMock
+					.sandbox()
+					.mock('http://example.com', BluebirdPromise.resolve(200));
+
+				const responsePromise = sbx('http://example.com')
+				expect(responsePromise).to.be.instanceof(GlobalPromise);
+				return responsePromise.then(res => expect(res.status).to.equal(200));
+			});
+
+			it('works with global promise responses when a custom promise is used', () => {
+				const sbx = fetchMock
+					.sandbox(BluebirdPromise)
+					.mock('http://example.com', GlobalPromise.resolve(200));
+
+				const responsePromise = sbx('http://example.com')
+				expect(responsePromise).to.be.instanceof(BluebirdPromise);
+				return responsePromise.then(res => expect(res.status).to.equal(200));
+			});
+
+			it('works with custom promise responses when a custom promise is used', () => {
+				const sbx = fetchMock
+					.sandbox(BluebirdPromise)
+					.mock('http://example.com', BluebirdPromise.resolve(200));
+
+				const responsePromise = sbx('http://example.com')
+				expect(responsePromise).to.be.instanceof(BluebirdPromise);
+				return responsePromise.then(res => expect(res.status).to.equal(200));
 			});
 
 		})

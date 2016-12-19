@@ -1122,10 +1122,9 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 					.sandbox()
 					.mock('http://example.com', GlobalPromise.resolve(200));
 
-				return sbx('http://example.com')
-					.then(res => {
-						expect(res.status).to.equal(200);
-					});
+				const responsePromise = sbx('http://example.com')
+				expect(responsePromise).to.be.instanceof(GlobalPromise);
+				return responsePromise.then(res => expect(res.status).to.equal(200));
 			});
 
 			it('works with custom promise responses when using the global promise', () => {
@@ -1133,10 +1132,9 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 					.sandbox()
 					.mock('http://example.com', BluebirdPromise.resolve(200));
 
-				return sbx('http://example.com')
-					.then(res => {
-						expect(res.status).to.equal(200);
-					});
+				const responsePromise = sbx('http://example.com')
+				expect(responsePromise).to.be.instanceof(GlobalPromise);
+				return responsePromise.then(res => expect(res.status).to.equal(200));
 			});
 
 			it('works with global promise responses when a custom promise is used', () => {
@@ -1144,10 +1142,9 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 					.sandbox(BluebirdPromise)
 					.mock('http://example.com', GlobalPromise.resolve(200));
 
-				return sbx('http://example.com')
-					.then(res => {
-						expect(res.status).to.equal(200);
-					});
+				const responsePromise = sbx('http://example.com')
+				expect(responsePromise).to.be.instanceof(BluebirdPromise);
+				return responsePromise.then(res => expect(res.status).to.equal(200));
 			});
 
 			it('works with custom promise responses when a custom promise is used', () => {
@@ -1155,10 +1152,9 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 					.sandbox(BluebirdPromise)
 					.mock('http://example.com', BluebirdPromise.resolve(200));
 
-				return sbx('http://example.com')
-					.then(res => {
-						expect(res.status).to.equal(200);
-					});
+				const responsePromise = sbx('http://example.com')
+				expect(responsePromise).to.be.instanceof(BluebirdPromise);
+				return responsePromise.then(res => expect(res.status).to.equal(200));
 			});
 
 		})

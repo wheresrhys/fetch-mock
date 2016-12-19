@@ -80,6 +80,7 @@ FetchMock.prototype.spy = function () {
 }
 
 FetchMock.prototype.fetchMock = function (url, opts) {
+	const Promise = this.fetchMock.Promise || FetchMock.global.Promise;
 	let response = this.router(url, opts);
 
 	if (!response) {
@@ -98,9 +99,10 @@ FetchMock.prototype.fetchMock = function (url, opts) {
 	}
 
 	if (typeof response.then === 'function') {
-		return response.then(response => this.mockResponse(url, response, opts))
+		let responsePromise = response.then(response => this.mockResponse(url, response, opts));
+		return Promise.resolve(responsePromise); // Ensure Promise is always our implementation.
 	} else {
-		return this.mockResponse(url, response, opts)
+		return this.mockResponse(url, response, opts);
 	}
 
 }
@@ -128,7 +130,7 @@ FetchMock.prototype.addRoute = function (route) {
 
 
 FetchMock.prototype.mockResponse = function (url, responseConfig, fetchOpts) {
-	let Promise = this.fetchMock.Promise || FetchMock.global.Promise;
+	const Promise = this.fetchMock.Promise || FetchMock.global.Promise;
 
 	// It seems odd to call this in here even though it's already called within fetchMock
 	// It's to handle the fact that because we want to support making it very easy to add a

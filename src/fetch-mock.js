@@ -80,7 +80,7 @@ FetchMock.prototype.spy = function () {
 }
 
 FetchMock.prototype.fetchMock = function (url, opts) {
-	const Promise = this.fetchMock.Promise || FetchMock.global.Promise;
+	const Promise = this.Promise || FetchMock.global.Promise;
 	let response = this.router(url, opts);
 
 	if (!response) {
@@ -130,7 +130,7 @@ FetchMock.prototype.addRoute = function (route) {
 
 
 FetchMock.prototype.mockResponse = function (url, responseConfig, fetchOpts) {
-	const Promise = this.fetchMock.Promise || FetchMock.global.Promise;
+	const Promise = this.Promise || FetchMock.global.Promise;
 
 	// It seems odd to call this in here even though it's already called within fetchMock
 	// It's to handle the fact that because we want to support making it very easy to add a
@@ -278,16 +278,26 @@ FetchMock.prototype.sandbox = function (Promise) {
 		throw new Error('.sandbox() can only be called on fetch-mock instances that don\'t have routes configured already')
 	}
 	const instance = new FetchMock();
-	Object.assign(
-		instance.fetchMock, // the function
+
+	// this construct allows us to create a fetch-mock instance which is also
+	// a callable function, while circumventing circularity when defining the
+	// object that this function should be bound to
+	let boundMock;
+	const proxy = function () {
+		return boundMock.apply(null, arguments);
+	}
+
+	const functionInstance = Object.assign(
+		proxy, // Ensures that the entire returned object is a callable function
 		FetchMock.prototype, // all prototype methods
 		instance // instance data
 	);
-	instance.fetchMock.bindMethods();
-	instance.fetchMock.isSandbox = true;
-	instance.fetchMock.Promise = Promise;
-	this.restore();
-	return instance.fetchMock;
+	functionInstance.bindMethods();
+	boundMock = functionInstance.fetchMock;
+	functionInstance.isSandbox = true;
+	functionInstance.Promise = Promise;
+
+	return functionInstance;
 };
 
 ['get','post','put','delete','head', 'patch']

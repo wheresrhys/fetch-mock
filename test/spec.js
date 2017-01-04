@@ -1175,7 +1175,6 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 				const sbx = fetchMock
 					.sandbox(BluebirdPromise)
 					.mock('http://example.com', 200);
-
 				expect(sbx('http://example.com')).to.be.instanceof(BluebirdPromise);
 			});
 
@@ -1231,6 +1230,22 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 				const responsePromise = sbx('http://example.com')
 				expect(responsePromise).to.be.instanceof(BluebirdPromise);
 				return responsePromise.then(res => expect(res.status).to.equal(200));
+			});
+
+			it('can be restored', () => {
+				const sbx = fetchMock
+					.sandbox(BluebirdPromise)
+					.get('https://api.resin.io/foo', 200);
+
+				return sbx('https://api.resin.io/foo')
+					.then(res => {
+						expect(res.status).to.equal(200);
+						sbx
+							.restore()
+							.get('https://api.resin.io/foo', 500);
+						return sbx('https://api.resin.io/foo');
+					})
+					.then(res => expect(res.status).to.equal(500))
 			});
 
 		})
@@ -1299,5 +1314,6 @@ e.g. {"body": {"status: "registered"}}`);
 				});
 
 		})
+
 	});
 }

@@ -7,13 +7,15 @@ const stream = require('stream');
 const FetchMock = require('./fetch-mock');
 const http = require('http');
 
-FetchMock.setGlobals({
-	global: global,
+FetchMock.global = global;
+FetchMock.statusTextMap = http.STATUS_CODES;
+FetchMock.stream = stream;
+
+FetchMock.setImplementations({
+	Promise: Promise,
 	Request: Request,
 	Response: Response,
-	Headers: Headers,
-	stream: stream,
-	statusTextMap: http.STATUS_CODES
+	Headers: Headers
 });
 
 module.exports = new FetchMock()

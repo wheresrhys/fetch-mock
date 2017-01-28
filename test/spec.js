@@ -1073,6 +1073,61 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 				}
 				fetchMock.restore();
 			});
+
+			describe('fetch utility class implementations', () => {
+				const FetchMock = require('../src/fetch-mock');
+				['Headers', 'Request', 'Response']
+					.forEach(className => {
+						it(`should use configured ${className}`, () => {
+							const original = FetchMock[className];
+							sinon.spy(FetchMock, className);
+							const spy = FetchMock[className];
+							let callCount = 0;
+							const custom = function () {
+								callCount++;
+								return spy.apply(this, arguments)
+							};
+							custom.prototype = original.prototype;
+							const confObject = {};
+							confObject[className] = custom
+							fetchMock.setImplementations(confObject);
+							expect(FetchMock[className]).to.equal(custom);
+
+							fetchMock.mock('http://test.url.com/', {
+								status: 200,
+								headers: {
+									id: 1
+								}
+							});
+							return Promise.all([
+								fetch('http://test.url.com/'),
+								fetch(new FetchMock.Request('http://test.url.com/'))
+							])
+								.then(() => {
+									expect(callCount).to.equal(spy.args.length);
+									confObject[className] = original;
+									fetchMock.restore();
+									fetchMock.setImplementations(confObject);
+								})
+						})
+
+					})
+			});
+
+			it('can be configured to use alternate Promise implementations', () => {
+				fetchMock.setImplementations({
+					Promise: BluebirdPromise
+				});
+				fetchMock
+					.mock('http://example.com', 200)
+				const fetchCall = fetch('http://example.com');
+				expect(fetchCall).to.be.instanceof(BluebirdPromise);
+				return fetchCall.then(() => {
+					fetchMock.restore();
+					fetchMock.setImplementations({Promise});
+				})
+
+			});
 		})
 
 		describe('sandbox', () => {

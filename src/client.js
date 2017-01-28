@@ -4,12 +4,14 @@ const FetchMock = require('./fetch-mock');
 const statusTextMap = require('./status-text');
 const theGlobal = typeof window !== 'undefined' ? window : self;
 
-FetchMock.setGlobals({
-	global: theGlobal,
+FetchMock.global = theGlobal;
+FetchMock.statusTextMap = statusTextMap;
+
+FetchMock.setImplementations({
+	Promise: Promise,
 	Request: theGlobal.Request,
 	Response: theGlobal.Response,
-	Headers: theGlobal.Headers,
-	statusTextMap: statusTextMap
+	Headers: theGlobal.Headers
 });
 
 module.exports = new FetchMock()

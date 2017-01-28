@@ -80,7 +80,7 @@ FetchMock.prototype.spy = function () {
 }
 
 FetchMock.prototype.fetchMock = function (url, opts) {
-	const Promise = this.Promise || FetchMock.global.Promise;
+	const Promise = this.Promise || FetchMock.Promise;
 	let response = this.router(url, opts);
 
 	if (!response) {
@@ -130,7 +130,7 @@ FetchMock.prototype.addRoute = function (route) {
 
 
 FetchMock.prototype.mockResponse = function (url, responseConfig, fetchOpts) {
-	const Promise = this.Promise || FetchMock.global.Promise;
+	const Promise = this.Promise || FetchMock.Promise;
 
 	// It seems odd to call this in here even though it's already called within fetchMock
 	// It's to handle the fact that because we want to support making it very easy to add a
@@ -269,8 +269,11 @@ FetchMock.prototype.configure = function (opts) {
 	Object.assign(FetchMock.config, opts);
 }
 
-FetchMock.setGlobals = function (globals) {
-	Object.assign(FetchMock, globals)
+FetchMock.setImplementations = FetchMock.prototype.setImplementations = function (implementations) {
+	FetchMock.Headers = implementations.Headers || FetchMock.Headers;
+	FetchMock.Request = implementations.Request || FetchMock.Request;
+	FetchMock.Response = implementations.Response || FetchMock.Response;
+	FetchMock.Promise = implementations.Promise || FetchMock.Promise;
 }
 
 FetchMock.prototype.sandbox = function (Promise) {
@@ -295,7 +298,9 @@ FetchMock.prototype.sandbox = function (Promise) {
 	functionInstance.bindMethods();
 	boundMock = functionInstance.fetchMock;
 	functionInstance.isSandbox = true;
-	functionInstance.Promise = Promise;
+	if (Promise) {
+		functionInstance.Promise = Promise;
+	}
 
 	return functionInstance;
 };

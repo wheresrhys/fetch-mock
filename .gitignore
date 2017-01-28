@@ -4,3 +4,6 @@ npm-debug.log
 /es5/
 /dist/
 test/fixtures/built-sw.js
+_site
+.sass-cache
+.jekyll-metadata

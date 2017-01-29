@@ -27,7 +27,7 @@
   "bugs": {
     "url": "https://github.com/wheresrhys/fetch-mock/issues"
   },
-  "homepage": "https://github.com/wheresrhys/fetch-mock",
+  "homepage": "http://www.wheresrhys.co.uk/fetch-mock",
   "dependencies": {
     "glob-to-regexp": "^0.3.0",
     "node-fetch": "^1.3.3",

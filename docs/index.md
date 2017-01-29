@@ -6,7 +6,7 @@ As well as shorthand methods for the simplest use cases, it offers a flexible AP
 
 - Introduction
 - [Quickstart](/fetch-mock/quickstart)
-- [Installation and usage (covering both global and locally scoped fetch implementations)](/fetch-mock/installation)
+- [Installation and usage ](/fetch-mock/installation)
 - [API documentation](/fetch-mock/api)
 - [Troubleshooting](/fetch-mock/troubleshooting)
 - [Examples](/fetch-mock/examples)

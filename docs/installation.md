@@ -45,7 +45,7 @@ fetchMock.setImplementations({Promise: require('Bluebird').promise})
 In particular, when using fetch-ponyfill 
 
 ```
-setImplementations(require('fetch-ponyfill'))`
+setImplementations(require('fetch-ponyfill')())`
 ```
 
 will set all the internal references to point at fetch-ponyfill's classes.

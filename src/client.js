@@ -8,7 +8,7 @@ FetchMock.global = theGlobal;
 FetchMock.statusTextMap = statusTextMap;
 
 FetchMock.setImplementations({
-	Promise: Promise,
+	Promise: theGlobal.Promise,
 	Request: theGlobal.Request,
 	Response: theGlobal.Response,
 	Headers: theGlobal.Headers

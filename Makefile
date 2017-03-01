@@ -15,4 +15,8 @@ test-unit:
 lint:
 	./node_modules/.bin/eslint src test
 
-test: test-unit lint test-browser
+test: test-unit lint test-browser coverage-report
+
+coverage-report:
+	istanbul cover node_modules/.bin/_mocha --report=lcovonly 'test/server.js'
+	cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js

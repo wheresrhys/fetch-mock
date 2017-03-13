@@ -1076,42 +1076,97 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 
 			describe('fetch utility class implementations', () => {
 				const FetchMock = require('../src/fetch-mock');
-				['Headers', 'Request', 'Response']
-					.forEach(className => {
-						it(`should use configured ${className}`, () => {
-							const original = FetchMock[className];
-							sinon.spy(FetchMock, className);
-							const spy = FetchMock[className];
-							let callCount = 0;
-							const custom = function () {
-								callCount++;
-								return spy.apply(this, arguments)
-							};
-							custom.prototype = original.prototype;
-							const confObject = {};
-							confObject[className] = custom
-							fetchMock.setImplementations(confObject);
-							expect(FetchMock[className]).to.equal(custom);
+				const originalImplementations = {
+					Headers: FetchMock.Headers,
+					Request: FetchMock.Request,
+					Response: FetchMock.Response
+				};
 
-							fetchMock.mock('http://test.url.com/', {
-								status: 200,
-								headers: {
-									id: 1
-								}
-							});
-							return Promise.all([
-								fetch('http://test.url.com/'),
-								fetch(new FetchMock.Request('http://test.url.com/'))
-							])
-								.then(() => {
-									expect(callCount).to.equal(spy.args.length);
-									confObject[className] = original;
-									fetchMock.restore();
-									fetchMock.setImplementations(confObject);
-								})
-						})
+				const getHeadersSpy = () => {
+					const spy = function (config) {
+						spy.callCount += 1;
+						if (config) {
+							return new originalImplementations.Headers(config);
+						} else {
+							return new originalImplementations.Headers();
+						}
+					};
+					spy.prototype = originalImplementations.Headers;
+					spy.callCount = 0;
+					return spy;
+				}
 
-					})
+				const getResponseSpy = () => {
+					const spy = function (body, opts) {
+						spy.callCount += 1;
+						return new originalImplementations.Response(body, opts);
+					};
+					spy.prototype = originalImplementations.Response;
+					spy.callCount = 0;
+					return spy;
+				}
+
+				let defaultSpies = null;
+
+				beforeEach(() => {
+					defaultSpies = {
+						Headers: getHeadersSpy(),
+						Request: originalImplementations.Request,
+						Response: getResponseSpy()
+					};
+
+					fetchMock.setImplementations(defaultSpies);
+				});
+
+				afterEach(() => {
+					fetchMock.restore();
+					fetchMock.setImplementations(originalImplementations);
+				});
+
+				it('should use the configured Headers', () => {
+					const spiedReplacementHeaders = getHeadersSpy();
+					fetchMock.setImplementations({ Headers: spiedReplacementHeaders });
+
+					fetchMock.mock('http://example.com/', {
+						status: 200,
+						headers: { id: 1 }
+					});
+
+					return fetch('http://example.com/').then(() => {
+						expect(spiedReplacementHeaders.callCount).to.equal(1);
+						expect(defaultSpies.Headers.callCount).to.equal(0);
+					});
+				});
+
+				it('should use the configured Response', () => {
+					const spiedReplacementResponse = sinon.stub().returns({ isFake: true });
+					fetchMock.setImplementations({ Response: spiedReplacementResponse });
+
+					fetchMock.mock('http://example.com/', { status: 200 });
+
+					return fetch('http://example.com/').then((response) => {
+						expect(response.isFake).to.equal(true);
+						expect(spiedReplacementResponse.callCount).to.equal(1);
+						expect(defaultSpies.Response.callCount).to.equal(0);
+					});
+				});
+
+				it('should use the configured Request', () => {
+					const ReplacementRequest = function (url) {
+						this.url = url;
+						this.method = 'GET';
+						this.headers = [];
+					};
+					fetchMock.setImplementations({ Request: ReplacementRequest });
+
+					fetchMock.mock('http://example.com/', { status: 200 });
+
+					const requestInstance = new ReplacementRequest('http://example.com/');
+
+					// As long as this is successful, it's worked, as we've correctly
+					// matched the request against overridden prototype.
+					return fetch(requestInstance);
+				});
 			});
 
 			it('can be configured to use alternate Promise implementations', () => {

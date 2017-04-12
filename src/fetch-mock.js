@@ -249,14 +249,28 @@ FetchMock.prototype.called = function (name) {
 
 FetchMock.prototype.done = function (name) {
 	const names = name ? [name] : this.routes.map(r => r.name);
-	// Ideally would use array.every, but not widely supported
+	// Can't use array.every because
+	// a) not widely supported
+	// b) would exit after first failure, which would break the logging
 	return names.map(name => {
 		if (!this.called(name)) {
-			return false
+			console.warn(`Warning: ${name} not called`);
+			return false;
 		}
 		// would use array.find... but again not so widely supported
 		const expectedTimes = (this.routes.filter(r => r.name === name) || [{}])[0].times;
-		return !expectedTimes || (expectedTimes <= this.calls(name).length)
+
+		if (!expectedTimes) {
+			return true;
+		}
+
+		const actualTimes = this.calls(name).length;
+		if (expectedTimes > actualTimes) {
+			console.warn(`Warning: ${name} only called ${actualTimes} times, but ${expectedTimes} expected`);
+			return false;
+		} else {
+			return true;
+		}
 	})
 		.filter(bool => !bool).length === 0
 }

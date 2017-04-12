@@ -1049,6 +1049,23 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 						});
 				})
 
+				it('logs unmatched calls', function () {
+					sinon.spy(console, 'warn')
+					fetchMock
+						.mock('http://it.at.there1/', 200)
+						.mock('http://it.at.there2/', 200, {times: 2})
+
+					fetch('http://it.at.there2/')
+					fetchMock.done()
+					expect(console.warn.calledWith('Warning: http://it.at.there1/ not called')).to.be.true;
+					expect(console.warn.calledWith('Warning: http://it.at.there2/ only called 1 times, but 2 expected')).to.be.true;
+					console.warn.reset();
+					fetchMock.done('http://it.at.there1/')
+					expect(console.warn.calledWith('Warning: http://it.at.there1/ not called')).to.be.true;
+					expect(console.warn.calledWith('Warning: http://it.at.there2/ only called 1 times, but 2 expected')).to.be.false;
+					console.warn.restore();
+				});
+
 			});
 		});
 

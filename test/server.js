@@ -15,6 +15,7 @@ const dummyFetch = function () {
 
 
 require('./spec')(fetchMock, global, require('node-fetch').Request, require('node-fetch').Response);
+//require('./custom-header.spec')(fetchMock, global, require('node-fetch').Headers);
 
 describe('support for Buffers', function () {
 	it('can respond with a buffer', function () {

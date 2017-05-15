@@ -37,10 +37,37 @@ function getHeaderMatcher (expectedHeaders) {
 			obj[k.toLowerCase()] = headers[k]
 			return obj;
 		}, {});
+
 		return expectation.every(header => {
-			return lowerCaseHeaders[header.key] === header.val;
+			return areHeadersEqual(lowerCaseHeaders, header);
 		})
 	}
+}
+
+function areHeadersEqual (currentHeader, expectedHeader) {
+    const {key, val} = expectedHeader;
+    const currentHeaderValue = (Array.isArray(currentHeader[key])) ? currentHeader[key] : [currentHeader[key]];
+    const expectedHeaderValue = (Array.isArray(val)) ? val : [val];
+
+    if (currentHeaderValue === expectedHeaderValue) {
+		return true;
+    }
+
+    if (!currentHeaderValue || !expectedHeaderValue) {
+		return false;
+	}
+
+    if (currentHeaderValue.length !== expectedHeaderValue.length) {
+		return false;
+    }
+
+    for (let i = 0; i < currentHeaderValue.length; ++i) {
+        if (currentHeaderValue[i] !== expectedHeaderValue[i]) {
+			return false;
+        }
+    }
+
+    return true;
 }
 
 function normalizeRequest (url, options, Request) {

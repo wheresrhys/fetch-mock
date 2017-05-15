@@ -1,6 +1,7 @@
 'use strict';
 const glob = require('glob-to-regexp')
 const express = require('path-to-regexp');
+const Headers = require('node-fetch').Headers;
 
 const stringMatchers = {
 	begin: targetString => {
@@ -27,6 +28,11 @@ function getHeaderMatcher (expectedHeaders) {
 		if (!headers) {
 			headers = {};
 		}
+
+		if (headers instanceof Headers) {
+			headers = headers.raw();
+		}
+
 		const lowerCaseHeaders = Object.keys(headers).reduce((obj, k) => {
 			obj[k.toLowerCase()] = headers[k]
 			return obj;

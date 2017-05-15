@@ -60,5 +60,9 @@ module.exports = (fetchMock, theGlobal, Headers) => {
             });
         })
 
+        afterEach(() => {
+            fetchMock.restore();
+        })
+
     });
 }

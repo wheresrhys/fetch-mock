@@ -1442,5 +1442,9 @@ e.g. {"body": {"status: "registered"}}`);
 
 		})
 
+        afterEach(() => {
+            fetchMock.restore();
+        })
+
 	});
 }

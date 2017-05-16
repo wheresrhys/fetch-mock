@@ -45,7 +45,8 @@ function getHeaderMatcher (expectedHeaders) {
 }
 
 function areHeadersEqual (currentHeader, expectedHeader) {
-    const {key, val} = expectedHeader;
+    const key = expectedHeader.key;
+    const val = expectedHeader.val;
     const currentHeaderValue = (Array.isArray(currentHeader[key])) ? currentHeader[key] : [currentHeader[key]];
     const expectedHeaderValue = (Array.isArray(val)) ? val : [val];
 

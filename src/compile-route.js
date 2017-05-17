@@ -50,14 +50,6 @@ function areHeadersEqual (currentHeader, expectedHeader) {
     const currentHeaderValue = (Array.isArray(currentHeader[key])) ? currentHeader[key] : [currentHeader[key]];
     const expectedHeaderValue = (Array.isArray(val)) ? val : [val];
 
-    if (currentHeaderValue === expectedHeaderValue) {
-		return true;
-    }
-
-    if (!currentHeaderValue || !expectedHeaderValue) {
-		return false;
-	}
-
     if (currentHeaderValue.length !== expectedHeaderValue.length) {
 		return false;
     }

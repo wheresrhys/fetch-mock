@@ -109,10 +109,6 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 		});
 
 		describe('catch() and spy()', () => {
-			beforeEach(() => {
-				fetchMock.restore();
-			});
-
 			it('can catch all calls to fetch with good response by default', () => {
 				fetchMock.catch();
 				return fetch('http://place.com/')
@@ -163,11 +159,6 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 		})
 
 		describe('mock()', () => {
-
-			beforeEach(() => {
-				fetchMock.restore();
-			});
-
 			describe('parameters', () => {
 				beforeEach(() => {
 					sinon.stub(fetchMock, 'addRoute');
@@ -1088,7 +1079,6 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 						sendAsJson: true
 					});
 				}
-				fetchMock.restore();
 			});
 
 			describe('fetch utility class implementations', () => {
@@ -1382,7 +1372,6 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 				expect(() => {
 					fetchMock.mock('http://foo.com', { foo: 'bar' }, { method: 'GET' })
 				}).to.not.throw();
-				fetchMock.restore();
 			})
 
 			it('should expect valid statuses', () => {
@@ -1391,7 +1380,6 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 					.to.throw(`Invalid status not number passed on response object.
 To respond with a JSON object that has status as a property assign the object to body
 e.g. {"body": {"status: "registered"}}`);
-				fetchMock.restore();
 			})
 
 			it('should restore successfully after multiple mocks', () => {

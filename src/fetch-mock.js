@@ -8,6 +8,7 @@ const FetchMock = function () {
 	this._calls = {};
 	this._matchedCalls = [];
 	this._unmatchedCalls = [];
+	this._holdingPromises = [];
 	this.bindMethods();
 }
 
@@ -81,6 +82,9 @@ FetchMock.prototype.spy = function () {
 
 FetchMock.prototype.fetchMock = function (url, opts) {
 	const Promise = this.Promise || FetchMock.Promise;
+	let resolveHoldingPromise
+	const holdingPromise = new Promise(res => resolveHoldingPromise = res)
+	this._holdingPromises.push(holdingPromise)
 	let response = this.router(url, opts);
 
 	if (!response) {
@@ -95,14 +99,14 @@ FetchMock.prototype.fetchMock = function (url, opts) {
 	}
 
 	if (typeof response === 'function') {
-		response = response (url, opts);
+		response = response(url, opts);
 	}
 
 	if (typeof response.then === 'function') {
-		let responsePromise = response.then(response => this.mockResponse(url, response, opts));
+		let responsePromise = response.then(response => this.mockResponse(url, response, opts, resolveHoldingPromise));
 		return Promise.resolve(responsePromise); // Ensure Promise is always our implementation.
 	} else {
-		return this.mockResponse(url, response, opts);
+		return this.mockResponse(url, response, opts, resolveHoldingPromise);
 	}
 
 }
@@ -129,7 +133,7 @@ FetchMock.prototype.addRoute = function (route) {
 }
 
 
-FetchMock.prototype.mockResponse = function (url, responseConfig, fetchOpts) {
+FetchMock.prototype.mockResponse = function (url, responseConfig, fetchOpts, resolveHoldingPromise) {
 	const Promise = this.Promise || FetchMock.Promise;
 
 	// It seems odd to call this in here even though it's already called within fetchMock
@@ -141,11 +145,11 @@ FetchMock.prototype.mockResponse = function (url, responseConfig, fetchOpts) {
 	}
 
 	if (FetchMock.Response.prototype.isPrototypeOf(responseConfig)) {
-		return Promise.resolve(responseConfig);
+		return this.respond(Promise.resolve(responseConfig), resolveHoldingPromise);
 	}
 
 	if (responseConfig.throws) {
-		return Promise.reject(responseConfig.throws);
+		return this.respond(Promise.reject(responseConfig.throws), resolveHoldingPromise);
 	}
 
 	if (typeof responseConfig === 'number') {
@@ -186,7 +190,23 @@ e.g. {"body": {"status: "registered"}}`);
 		body = s;
 	}
 
-	return Promise.resolve(new FetchMock.Response(body, opts));
+	return this.respond(Promise.resolve(new FetchMock.Response(body, opts)), resolveHoldingPromise);
+}
+
+FetchMock.prototype.respond = function (response, resolveHoldingPromise) {
+	return response
+		.then(res => {
+			resolveHoldingPromise()
+			return res;
+		})
+		.catch(err => {
+			resolveHoldingPromise()
+			throw err;
+		})
+}
+
+FetchMock.prototype.flush = function () {
+	return Promise.all(this._holdingPromises);
 }
 
 FetchMock.prototype.push = function (name, call) {
@@ -210,6 +230,7 @@ FetchMock.prototype.reset = function () {
 	this._calls = {};
 	this._matchedCalls = [];
 	this._unmatchedCalls = [];
+	this._holdingPromises = [];
 	this.routes.forEach(route => route.reset && route.reset())
 	return this;
 }

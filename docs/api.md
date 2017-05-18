@@ -82,6 +82,9 @@ This returns a drop-in mock for fetch which can be passed to other mocking libra
 
 `sandbox()` can optionally be passed a custom promise implementation. If not provided, the `Promise` global is used.
 
+#### `flush()`
+Returns a promise that resolves once all fetches handled by fetch-mock have resolved. Useful for testing code that uses `fetch` but doesn't return a promise.
+
 #### `restore()`
 Chainable method that restores `fetch()` to its unstubbed state and clears all data recorded for its calls.
 

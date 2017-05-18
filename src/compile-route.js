@@ -1,6 +1,7 @@
 'use strict';
 const glob = require('glob-to-regexp')
 const express = require('path-to-regexp');
+const Headers = require('node-fetch').Headers;
 
 const stringMatchers = {
 	begin: targetString => {
@@ -27,14 +28,39 @@ function getHeaderMatcher (expectedHeaders) {
 		if (!headers) {
 			headers = {};
 		}
+
+		if (headers instanceof Headers) {
+			headers = headers.raw();
+		}
+
 		const lowerCaseHeaders = Object.keys(headers).reduce((obj, k) => {
 			obj[k.toLowerCase()] = headers[k]
 			return obj;
 		}, {});
+
 		return expectation.every(header => {
-			return lowerCaseHeaders[header.key] === header.val;
+			return areHeadersEqual(lowerCaseHeaders, header);
 		})
 	}
+}
+
+function areHeadersEqual (currentHeader, expectedHeader) {
+    const key = expectedHeader.key;
+    const val = expectedHeader.val;
+    const currentHeaderValue = (Array.isArray(currentHeader[key])) ? currentHeader[key] : [currentHeader[key]];
+    const expectedHeaderValue = (Array.isArray(val)) ? val : [val];
+
+    if (currentHeaderValue.length !== expectedHeaderValue.length) {
+		return false;
+    }
+
+    for (let i = 0; i < currentHeaderValue.length; ++i) {
+        if (currentHeaderValue[i] !== expectedHeaderValue[i]) {
+			return false;
+        }
+    }
+
+    return true;
 }
 
 function normalizeRequest (url, options, Request) {

@@ -910,6 +910,48 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 						}, 10)
 					}, 10)
 				});
+
+				describe('flush', () => {
+					it('flush resolves if all fetches have resolved', () => {
+						fetchMock
+							.mock('http://one.com', 200)
+							.mock('http://two.com', 200)
+						// no expectation, but if it doesn't work then the promises will hang
+						// or reject and the test will timeout
+						return fetchMock.flush()
+							.then(() => {
+								fetch('http://one.com')
+								return fetchMock.flush()
+							})
+							.then(() => {
+								fetch('http://two.com')
+								return fetchMock.flush()
+							})
+					})
+
+					it('flush waits for unresolved promises', () => {
+						fetchMock
+							.mock('http://one.com', 200)
+							.mock('http://two.com', () => new Promise(res => setTimeout(() => res(200), 50)))
+						const orderedResults = []
+						fetch('http://one.com')
+						fetch('http://two.com')
+						setTimeout(() => orderedResults.push('not flush'), 25)
+						return fetchMock
+							.flush()
+							.then(() => orderedResults.push('flush'))
+							.then(() => expect(orderedResults).to.deep.equal(['not flush', 'flush']))
+					})
+
+					it('flush resolves on expected error', () => {
+						fetchMock
+							.mock('http://one.com', {throws: 'Problem in space'})
+						fetch('http://one.com')
+						return fetchMock
+							.flush()
+					})
+
+				})
 			});
 
 			describe('strict matching', function () {

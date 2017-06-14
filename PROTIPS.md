@@ -30,4 +30,4 @@ fetchMock.mock('^http://example.com', (url, opts) => {
 - - -
 By default any unmatched calls go straight through to `fetch`. Set `fetchMock.greed = 'bad'` to make them all error, or `fetchMock.greed = 'good'` to return `200` responses
 - - - 
-When using webpack and it's variety of plugins alongside karma, fetch-mock, isomorphic fetch and others sometimes the easiest way to define `fetch` in the environment is to include it as a standalone script (`npm install whatwg-fetch`) and leave it out of your main bundle. Or run your tests in firefox/chrome, where fetch is native
+When using webpack and its variety of plugins alongside karma, fetch-mock, isomorphic fetch and others sometimes the easiest way to define `fetch` in the environment is to include it as a standalone script (`npm install whatwg-fetch`) and leave it out of your main bundle. Or run your tests in firefox/chrome, where fetch is native

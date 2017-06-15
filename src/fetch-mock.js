@@ -156,14 +156,13 @@ FetchMock.prototype.mockResponse = function (url, responseConfig, fetchOpts, res
 		responseConfig = {
 			status: responseConfig
 		};
-	} else if (typeof responseConfig === 'string' || !(responseConfig.body || responseConfig.headers || responseConfig.throws || responseConfig.status)) {
+	} else if (typeof responseConfig === 'string' || !(responseConfig.body || responseConfig.headers || responseConfig.throws || responseConfig.status || responseConfig.__redirectUrl)) {
 		responseConfig = {
 			body: responseConfig
 		};
 	}
-
 	const opts = responseConfig.opts || {};
-	opts.url = url;
+	opts.url = responseConfig.__redirectUrl || url;
 	opts.sendAsJson = responseConfig.sendAsJson === undefined ? FetchMock.config.sendAsJson : responseConfig.sendAsJson;
 	if (responseConfig.status && (typeof responseConfig.status !== 'number' || parseInt(responseConfig.status, 10) !== responseConfig.status || responseConfig.status < 200 || responseConfig.status > 599)) {
 		throw new TypeError(`Invalid status ${responseConfig.status} passed on response object.
@@ -189,8 +188,19 @@ e.g. {"body": {"status: "registered"}}`);
 		s.push(null);
 		body = s;
 	}
+	let response = new FetchMock.Response(body, opts);
 
-	return this.respond(Promise.resolve(new FetchMock.Response(body, opts)), resolveHoldingPromise);
+	if (opts.url) {
+		response = Object.create(response, {
+			redirected: {
+				value: true
+			},
+			url: {
+				value: opts.url
+			}
+		})
+	}
+	return this.respond(Promise.resolve(response), resolveHoldingPromise);
 }
 
 FetchMock.prototype.respond = function (response, resolveHoldingPromise) {
@@ -349,5 +359,6 @@ FetchMock.prototype.sandbox = function (Promise) {
 			return this.once(matcher, response, Object.assign({}, options, {method: method.toUpperCase()}));
 		}
 	})
+
 
 module.exports = FetchMock;

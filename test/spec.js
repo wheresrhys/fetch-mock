@@ -819,6 +819,22 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 						});
 				});
 
+				it('respond with a redirected response', () => {
+					fetchMock.mock('http://it.at.there/', {
+						__redirectUrl: 'http://it.at.there/destination',
+						body: 'I am a redirect'
+					});
+					return fetch('http://it.at.there/')
+						.then(res => {
+							expect(res.redirected).to.equal(true);
+							expect(res.url).to.equal('http://it.at.there/destination');
+							return res.text()
+								.then(text => {
+									expect(text).to.equal('I am a redirect')
+								})
+						});
+				});
+
 				it('construct a response based on the request', () => {
 					fetchMock.mock({
 						name: 'route',

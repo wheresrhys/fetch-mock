@@ -144,43 +144,70 @@ FetchMock.prototype.mockResponse = function (url, responseConfig, fetchOpts, res
 		responseConfig = responseConfig(url, fetchOpts);
 	}
 
+	// If the response is a pre-made Response, respond with it
 	if (FetchMock.Response.prototype.isPrototypeOf(responseConfig)) {
 		return this.respond(Promise.resolve(responseConfig), resolveHoldingPromise);
 	}
 
+	// If the response says to throw an error, throw it
 	if (responseConfig.throws) {
 		return this.respond(Promise.reject(responseConfig.throws), resolveHoldingPromise);
 	}
 
+	// If the response config looks like a status, start to generate a simple response
 	if (typeof responseConfig === 'number') {
 		responseConfig = {
 			status: responseConfig
 		};
-	} else if (typeof responseConfig === 'string' || !(responseConfig.body || responseConfig.headers || responseConfig.throws || responseConfig.status)) {
+	// If the response config is not an object, or is an object that doesn't use
+	// any reserved properties, assume it is meant to be the body of the response
+	} else if (typeof responseConfig === 'string' || !(
+		responseConfig.body ||
+		responseConfig.headers ||
+		responseConfig.throws ||
+		responseConfig.status ||
+		responseConfig.__redirectUrl
+	)) {
 		responseConfig = {
 			body: responseConfig
 		};
 	}
 
+	// Now we are sure we're dealing with a response config object, so start to
+	// construct a real response from it
 	const opts = responseConfig.opts || {};
-	opts.url = url;
-	opts.sendAsJson = responseConfig.sendAsJson === undefined ? FetchMock.config.sendAsJson : responseConfig.sendAsJson;
+
+	// set the response url
+	opts.url = responseConfig.__redirectUrl || url;
+
+	// Handle a reasonably common misuse of the library - returning an object
+	// with the property 'status'
 	if (responseConfig.status && (typeof responseConfig.status !== 'number' || parseInt(responseConfig.status, 10) !== responseConfig.status || responseConfig.status < 200 || responseConfig.status > 599)) {
 		throw new TypeError(`Invalid status ${responseConfig.status} passed on response object.
 To respond with a JSON object that has status as a property assign the object to body
 e.g. {"body": {"status: "registered"}}`);
 	}
+
+	// set up the response status
 	opts.status = responseConfig.status || 200;
 	opts.statusText = FetchMock.statusTextMap['' + opts.status];
-	// The ternary operator is to cope with new Headers(undefined) throwing in Chrome
+
+	// Set up response headers. The ternary operator is to cope with
+	// new Headers(undefined) throwing in Chrome
 	// https://code.google.com/p/chromium/issues/detail?id=335871
 	opts.headers = responseConfig.headers ? new FetchMock.Headers(responseConfig.headers) : new FetchMock.Headers();
 
+	// start to construct the body
 	let body = responseConfig.body;
+
+	// convert to json if we need to
+	opts.sendAsJson = responseConfig.sendAsJson === undefined ? FetchMock.config.sendAsJson : responseConfig.sendAsJson;
 	if (opts.sendAsJson && responseConfig.body != null && typeof body === 'object') { //eslint-disable-line
 		body = JSON.stringify(body);
 	}
 
+	// On the server we need to manually construct the readable stream for the
+	// Response object (on the client this is done automatically)
 	if (FetchMock.stream) {
 		let s = new FetchMock.stream.Readable();
 		if (body != null) { //eslint-disable-line
@@ -189,8 +216,19 @@ e.g. {"body": {"status: "registered"}}`);
 		s.push(null);
 		body = s;
 	}
+	let response = new FetchMock.Response(body, opts);
 
-	return this.respond(Promise.resolve(new FetchMock.Response(body, opts)), resolveHoldingPromise);
+	// When mocking a followed redirect we must wrap the response in an object
+	// which sets the redirected flag (not a writable property on the actual response)
+	if (responseConfig.__redirectUrl) {
+		response = Object.create(response, {
+			redirected: {
+				value: true
+			}
+		})
+	}
+
+	return this.respond(Promise.resolve(response), resolveHoldingPromise);
 }
 
 FetchMock.prototype.respond = function (response, resolveHoldingPromise) {
@@ -350,5 +388,6 @@ FetchMock.prototype.sandbox = function (Promise) {
 			return this.once(matcher, response, Object.assign({}, options, {method: method.toUpperCase()}));
 		}
 	})
+
 
 module.exports = FetchMock;

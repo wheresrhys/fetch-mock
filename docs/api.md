@@ -43,6 +43,7 @@ Replaces `fetch()` with a stub which records its calls, grouped by route, and op
     * `headers`: key/value map of headers to match
     * `matcher`: as specified above
     * `response`: as specified above
+    * `__redirectUrl`: *experimental* the url the response should be from (to imitate followed redirects - will set `redirected: true` on the response)
     * `times`: An integer, `n`, limiting the number of times the matcher can be used. If the route has already been called `n` times the route will be ignored and the call to `fetch()` will fall through to be handled by any other routes defined (which may eventually result in an error if nothing matches it)
 
 #### `once()`

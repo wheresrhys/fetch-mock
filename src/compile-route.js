@@ -1,7 +1,6 @@
 'use strict';
 const glob = require('glob-to-regexp')
 const express = require('path-to-regexp');
-const Headers = require('node-fetch').Headers;
 
 const stringMatchers = {
 	begin: targetString => {
@@ -20,7 +19,7 @@ const stringMatchers = {
 	}
 }
 
-function getHeaderMatcher (expectedHeaders) {
+function getHeaderMatcher (expectedHeaders, HeadersConstructor) {
 	const expectation = Object.keys(expectedHeaders).map(k => {
 		return {key: k.toLowerCase(), val: expectedHeaders[k]}
 	})
@@ -29,7 +28,7 @@ function getHeaderMatcher (expectedHeaders) {
 			headers = {};
 		}
 
-		if (headers instanceof Headers) {
+		if (headers instanceof HeadersConstructor) {
 			headers = headers.raw();
 		}
 
@@ -83,7 +82,7 @@ function normalizeRequest (url, options, Request) {
 	}
 }
 
-module.exports = function (route, Request) {
+module.exports = function (route, Request, HeadersConstructor) {
 	route = Object.assign({}, route);
 
 	if (typeof route.response === 'undefined') {
@@ -111,7 +110,7 @@ module.exports = function (route, Request) {
 		return !expectedMethod || expectedMethod === (method ? method.toLowerCase() : 'get');
 	};
 
-	const matchHeaders = route.headers ? getHeaderMatcher(route.headers) : (() => true);
+	const matchHeaders = route.headers ? getHeaderMatcher(route.headers, HeadersConstructor) : (() => true);
 
 	let matchUrl;
 

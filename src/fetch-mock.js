@@ -129,7 +129,7 @@ FetchMock.prototype.addRoute = function (route) {
 	}
 
 	// Allows selective application of some of the preregistered routes
-	this.routes.push(compileRoute(route, FetchMock.Request));
+	this.routes.push(compileRoute(route, FetchMock.Request, FetchMock.Headers));
 }
 
 

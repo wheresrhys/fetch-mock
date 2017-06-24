@@ -929,6 +929,15 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 							})
 					})
 
+					it('should resolve after fetches', () => {
+						fetchMock.mock('http://example', 'working!')
+						let data;
+						fetch('http://example')
+							.then(() => data = 'done');
+						return fetchMock.flush()
+							.then(() => expect(data).to.equal('done'))
+					})
+
 					it('flush waits for unresolved promises', () => {
 						fetchMock
 							.mock('http://one.com', 200)

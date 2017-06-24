@@ -194,7 +194,7 @@ e.g. {"body": {"status: "registered"}}`);
 }
 
 FetchMock.prototype.respond = function (response, resolveHoldingPromise) {
-	return response
+	response
 		.then(res => {
 			resolveHoldingPromise()
 			return res;
@@ -203,6 +203,7 @@ FetchMock.prototype.respond = function (response, resolveHoldingPromise) {
 			resolveHoldingPromise()
 			throw err;
 		})
+	return response;
 }
 
 FetchMock.prototype.flush = function () {

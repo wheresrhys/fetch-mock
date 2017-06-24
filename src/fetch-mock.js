@@ -129,7 +129,7 @@ FetchMock.prototype.addRoute = function (route) {
 	}
 
 	// Allows selective application of some of the preregistered routes
-	this.routes.push(compileRoute(route, FetchMock.Request));
+	this.routes.push(compileRoute(route, FetchMock.Request, FetchMock.Headers));
 }
 
 
@@ -232,7 +232,7 @@ e.g. {"body": {"status: "registered"}}`);
 }
 
 FetchMock.prototype.respond = function (response, resolveHoldingPromise) {
-	return response
+	response
 		.then(res => {
 			resolveHoldingPromise()
 			return res;
@@ -241,6 +241,7 @@ FetchMock.prototype.respond = function (response, resolveHoldingPromise) {
 			resolveHoldingPromise()
 			throw err;
 		})
+	return response;
 }
 
 FetchMock.prototype.flush = function () {

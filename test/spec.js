@@ -1435,6 +1435,21 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 		})
 
 		describe('regressions', () => {
+			it('should combine function matchers with other options', () => {
+				fetchMock
+					.mock(url => /person/.test(url) , 301, { method: 'GET' })
+					.mock(url => /person/.test(url) , 401, { method: 'POST' })
+
+				return Promise.all([
+					fetch('http://domain.com/person'),
+					fetch('http://domain.com/person', {method: 'post'})
+				])
+					.then(responses => {
+						expect(responses[0].status).to.equal(301);
+						expect(responses[1].status).to.equal(401);
+					})
+			})
+
 			it('should accept object respones when passing options', () => {
 				expect(() => {
 					fetchMock.mock('http://foo.com', { foo: 'bar' }, { method: 'GET' })

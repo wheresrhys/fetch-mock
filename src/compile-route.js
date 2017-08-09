@@ -98,11 +98,7 @@ module.exports = function (route, Request, HeadersConstructor) {
 		route.__unnamed = true;
 	}
 
-	// If user has provided a function as a matcher we assume they are handling all the
-	// matching logic they need
-	if (typeof route.matcher === 'function') {
-		return route;
-	}
+	let matchUrl;
 
 	const expectedMethod = route.method && route.method.toLowerCase();
 
@@ -112,9 +108,10 @@ module.exports = function (route, Request, HeadersConstructor) {
 
 	const matchHeaders = route.headers ? getHeaderMatcher(route.headers, HeadersConstructor) : (() => true);
 
-	let matchUrl;
 
-	if (typeof route.matcher === 'string') {
+	if (typeof route.matcher === 'function') {
+		matchUrl = route.matcher;
+	} else if (typeof route.matcher === 'string') {
 
 		Object.keys(stringMatchers).some(name => {
 			if (route.matcher.indexOf(name + ':') === 0) {
@@ -144,7 +141,7 @@ module.exports = function (route, Request, HeadersConstructor) {
 
 	const matcher = (url, options) => {
 		const req = normalizeRequest(url, options, Request);
-		return matchHeaders(req.headers) && matchMethod(req.method) && matchUrl(req.url);
+		return matchHeaders(req.headers) && matchMethod(req.method) && matchUrl(req.url, options);
 	};
 
 	if (route.times) {

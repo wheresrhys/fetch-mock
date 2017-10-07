@@ -121,7 +121,8 @@ Returns the options for the last matched call to fetch
 
 #### `configure(opts)`
 Set some global config options, which include
-* `sendAsJson` [default `true`] - by default fetchMock will convert objects to JSON before sending. This is overrideable fro each call but for some scenarios e.g. when dealing with a lot of array buffers, it can be useful to default to `false`
+* `sendAsJson` [default `true`] - by default fetchMock will convert objects to JSON before sending. This is overrideable from each call but for some scenarios e.g. when dealing with a lot of array buffers, it can be useful to default to `false`
+* `includeContentLength` [default `false`]: When set to true this will make fetchMock automatically add the `content-length` header. This is especially useful when combined with `sendAsJson` because then fetchMock does the conversion to JSON for you and knows the resulting length so you don’t have to compute this yourself by basically doing the same conversion to JSON.
 
 #### `setImplementations(opts)`
 When using non global fetch (e.g. a ponyfill) or an alternative Promise implementation, this will configure fetch-mock to use your chosen implementations. `opts` is an object with one or more of the following properties: `Headers`,`Request`,`Response`,`Promise`. Note that `setImplementations(require('fetch-ponyfill')())` will configure fetch-mock to use all of fetch-ponyfill's classes. 

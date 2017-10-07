@@ -1349,7 +1349,7 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 					});
 			});
 
-			it('should ignore case of explicit content-length header', done => {
+			it('should be case-insensitive when checking for explicit content-length header', done => {
 				fetchMock.mock('http://it.at.there/', {
 					body: {
 						hello: 'world'

@@ -177,9 +177,6 @@ FetchMock.prototype.mockResponse = function (url, responseConfig, fetchOpts, res
 	// construct a real response from it
 	const opts = responseConfig.opts || {};
 
-	// set the response url
-	opts.url = responseConfig.__redirectUrl || url;
-
 	// Handle a reasonably common misuse of the library - returning an object
 	// with the property 'status'
 	if (responseConfig.status && (typeof responseConfig.status !== 'number' || parseInt(responseConfig.status, 10) !== responseConfig.status || responseConfig.status < 200 || responseConfig.status > 599)) {
@@ -206,6 +203,12 @@ e.g. {"body": {"status: "registered"}}`);
 		body = JSON.stringify(body);
 	}
 
+	// add a Content-Length header if we need to
+	opts.includeContentLength = responseConfig.includeContentLength === undefined ? FetchMock.config.includeContentLength : responseConfig.includeContentLength;
+	if (opts.includeContentLength && typeof body === 'string' && !opts.headers.has('Content-Length')) {
+		opts.headers.set('Content-Length', body.length.toString());
+	}
+
 	// On the server we need to manually construct the readable stream for the
 	// Response object (on the client this is done automatically)
 	if (FetchMock.stream) {
@@ -224,6 +227,17 @@ e.g. {"body": {"status: "registered"}}`);
 		response = Object.create(response, {
 			redirected: {
 				value: true
+			},
+			url: {
+				value: responseConfig.__redirectUrl
+			},
+			// TODO extend to all other methods as requested by users
+			// Such a nasty hack
+			text: {
+				value: response.text.bind(response)
+			},
+			json: {
+				value: response.json.bind(response)
 			}
 		})
 	}
@@ -234,7 +248,7 @@ e.g. {"body": {"status: "registered"}}`);
 FetchMock.prototype.respond = function (response, resolveHoldingPromise) {
 	response
 		.then(resolveHoldingPromise, resolveHoldingPromise)
-	
+
 	return response;
 }
 
@@ -330,6 +344,7 @@ FetchMock.prototype.done = function (name) {
 }
 
 FetchMock.config = {
+	includeContentLength: false,
 	sendAsJson: true
 }
 

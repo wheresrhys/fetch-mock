@@ -1148,6 +1148,60 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 				}
 			});
 
+			it('has includeContentLength off by default', done => {
+				fetchMock.mock('http://it.at.there/', {body: {hello: 'world'}});
+				fetch('http://it.at.there/')
+					.then(res => {
+						expect(res.headers.has('content-length')).to.be.false;
+						done();
+					});
+			});
+
+			it('can configure includeContentLength on', done => {
+				fetchMock.configure({
+					includeContentLength: true
+				});
+				fetchMock.mock('http://it.at.there/', {body: {hello: 'world'}});
+				fetch('http://it.at.there/')
+					.then(res => {
+						expect(res.headers.get('content-length')).to.equal('17');
+						fetchMock.configure({
+							includeContentLength: false
+						});
+						done();
+					});
+			});
+
+			it('includeContentLength can override the global setting to on', done => {
+				fetchMock.configure({
+					includeContentLength: false
+				});
+				fetchMock.mock('http://it.at.there/', {body: {hello: 'world'}, includeContentLength: true});
+				fetch('http://it.at.there/')
+					.then(res => {
+						expect(res.headers.get('content-length')).to.equal('17');
+						fetchMock.configure({
+							includeContentLength: false
+						});
+						done();
+					});
+			});
+
+			it('includeContentLength can override the global setting to off', done => {
+				fetchMock.configure({
+					includeContentLength: true
+				});
+				fetchMock.mock('http://it.at.there/', {body: {hello: 'world'}, includeContentLength: false});
+				fetch('http://it.at.there/')
+					.then(res => {
+						expect(res.headers.has('content-length')).to.be.false;
+						fetchMock.configure({
+							includeContentLength: false
+						});
+						done();
+					});
+			});
+
 			describe('fetch utility class implementations', () => {
 				const FetchMock = require('../src/fetch-mock');
 				const originalImplementations = {
@@ -1258,6 +1312,61 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 
 			});
 		})
+
+		describe('includeContentLength', () => {
+			it('should work on body of type object', done => {
+				fetchMock.mock('http://it.at.there/', {body: {hello: 'world'}, includeContentLength: true});
+				fetch('http://it.at.there/')
+					.then(res => {
+						expect(res.headers.get('content-length')).to.equal('17');
+						done();
+					});
+			});
+
+			it('should work on body of type string', done => {
+				fetchMock.mock('http://it.at.there/', {body: 'Fetch-Mock rocks', includeContentLength: true});
+				fetch('http://it.at.there/')
+					.then(res => {
+						expect(res.headers.get('content-length')).to.equal('16');
+						done();
+					});
+			});
+
+			it('should not overrule explicit mocked content-length header', done => {
+				fetchMock.mock('http://it.at.there/', {
+					body: {
+						hello: 'world'
+					},
+					headers: {
+						'Content-Length': '100',
+					},
+					includeContentLength: true
+				});
+				fetch('http://it.at.there/')
+					.then(res => {
+						expect(res.headers.get('content-length')).to.equal('100');
+						done();
+					});
+			});
+
+			it('should be case-insensitive when checking for explicit content-length header', done => {
+				fetchMock.mock('http://it.at.there/', {
+					body: {
+						hello: 'world'
+					},
+					headers: {
+						'CoNtEnT-LeNgTh': '100',
+					},
+					includeContentLength: true
+				});
+				fetch('http://it.at.there/')
+					.then(res => {
+						expect(res.headers.get('content-length')).to.equal('100');
+						done();
+					});
+			});
+
+		});
 
 		describe('sandbox', () => {
 			it('return function', () => {

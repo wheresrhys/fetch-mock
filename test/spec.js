@@ -1336,7 +1336,7 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 				fetchMock.mock('http://it.at.there/', {
 					body: {
 						hello: 'world'
-					}, 
+					},
 					headers: {
 						'Content-Length': '100',
 					},
@@ -1353,7 +1353,7 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 				fetchMock.mock('http://it.at.there/', {
 					body: {
 						hello: 'world'
-					}, 
+					},
 					headers: {
 						'CoNtEnT-LeNgTh': '100',
 					},

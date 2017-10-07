@@ -177,9 +177,6 @@ FetchMock.prototype.mockResponse = function (url, responseConfig, fetchOpts, res
 	// construct a real response from it
 	const opts = responseConfig.opts || {};
 
-	// set the response url
-	opts.url = responseConfig.__redirectUrl || url;
-
 	// Handle a reasonably common misuse of the library - returning an object
 	// with the property 'status'
 	if (responseConfig.status && (typeof responseConfig.status !== 'number' || parseInt(responseConfig.status, 10) !== responseConfig.status || responseConfig.status < 200 || responseConfig.status > 599)) {
@@ -230,6 +227,17 @@ e.g. {"body": {"status: "registered"}}`);
 		response = Object.create(response, {
 			redirected: {
 				value: true
+			},
+			url: {
+				value: responseConfig.__redirectUrl
+			},
+			// TODO extend to all other methods as requested by users
+			// Such a nasty hack
+			text: {
+				value: response.text.bind(response)
+			},
+			json: {
+				value: response.json.bind(response)
 			}
 		})
 	}
@@ -240,7 +248,7 @@ e.g. {"body": {"status: "registered"}}`);
 FetchMock.prototype.respond = function (response, resolveHoldingPromise) {
 	response
 		.then(resolveHoldingPromise, resolveHoldingPromise)
-	
+
 	return response;
 }
 

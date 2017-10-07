@@ -206,6 +206,12 @@ e.g. {"body": {"status: "registered"}}`);
 		body = JSON.stringify(body);
 	}
 
+	// add a Content-Length header if we need to
+	opts.includeContentLength = responseConfig.includeContentLength === undefined ? FetchMock.config.includeContentLength : responseConfig.includeContentLength;
+	if (opts.includeContentLength && typeof body === 'string' && !opts.headers.has('Content-Length')) {
+		opts.headers.set('Content-Length', body.length.toString());
+	}
+
 	// On the server we need to manually construct the readable stream for the
 	// Response object (on the client this is done automatically)
 	if (FetchMock.stream) {
@@ -330,6 +336,7 @@ FetchMock.prototype.done = function (name) {
 }
 
 FetchMock.config = {
+	includeContentLength: false,
 	sendAsJson: true
 }
 

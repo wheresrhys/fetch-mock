@@ -1619,11 +1619,17 @@ e.g. {"body": {"status: "registered"}}`);
 						});
 				});
 
+				it('should set the url property on responses', () => {
+					fetchMock.mock('begin:http://foo.com', 200)
+					return fetch('http://foo.com/path?query=string')
+						.then(res => expect(res.url).to.equal('http://foo.com/path?query=string'))
+				})
+
 		})
 
-        afterEach(() => {
-            fetchMock.restore();
-        })
+    afterEach(() => {
+        fetchMock.restore();
+    })
 
 	});
 }

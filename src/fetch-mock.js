@@ -9,17 +9,6 @@ FetchMock.config = {
 	sendAsJson: true
 }
 
-FetchMock.configure = function (opts) {
-	Object.assign(this.config, opts);
-}
-
-FetchMock.setImplementations = function (implementations) {
-	this.config.Headers = implementations.Headers || this.config.Headers;
-	this.config.Request = implementations.Request || this.config.Request;
-	this.config.Response = implementations.Response || this.config.Response;
-	this.config.Promise = implementations.Promise || this.config.Promise;
-}
-
 FetchMock.createInstance = function () {
 	const instance = Object.create(FetchMock);
 	instance.routes = [];
@@ -388,9 +377,7 @@ FetchMock.done = function (name) {
 		}
 	})
 		.filter(bool => !bool).length === 0
-}
-
-
+};
 
 ['get','post','put','delete','head', 'patch']
 	.forEach(method => {

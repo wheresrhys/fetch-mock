@@ -7,7 +7,7 @@ const theGlobal = typeof window !== 'undefined' ? window : self;
 FetchMock.global = theGlobal;
 FetchMock.statusTextMap = statusTextMap;
 
-FetchMock.setImplementations({
+instance.config = Object.assign(instance.config, {
 	Promise: theGlobal.Promise,
 	Request: theGlobal.Request,
 	Response: theGlobal.Response,

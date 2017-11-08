@@ -13,7 +13,7 @@ FetchMock.stream = stream;
 
 const instance = FetchMock.createInstance();
 
-instance.setImplementations({
+instance.config = Object.assign(instance.config, {
 	Promise: Promise,
 	Request: Request,
 	Response: Response,

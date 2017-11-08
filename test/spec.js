@@ -1130,9 +1130,7 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 		describe('configurability', () => {
 			it('can configure sendAsJson off', () => {
 				sinon.spy(JSON, 'stringify');
-				fetchMock.configure({
-					sendAsJson: false
-				});
+				fetchMock.config.sendAsJson = false;
 				fetchMock.mock('http://it.at.there/', {not: 'an object'});
 				try {
 					// it should throw as we're trying to respond with unstringified junk
@@ -1142,9 +1140,7 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 				} catch (e) {
 					expect(JSON.stringify.calledWith({not: 'an object'})).to.be.false;
 					JSON.stringify.restore();
-					fetchMock.configure({
-						sendAsJson: true
-					});
+					fetchMock.config.sendAsJson = true;
 				}
 			});
 
@@ -1158,67 +1154,51 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 			});
 
 			it('can configure includeContentLength on', done => {
-				fetchMock.configure({
-					includeContentLength: true
-				});
+				fetchMock.config.includeContentLength = true;
 				fetchMock.mock('http://it.at.there/', {body: {hello: 'world'}});
 				fetch('http://it.at.there/')
 					.then(res => {
 						expect(res.headers.get('content-length')).to.equal('17');
-						fetchMock.configure({
-							includeContentLength: false
-						});
+						fetchMock.config.includeContentLength = false;
 						done();
 					});
 			});
 
 			it('includeContentLength can override the global setting to on', done => {
-				fetchMock.configure({
-					includeContentLength: false
-				});
+				fetchMock.config.includeContentLength = true;
 				fetchMock.mock('http://it.at.there/', {body: {hello: 'world'}, includeContentLength: true});
 				fetch('http://it.at.there/')
 					.then(res => {
 						expect(res.headers.get('content-length')).to.equal('17');
-						fetchMock.configure({
-							includeContentLength: false
-						});
+						fetchMock.config.includeContentLength = false;
 						done();
 					});
 			});
 
 			it('includeContentLength can override the global setting to off', done => {
-				fetchMock.configure({
-					includeContentLength: true
-				});
+				fetchMock.config.includeContentLength = true;
 				fetchMock.mock('http://it.at.there/', {body: {hello: 'world'}, includeContentLength: false});
 				fetch('http://it.at.there/')
 					.then(res => {
 						expect(res.headers.has('content-length')).to.be.false;
-						fetchMock.configure({
-							includeContentLength: false
-						});
+						fetchMock.config.includeContentLength = false;
 						done();
 					});
 			});
 
 			describe('fetch utility class implementations', () => {
-				const originalImplementations = {
-					Headers: fetchMock.config.Headers,
-					Request: fetchMock.config.Request,
-					Response: fetchMock.config.Response
-				};
+				const originalConfig = fetchMock.config;
 
 				const getHeadersSpy = () => {
 					const spy = function (config) {
 						spy.callCount += 1;
 						if (config) {
-							return new originalImplementations.Headers(config);
+							return new originalConfig.Headers(config);
 						} else {
-							return new originalImplementations.Headers();
+							return new originalConfig.Headers();
 						}
 					};
-					spy.prototype = originalImplementations.Headers;
+					spy.prototype = originalConfig.Headers;
 					spy.callCount = 0;
 					return spy;
 				}
@@ -1226,9 +1206,9 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 				const getResponseSpy = () => {
 					const spy = function (body, opts) {
 						spy.callCount += 1;
-						return new originalImplementations.Response(body, opts);
+						return new originalConfig.Response(body, opts);
 					};
-					spy.prototype = originalImplementations.Response;
+					spy.prototype = originalConfig.Response;
 					spy.callCount = 0;
 					return spy;
 				}
@@ -1238,21 +1218,21 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 				beforeEach(() => {
 					defaultSpies = {
 						Headers: getHeadersSpy(),
-						Request: originalImplementations.Request,
+						Request: originalConfig.Request,
 						Response: getResponseSpy()
 					};
 
-					fetchMock.setImplementations(defaultSpies);
+					fetchMock.config = Object.assign({}, originalConfig, defaultSpies);
 				});
 
 				afterEach(() => {
 					fetchMock.restore();
-					fetchMock.setImplementations(originalImplementations);
+					fetchMock.config = originalConfig;
 				});
 
 				it('should use the configured Headers', () => {
 					const spiedReplacementHeaders = getHeadersSpy();
-					fetchMock.setImplementations({ Headers: spiedReplacementHeaders });
+					fetchMock.config.Headers = spiedReplacementHeaders;
 
 					fetchMock.mock('http://example.com/', {
 						status: 200,
@@ -1267,7 +1247,7 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 
 				it('should use the configured Response', () => {
 					const spiedReplacementResponse = sinon.stub().returns({ isFake: true });
-					fetchMock.setImplementations({ Response: spiedReplacementResponse });
+					fetchMock.config.Response = spiedReplacementResponse;
 
 					fetchMock.mock('http://example.com/', { status: 200 });
 
@@ -1284,7 +1264,7 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 						this.method = 'GET';
 						this.headers = [];
 					};
-					fetchMock.setImplementations({ Request: ReplacementRequest });
+					fetchMock.config.Request = ReplacementRequest;
 
 					fetchMock.mock('http://example.com/', { status: 200 });
 
@@ -1297,16 +1277,14 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 			});
 
 			it('can be configured to use alternate Promise implementations', () => {
-				fetchMock.setImplementations({
-					Promise: BluebirdPromise
-				});
+				fetchMock.config.Promise = BluebirdPromise;
 				fetchMock
 					.mock('http://example.com', 200)
 				const fetchCall = fetch('http://example.com');
 				expect(fetchCall).to.be.instanceof(BluebirdPromise);
 				return fetchCall.then(() => {
 					fetchMock.restore();
-					fetchMock.setImplementations({Promise});
+					fetchMock.config.Promise = Promise;
 				})
 
 			});

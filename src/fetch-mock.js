@@ -365,7 +365,7 @@ FetchMock.setImplementations = FetchMock.setImplementations = function (implemen
 	FetchMock.Promise = implementations.Promise || FetchMock.Promise;
 }
 
-FetchMock.sandbox = function (Promise) {
+FetchMock.sandbox = function () {
 	if (this.routes.length || this.fallbackResponse) {
 		throw new Error('.sandbox() can only be called on fetch-mock instances that don\'t have routes configured already')
 	}
@@ -385,10 +385,6 @@ FetchMock.sandbox = function (Promise) {
 	functionInstance.bindMethods();
 	boundMock = functionInstance.fetchMock;
 	functionInstance.isSandbox = true;
-	if (Promise) {
-		functionInstance.Promise = Promise;
-	}
-
 	return functionInstance;
 };
 

@@ -2,23 +2,26 @@
 
 const compileRoute = require('./compile-route');
 
-const FetchMock = function () {
+const FetchMock = {};
 
-	this.routes = [];
-	this._calls = {};
-	this._matchedCalls = [];
-	this._unmatchedCalls = [];
-	this._holdingPromises = [];
-	this.bindMethods();
+FetchMock.createInstance = () => {
+	const instance = Object.create(FetchMock);
+	instance.routes = [];
+	instance._calls = {};
+	instance._matchedCalls = [];
+	instance._unmatchedCalls = [];
+	instance._holdingPromises = [];
+	instance.bindMethods();
+	return instance;
 }
 
-FetchMock.prototype.bindMethods = function () {
-	this.fetchMock = FetchMock.prototype.fetchMock.bind(this);
-	this.restore = FetchMock.prototype.restore.bind(this);
-	this.reset = FetchMock.prototype.reset.bind(this);
+FetchMock.bindMethods = function () {
+	this.fetchMock = FetchMock.fetchMock.bind(this);
+	this.restore = FetchMock.restore.bind(this);
+	this.reset = FetchMock.reset.bind(this);
 }
 
-FetchMock.prototype.mock = function (matcher, response, options) {
+FetchMock.mock = function (matcher, response, options) {
 
 	let route;
 
@@ -45,11 +48,11 @@ FetchMock.prototype.mock = function (matcher, response, options) {
 	return this._mock();
 }
 
-FetchMock.prototype.once = function (matcher, response, options) {
+FetchMock.once = function (matcher, response, options) {
 	return this.mock(matcher, response, Object.assign({}, options, {times: 1}));
 }
 
-FetchMock.prototype._mock = function () {
+FetchMock._mock = function () {
 	if (!this.isSandbox) {
 		// Do this here rather than in the constructor to ensure it's scoped to the test
 		this.realFetch = this.realFetch || FetchMock.global.fetch;
@@ -58,7 +61,7 @@ FetchMock.prototype._mock = function () {
 	return this;
 }
 
-FetchMock.prototype._unMock = function () {
+FetchMock._unMock = function () {
 	if (this.realFetch) {
 		FetchMock.global.fetch = this.realFetch;
 		this.realFetch = null;
@@ -67,7 +70,7 @@ FetchMock.prototype._unMock = function () {
 	return this;
 }
 
-FetchMock.prototype.catch = function (response) {
+FetchMock.catch = function (response) {
 	if (this.fallbackResponse) {
 		console.warn(`calling fetchMock.catch() twice - are you sure you want to overwrite the previous fallback response`);
 	}
@@ -75,12 +78,12 @@ FetchMock.prototype.catch = function (response) {
 	return this._mock();
 }
 
-FetchMock.prototype.spy = function () {
+FetchMock.spy = function () {
 	this._mock();
 	return this.catch(this.realFetch)
 }
 
-FetchMock.prototype.fetchMock = function (url, opts) {
+FetchMock.fetchMock = function (url, opts) {
 	const Promise = this.Promise || FetchMock.Promise;
 	let resolveHoldingPromise
 	const holdingPromise = new Promise(res => resolveHoldingPromise = res)
@@ -111,7 +114,7 @@ FetchMock.prototype.fetchMock = function (url, opts) {
 
 }
 
-FetchMock.prototype.router = function (url, opts) {
+FetchMock.router = function (url, opts) {
 	let route;
 	for (let i = 0, il = this.routes.length; i < il ; i++) {
 		route = this.routes[i];
@@ -122,7 +125,7 @@ FetchMock.prototype.router = function (url, opts) {
 	}
 }
 
-FetchMock.prototype.addRoute = function (route) {
+FetchMock.addRoute = function (route) {
 
 	if (!route) {
 		throw new Error('.mock() must be passed configuration for a route')
@@ -133,7 +136,7 @@ FetchMock.prototype.addRoute = function (route) {
 }
 
 
-FetchMock.prototype.mockResponse = function (url, responseConfig, fetchOpts, resolveHoldingPromise) {
+FetchMock.mockResponse = function (url, responseConfig, fetchOpts, resolveHoldingPromise) {
 	const Promise = this.Promise || FetchMock.Promise;
 
 	// It seems odd to call this in here even though it's already called within fetchMock
@@ -248,18 +251,18 @@ e.g. {"body": {"status: "registered"}}`);
 	return this.respond(Promise.resolve(response), resolveHoldingPromise);
 }
 
-FetchMock.prototype.respond = function (response, resolveHoldingPromise) {
+FetchMock.respond = function (response, resolveHoldingPromise) {
 	response
 		.then(resolveHoldingPromise, resolveHoldingPromise)
 
 	return response;
 }
 
-FetchMock.prototype.flush = function () {
+FetchMock.flush = function () {
 	return Promise.all(this._holdingPromises);
 }
 
-FetchMock.prototype.push = function (name, call) {
+FetchMock.push = function (name, call) {
 	if (name) {
 		this._calls[name] = this._calls[name] || [];
 		this._calls[name].push(call);
@@ -269,14 +272,14 @@ FetchMock.prototype.push = function (name, call) {
 	}
 }
 
-FetchMock.prototype.restore = function () {
+FetchMock.restore = function () {
 	this._unMock();
 	this.reset();
 	this.routes = [];
 	return this;
 }
 
-FetchMock.prototype.reset = function () {
+FetchMock.reset = function () {
 	this._calls = {};
 	this._matchedCalls = [];
 	this._unmatchedCalls = [];
@@ -285,14 +288,14 @@ FetchMock.prototype.reset = function () {
 	return this;
 }
 
-FetchMock.prototype.calls = function (name) {
+FetchMock.calls = function (name) {
 	return name ? (this._calls[name] || []) : {
 		matched: this._matchedCalls,
 		unmatched: this._unmatchedCalls
 	};
 }
 
-FetchMock.prototype.lastCall = function (name) {
+FetchMock.lastCall = function (name) {
 	const calls = name ? this.calls(name) : this.calls().matched;
 	if (calls && calls.length) {
 		return calls[calls.length - 1];
@@ -301,24 +304,24 @@ FetchMock.prototype.lastCall = function (name) {
 	}
 }
 
-FetchMock.prototype.lastUrl = function (name) {
+FetchMock.lastUrl = function (name) {
 	const call = this.lastCall(name);
 	return call && call[0];
 }
 
-FetchMock.prototype.lastOptions = function (name) {
+FetchMock.lastOptions = function (name) {
 	const call = this.lastCall(name);
 	return call && call[1];
 }
 
-FetchMock.prototype.called = function (name) {
+FetchMock.called = function (name) {
 	if (!name) {
 		return !!(this._matchedCalls.length || this._unmatchedCalls.length);
 	}
 	return !!(this._calls[name] && this._calls[name].length);
 }
 
-FetchMock.prototype.done = function (name) {
+FetchMock.done = function (name) {
 	const names = name ? [name] : this.routes.map(r => r.name);
 	// Can't use array.every because
 	// a) not widely supported
@@ -351,23 +354,21 @@ FetchMock.config = {
 	sendAsJson: true
 }
 
-FetchMock.prototype.configure = function (opts) {
+FetchMock.configure = function (opts) {
 	Object.assign(FetchMock.config, opts);
 }
 
-FetchMock.setImplementations = FetchMock.prototype.setImplementations = function (implementations) {
+FetchMock.setImplementations = FetchMock.setImplementations = function (implementations) {
 	FetchMock.Headers = implementations.Headers || FetchMock.Headers;
 	FetchMock.Request = implementations.Request || FetchMock.Request;
 	FetchMock.Response = implementations.Response || FetchMock.Response;
 	FetchMock.Promise = implementations.Promise || FetchMock.Promise;
 }
 
-FetchMock.prototype.sandbox = function (Promise) {
+FetchMock.sandbox = function (Promise) {
 	if (this.routes.length || this.fallbackResponse) {
 		throw new Error('.sandbox() can only be called on fetch-mock instances that don\'t have routes configured already')
 	}
-	const instance = new FetchMock();
-
 	// this construct allows us to create a fetch-mock instance which is also
 	// a callable function, while circumventing circularity when defining the
 	// object that this function should be bound to
@@ -378,8 +379,8 @@ FetchMock.prototype.sandbox = function (Promise) {
 
 	const functionInstance = Object.assign(
 		proxy, // Ensures that the entire returned object is a callable function
-		FetchMock.prototype, // all prototype methods
-		instance // instance data
+		FetchMock, // all prototype methods
+		FetchMock.createInstance() // instance data
 	);
 	functionInstance.bindMethods();
 	boundMock = functionInstance.fetchMock;
@@ -393,10 +394,10 @@ FetchMock.prototype.sandbox = function (Promise) {
 
 ['get','post','put','delete','head', 'patch']
 	.forEach(method => {
-		FetchMock.prototype[method] = function (matcher, response, options) {
+		FetchMock[method] = function (matcher, response, options) {
 			return this.mock(matcher, response, Object.assign({}, options, {method: method.toUpperCase()}));
 		}
-		FetchMock.prototype[`${method}Once`] = function (matcher, response, options) {
+		FetchMock[`${method}Once`] = function (matcher, response, options) {
 			return this.once(matcher, response, Object.assign({}, options, {method: method.toUpperCase()}));
 		}
 	})

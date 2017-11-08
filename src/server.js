@@ -18,4 +18,4 @@ FetchMock.setImplementations({
 	Headers: Headers
 });
 
-module.exports = new FetchMock()
+module.exports = FetchMock.createInstance();

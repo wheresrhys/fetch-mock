@@ -14,4 +14,4 @@ FetchMock.setImplementations({
 	Headers: theGlobal.Headers
 });
 
-module.exports = new FetchMock()
+module.exports = FetchMock;

@@ -1,18 +1,12 @@
-'use strict';
-
 const fetchMock = require('../src/server.js');
 const fetchCalls = [];
 const expect = require('chai').expect;
 const mockery = require('mockery');
 
-// we can't use sinon to spy on fetch in these tests as fetch-mock
-// uses it internally and sinon doesn't allow spying on a previously
-// stubbed function, so just use this very basic stub
 const dummyFetch = function () {
 	fetchCalls.push([].slice.call(arguments));
 	return Promise.resolve(arguments);
 };
-
 
 require('./spec')(fetchMock, global, require('node-fetch').Request, require('node-fetch').Response);
 require('./custom-header.spec')(fetchMock, global, require('node-fetch').Headers);

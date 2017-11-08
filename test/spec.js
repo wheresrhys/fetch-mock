@@ -1387,7 +1387,7 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 				expect(typeof sbx.mock).to.equal('function');
 			});
 
-			it.only('be a mock fetch implementation', () => {
+			it('be a mock fetch implementation', () => {
 				const sbx = fetchMock
 					.sandbox()
 					.mock('http://domain.url', 200)

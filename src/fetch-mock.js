@@ -4,9 +4,26 @@ const compileRoute = require('./compile-route');
 
 const FetchMock = {};
 
+FetchMock.config = {
+	includeContentLength: false,
+	sendAsJson: true
+}
+
+FetchMock.configure = function (opts) {
+	Object.assign(this.config, opts);
+}
+
+FetchMock.setImplementations = function (implementations) {
+	this.config.Headers = implementations.Headers || this.config.Headers;
+	this.config.Request = implementations.Request || this.config.Request;
+	this.config.Response = implementations.Response || this.config.Response;
+	this.config.Promise = implementations.Promise || this.config.Promise;
+}
+
 FetchMock.createInstance = () => {
 	const instance = Object.create(FetchMock);
 	instance.routes = [];
+	instance.config = Object.assign({}, FetchMock.config);
 	instance._calls = {};
 	instance._matchedCalls = [];
 	instance._unmatchedCalls = [];
@@ -84,7 +101,7 @@ FetchMock.spy = function () {
 }
 
 FetchMock.fetchMock = function (url, opts) {
-	const Promise = this.Promise || FetchMock.Promise;
+	const Promise = this.config.Promise;
 	let resolveHoldingPromise
 	const holdingPromise = new Promise(res => resolveHoldingPromise = res)
 	this._holdingPromises.push(holdingPromise)
@@ -132,12 +149,12 @@ FetchMock.addRoute = function (route) {
 	}
 
 	// Allows selective application of some of the preregistered routes
-	this.routes.push(compileRoute(route, FetchMock.Request, FetchMock.Headers));
+	this.routes.push(compileRoute(route, this.config.Request, this.config.Headers));
 }
 
 
 FetchMock.mockResponse = function (url, responseConfig, fetchOpts, resolveHoldingPromise) {
-	const Promise = this.Promise || FetchMock.Promise;
+	const Promise = this.config.Promise;
 
 	// It seems odd to call this in here even though it's already called within fetchMock
 	// It's to handle the fact that because we want to support making it very easy to add a
@@ -148,7 +165,7 @@ FetchMock.mockResponse = function (url, responseConfig, fetchOpts, resolveHoldin
 	}
 
 	// If the response is a pre-made Response, respond with it
-	if (FetchMock.Response.prototype.isPrototypeOf(responseConfig)) {
+	if (this.config.Response.prototype.isPrototypeOf(responseConfig)) {
 		return this.respond(Promise.resolve(responseConfig), resolveHoldingPromise);
 	}
 
@@ -198,19 +215,19 @@ e.g. {"body": {"status: "registered"}}`);
 	// Set up response headers. The ternary operator is to cope with
 	// new Headers(undefined) throwing in Chrome
 	// https://code.google.com/p/chromium/issues/detail?id=335871
-	opts.headers = responseConfig.headers ? new FetchMock.Headers(responseConfig.headers) : new FetchMock.Headers();
+	opts.headers = responseConfig.headers ? new this.config.Headers(responseConfig.headers) : new this.config.Headers();
 
 	// start to construct the body
 	let body = responseConfig.body;
 
 	// convert to json if we need to
-	opts.sendAsJson = responseConfig.sendAsJson === undefined ? FetchMock.config.sendAsJson : responseConfig.sendAsJson;
+	opts.sendAsJson = responseConfig.sendAsJson === undefined ? this.config.sendAsJson : responseConfig.sendAsJson;
 	if (opts.sendAsJson && responseConfig.body != null && typeof body === 'object') { //eslint-disable-line
 		body = JSON.stringify(body);
 	}
 
 	// add a Content-Length header if we need to
-	opts.includeContentLength = responseConfig.includeContentLength === undefined ? FetchMock.config.includeContentLength : responseConfig.includeContentLength;
+	opts.includeContentLength = responseConfig.includeContentLength === undefined ? this.config.includeContentLength : responseConfig.includeContentLength;
 	if (opts.includeContentLength && typeof body === 'string' && !opts.headers.has('Content-Length')) {
 		opts.headers.set('Content-Length', body.length.toString());
 	}
@@ -225,7 +242,7 @@ e.g. {"body": {"status: "registered"}}`);
 		s.push(null);
 		body = s;
 	}
-	let response = new FetchMock.Response(body, opts);
+	let response = new this.config.Response(body, opts);
 
 	// When mocking a followed redirect we must wrap the response in an object
 	// which sets the redirected flag (not a writable property on the actual response)
@@ -349,21 +366,6 @@ FetchMock.done = function (name) {
 		.filter(bool => !bool).length === 0
 }
 
-FetchMock.config = {
-	includeContentLength: false,
-	sendAsJson: true
-}
-
-FetchMock.configure = function (opts) {
-	Object.assign(FetchMock.config, opts);
-}
-
-FetchMock.setImplementations = FetchMock.setImplementations = function (implementations) {
-	FetchMock.Headers = implementations.Headers || FetchMock.Headers;
-	FetchMock.Request = implementations.Request || FetchMock.Request;
-	FetchMock.Response = implementations.Response || FetchMock.Response;
-	FetchMock.Promise = implementations.Promise || FetchMock.Promise;
-}
 
 FetchMock.sandbox = function () {
 	if (this.routes.length || this.fallbackResponse) {

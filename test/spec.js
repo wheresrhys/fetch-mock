@@ -1203,11 +1203,10 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 			});
 
 			describe('fetch utility class implementations', () => {
-				const FetchMock = require('../src/fetch-mock');
 				const originalImplementations = {
-					Headers: FetchMock.Headers,
-					Request: FetchMock.Request,
-					Response: FetchMock.Response
+					Headers: fetchMock.config.Headers,
+					Request: fetchMock.config.Request,
+					Response: fetchMock.config.Response
 				};
 
 				const getHeadersSpy = () => {

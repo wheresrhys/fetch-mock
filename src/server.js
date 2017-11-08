@@ -11,13 +11,11 @@ FetchMock.global = global;
 FetchMock.statusTextMap = http.STATUS_CODES;
 FetchMock.stream = stream;
 
-const instance = FetchMock.createInstance();
-
-instance.config = Object.assign(instance.config, {
+FetchMock.config = Object.assign(FetchMock.config, {
 	Promise: Promise,
 	Request: Request,
 	Response: Response,
 	Headers: Headers
 });
 
-module.exports = instance;
+module.exports = FetchMock.createInstance();

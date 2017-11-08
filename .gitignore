@@ -1,3 +1,6 @@
-test/fixtures/built-sw.js
-es5/
+/test/fixtures/built-sw.js
+/es5/
 package-lock.json
+/node_modules/
+npm-debug.log
+/dist/

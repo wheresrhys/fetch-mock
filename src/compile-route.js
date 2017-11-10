@@ -1,6 +1,7 @@
 'use strict';
 const glob = require('glob-to-regexp')
 const express = require('path-to-regexp');
+const queryParser = require('query-string');
 
 const stringMatchers = {
 	begin: targetString => {
@@ -60,6 +61,55 @@ function areHeadersEqual (currentHeader, expectedHeader) {
     }
 
     return true;
+}
+
+const pathPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+const queryPattern = /^(\?)?([0-9A-Za-z]+=[0-9A-Za-z]+(\&)?)+$/;
+
+function getUrlSections (url) {
+    const splitUrl = url.split('?');
+    const pathPart = splitUrl[0];
+    const queryPart = splitUrl.length > 1 ? splitUrl.slice(1).join('?') : '';
+
+    return {
+        path: pathPart,
+        query: queryPart
+    }
+}
+
+function isValidUrl (checkedUrl) {
+    const parsedUrl = getUrlSections(checkedUrl);
+    const pathTest = pathPattern.test(parsedUrl.path);
+    const queryTest = queryPattern.test(parsedUrl.query);
+
+    return pathTest & queryTest;
+}
+
+function isSameQueryParams (currentQuery, expectedQuery) {
+    const currentQueryObj = queryParser.parse(currentQuery);
+    const expectedQueryObj = queryParser.parse(expectedQuery);
+    const currentQueryKeys = Object.keys(queryParser.parse(currentQuery));
+    const expectedQueryKeys = Object.keys(queryParser.parse(expectedQuery));
+
+    if (currentQueryKeys.length !== expectedQueryKeys.length) {
+        return false;
+    }
+
+    for (let i = 0; i < currentQueryKeys.length; ++i) {
+        if (currentQueryObj[currentQueryKeys[i]] !== expectedQueryObj[currentQueryKeys[i]]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+function isSameUrl (currentUrl, expectedUrl) {
+    const parsedCurrentUrl = getUrlSections(currentUrl);
+    const parsedExpectedUrl = getUrlSections(expectedUrl);
+
+    return parsedCurrentUrl.path === parsedExpectedUrl.path &&
+        isSameQueryParams(parsedCurrentUrl.query, parsedExpectedUrl.query);
 }
 
 function normalizeRequest (url, options, Request) {
@@ -127,7 +177,10 @@ module.exports = function (route, Request, HeadersConstructor) {
 				console.warn('Using \'^\' to denote the start of a url is deprecated. Use \'begin:\' instead');
 				const expectedUrl = route.matcher.substr(1);
 				matchUrl = url => url.indexOf(expectedUrl) === 0;
-			} else {
+            } else if (isValidUrl(route.matcher)) {
+                const expectedUrl = route.matcher;
+                matchUrl = url => isSameUrl(url, expectedUrl);
+            } else {
 				const expectedUrl = route.matcher;
 				matchUrl = url => url === expectedUrl;
 			}

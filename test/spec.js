@@ -556,7 +556,17 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 						});
 				});
 
-				it('have helpers to retrieve paramaters pf last call', () => {
+                it('should match urls with same query string but in a different order', () => {
+                    fetchMock
+                        .mock('http://some.url/param?a=1&b=2', 200);
+
+                    return fetch('http://some.url/param?b=2&a=1')
+                        .then(function () {
+                            expect(fetchMock.called('http://some.url/param?a=1&b=2')).to.be.true;
+                        })
+                })
+
+                it('have helpers to retrieve paramaters pf last call', () => {
 					fetchMock.mock({
 						name: 'route',
 						matcher: '^http://it.at.there',

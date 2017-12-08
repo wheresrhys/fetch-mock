@@ -19,7 +19,7 @@ fetchMock.mock('http://it.at.there', 404).catch(200);
 **No**. In general it's bad practice to have your tests dependent on the network, and the previous default behaviour didn't do enough to discourage this.
 However, if there's demand for the feature to be added in it shouldn't be too difficult. I just didn't want to add the feature unless people are unhappy with the upgrade on offer
 
-## Matching calls on methods
+## Matching calls on methods
 The previous signature of `.mock(matcher, method, response)` has changed to `mock(matcher, response, {method})` - _sorry_ :grimace:, but the previous API overloaded parameters and made it difficult to add new functionality (e.g. it's blocked rolling out a 'mock n times' feature for a while).
 
 But there is some good news, in the form of `get()`, `post()`, `put()`, `delete()`, `head()` shorthands.

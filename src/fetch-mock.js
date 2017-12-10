@@ -1,8 +1,12 @@
 'use strict';
 
-const compileRoute = require('./compile-route');
+const compileRouteModule = require('./compile-route');
+const compileRoute = compileRouteModule.compileRoute;
+const buildMatcherName = compileRouteModule.buildMatcherName;
 
 const FetchMock = {};
+
+const NOT_FOUND = -1;
 
 FetchMock.config = {
 	includeContentLength: false,
@@ -160,6 +164,16 @@ FetchMock.addRoute = function (route) {
 	if (!route) {
 		throw new Error('.mock() must be passed configuration for a route')
 	}
+
+  	const foundIndex = this.routes.findIndex(registeredRoute => {
+    		return buildMatcherName(route) === registeredRoute.name
+  	});
+
+  	// If duplicate matcher found, delete the old one. This provides the ability to
+  	// override the response for a specific matcher
+  	if (foundIndex !== NOT_FOUND) {
+    		this.routes.splice(foundIndex, 1);
+  	}
 
 	// Allows selective application of some of the preregistered routes
 	this.routes.push(compileRoute(route, this.config.Request, this.config.Headers));

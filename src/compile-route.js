@@ -82,7 +82,12 @@ function normalizeRequest (url, options, Request) {
 	}
 }
 
-module.exports = function (route, Request, HeadersConstructor) {
+exports.buildMatcherName = function (route) {
+	const methodString = route.method ? route.method.toString() + ': ' : '';
+	return methodString + route.matcher.toString()
+}
+
+exports.compileRoute = function (route, Request, HeadersConstructor) {
 	route = Object.assign({}, route);
 
 	if (typeof route.response === 'undefined') {
@@ -94,7 +99,7 @@ module.exports = function (route, Request, HeadersConstructor) {
 	}
 
 	if (!route.name) {
-		route.name = route.matcher.toString();
+		route.name = exports.buildMatcherName(route);
 		route.__unnamed = true;
 	}
 

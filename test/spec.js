@@ -1075,20 +1075,39 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 						})
 				});
 
-				it('falls back to second route if first route already matched enough times', function () {
+				it('overrides an existing string matcher', function () {
 					fetchMock
-						.mock('http://it.at.there1/', 404, {times: 1})
+						.mock('http://it.at.there1/', 404)
 						.mock('http://it.at.there1/', 200);
 
 					return fetch('http://it.at.there1/')
 						.then(res => {
-							expect(res.status).to.equal(404);
-						})
-						.then(() => fetch('http://it.at.there1/'))
-						.then(res => {
 							expect(res.status).to.equal(200);
 						})
 				});
+
+        			it('overrides an existing regex matcher', function () {
+          				fetchMock
+            					.mock(/person/, 404)
+            					.mock(/person/, 200)
+            					.mock(/person/, 201);
+
+          				return fetch('person')
+            					.then(res => {
+              						expect(res.status).to.equal(201);
+            					})
+        			});
+
+        			it('overrides an existing function matcher', function () {
+          				fetchMock
+            					.mock(url => /person/.test(url) , 404)
+            					.mock(url => /person/.test(url) , 200);
+
+          				return fetch('person')
+            					.then(res => {
+              						expect(res.status).to.equal(200);
+            					})
+        				});
 
 				it('reset() resets count', () => {
 					fetchMock

@@ -371,7 +371,7 @@ FetchMock.done = function (name) {
 			return false;
 		}
 		// would use array.find... but again not so widely supported
-		const expectedTimes = (this.routes.filter(r => r.name === name) || [{}])[0].times;
+		const expectedTimes = (this.routes.filter(r => r.name === name) || [{}])[0].repeat;
 
 		if (!expectedTimes) {
 			return true;

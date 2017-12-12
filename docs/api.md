@@ -77,7 +77,7 @@ Similar to `catch()`, this records the call history of unmatched calls, but inst
 #### `chill()`
 Similar to `spy()`, but silences all fallback to network warnings
 
-#### `sandbox(Promise)`
+#### `sandbox()`
 This returns a drop-in mock for fetch which can be passed to other mocking libraries. It implements the full fetch-mock api and maintains its own state independent of other instances, so tests can be run in parallel. e.g.
 
 ```

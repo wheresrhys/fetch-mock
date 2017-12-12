@@ -144,8 +144,8 @@ module.exports = function (route, Request, HeadersConstructor) {
 		return matchHeaders(req.headers) && matchMethod(req.method) && matchUrl(req.url, options);
 	};
 
-	if (route.times) {
-		let timesLeft = route.times;
+	if (route.repeat) {
+		let timesLeft = route.repeat;
 		route.matcher = (url, options) => {
 			const match = timesLeft && matcher(url, options);
 			if (match) {
@@ -153,7 +153,7 @@ module.exports = function (route, Request, HeadersConstructor) {
 				return true;
 			}
 		}
-		route.reset = () => timesLeft = route.times;
+		route.reset = () => timesLeft = route.repeat;
 	} else {
 		route.matcher = matcher;
 	}

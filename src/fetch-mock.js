@@ -80,7 +80,7 @@ FetchMock.mock = function (matcher, response, options) {
 }
 
 FetchMock.once = function (matcher, response, options) {
-	return this.mock(matcher, response, Object.assign({}, options, {times: 1}));
+	return this.mock(matcher, response, Object.assign({}, options, {repeat: 1}));
 }
 
 FetchMock._mock = function () {

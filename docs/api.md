@@ -44,7 +44,7 @@ Replaces `fetch()` with a stub which records its calls, grouped by route, and op
     * `headers`: key/value map of headers to match
     * `matcher`: as specified above
     * `response`: as specified above
-    * `__redirectUrl`: *experimental* the url the response should be from (to imitate followed redirects - will set `redirected: true` on the response)
+    * `redirectUrl`: *experimental* the url the response should be from (to imitate followed redirects - will set `redirected: true` on the response)
     * `times`: An integer, `n`, limiting the number of times the matcher can be used. If the route has already been called `n` times the route will be ignored and the call to `fetch()` will fall through to be handled by any other routes defined (which may eventually result in an error if nothing matches it)
 
 #### `once()`
@@ -119,7 +119,8 @@ Returns the options for the last matched call to fetch
 
 On either the global or sandboxed fetchMock instances, the following config options can be set by changing properties on `fetchMock.config`
 * `sendAsJson` [default `true`] - by default fetchMock will convert objects to JSON before sending. This is overrideable from each call but for some scenarios e.g. when dealing with a lot of array buffers, it can be useful to default to `false`
-* `includeContentLength` [default `false`]: When set to true this will make fetchMock automatically add the `content-length` header. This is especially useful when combined with `sendAsJson` because then fetchMock does the conversion to JSON for you and knows the resulting length so you don’t have to compute this yourself by basically doing the same conversion to JSON.
+* `includeContentLength` [default `true`]: When set to true this will make fetchMock automatically add the `content-length` header. This is especially useful when combined with `sendAsJson` because then fetchMock does the conversion to JSON for you and knows the resulting length so you don’t have to compute this yourself by basically doing the same conversion to JSON.
+* `fallThroughToNetwork` [default `false`] If true then unmatched calls will transparently fall through to the network, if false an error will be thrown. Within individual tests `.catch()` and `spy()` can be used for fine-grained control of this
 * `Headers`,`Request`,`Response`,`Promise`
 When using non global fetch (e.g. a ponyfill) or an alternative Promise implementation, this will configure fetch-mock to use your chosen implementations. Note that `Object.assign(fetchMock.config, require('fetch-ponyfill')())` will configure fetch-mock to use all of fetch-ponyfill's classes. In most cases, it should only be necessary to set this once before any tests run.
 

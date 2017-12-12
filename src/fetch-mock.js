@@ -5,7 +5,8 @@ const compileRoute = require('./compile-route');
 const FetchMock = {};
 
 FetchMock.config = {
-	includeContentLength: false,
+	fallThroughToNetwork: false,
+	includeContentLength: true,
 	sendAsJson: true
 }
 
@@ -199,7 +200,7 @@ FetchMock.mockResponse = function (url, responseConfig, fetchOpts, resolveHoldin
 		responseConfig.headers ||
 		responseConfig.throws ||
 		responseConfig.status ||
-		responseConfig.__redirectUrl
+		responseConfig.redirectUrl
 	)) {
 		responseConfig = {
 			body: responseConfig
@@ -211,7 +212,7 @@ FetchMock.mockResponse = function (url, responseConfig, fetchOpts, resolveHoldin
 	const opts = responseConfig.opts || {};
 
 	// set the response url
-	opts.url = responseConfig.__redirectUrl || url;
+	opts.url = responseConfig.redirectUrl || url;
 
 	// Handle a reasonably common misuse of the library - returning an object
 	// with the property 'status'
@@ -259,13 +260,13 @@ e.g. {"body": {"status: "registered"}}`);
 
 	// When mocking a followed redirect we must wrap the response in an object
 	// which sets the redirected flag (not a writable property on the actual response)
-	if (responseConfig.__redirectUrl) {
+	if (responseConfig.redirectUrl) {
 		response = Object.create(response, {
 			redirected: {
 				value: true
 			},
 			url: {
-				value: responseConfig.__redirectUrl
+				value: responseConfig.redirectUrl
 			},
 			// TODO extend to all other methods as requested by users
 			// Such a nasty hack

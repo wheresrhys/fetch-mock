@@ -7,7 +7,9 @@ const FetchMock = {};
 FetchMock.config = {
 	fallThroughToNetwork: false,
 	includeContentLength: true,
-	sendAsJson: true
+	sendAsJson: true,
+	warnOnFallback: true,
+	fallThroughToNetwork: false
 }
 
 FetchMock.createInstance = function () {
@@ -111,6 +113,12 @@ FetchMock.catch = function (response) {
 
 FetchMock.spy = function () {
 	this._mock();
+	return this.catch(this.realFetch)
+}
+
+FetchMock.chill = function () {
+	this._mock();
+	this.config.warnOnFallback = false;
 	return this.catch(this.realFetch)
 }
 

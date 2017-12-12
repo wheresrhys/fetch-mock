@@ -272,26 +272,6 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 						});
 				});
 
-				it('match strings starting with a string', () => {
-					fetchMock.mock({
-						name: 'route',
-						matcher: '^http://it.at.there',
-						response: 'ok'
-					}).catch();
-					return Promise.all([
-						fetch('http://it.at.there'),
-						fetch('http://it.at.thereabouts'),
-						fetch('http://it.at.hereabouts')]
-					)
-						.then(() => {
-							expect(fetchMock.called()).to.be.true;
-							expect(fetchMock.called('route')).to.be.true;
-							expect(fetchMock.calls().matched.length).to.equal(2);
-							expect(fetchMock.calls('route').length).to.equal(2);
-							expect(fetchMock.calls().unmatched.length).to.equal(1);
-						});
-				});
-
 				describe('string matcher keywords', () => {
 					it('match begin: keyword', () => {
 						fetchMock.mock({

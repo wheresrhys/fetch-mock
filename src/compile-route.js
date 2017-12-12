@@ -124,9 +124,7 @@ module.exports = function (route, Request, HeadersConstructor) {
 			if (route.matcher === '*') {
 				matchUrl = () => true;
 			} else if (route.matcher.indexOf('^') === 0) {
-				console.warn('Using \'^\' to denote the start of a url is deprecated. Use \'begin:\' instead');
-				const expectedUrl = route.matcher.substr(1);
-				matchUrl = url => url.indexOf(expectedUrl) === 0;
+				throw new Error('Using \'^\' to denote the start of a url is deprecated. Use \'begin:\' instead');
 			} else {
 				const expectedUrl = route.matcher;
 				matchUrl = url => url === expectedUrl;

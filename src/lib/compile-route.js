@@ -24,18 +24,18 @@ function normalizeRequest (url, options, Request) {
 
 const stringMatchers = {
 	begin: targetString => {
-		return ({ url }) => url.indexOf(targetString) === 0
+		return url => url.indexOf(targetString) === 0
 	},
 	end: targetString => {
-		return ({ url }) => url.substr(-targetString.length) === targetString
+		return url => url.substr(-targetString.length) === targetString
 	},
 	glob: targetString => {
 		const urlRX = glob(targetString)
-		return ({ url }) => urlRX.test(url)
+		return url => urlRX.test(url)
 	},
 	express: targetString => {
 		const urlRX = express(targetString)
-		return ({ url }) => urlRX.test(url)
+		return url => urlRX.test(url)
 	}
 }
 
@@ -84,16 +84,15 @@ const getMethodMatcher = route => {
 	};
 }
 
-const getUrlMatcher = route => {
+const _getUrlMatcher = route => {
 
 	if (typeof route.matcher === 'function') {
-		const matcher = route.matcher;
-		return ({ url }, options) => matcher(url, options);
+		return route.matcher
 	}
 
 	if (route.matcher instanceof RegExp) {
 		const urlRX = route.matcher;
-		return ({ url }) => urlRX.test(url);
+		return url => urlRX.test(url);
 	}
 
 	if (route.matcher === '*') {
@@ -112,7 +111,12 @@ const getUrlMatcher = route => {
 	}
 
 	const expectedUrl = route.matcher;
-	return ({ url }) => url === expectedUrl;
+	return url => url === expectedUrl;
+}
+
+const getUrlMatcher = route => {
+	const matcher = _getUrlMatcher(route)
+	return (req, options) => matcher(req.url, options)
 }
 
 module.exports = function (route) {

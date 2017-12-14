@@ -56,7 +56,7 @@ function areHeadersEqual (actualHeader, expectedHeader) {
 	return actualHeader.every((val, i) => val === expectedHeader[i])
 }
 
-function getHeaderMatcher ({ headers: expectedHeaders }, HeadersConstructor) {
+function getHeaderMatcher ({ headers: expectedHeaders }, Headers) {
 	if (!expectedHeaders) {
 		return () => true;
 	}
@@ -64,7 +64,7 @@ function getHeaderMatcher ({ headers: expectedHeaders }, HeadersConstructor) {
 
 	return ({ headers = {} }) => {
 
-		if (headers instanceof HeadersConstructor) {
+		if (headers instanceof Headers) {
 			headers = headers.raw();
 		}
 
@@ -117,7 +117,7 @@ const getUrlMatcher = route => {
 	return ({ url }) => url === expectedUrl;
 }
 
-module.exports = function (route, Request, HeadersConstructor) {
+module.exports = function (route) {
 	route = Object.assign({}, route);
 
 	if (typeof route.response === 'undefined') {
@@ -135,12 +135,12 @@ module.exports = function (route, Request, HeadersConstructor) {
 
 	const matchers = [
 		getMethodMatcher(route),
-		getHeaderMatcher(route, HeadersConstructor),
+		getHeaderMatcher(route, this.config.Headers),
 		getUrlMatcher(route)
 	];
 
 	const matcher = (url, options) => {
-		const req = normalizeRequest(url, options, Request);
+		const req = normalizeRequest(url, options, this.config.Request);
 		return matchers.every(matcher => matcher(req, options));
 	};
 

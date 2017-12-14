@@ -23,8 +23,8 @@ FetchMock._unMock = function () {
 
 FetchMock.fetchMock = function (url, opts) {
 	const Promise = this.config.Promise;
-	let resolveHoldingPromise
-	const holdingPromise = new Promise(res => resolveHoldingPromise = res)
+	let done
+	const holdingPromise = new Promise(res => done = res)
 	this._holdingPromises.push(holdingPromise)
 	let response = this.router(url, opts);
 
@@ -47,10 +47,10 @@ FetchMock.fetchMock = function (url, opts) {
 		// Ensure Promise is always our implementation.
 		return Promise.resolve(
 			response
-				.then(response => this.mockResponse(url, response, opts, resolveHoldingPromise))
+				.then(response => this.mockResponse(url, response, opts, done))
 		);
 	} else {
-		return this.mockResponse(url, response, opts, resolveHoldingPromise);
+		return this.mockResponse(url, response, opts, done);
 	}
 
 }
@@ -66,22 +66,12 @@ FetchMock.router = function (url, opts) {
 	}
 }
 
-FetchMock.addRoute = function (route) {
-
-	if (!route) {
-		throw new Error('.mock() must be passed configuration for a route')
-	}
-
-	// Allows selective application of some of the preregistered routes
-	this.routes.push(compileRoute(route, this.config.Request, this.config.Headers));
-}
-
-
+FetchMock.compileRoute = compileRoute;
 FetchMock.mockResponse = mockResponse;
 
-FetchMock.respond = function (response, resolveHoldingPromise) {
+FetchMock.respond = function (response, done) {
 	response
-		.then(resolveHoldingPromise, resolveHoldingPromise)
+		.then(done, done)
 
 	return response;
 }

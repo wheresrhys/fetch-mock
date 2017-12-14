@@ -161,11 +161,11 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 		describe('mock()', () => {
 			describe('parameters', () => {
 				beforeEach(() => {
-					sinon.stub(fetchMock, 'addRoute');
+					sinon.stub(fetchMock, 'compileRoute', () => ({}));
 				});
 
 				afterEach(() => {
-					fetchMock.addRoute.restore();
+					fetchMock.compileRoute.restore();
 				});
 
 				it('accepts single config object', () => {
@@ -173,21 +173,21 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 					expect(() => {
 						fetchMock.mock(config);
 					}).not.to.throw();
-					expect(fetchMock.addRoute.calledWith(config));
+					expect(fetchMock.compileRoute.calledWith(config));
 				});
 
 				it('accepts matcher, route pairs', () => {
 					expect(() => {
 						fetchMock.mock('http://it.at.there/', 'ok');
 					}).not.to.throw();
-					expect(fetchMock.addRoute.calledWith({matcher: 'http://it.at.there/', response: 'ok'}));
+					expect(fetchMock.compileRoute.calledWith({matcher: 'http://it.at.there/', response: 'ok'}));
 				});
 
 				it('accepts matcher, response, config triples', () => {
 					expect(() => {
 						fetchMock.mock('http://it.at.there/', 'ok', {method: 'PUT', some: 'prop'});
 					}).not.to.throw();
-					expect(fetchMock.addRoute.calledWith({matcher: 'http://it.at.there/', response: 'ok', method: 'PUT', some: 'prop'}));
+					expect(fetchMock.compileRoute.calledWith({matcher: 'http://it.at.there/', response: 'ok', method: 'PUT', some: 'prop'}));
 				});
 
 				it('expects a matcher', () => {

@@ -21,8 +21,7 @@ FetchMock.mock = function (matcher, response, options) {
 		throw new Error('Invalid parameters passed to fetch-mock')
 	}
 
-
-	this.addRoute(route);
+	this.routes.push(this.compileRoute(route));
 
 	return this._mock();
 }

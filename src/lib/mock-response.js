@@ -1,4 +1,4 @@
-module.exports = function (url, responseConfig, fetchOpts, resolveHoldingPromise) {
+module.exports = function (url, responseConfig, fetchOpts, done) {
 	const Promise = this.config.Promise;
 
 	// It seems odd to call this in here even though it's already called within fetchMock
@@ -11,12 +11,12 @@ module.exports = function (url, responseConfig, fetchOpts, resolveHoldingPromise
 
 	// If the response is a pre-made Response, respond with it
 	if (this.config.Response.prototype.isPrototypeOf(responseConfig)) {
-		return this.respond(Promise.resolve(responseConfig), resolveHoldingPromise);
+		return this.respond(Promise.resolve(responseConfig), done);
 	}
 
 	// If the response says to throw an error, throw it
 	if (responseConfig.throws) {
-		return this.respond(Promise.reject(responseConfig.throws), resolveHoldingPromise);
+		return this.respond(Promise.reject(responseConfig.throws), done);
 	}
 
 	// If the response config looks like a status, start to generate a simple response
@@ -110,5 +110,5 @@ e.g. {"body": {"status: "registered"}}`);
 		})
 	}
 
-	return this.respond(Promise.resolve(response), resolveHoldingPromise);
+	return this.respond(Promise.resolve(response), done);
 }

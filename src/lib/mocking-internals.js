@@ -56,13 +56,11 @@ FetchMock.fetchMock = function (url, opts) {
 }
 
 FetchMock.router = function (url, opts) {
-	let route;
-	for (let i = 0, il = this.routes.length; i < il ; i++) {
-		route = this.routes[i];
-		if (route.matcher(url, opts)) {
-			this.push(route.name, [url, opts]);
-			return route.response;
-		}
+	const route = this.routes.find(route => route.matcher(url, opts));
+
+	if (route) {
+		this.push(route.name, [url, opts]);
+		return route.response;
 	}
 }
 

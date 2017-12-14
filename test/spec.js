@@ -1483,10 +1483,14 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 
 			it('should expect valid statuses', () => {
 				fetchMock.mock('http://foo.com', { status: 'not number' })
-				expect(() => fetch('http://foo.com'))
-					.to.throw(`Invalid status not number passed on response object.
+				fetch('http://foo.com')
+					.then(() => {
+						expect(true).to.be.false;
+					}, err => {
+						expect(err).to.equal(`Invalid status not number passed on response object.
 To respond with a JSON object that has status as a property assign the object to body
-e.g. {"body": {"status: "registered"}}`);
+e.g. {"body": {"status: "registered"}}`)
+					})
 			})
 
 			it('should restore successfully after multiple mocks', () => {

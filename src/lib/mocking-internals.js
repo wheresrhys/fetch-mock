@@ -22,10 +22,22 @@ FetchMock._unMock = function () {
 }
 
 FetchMock.fetchMock = function (url, opts) {
+	return new this.config.Promise((res, rej) => {
+		try {
+			this._fetchMock(url, opts)
+			.then(res, rej)
+		} catch (err) {
+			rej(err);
+		}
+	})
+}
+
+FetchMock._fetchMock = function (url, opts) {
 	const Promise = this.config.Promise;
 	let done
 	const holdingPromise = new Promise(res => done = res)
 	this._holdingPromises.push(holdingPromise)
+
 	let response = this.router(url, opts);
 
 	if (!response) {
@@ -43,6 +55,7 @@ FetchMock.fetchMock = function (url, opts) {
 		response = response(url, opts);
 	}
 
+	// todo use async/await to DRY this
 	if (typeof response.then === 'function') {
 		// Ensure Promise is always our implementation.
 		return Promise.resolve(

@@ -76,8 +76,6 @@ function getHeaderMatcher ({ headers: expectedHeaders }, Headers) {
 	}
 }
 
-
-
 const getMethodMatcher = route => {
 	const expectedMethod = route.method && route.method.toLowerCase();
 

@@ -2,6 +2,26 @@
 const glob = require('glob-to-regexp')
 const express = require('path-to-regexp');
 
+function normalizeRequest (url, options, Request) {
+	if (Request.prototype.isPrototypeOf(url)) {
+		return {
+			url: url.url,
+			method: url.method,
+			headers: (() => {
+				const headers = {};
+				url.headers.forEach(name => headers[name] = url.headers.name);
+				return headers;
+			})()
+		};
+	} else {
+		return {
+			url: url,
+			method: options && options.method || 'GET',
+			headers: options && options.headers
+		};
+	}
+}
+
 const stringMatchers = {
 	begin: targetString => {
 		return ({ url }) => url.indexOf(targetString) === 0
@@ -10,11 +30,11 @@ const stringMatchers = {
 		return ({ url }) => url.substr(-targetString.length) === targetString
 	},
 	glob: targetString => {
-		const urlRX = glob(targetString.replace(/^glob:/, ''))
+		const urlRX = glob(targetString)
 		return ({ url }) => urlRX.test(url)
 	},
 	express: targetString => {
-		const urlRX = express(targetString.replace(/^express:/, ''))
+		const urlRX = express(targetString)
 		return ({ url }) => urlRX.test(url)
 	}
 }
@@ -56,25 +76,7 @@ function getHeaderMatcher ({ headers: expectedHeaders }, HeadersConstructor) {
 	}
 }
 
-function normalizeRequest (url, options, Request) {
-	if (Request.prototype.isPrototypeOf(url)) {
-		return {
-			url: url.url,
-			method: url.method,
-			headers: (() => {
-				const headers = {};
-				url.headers.forEach(name => headers[name] = url.headers.name);
-				return headers;
-			})()
-		};
-	} else {
-		return {
-			url: url,
-			method: options && options.method || 'GET',
-			headers: options && options.headers
-		};
-	}
-}
+
 
 const getMethodMatcher = route => {
 	const expectedMethod = route.method && route.method.toLowerCase();
@@ -86,37 +88,33 @@ const getMethodMatcher = route => {
 
 const getUrlMatcher = route => {
 
-	let matchUrl;
-
 	if (typeof route.matcher === 'function') {
 		const matcher = route.matcher;
-		matchUrl = ({ url }, options) => matcher(url, options);
-	} else if (typeof route.matcher === 'string') {
-
-		Object.keys(stringMatchers).some(name => {
-			if (route.matcher.indexOf(name + ':') === 0) {
-				const url = route.matcher.replace(new RegExp(`^${name}:`), '')
-				matchUrl = stringMatchers[name](url);
-				return true
-			}
-		})
-
-		if (!matchUrl) {
-			if (route.matcher === '*') {
-				matchUrl = () => true;
-			} else if (route.matcher.indexOf('^') === 0) {
-				throw new Error('Using \'^\' to denote the start of a url is deprecated. Use \'begin:\' instead');
-			} else {
-				const expectedUrl = route.matcher;
-				matchUrl = ({ url }) => url === expectedUrl;
-			}
-		}
-	} else if (route.matcher instanceof RegExp) {
-		const urlRX = route.matcher;
-		matchUrl = ({ url }) => urlRX.test(url);
+		return ({ url }, options) => matcher(url, options);
 	}
 
-	return matchUrl
+	if (route.matcher instanceof RegExp) {
+		const urlRX = route.matcher;
+		return ({ url }) => urlRX.test(url);
+	}
+
+	if (route.matcher === '*') {
+		return () => true;
+	}
+
+	if (route.matcher.indexOf('^') === 0) {
+		throw new Error('Using \'^\' to denote the start of a url is deprecated. Use \'begin:\' instead');
+	}
+
+	for (let shorthand in stringMatchers) {
+		if (route.matcher.indexOf(shorthand + ':') === 0) {
+			const url = route.matcher.replace(new RegExp(`^${shorthand}:`), '')
+			return stringMatchers[shorthand](url);
+		}
+	}
+
+	const expectedUrl = route.matcher;
+	return ({ url }) => url === expectedUrl;
 }
 
 module.exports = function (route, Request, HeadersConstructor) {
@@ -127,7 +125,7 @@ module.exports = function (route, Request, HeadersConstructor) {
 	}
 
 	if (!route.matcher) {
-		throw new Error('each route must specify a string, regex or function to match calls to fetch');
+		throw new Error('Each route must specify a string, regex or function to match calls to fetch');
 	}
 
 	if (!route.name) {
@@ -135,11 +133,11 @@ module.exports = function (route, Request, HeadersConstructor) {
 		route.__unnamed = true;
 	}
 
-	const matchers = [];
-
-	matchers.push(getMethodMatcher(route))
-	matchers.push(getHeaderMatcher(route, HeadersConstructor))
-	matchers.push(getUrlMatcher(route, HeadersConstructor))
+	const matchers = [
+		getMethodMatcher(route),
+		getHeaderMatcher(route, HeadersConstructor),
+		getUrlMatcher(route)
+	];
 
 	const matcher = (url, options) => {
 		const req = normalizeRequest(url, options, Request);

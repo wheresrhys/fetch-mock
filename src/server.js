@@ -4,7 +4,7 @@ const Request = fetch.Request;
 const Response = fetch.Response;
 const Headers = fetch.Headers;
 const stream = require('stream');
-const FetchMock = require('./fetch-mock');
+const FetchMock = require('./lib/fetch-mock');
 const http = require('http');
 
 FetchMock.global = global;

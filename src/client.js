@@ -1,7 +1,7 @@
 'use strict';
 
-const FetchMock = require('./fetch-mock');
-const statusTextMap = require('./status-text');
+const FetchMock = require('./lib/fetch-mock');
+const statusTextMap = require('./lib/status-text');
 const theGlobal = typeof window !== 'undefined' ? window : self;
 
 FetchMock.global = theGlobal;

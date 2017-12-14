@@ -19,47 +19,38 @@ const stringMatchers = {
 	}
 }
 
+const headersToLowerCase = headers => Object.keys(headers).reduce((obj, k) => {
+	obj[k.toLowerCase()] = headers[k]
+	return obj;
+}, {});
+
+
+function areHeadersEqual (actualHeader, expectedHeader) {
+	actualHeader = Array.isArray(actualHeader) ? actualHeader : [actualHeader];
+	expectedHeader = Array.isArray(expectedHeader) ? expectedHeader : [expectedHeader];
+
+	if (actualHeader.length !== expectedHeader.length) {
+		return false;
+	}
+
+	return actualHeader.every((val, i) => val === expectedHeader[i])
+}
+
 function getHeaderMatcher (expectedHeaders, HeadersConstructor) {
-	const expectation = Object.keys(expectedHeaders).map(k => {
-		return {key: k.toLowerCase(), val: expectedHeaders[k]}
-	})
-	return headers => {
-		if (!headers) {
-			headers = {};
-		}
+	const expectation = headersToLowerCase(expectedHeaders);
+
+	return (headers = {}) => {
 
 		if (headers instanceof HeadersConstructor) {
 			headers = headers.raw();
 		}
 
-		const lowerCaseHeaders = Object.keys(headers).reduce((obj, k) => {
-			obj[k.toLowerCase()] = headers[k]
-			return obj;
-		}, {});
+		const lowerCaseHeaders = headersToLowerCase(headers);
 
-		return expectation.every(header => {
-			return areHeadersEqual(lowerCaseHeaders, header);
+		return Object.keys(expectation).every(headerName => {
+			return areHeadersEqual(lowerCaseHeaders[headerName], expectation[headerName]);
 		})
 	}
-}
-
-function areHeadersEqual (currentHeader, expectedHeader) {
-    const key = expectedHeader.key;
-    const val = expectedHeader.val;
-    const currentHeaderValue = (Array.isArray(currentHeader[key])) ? currentHeader[key] : [currentHeader[key]];
-    const expectedHeaderValue = (Array.isArray(val)) ? val : [val];
-
-    if (currentHeaderValue.length !== expectedHeaderValue.length) {
-		return false;
-    }
-
-    for (let i = 0; i < currentHeaderValue.length; ++i) {
-        if (currentHeaderValue[i] !== expectedHeaderValue[i]) {
-			return false;
-        }
-    }
-
-    return true;
 }
 
 function normalizeRequest (url, options, Request) {

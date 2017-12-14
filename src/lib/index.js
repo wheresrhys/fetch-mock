@@ -1,7 +1,8 @@
-const mocking = require('./mocking');
+const mockingInternals = require('./mocking-internals');
+const mockingApi = require('./mocking-api');
 const inspecting = require('./inspecting');
 
-const FetchMock = Object.assign({}, mocking, inspecting);
+const FetchMock = Object.assign({}, mockingInternals, mockingApi, inspecting);
 
 FetchMock.config = {
 	fallThroughToNetwork: false,
@@ -52,25 +53,5 @@ FetchMock.sandbox = function () {
 	functionInstance.isSandbox = true;
 	return functionInstance;
 };
-
-FetchMock.flush = function () {
-	return Promise.all(this._holdingPromises);
-}
-
-FetchMock.restore = function () {
-	this._unMock();
-	this.reset();
-	this.routes = [];
-	return this;
-}
-
-FetchMock.reset = function () {
-	this._calls = {};
-	this._matchedCalls = [];
-	this._unmatchedCalls = [];
-	this._holdingPromises = [];
-	this.routes.forEach(route => route.reset && route.reset())
-	return this;
-}
 
 module.exports = FetchMock;

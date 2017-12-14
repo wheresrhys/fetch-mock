@@ -46,6 +46,7 @@ FetchMock.sandbox = function () {
 		FetchMock, // all prototype methods
 		this.createInstance() // instance data
 	);
+
 	functionInstance.bindMethods();
 	boundMock = functionInstance.fetchMock;
 	functionInstance.isSandbox = true;

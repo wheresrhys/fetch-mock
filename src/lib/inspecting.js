@@ -35,6 +35,7 @@ FetchMock.called = function (name) {
 
 FetchMock.done = function (name) {
 	const names = name ? [name] : this.routes.map(r => r.name);
+
 	// Can't use array.every because
 	// a) not widely supported
 	// b) would exit after first failure, which would break the logging

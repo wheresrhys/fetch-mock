@@ -32,6 +32,8 @@ FetchMock.fetchMock = function (url, opts) {
 	})
 }
 
+FetchMock.fetchMock.isMock = true;
+
 FetchMock._fetchMock = function (url, opts) {
 	const Promise = this.config.Promise;
 	let done

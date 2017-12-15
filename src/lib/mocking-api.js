@@ -40,9 +40,8 @@ FetchMock.spy = function () {
 }
 
 FetchMock.chill = function () {
-	this._mock();
 	this.config.warnOnFallback = false;
-	return this.catch(this.realFetch)
+	return this.spy()
 }
 
 FetchMock.once = function (matcher, response, options) {

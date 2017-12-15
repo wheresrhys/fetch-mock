@@ -17,13 +17,11 @@ FetchMock.lastCall = function (name) {
 }
 
 FetchMock.lastUrl = function (name) {
-	const call = this.lastCall(name);
-	return call && call[0];
+	return (this.lastCall(name) || [])[0]
 }
 
 FetchMock.lastOptions = function (name) {
-	const call = this.lastCall(name);
-	return call && call[1];
+	return (this.lastCall(name) || [])[1]
 }
 
 FetchMock.called = function (name) {

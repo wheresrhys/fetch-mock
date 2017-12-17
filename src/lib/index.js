@@ -1,8 +1,8 @@
-const mockingInternals = require('./mocking-internals');
-const mockingApi = require('./mocking-api');
+const setUpAndTearDown = require('./set-up-and-tear-down');
+const fetchHandler = require('./fetch-handler');
 const inspecting = require('./inspecting');
 
-const FetchMock = Object.assign({}, mockingInternals, mockingApi, inspecting);
+const FetchMock = Object.assign({}, fetchHandler, setUpAndTearDown, inspecting);
 
 FetchMock.config = {
 	fallThroughToNetwork: false,

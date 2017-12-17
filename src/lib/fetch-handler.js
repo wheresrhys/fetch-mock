@@ -1,25 +1,6 @@
-const compileRoute = require('./compile-route');
 const ResponseBuilder = require('./response-builder');
 
 const FetchMock = {};
-
-FetchMock._mock = function () {
-	if (!this.isSandbox) {
-		// Do this here rather than in the constructor to ensure it's scoped to the test
-		this.realFetch = this.realFetch || this.global.fetch;
-		this.global.fetch = this.fetchMock;
-	}
-	return this;
-}
-
-FetchMock._unMock = function () {
-	if (this.realFetch) {
-		this.global.fetch = this.realFetch;
-		this.realFetch = null;
-	}
-	this.fallbackResponse = null;
-	return this;
-}
 
 FetchMock.fetchMock = function (url, opts) {
 
@@ -100,8 +81,6 @@ FetchMock.router = function (url, opts) {
 		return route.response;
 	}
 }
-
-FetchMock.compileRoute = compileRoute;
 
 FetchMock.push = function (name, call) {
 	if (name) {

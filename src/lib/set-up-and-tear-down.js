@@ -1,3 +1,4 @@
+const compileRoute = require('./compile-route');
 const FetchMock = {};
 
 FetchMock.mock = function (matcher, response, options) {
@@ -25,6 +26,26 @@ FetchMock.mock = function (matcher, response, options) {
 
 	return this._mock();
 }
+
+FetchMock._mock = function () {
+	if (!this.isSandbox) {
+		// Do this here rather than in the constructor to ensure it's scoped to the test
+		this.realFetch = this.realFetch || this.global.fetch;
+		this.global.fetch = this.fetchMock;
+	}
+	return this;
+}
+
+FetchMock._unMock = function () {
+	if (this.realFetch) {
+		this.global.fetch = this.realFetch;
+		this.realFetch = null;
+	}
+	this.fallbackResponse = null;
+	return this;
+}
+
+FetchMock.compileRoute = compileRoute;
 
 FetchMock.catch = function (response) {
 	if (this.fallbackResponse) {

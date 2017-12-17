@@ -37,21 +37,21 @@ FetchMock.sandbox = function () {
 	// this construct allows us to create a fetch-mock instance which is also
 	// a callable function, while circumventing circularity when defining the
 	// object that this function should be bound to
-	let boundMock;
+	let mock;
 	const proxy = function () {
-		return boundMock.apply(null, arguments);
+		return mock.apply(null, arguments);
 	}
 
-	const functionInstance = Object.assign(
+	const sandbox = Object.assign(
 		proxy, // Ensures that the entire returned object is a callable function
 		FetchMock, // all prototype methods
 		this.createInstance() // instance data
 	);
 
-	functionInstance.bindMethods();
-	boundMock = functionInstance.fetchMock;
-	functionInstance.isSandbox = true;
-	return functionInstance;
+	sandbox.bindMethods();
+	mock = sandbox.fetchMock;
+	sandbox.isSandbox = true;
+	return sandbox;
 };
 
 module.exports = FetchMock;

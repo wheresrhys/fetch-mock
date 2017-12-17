@@ -22,25 +22,26 @@ FetchMock._unMock = function () {
 }
 
 FetchMock.fetchMock = function (url, opts) {
-	const Promise = this.config.Promise;
+
 	let done
-	const holdingPromise = new Promise(res => done = res)
-	this._holdingPromises.push(holdingPromise)
+
+	this._holdingPromises.push(new this.config.Promise(res => done = res));
+
 	return new this.config.Promise((res, rej) => {
 		try {
 			this._fetchMock(url, opts)
 				.then(res, rej)
-				.then(done, done)
+				.then(done, done);
 		} catch (err) {
 			rej(err);
-			done()
+			done();
 		}
 	})
 }
 
 FetchMock.fetchMock.isMock = true;
 
-FetchMock._fetchMock = async function (url, opts, done) {
+FetchMock._fetchMock = async function (url, opts) {
 
 	let response = this.router(url, opts);
 
@@ -63,7 +64,7 @@ FetchMock._fetchMock = async function (url, opts, done) {
 		// Strange .then is to cope with non ES Promises... god knows why it works
 		response = await response.then(it => it)
 	}
-	return this.mockResponse(url, response, opts, done);
+	return this.mockResponse(url, response, opts);
 }
 
 FetchMock.router = function (url, opts) {
@@ -77,13 +78,6 @@ FetchMock.router = function (url, opts) {
 
 FetchMock.compileRoute = compileRoute;
 FetchMock.mockResponse = mockResponse;
-
-FetchMock.respond = function (response, done) {
-	response
-		// .then(done, done)
-
-	return response;
-}
 
 FetchMock.push = function (name, call) {
 	if (name) {

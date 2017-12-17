@@ -1,4 +1,4 @@
-module.exports = function (url, responseConfig, fetchOpts, done) {
+module.exports = function (url, responseConfig, fetchOpts) {
 	const Promise = this.config.Promise;
 
 	// It seems odd to call this in here even though it's already called within fetchMock
@@ -11,12 +11,12 @@ module.exports = function (url, responseConfig, fetchOpts, done) {
 
 	// If the response is a pre-made Response, respond with it
 	if (this.config.Response.prototype.isPrototypeOf(responseConfig)) {
-		return this.respond(Promise.resolve(responseConfig), done);
+		return responseConfig;
 	}
 
 	// If the response says to throw an error, throw it
 	if (responseConfig.throws) {
-		return this.respond(Promise.reject(responseConfig.throws), done);
+		throw responseConfig.throws;
 	}
 
 	// If the response config looks like a status, start to generate a simple response
@@ -78,7 +78,7 @@ e.g. {"body": {"status: "registered"}}`);
 	}
 
 	// On the server we need to manually construct the readable stream for the
-	// Response object (on the client this is done automatically)
+	// Response object (on the client this i automatically)
 	if (this.stream) {
 		let s = new this.stream.Readable();
 		if (body != null) { //eslint-disable-line
@@ -110,5 +110,5 @@ e.g. {"body": {"status: "registered"}}`);
 		})
 	}
 
-	return this.respond(Promise.resolve(response), done);
+	return response;
 }

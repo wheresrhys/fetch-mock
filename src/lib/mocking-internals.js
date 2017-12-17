@@ -1,5 +1,5 @@
 const compileRoute = require('./compile-route');
-const buildResponse = require('./build-response');
+const ResponseBuilder = require('./response-builder');
 
 const FetchMock = {};
 
@@ -88,7 +88,11 @@ FetchMock.negotiateResponse = async function (url, opts) {
 
 	// finally, if we have a response config we need to convert to a response,
 	// we do it
-	return this.buildResponse(url, response, opts);
+	return this.buildResponse(url, response);
+}
+
+FetchMock.buildResponse = function (url, responseConfig) {
+	return new ResponseBuilder(url, responseConfig, this.config, this.statusTextMap).build();
 }
 
 FetchMock.router = function (url, opts) {
@@ -101,7 +105,7 @@ FetchMock.router = function (url, opts) {
 }
 
 FetchMock.compileRoute = compileRoute;
-FetchMock.buildResponse = buildResponse;
+
 
 FetchMock.push = function (name, call) {
 	if (name) {

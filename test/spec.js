@@ -1124,7 +1124,7 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 				}
 			});
 
-			it('has includeContentLength off by default', done => {
+			it.skip('has includeContentLength off by default', done => {
 				fetchMock.mock('http://it.at.there/', {body: {hello: 'world'}});
 				fetch('http://it.at.there/')
 					.then(res => {

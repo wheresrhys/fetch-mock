@@ -86,14 +86,11 @@ FetchMock.negotiateResponse = async function (url, opts) {
 		throw response.throws;
 	}
 
-	// finally, if we have a response config we need to convert to a response,
-	// we do it
-	return this.buildResponse(url, response);
+	// finally, if we need to convert config into a response, we do it
+	return new ResponseBuilder(url, response, this.config, this.statusTextMap)
+		.respond();
 }
 
-FetchMock.buildResponse = function (url, responseConfig) {
-	return new ResponseBuilder(url, responseConfig, this.config, this.statusTextMap).build();
-}
 
 FetchMock.router = function (url, opts) {
 	const route = this.routes.find(route => route.matcher(url, opts));
@@ -105,7 +102,6 @@ FetchMock.router = function (url, opts) {
 }
 
 FetchMock.compileRoute = compileRoute;
-
 
 FetchMock.push = function (name, call) {
 	if (name) {

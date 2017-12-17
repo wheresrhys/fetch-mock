@@ -1,5 +1,5 @@
 const compileRoute = require('./compile-route');
-const mockResponse = require('./mock-response');
+const buildResponse = require('./build-response');
 
 const FetchMock = {};
 
@@ -23,10 +23,12 @@ FetchMock._unMock = function () {
 
 FetchMock.fetchMock = function (url, opts) {
 
+	// this is used to power the .flush() method
 	let done
-
 	this._holdingPromises.push(new this.config.Promise(res => done = res));
 
+	// wrapped in this promise to make sure we respect custom Promise
+	// constructors defined by the user
 	return new this.config.Promise((res, rej) => {
 		try {
 			this.negotiateResponse(url, opts)
@@ -64,7 +66,29 @@ FetchMock.negotiateResponse = async function (url, opts) {
 		// Strange .then is to cope with non ES Promises... god knows why it works
 		response = await response.then(it => it)
 	}
-	return this.mockResponse(url, response, opts);
+
+	// It seems odd to check if response is a function again
+	// It's to handle the the need to support making it very easy to add a
+	// Promise-based delay to any sort of response (including responses which
+	// are defined with a function) while also allowing function responses to
+	// return a Promise for a response config.
+	if (typeof response === 'function') {
+		response = response(url, opts);
+	}
+
+	// If the response is a pre-made Response, respond with it
+	if (this.config.Response.prototype.isPrototypeOf(response)) {
+		return response;
+	}
+
+	// If the response says to throw an error, throw it
+	if (response.throws) {
+		throw response.throws;
+	}
+
+	// finally, if we have a response config we need to convert to a response,
+	// we do it
+	return this.buildResponse(url, response, opts);
 }
 
 FetchMock.router = function (url, opts) {
@@ -77,7 +101,7 @@ FetchMock.router = function (url, opts) {
 }
 
 FetchMock.compileRoute = compileRoute;
-FetchMock.mockResponse = mockResponse;
+FetchMock.buildResponse = buildResponse;
 
 FetchMock.push = function (name, call) {
 	if (name) {

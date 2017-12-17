@@ -1,24 +1,4 @@
 module.exports = function (url, responseConfig, fetchOpts) {
-	const Promise = this.config.Promise;
-
-	// It seems odd to call this in here even though it's already called within fetchMock
-	// It's to handle the fact that because we want to support making it very easy to add a
-	// delay to any sort of response (including responses which are defined with a function)
-	// while also allowing function responses to return a Promise for a response config.
-	if (typeof responseConfig === 'function') {
-		responseConfig = responseConfig(url, fetchOpts);
-	}
-
-	// If the response is a pre-made Response, respond with it
-	if (this.config.Response.prototype.isPrototypeOf(responseConfig)) {
-		return responseConfig;
-	}
-
-	// If the response says to throw an error, throw it
-	if (responseConfig.throws) {
-		throw responseConfig.throws;
-	}
-
 	// If the response config looks like a status, start to generate a simple response
 	if (typeof responseConfig === 'number') {
 		responseConfig = {

@@ -29,7 +29,7 @@ FetchMock.fetchMock = function (url, opts) {
 
 	return new this.config.Promise((res, rej) => {
 		try {
-			this._fetchMock(url, opts)
+			this.negotiateResponse(url, opts)
 				.then(res, rej)
 				.then(done, done);
 		} catch (err) {
@@ -41,12 +41,12 @@ FetchMock.fetchMock = function (url, opts) {
 
 FetchMock.fetchMock.isMock = true;
 
-FetchMock._fetchMock = async function (url, opts) {
+FetchMock.negotiateResponse = async function (url, opts) {
 
 	let response = this.router(url, opts);
 
 	if (!response) {
-		console.warn(`Unmatched ${opts && opts.method || 'GET'} to ${url}`);
+		this.config.warnOnFallback && console.warn(`Unmatched ${opts && opts.method || 'GET'} to ${url}`);
 		this.push(null, [url, opts]);
 
 		if (this.fallbackResponse) {

@@ -1,12 +1,5 @@
 const fetchMock = require('../src/server.js');
-const fetchCalls = [];
 const expect = require('chai').expect;
-const mockery = require('mockery');
-
-const dummyFetch = function () {
-	fetchCalls.push([].slice.call(arguments));
-	return Promise.resolve(arguments);
-};
 
 require('./spec')(fetchMock, global, require('node-fetch').Request, require('node-fetch').Response);
 require('./custom-header.spec')(fetchMock, global, require('node-fetch').Headers);
@@ -24,50 +17,3 @@ describe('support for Buffers', function () {
 			});
 	});
 });
-
-describe('new non-global use', function () {
-
-	before(function () {
-		try {
-			fetchMock.restore();
-		} catch (e) {}
-		delete global.fetch;
-	});
-
-	it('stubs non global fetch if function passed in', function () {
-		fetchMock.mock(/a/,200).catch(dummyFetch);
-		expect(function () {
-			fetchMock.fetchMock('http://url', {prop: 'val'})
-		}).not.to.throw();
-		expect(fetchMock.calls().unmatched.length).to.equal(1);
-		expect(fetchCalls.length).to.equal(1);
-		expect(fetchCalls[0]).to.eql(['http://url', {prop: 'val'}]);
-		fetchMock.restore();
-	});
-
-
-  it('should work well with mockery', function () {
-    mockery.enable({
-      useCleanCache: true,
-      warnOnUnregistered: false
-    });
-    fetchMock
-      .mock('http://auth.service.com/user', '{"foo": 1}')
-    mockery.registerMock('node-fetch', fetchMock.fetchMock);
-    expect(require('./fixtures/fetch-proxy')).to.equal(fetchMock.fetchMock);
-    fetchMock.restore();
-    mockery.deregisterMock('node-fetch');
-    mockery.disable();
-  });
-
-});
-
-
-
-
-
-
-
-
-
-

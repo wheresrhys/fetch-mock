@@ -2,8 +2,9 @@ const fetchMock = require('../../src/client');
 
 self.addEventListener('install', ev => {
 	fetchMock
-			.mock(/.*/, 203)
-	ev.waitUntil(fetch('http://egg.on.face/')
+		.mock(/.*/, 203)
+	ev.waitUntil(
+		fetch('http://egg.on.face/')
 			.then(res => {
 				if (res.status !== 203) {
 					console.log('Fetch mock not behaving as expected')
@@ -11,7 +12,6 @@ self.addEventListener('install', ev => {
 				}
 			})
 			.then(fetchMock.restore)
-			.then(() => console.log('bing'))
-	)
+	);
 })
 

@@ -11,6 +11,10 @@ module.exports = (fetchMock, theGlobal, Headers) => {
             theGlobal.fetch = dummyFetch;
         })
 
+        afterEach(() => {
+            fetchMock.restore();
+        })
+
         describe('Interface', () => {
 
             it('handles Headers class configuration correctly', () => {
@@ -60,9 +64,6 @@ module.exports = (fetchMock, theGlobal, Headers) => {
             });
         })
 
-        afterEach(() => {
-            fetchMock.restore();
-        })
 
     });
 }

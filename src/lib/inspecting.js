@@ -31,6 +31,10 @@ FetchMock.called = function (name) {
 	return !!(this._calls[name] && this._calls[name].length);
 }
 
+FetchMock.flush = function () {
+	return Promise.all(this._holdingPromises);
+}
+
 FetchMock.done = function (name) {
 	const names = name ? [name] : this.routes.map(r => r.name);
 

@@ -8,7 +8,8 @@ FetchMock.config = {
 	fallThroughToNetwork: false,
 	includeContentLength: true,
 	sendAsJson: true,
-	warnOnFallback: true
+	warnOnFallback: true,
+	overwriteRoutes: undefined
 }
 
 FetchMock.createInstance = function () {

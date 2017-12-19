@@ -9,154 +9,13 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 
 	describe('fetch-mock', () => {
 
-		const dummyRoute = {
-			matcher: /a/,
-			response: 200
-		};
-
 		const dummyFetch = () => Promise.resolve(arguments);
 
 		before(() => {
 			theGlobal.fetch = dummyFetch;
 		})
 
-		describe('Interface', () => {
-
-			it('restores fetch', () => {
-				fetchMock.mock(dummyRoute);
-				fetchMock.restore();
-				expect(fetch).to.equal(dummyFetch);
-				expect(fetchMock.realFetch).to.not.exist;
-				expect(fetchMock.routes.length).to.equal(0)
-				expect(fetchMock.fallbackresponse).to.not.exist;
-			});
-
-			it('allow multiple mocking calls', () => {
-				fetchMock.mock('begin:http://route1', 200);
-				expect(() => {
-					fetchMock.mock('begin:http://route2', 200);
-				}).not.to.throw();
-				fetch('http://route1.com')
-				fetch('http://route2.com')
-				expect(fetchMock.calls().matched.length).to.equal(2);
-				fetchMock.restore();
-			});
-
-			it('mocking is chainable', () => {
-				expect(() => {
-					fetchMock
-						.mock('begin:http://route1', 200)
-						.mock('begin:http://route2', 200);
-				}).not.to.throw();
-				fetch('http://route1.com')
-				fetch('http://route2.com')
-				expect(fetchMock.calls().matched.length).to.equal(2);
-				fetchMock.restore();
-			});
-
-			it('binds mock to self', () => {
-				sinon.spy(fetchMock, 'mock');
-				fetchMock.mock(dummyRoute);
-				expect(fetchMock.mock.lastCall.thisValue).to.equal(fetchMock);
-				fetchMock.mock.restore();
-			});
-
-			it('allow remocking after being restored', () => {
-				fetchMock.mock(dummyRoute);
-				fetchMock.restore();
-				expect(() => {
-					fetchMock.mock(dummyRoute);
-					fetchMock.restore();
-				}).not.to.throw();
-			});
-
-			it('restore is chainable', () => {
-				fetchMock.mock(dummyRoute);
-				expect(() => {
-					fetchMock.restore().mock(dummyRoute);
-				}).not.to.throw();
-			});
-
-			it('binds restore to self', () => {
-				sinon.spy(fetchMock, 'restore');
-				fetchMock.restore();
-				expect(fetchMock.restore.lastCall.thisValue).to.equal(fetchMock);
-				fetchMock.restore.restore();
-			});
-
-			it('restore can be called even if no mocks set', () => {
-				expect(() => {
-					fetchMock.restore();
-				}).not.to.throw();
-			});
-
-			it('reset is chainable', () => {
-				fetchMock.mock(dummyRoute);
-				expect(() => {
-					fetchMock.reset().mock(dummyRoute);
-				}).not.to.throw();
-			});
-
-			it('binds reset to self', () => {
-				sinon.spy(fetchMock, 'reset');
-				fetchMock.reset();
-				expect(fetchMock.reset.lastCall.thisValue).to.equal(fetchMock);
-				fetchMock.reset.restore();
-			});
-
-
-
-		});
-
-		describe('catch() and spy()', () => {
-			it('can catch all calls to fetch with good response by default', () => {
-				fetchMock.catch();
-				return fetch('http://place.com/')
-					.then(res => {
-						expect(res.status).to.equal(200);
-						expect(fetchMock.calls().unmatched[0]).to.eql([ 'http://place.com/', undefined ])
-					})
-			})
-
-			it('can catch all calls to fetch with custom response', () => {
-				fetchMock.catch(Promise.resolve('carrot'));
-				return fetch('http://place.com/')
-					.then(res => {
-						expect(res.status).to.equal(200);
-						expect(fetchMock.calls().unmatched[0]).to.eql([ 'http://place.com/', undefined ])
-						return res.text()
-							.then(text => expect(text).to.equal('carrot'))
-					})
-			})
-
-			it('can call catch after calls to mock', () => {
-				fetchMock
-					.mock('http://other-place.com', 404)
-					.catch();
-				return fetch('http://place.com/')
-					.then(res => {
-						expect(res.status).to.equal(200);
-						expect(fetchMock.calls().unmatched[0]).to.eql([ 'http://place.com/', undefined ])
-					})
-			})
-
-			it('can spy on all unmatched calls to fetch', () => {
-				const theFetch = theGlobal.fetch
-				const fetchSpy = theGlobal.fetch = sinon.spy(() => Promise.resolve());
-				fetchMock
-					.spy();
-
-				fetch('http://apples.and.pears')
-				expect(fetchSpy.calledWith('http://apples.and.pears')).to.be.true
-				expect(fetchMock.called()).to.be.true;
-				expect(fetchMock.calls().unmatched[0]).to.eql(['http://apples.and.pears', undefined]);
-				fetchMock.restore();
-				expect(theGlobal.fetch).to.equal(fetchSpy)
-				theGlobal.fetch = theFetch;
-
-			})
-
-		})
+		require('./int/set-up-and-tear-down.test')(fetchMock, dummyFetch, theGlobal)
 
 		describe('mock()', () => {
 			describe('parameters', () => {
@@ -597,7 +456,7 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 			describe('unmatched routes', () => {
 
 				it('throws if any calls unmatched', () => {
-					fetchMock.mock(dummyRoute);
+					fetchMock.mock(/a/, 200);
 					expect(() => {
 						fetch('http://1');
 					}).to.throw;
@@ -606,7 +465,7 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 				it('can catch unmatched calls with empty 200', () => {
 					fetchMock
 						.catch()
-						.mock(dummyRoute);
+						.mock(/a/, 200);
 					return fetch('http://1')
 						.then(res => {
 							expect(fetchMock.called()).to.be.true;
@@ -618,7 +477,7 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 				it('can catch unmatched calls with custom response', () => {
 					fetchMock
 						.catch({iam: 'json'})
-						.mock(dummyRoute);
+						.mock(/a/, 200);
 					return fetch('http://1')
 						.then(res => {
 							expect(fetchMock.called()).to.be.true;
@@ -633,7 +492,7 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 				it('can catch unmatched calls with function', () => {
 					fetchMock
 						.catch(() => new Response('i am text', {status: 200	}))
-						.mock(dummyRoute);
+						.mock(/a/, 200);
 					return fetch('http://1')
 						.then(res => {
 							expect(fetchMock.called()).to.be.true;
@@ -649,7 +508,7 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 				it('record history of unmatched routes', () => {
 					fetchMock
 						.catch()
-						.mock(dummyRoute);
+						.mock(/a/, 200);
 					return Promise.all([
 						fetch('http://1', {method: 'GET'}),
 						fetch('http://2', {method: 'POST'})

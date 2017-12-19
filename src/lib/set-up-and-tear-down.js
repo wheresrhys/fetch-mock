@@ -36,17 +36,6 @@ FetchMock._mock = function () {
 	return this;
 }
 
-FetchMock._unMock = function () {
-	if (this.realFetch) {
-		this.global.fetch = this.realFetch;
-		this.realFetch = null;
-	}
-	this.fallbackResponse = null;
-	return this;
-}
-
-FetchMock.compileRoute = compileRoute;
-
 FetchMock.catch = function (response) {
 	if (this.fallbackResponse) {
 		console.warn(`calling fetchMock.catch() twice - are you sure you want to overwrite the previous fallback response`);
@@ -65,6 +54,8 @@ FetchMock.chill = function () {
 	return this.spy()
 }
 
+FetchMock.compileRoute = compileRoute;
+
 FetchMock.once = function (matcher, response, options) {
 	return this.mock(matcher, response, Object.assign({}, options, {repeat: 1}));
 };
@@ -77,11 +68,7 @@ FetchMock.once = function (matcher, response, options) {
 		FetchMock[`${method}Once`] = function (matcher, response, options) {
 			return this.once(matcher, response, Object.assign({}, options, {method: method.toUpperCase()}));
 		}
-	})
-
-FetchMock.flush = function () {
-	return Promise.all(this._holdingPromises);
-}
+	});
 
 FetchMock.restore = function () {
 	this._unMock();
@@ -96,6 +83,15 @@ FetchMock.reset = function () {
 	this._unmatchedCalls = [];
 	this._holdingPromises = [];
 	this.routes.forEach(route => route.reset && route.reset())
+	return this;
+}
+
+FetchMock._unMock = function () {
+	if (this.realFetch) {
+		this.global.fetch = this.realFetch;
+		this.realFetch = null;
+	}
+	this.fallbackResponse = null;
 	return this;
 }
 

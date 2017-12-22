@@ -17,7 +17,10 @@ module.exports = (fetchMock) => {
 		// FM.fM is always equal to global fetch/called by sandboxed function as appropriate
 
 		let fm;
-		beforeEach(() => fm = fetchMock.createInstance());
+		before(() => {
+			fm = fetchMock.createInstance();
+			fm.config.warnOnUnmatched = false;
+		});
 		afterEach(() => fm.restore());
 
 		describe('mock', () => {

@@ -4,6 +4,7 @@ const expect = require('chai').expect;
 const sinon = require('sinon');
 
 module.exports = (fetchMock, dummyFetch, theGlobal) => {
+
 	describe('Set up and tear down', () => {
 
 		// Put chainability of methods as standalone tests, just checking they return fetchMock
@@ -17,6 +18,88 @@ module.exports = (fetchMock, dummyFetch, theGlobal) => {
 		// they should call FM.fetchMock!!! tests for instantiation shoudl make sure
 		// FM.fM is always equal to global fetch/called by sandboxed function as appropriate
 
+		let fm;
+		beforeEach(() => fm = fetchMock.createInstance());
+		afterEach(() => fm.restore());
+
+		describe('mock', () => {
+			it('is chainable', () => {
+				expect(fm.mock(/a/, 200)).to.equal(fm);
+			});
+
+			it('has \'this\'', () => {
+				sinon.spy(fm, 'mock');
+				fm.mock(/a/, 200);
+				expect(fm.mock.lastCall.thisValue).to.equal(fm);
+				fm.mock.restore();
+			});
+		});
+
+		describe('restore', () => {
+			it('is chainable', () => {
+				expect(fm.restore(/a/, 200)).to.equal(fm);
+			});
+
+			it('has \'this\'', () => {
+				sinon.spy(fm, 'restore');
+				fm.restore(/a/, 200);
+				expect(fm.restore.lastCall.thisValue).to.equal(fm);
+				fm.restore.restore();
+			});
+
+			it('can be called even if no mocks set', () => {
+				expect(() => fetchMock.restore()).not.to.throw();
+			});
+		});
+
+		describe('reset', () => {
+			it('is chainable', () => {
+				expect(fm.reset(/a/, 200)).to.equal(fm);
+			});
+
+			it('has \'this\'', () => {
+				sinon.spy(fm, 'reset');
+				fm.reset(/a/, 200);
+				expect(fm.reset.lastCall.thisValue).to.equal(fm);
+				fm.reset.restore();
+			});
+		});
+		describe('spy', () => {
+			it('is chainable', () => {
+				expect(fm.spy(/a/, 200)).to.equal(fm);
+			});
+
+			it('has \'this\'', () => {
+				sinon.spy(fm, 'spy');
+				fm.spy(/a/, 200);
+				expect(fm.spy.lastCall.thisValue).to.equal(fm);
+				fm.spy.restore();
+			});
+		});
+		describe('catch', () => {
+			it('is chainable', () => {
+				expect(fm.catch(/a/, 200)).to.equal(fm);
+			});
+
+			it('has \'this\'', () => {
+				sinon.spy(fm, 'catch');
+				fm.catch(/a/, 200);
+				expect(fm.catch.lastCall.thisValue).to.equal(fm);
+				fm.catch.restore();
+			});
+		});
+		describe('chill', () => {
+			it('is chainable', () => {
+				expect(fm.chill(/a/, 200)).to.equal(fm);
+			});
+
+			it('has \'this\'', () => {
+				sinon.spy(fm, 'chill');
+				fm.chill(/a/, 200);
+				expect(fm.chill.lastCall.thisValue).to.equal(fm);
+				fm.chill.restore();
+			});
+		});
 
 		it('restores fetch', () => {
 			fetchMock.mock(/a/, 200);
@@ -26,6 +109,8 @@ module.exports = (fetchMock, dummyFetch, theGlobal) => {
 			expect(fetchMock.routes.length).to.equal(0)
 			expect(fetchMock.fallbackResponse).to.not.exist;
 		});
+
+
 
 		it('allow multiple mocking calls', () => {
 			fetchMock.mock('begin:http://route1', 200);
@@ -50,13 +135,6 @@ module.exports = (fetchMock, dummyFetch, theGlobal) => {
 			fetchMock.restore();
 		});
 
-		it('binds mock to self', () => {
-			sinon.spy(fetchMock, 'mock');
-			fetchMock.mock(/a/, 200);
-			expect(fetchMock.mock.lastCall.thisValue).to.equal(fetchMock);
-			fetchMock.mock.restore();
-		});
-
 		it('allow remocking after being restored', () => {
 			fetchMock.mock(/a/, 200);
 			fetchMock.restore();
@@ -66,39 +144,7 @@ module.exports = (fetchMock, dummyFetch, theGlobal) => {
 			}).not.to.throw();
 		});
 
-		it('restore is chainable', () => {
-			fetchMock.mock(/a/, 200);
-			expect(() => {
-				fetchMock.restore().mock(/a/, 200);
-			}).not.to.throw();
-		});
 
-		it('binds restore to self', () => {
-			sinon.spy(fetchMock, 'restore');
-			fetchMock.restore();
-			expect(fetchMock.restore.lastCall.thisValue).to.equal(fetchMock);
-			fetchMock.restore.restore();
-		});
-
-		it('restore can be called even if no mocks set', () => {
-			expect(() => {
-				fetchMock.restore();
-			}).not.to.throw();
-		});
-
-		it('reset is chainable', () => {
-			fetchMock.mock(/a/, 200);
-			expect(() => {
-				fetchMock.reset().mock(/a/, 200);
-			}).not.to.throw();
-		});
-
-		it('binds reset to self', () => {
-			sinon.spy(fetchMock, 'reset');
-			fetchMock.reset();
-			expect(fetchMock.reset.lastCall.thisValue).to.equal(fetchMock);
-			fetchMock.reset.restore();
-		});
 
 		describe('catch() and spy()', () => {
 			it('can catch all calls to fetch with good response by default', () => {

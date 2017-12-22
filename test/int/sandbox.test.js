@@ -1,3 +1,7 @@
+		// they should call FM.fetchMock!!! tests for instantiation shoudl make sure
+		// FM.fM is always equal to global fetch/called by sandboxed function as appropriate
+
+
 // tests for changing all the config options
 // tests for sandbox and global
 

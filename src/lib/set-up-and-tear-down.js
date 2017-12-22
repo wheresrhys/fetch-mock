@@ -49,11 +49,6 @@ FetchMock.spy = function () {
 	return this.catch(this.realFetch)
 }
 
-FetchMock.chill = function () {
-	this.config.warnOnFallback = false;
-	return this.spy()
-}
-
 FetchMock.compileRoute = compileRoute;
 
 FetchMock.once = function (matcher, response, options) {

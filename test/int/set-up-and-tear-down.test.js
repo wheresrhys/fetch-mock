@@ -3,18 +3,9 @@ chai.use(require('sinon-chai'));
 const expect = chai.expect;
 const sinon = require('sinon');
 
-module.exports = (fetchMock) => {
+module.exports = fetchMock => {
 
 	describe('Set up and tear down', () => {
-
-		// add tests for chill
-		// begin with a test that .mock can be called
-		// think about it... we want to test what happens to FetchMock.fetchMock
-		// - the tests in instantiation should take care of whether the mock is used
-		// to overwrite the global...
-		// - hmm, yes, all tests other than instantiation shouldn't call fetch,
-		// they should call FM.fetchMock!!! tests for instantiation shoudl make sure
-		// FM.fM is always equal to global fetch/called by sandboxed function as appropriate
 
 		let fm;
 		before(() => {
@@ -152,7 +143,6 @@ module.exports = (fetchMock) => {
 				expect(fm.fallbackResponse).not.to.exist;
 			});
 
-
 		});
 
 		describe('reset', () => {
@@ -212,19 +202,6 @@ module.exports = (fetchMock) => {
 				fm.catch(200);
 				expect(fm.catch.lastCall.thisValue).to.equal(fm);
 				fm.catch.restore();
-			});
-		});
-
-		describe('chill', () => {
-			it('is chainable', () => {
-				expect(fm.chill()).to.equal(fm);
-			});
-
-			it('has \'this\'', () => {
-				sinon.spy(fm, 'chill');
-				fm.chill();
-				expect(fm.chill.lastCall.thisValue).to.equal(fm);
-				fm.chill.restore();
 			});
 		});
 	});

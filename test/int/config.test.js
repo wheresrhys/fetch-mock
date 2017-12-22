@@ -218,3 +218,22 @@ const GlobalPromise = Promise;
 
 		// });
 
+	// 	it('works with global promise responses when using the global promise', () => {
+	// 		const sbx = fetchMock
+	// 			.sandbox()
+	// 			.mock('http://example.com', GlobalPromise.resolve(200));
+
+	// 		const responsePromise = sbx('http://example.com')
+	// 		expect(responsePromise).to.be.instanceof(GlobalPromise);
+	// 		return responsePromise.then(res => expect(res.status).to.equal(200));
+	// 	});
+
+	// 	it('works with custom promise responses when using the global promise', () => {
+	// 		const sbx = fetchMock
+	// 			.sandbox()
+	// 			.mock('http://example.com', BluebirdPromise.resolve(200));
+
+	// 		const responsePromise = sbx('http://example.com')
+	// 		expect(responsePromise).to.be.instanceof(GlobalPromise);
+	// 		return responsePromise.then(res => expect(res.status).to.equal(200));
+	// 	});

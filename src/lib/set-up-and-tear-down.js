@@ -45,6 +45,9 @@ FetchMock.catch = function (response) {
 }
 
 FetchMock.spy = function () {
+	if (this.isSandbox) {
+		throw 'spy() is not supported on sandboxed fetch mock instances';
+	}
 	this._mock();
 	return this.catch(this.realFetch)
 }
@@ -68,9 +71,9 @@ FetchMock.once = function (matcher, response, options) {
 FetchMock.restore = function () {
 		if (this.realFetch) {
 		this.global.fetch = this.realFetch;
-		this.realFetch = null;
+		this.realFetch = undefined;
 	}
-	this.fallbackResponse = null;
+	this.fallbackResponse = undefined;
 	this.routes = [];
 	this.reset();
 	return this;

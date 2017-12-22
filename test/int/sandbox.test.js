@@ -1,145 +1,153 @@
-		// they should call FM.fetchMock!!! tests for instantiation shoudl make sure
-		// FM.fM is always equal to global fetch/called by sandboxed function as appropriate
+const chai = require('chai');
+chai.use(require('sinon-chai'));
+const expect = chai.expect;
+const sinon = require('sinon');
 
+module.exports = (fetchMock, theGlobal) => {
 
-// tests for changing all the config options
-// tests for sandbox and global
+	describe('sandbox', () => {
+		let originalFetch;
 
+		before(() => {
+			originalFetch = theGlobal.fetch = sinon.stub().returns(Promise.resolve('dummy'));
+		});
 
-//chill and spy should error informatively
+		it('return function', () => {
+			const sbx = fetchMock.sandbox();
+			expect(typeof sbx).to.equal('function');
+		});
 
+		it('port settings from parent instance', () => {
+			const sbx = fetchMock.sandbox();
+			expect(sbx.config).to.eql(fetchMock.config)
+		});
 
+		it('disallow calling on part configured parent', () => {
+			expect(() => fetchMock.mock('url', 200).sandbox()).to.throw
+		});
 
-		// describe('sandbox', () => {
-		// 	it('return function', () => {
-		// 		const sbx = fetchMock.sandbox();
-		// 		expect(typeof sbx).to.equal('function');
-		// 	});
+		it('implement full fetch-mock api', () => {
+			const sbx = fetchMock.sandbox();
+			for (key in fetchMock) {
+				expect(typeof sbx[key]).to.equal(typeof fetchMock[key]);
+			}
+		});
 
-		// 	it('port settings from parent instance', () => {
-		// 		const sbx = fetchMock.sandbox();
-		// 		expect(sbx.Headers).to.equal(fetchMock.Headers)
-		// 	});
+		it('delegate to its own fetch handler', async () => {
+			const sbx = fetchMock
+				.sandbox()
+				.mock('http://domain.url', 200);
 
-		// 	it('disallow calling on part configured parent', () => {
-		// 		expect(() => fetchMock.mock('url', 200).sandbox()).to.throw
-		// 	});
+			sinon.stub(sbx, 'fetchHandler');
 
-		// 	it('implement full fetch-mock api', () => {
-		// 		const sbx = fetchMock.sandbox();
-		// 		expect(typeof sbx.mock).to.equal('function');
-		// 	});
+			sbx('http://domain.url')
+			expect(sbx.fetchHandler).calledWith('http://domain.url')
+		});
 
-		// 	it('be a mock fetch implementation', () => {
-		// 		const sbx = fetchMock
-		// 			.sandbox()
-		// 			.mock('http://domain.url', 200)
-		// 		return sbx('http://domain.url')
-		// 			.then(res => {
-		// 				expect(res.status).to.equal(200);
-		// 			})
-		// 	});
+		it('don\'t interfere with global fetch', () => {
+			const sbx = fetchMock
+				.sandbox()
+				.mock('http://domain.url', 200)
 
-		// 	it('don\'t interfere with global fetch', () => {
-		// 		const sbx = fetchMock
-		// 			.sandbox()
-		// 			.mock('http://domain.url', 200)
-		// 		expect(theGlobal.fetch).to.equal(dummyFetch);
-		// 		expect(theGlobal.fetch).not.to.equal(sbx);
-		// 	});
+			expect(theGlobal.fetch).to.equal(originalFetch);
+			expect(theGlobal.fetch).not.to.equal(sbx);
+		});
 
-		// 	it('don\'t interfere with global fetch-mock', () => {
-		// 		const sbx = fetchMock
-		// 			.sandbox()
-		// 			.mock('http://domain.url', 200)
-		// 			.catch(302)
+		it('don\'t interfere with global fetch-mock', async () => {
+			const sbx = fetchMock
+				.sandbox()
+				.mock('http://domain.url', 200)
+				.catch(302)
 
-		// 		fetchMock
-		// 			.mock('http://domain2.url', 200)
-		// 			.catch(301)
+			fetchMock
+				.mock('http://domain2.url', 200)
+				.catch(301)
 
-		// 		expect(theGlobal.fetch).to.equal(fetchMock.fetchMock);
-		// 		expect(fetchMock.fetchMock).not.to.equal(sbx);
-		// 		expect(fetchMock.fallbackResponse).not.to.equal(sbx.fallbackResponse)
+			expect(theGlobal.fetch).to.equal(fetchMock.fetchHandler);
+			expect(fetchMock.fetchHandler).not.to.equal(sbx);
+			expect(fetchMock.fallbackResponse).not.to.equal(sbx.fallbackResponse)
+			expect(fetchMock.routes).not.to.equal(sbx.routes)
 
-		// 		return Promise.all([
-		// 			sbx('http://domain.url'),
-		// 			fetch('http://domain2.url')
-		// 		])
-		// 			.then(responses => {
-		// 				expect(responses[0].status).to.equal(200);
-		// 				expect(responses[1].status).to.equal(200);
-		// 				expect(sbx.called('http://domain.url')).to.be.true;
-		// 				expect(sbx.called('http://domain2.url')).to.be.false;
-		// 				expect(fetchMock.called('http://domain2.url')).to.be.true;
-		// 				expect(fetchMock.called('http://domain.url')).to.be.false;
-		// 				fetchMock.restore();
-		// 				expect(sbx.called('http://domain.url')).to.be.true;
-		// 			})
-		// 	});
+			const [sandboxed, globally] = await Promise.all([
+				sbx('http://domain.url'),
+				fetch('http://domain2.url')
+			])
 
-		// 	it('don\'t interfere with other sandboxes', () => {
-		// 		const sbx = fetchMock
-		// 			.sandbox()
-		// 			.mock('http://domain.url', 200)
-		// 			.catch(301)
+			expect(sandboxed.status).to.equal(200);
+			expect(globally.status).to.equal(200);
+			expect(sbx.called('http://domain.url')).to.be.true;
+			expect(sbx.called('http://domain2.url')).to.be.false;
+			expect(fetchMock.called('http://domain2.url')).to.be.true;
+			expect(fetchMock.called('http://domain.url')).to.be.false;
+			expect(sbx.called('http://domain.url')).to.be.true;
+			fetchMock.restore();
+		});
 
-		// 		const sbx2 = fetchMock
-		// 			.sandbox()
-		// 			.mock('http://domain2.url', 200)
-		// 			.catch(302)
+		it('don\'t interfere with other sandboxes', async () => {
+			const sbx = fetchMock
+				.sandbox()
+				.mock('http://domain.url', 200)
+				.catch(301)
 
-		// 		expect(sbx2).not.to.equal(sbx);
-		// 		expect(sbx2.fallbackResponse).not.to.equal(sbx.fallbackResponse)
+			const sbx2 = fetchMock
+				.sandbox()
+				.mock('http://domain2.url', 200)
+				.catch(302)
 
-		// 		return Promise.all([
-		// 			sbx('http://domain.url'),
-		// 			sbx2('http://domain2.url')
-		// 		])
-		// 			.then(responses => {
-		// 				expect(responses[0].status).to.equal(200);
-		// 				expect(responses[1].status).to.equal(200);
-		// 				expect(sbx.called('http://domain.url')).to.be.true;
-		// 				expect(sbx.called('http://domain2.url')).to.be.false;
-		// 				expect(sbx2.called('http://domain2.url')).to.be.true;
-		// 				expect(sbx2.called('http://domain.url')).to.be.false;
-		// 			})
-		// 	});
+			expect(sbx2).not.to.equal(sbx);
+			expect(sbx2.fallbackResponse).not.to.equal(sbx.fallbackResponse)
+			expect(sbx2.routes).not.to.equal(sbx.routes)
 
-		// 	it('works with global promise responses when using the global promise', () => {
-		// 		const sbx = fetchMock
-		// 			.sandbox()
-		// 			.mock('http://example.com', GlobalPromise.resolve(200));
+			const [res1, res2] = await Promise.all([
+				sbx('http://domain.url'),
+				sbx2('http://domain2.url')
+			])
+			expect(res1.status).to.equal(200);
+			expect(res2.status).to.equal(200);
+			expect(sbx.called('http://domain.url')).to.be.true;
+			expect(sbx.called('http://domain2.url')).to.be.false;
+			expect(sbx2.called('http://domain2.url')).to.be.true;
+			expect(sbx2.called('http://domain.url')).to.be.false;
+		});
 
-		// 		const responsePromise = sbx('http://example.com')
-		// 		expect(responsePromise).to.be.instanceof(GlobalPromise);
-		// 		return responsePromise.then(res => expect(res.status).to.equal(200));
-		// 	});
+		it('can be restored', async () => {
+			const sbx = fetchMock
+				.sandbox()
+				.get('https://api.resin.io/foo', 200);
 
-		// 	it('works with custom promise responses when using the global promise', () => {
-		// 		const sbx = fetchMock
-		// 			.sandbox()
-		// 			.mock('http://example.com', BluebirdPromise.resolve(200));
+			const res = await sbx('https://api.resin.io/foo')
+			expect(res.status).to.equal(200);
 
-		// 		const responsePromise = sbx('http://example.com')
-		// 		expect(responsePromise).to.be.instanceof(GlobalPromise);
-		// 		return responsePromise.then(res => expect(res.status).to.equal(200));
-		// 	});
+			sbx
+				.restore()
+				.get('https://api.resin.io/foo', 500);
 
-		// 	it('can be restored', () => {
-		// 		const sbx = fetchMock
-		// 			.sandbox()
-		// 			.get('https://api.resin.io/foo', 200);
+			const res2 = await sbx('https://api.resin.io/foo');
+			expect(res2.status).to.equal(500);
+		});
 
-		// 		return sbx('https://api.resin.io/foo')
-		// 			.then(res => {
-		// 				expect(res.status).to.equal(200);
-		// 				sbx
-		// 					.restore()
-		// 					.get('https://api.resin.io/foo', 500);
-		// 				return sbx('https://api.resin.io/foo');
-		// 			})
-		// 			.then(res => expect(res.status).to.equal(500))
-		// 	});
+		it('can \'fork\' existing sandboxes or the global fetchMock', () => {
+			const sbx1 = fetchMock
+				.sandbox()
+				.mock(/a/, 200)
+				.catch(300)
 
-		// })
+			const sbx2 = sbx1
+				.sandbox()
+				.mock(/b/, 200)
+				.catch(400)
+
+			expect(sbx1.routes.length).to.equal(1);
+			expect(sbx2.routes.length).to.equal(2);
+			expect(sbx1.fallbackResponse).to.equal(300);
+			expect(sbx2.fallbackResponse).to.equal(400);
+			sbx1.restore();
+			expect(sbx1.routes.length).to.equal(0);
+			expect(sbx2.routes.length).to.equal(2);
+		})
+
+		it('error if spy() is called', () => {
+			expect(() => fetchMock.sandbox().spy()).to.throw();
+		});
+	});
+}

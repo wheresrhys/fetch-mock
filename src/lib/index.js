@@ -14,7 +14,8 @@ FetchMock.config = {
 
 FetchMock.createInstance = function () {
 	const instance = Object.create(FetchMock);
-	instance.routes = [];
+	instance.routes = (this.routes || []).slice();
+	instance.fallbackResponse = this.fallbackResponse || undefined;
 	instance.config = Object.assign({}, this.config || FetchMock.config);
 	instance._calls = {};
 	instance._matchedCalls = [];
@@ -31,15 +32,14 @@ FetchMock.bindMethods = function () {
 }
 
 FetchMock.sandbox = function () {
-	if (this.routes.length || this.fallbackResponse) {
-		throw new Error('.sandbox() can only be called on fetch-mock instances that don\'t have routes configured already')
-	}
+	// if (this.routes.length || this.fallbackResponse) {
+	// 	throw new Error('.sandbox() can only be called on fetch-mock instances that don\'t have routes configured already')
+	// }
 	// this construct allows us to create a fetch-mock instance which is also
 	// a callable function, while circumventing circularity when defining the
 	// object that this function should be bound to
-	let fetchHandler;
-	const proxy = function () {
-		return fetchHandler.apply(null, arguments);
+	const proxy = function (url, options) {
+		return sandbox.fetchHandler(url, options);
 	}
 
 	const sandbox = Object.assign(
@@ -49,7 +49,6 @@ FetchMock.sandbox = function () {
 	);
 
 	sandbox.bindMethods();
-	fetchHandler = sandbox.fetchHandler;
 	sandbox.isSandbox = true;
 	return sandbox;
 };

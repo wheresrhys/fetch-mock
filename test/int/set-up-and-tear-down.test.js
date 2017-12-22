@@ -7,7 +7,6 @@ module.exports = (fetchMock) => {
 
 	describe('Set up and tear down', () => {
 
-		// Put chainability of methods as standalone tests, just checking they return fetchMock
 		// add tests for chill
 		// begin with a test that .mock can be called
 		// think about it... we want to test what happens to FetchMock.fetchMock
@@ -51,66 +50,66 @@ module.exports = (fetchMock) => {
 			});
 
 			describe('parameters', () => {
-				// beforeEach(() => {
-				// 	sinon.stub(fetchMock, 'compileRoute', () => ({}));
-				// });
+				beforeEach(() => {
+					sinon.stub(fm, 'compileRoute').returns({});
+				});
 
-				// afterEach(() => {
-				// 	fetchMock.compileRoute.restore();
-				// });
+				afterEach(() => {
+					fm.compileRoute.restore();
+				});
 
-				// it('accepts single config object', () => {
-				// 	const config = {name: 'route', matcher: 'http://it.at.there/', response: 'ok'};
-				// 	expect(() => {
-				// 		fetchMock.mock(config);
-				// 	}).not.to.throw();
-				// 	expect(fetchMock.compileRoute.calledWith(config));
-				// });
+				it('accepts single config object', () => {
+					const config = {
+						matcher: 'http://it.at.there/',
+						response: 200
+					};
+					expect(() => fm.mock(config)).not.to.throw();
+					expect(fm.compileRoute)
+						.calledWith(config);
+				});
 
-				// it('accepts matcher, route pairs', () => {
-				// 	expect(() => {
-				// 		fetchMock.mock('http://it.at.there/', 'ok');
-				// 	}).not.to.throw();
-				// 	expect(fetchMock.compileRoute.calledWith({matcher: 'http://it.at.there/', response: 'ok'}));
-				// });
+				it('accepts matcher, route pairs', () => {
+					expect(() => fm.mock('http://it.at.there/', 200)).not.to.throw();
+					expect(fm.compileRoute)
+						.calledWith({matcher: 'http://it.at.there/', response: 200});
+				});
 
-				// it('accepts matcher, response, config triples', () => {
-				// 	expect(() => {
-				// 		fetchMock.mock('http://it.at.there/', 'ok', {method: 'PUT', some: 'prop'});
-				// 	}).not.to.throw();
-				// 	expect(fetchMock.compileRoute.calledWith({matcher: 'http://it.at.there/', response: 'ok', method: 'PUT', some: 'prop'}));
-				// });
+				it('accepts matcher, response, config triples', () => {
+					expect(() => fm.mock('http://it.at.there/', 'ok', {method: 'PUT', some: 'prop'})).not.to.throw();
+					expect(fm.compileRoute)
+						.calledWith({matcher: 'http://it.at.there/', response: 'ok', method: 'PUT', some: 'prop'});
+				});
 
-				// it('expects a matcher', () => {
-				// 	expect(() => {
-				// 		fetchMock.mock(null, 'ok');
-				// 	}).to.throw();
-				// });
+				it('expects a matcher', () => {
+					expect(() => fm.mock(null, 'ok')).to.throw();
+				});
 
-				// it('expects a response', () => {
-				// 	expect(() => {
-				// 		fetchMock.mock('http://it.at.there/');
-				// 	}).to.throw();
-				// });
-		// it('should accept object respones when passing options', () => {
-		// 		expect(() => {
-		// 			fetchMock.mock('http://foo.com', { foo: 'bar' }, { method: 'GET' })
-		// 		}).to.not.throw();
-		// 	})
-				// describe('method shorthands', () => {
-				// 	'get,post,put,delete,head,patch'.split(',')
-				// 		.forEach(method => {
-				// 			it(`has shorthand for ${method.toUpperCase()}`, () => {
-				// 				sinon.stub(fetchMock, 'mock');
-				// 				fetchMock[method]('a', 'b');
-				// 				fetchMock[method]('a', 'b', {opt: 'c'});
-				// 				expect(fetchMock.mock.calledWith('a', 'b', {method: method.toUpperCase()})).to.be.true;
-				// 				expect(fetchMock.mock.calledWith('a', 'b', {opt: 'c', method: method.toUpperCase()})).to.be.true;
-				// 				fetchMock.mock.restore();
-				// 			});
-				// 		})
-				// });
+				it('expects a response', () => {
+					expect(() => fm.mock('http://it.at.there/')).to.throw();
+				});
+
+				it('REGRESSION: should accept object respones when passing options', () => {
+					expect(() => fm.mock('http://foo.com', { foo: 'bar' }, { method: 'GET' })).not.to.throw();
+				})
 			});
+		});
+
+		describe('method shorthands', () => {
+			'get,post,put,delete,head,patch'.split(',')
+				.forEach(method => {
+					it(`has shorthand for ${method.toUpperCase()}`, () => {
+						sinon.spy(fm, 'mock');
+						const result = fm[method]('a', 'b');
+						expect(result).to.equal(fm);
+
+						fm[method]('a', 'b', {opt: 'c'});
+						expect(fm.mock)
+							.calledWith('a', 'b', {method: method.toUpperCase()});
+						expect(fm.mock)
+							.calledWith('a', 'b', {opt: 'c', method: method.toUpperCase()});
+						fm.mock.restore();
+					});
+				})
 		});
 
 		describe('restore', () => {

@@ -25,7 +25,7 @@ FetchMock.createInstance = function () {
 }
 
 FetchMock.bindMethods = function () {
-	this.fetchMock = FetchMock.fetchMock.bind(this);
+	this.fetchHandler = FetchMock.fetchHandler.bind(this);
 	this.restore = FetchMock.restore.bind(this);
 	this.reset = FetchMock.reset.bind(this);
 }
@@ -37,9 +37,9 @@ FetchMock.sandbox = function () {
 	// this construct allows us to create a fetch-mock instance which is also
 	// a callable function, while circumventing circularity when defining the
 	// object that this function should be bound to
-	let mock;
+	let fetchHandler;
 	const proxy = function () {
-		return mock.apply(null, arguments);
+		return fetchHandler.apply(null, arguments);
 	}
 
 	const sandbox = Object.assign(
@@ -49,7 +49,7 @@ FetchMock.sandbox = function () {
 	);
 
 	sandbox.bindMethods();
-	mock = sandbox.fetchMock;
+	fetchHandler = sandbox.fetchHandler;
 	sandbox.isSandbox = true;
 	return sandbox;
 };

@@ -31,7 +31,7 @@ FetchMock._mock = function () {
 	if (!this.isSandbox) {
 		// Do this here rather than in the constructor to ensure it's scoped to the test
 		this.realFetch = this.realFetch || this.global.fetch;
-		this.global.fetch = this.fetchMock;
+		this.global.fetch = this.fetchHandler;
 	}
 	return this;
 }
@@ -71,9 +71,13 @@ FetchMock.once = function (matcher, response, options) {
 	});
 
 FetchMock.restore = function () {
-	this._unMock();
-	this.reset();
+		if (this.realFetch) {
+		this.global.fetch = this.realFetch;
+		this.realFetch = null;
+	}
+	this.fallbackResponse = null;
 	this.routes = [];
+	this.reset();
 	return this;
 }
 
@@ -83,15 +87,6 @@ FetchMock.reset = function () {
 	this._unmatchedCalls = [];
 	this._holdingPromises = [];
 	this.routes.forEach(route => route.reset && route.reset())
-	return this;
-}
-
-FetchMock._unMock = function () {
-	if (this.realFetch) {
-		this.global.fetch = this.realFetch;
-		this.realFetch = null;
-	}
-	this.fallbackResponse = null;
 	return this;
 }
 

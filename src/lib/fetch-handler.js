@@ -2,7 +2,7 @@ const ResponseBuilder = require('./response-builder');
 
 const FetchMock = {};
 
-FetchMock.fetchMock = function (url, opts) {
+FetchMock.fetchHandler = function (url, opts) {
 
 	// this is used to power the .flush() method
 	let done
@@ -22,7 +22,7 @@ FetchMock.fetchMock = function (url, opts) {
 	})
 }
 
-FetchMock.fetchMock.isMock = true;
+FetchMock.fetchHandler.isMock = true;
 
 FetchMock.negotiateResponse = async function (url, opts) {
 

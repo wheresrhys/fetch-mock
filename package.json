@@ -33,7 +33,6 @@
     "path-to-regexp": "^1.7.0"
   },
   "devDependencies": {
-    "node-fetch": "^2.0.0-alpha.9",
     "babel": "^6.0.15",
     "babel-cli": "^6.1.2",
     "babel-plugin-transform-object-assign": "^6.8.0",
@@ -41,7 +40,7 @@
     "babelify": "^7.3.0",
     "bluebird": "^3.4.6",
     "browserify": "^13.1.0",
-    "chai": "^2.3.0",
+    "chai": "^4.1.2",
     "coveralls": "^2.11.16",
     "eslint": "^1.10.3",
     "istanbul": "^0.4.5",
@@ -53,7 +52,9 @@
     "karma-mocha": "^1.2.0",
     "karma-phantomjs-launcher": "^1.0.2",
     "mocha": "^4.0.1",
-    "sinon": "^1.17.0",
+    "node-fetch": "^2.0.0-alpha.9",
+    "sinon": "^4.1.3",
+    "sinon-chai": "^2.14.0",
     "watchify": "^3.7.0",
     "whatwg-fetch": "^0.10.1"
   }

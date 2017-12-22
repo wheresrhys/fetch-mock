@@ -1,6 +1,6 @@
 // can probably use tests very similar to existing ones
 // , flush
-
+// write some really exhaustive tests for called, calls, etc...
 
 			// 	describe('flush', () => {
 			// 		it('flush resolves if all fetches have resolved', () => {
@@ -105,3 +105,19 @@
 							expect(Object.keys(fetchMock._calls).some(key => key === fourth.toString())).to.be.true;
 						});
 				});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -6,141 +6,112 @@ const sinon = require('sinon');
 // all existing router tests
 // + new tests for overwriting routes
 // + once, getOnce etc
+// + remember to test explicitly named routes
 
 module.exports = (fetchMock, Request) => {
-	describe('routing', () => {
+	describe.only('routing', () => {
 		let fm;
 		before(() => {
 			fm = fetchMock.createInstance();
 			fm.config.warnOnUnmatched = false;
 		});
+
 		afterEach(() => fm.restore());
 
-		it('match exact strings', async () => {
+		describe('string matching', () => {
+			it('match exact strings', async () => {
 
-			fm
-				.mock('http://it.at.there/', 200)
-				.catch();
+				fm
+					.mock('http://it.at.there/', 200)
+					.catch();
 
-			const [f1, f2] = await Promise.all([
-				fm.fetchHandler('http://it.at.there/'),
-				fm.fetchHandler('http://it.at.there/abouts'),
-				fm.fetchHandler('http://it.at.the')
-			]);
+				await Promise.all([
+					fm.fetchHandler('http://it.at.there/'),
+					fm.fetchHandler('http://it.at.there/abouts'),
+					fm.fetchHandler('http://it.at.the')
+				]);
 
-			expect(fm.calls('http://it.at.there/').length).to.equal(1);
-			expect(fm.calls().unmatched.length).to.equal(2);
-		});
+				expect(fm.calls('http://it.at.there/').length).to.equal(1);
+			});
 
+			it('match begin: keyword', async () => {
+				fm
+					.mock('begin:http://it.at.there', 200)
+					.catch();
 
-
-		describe('string matcher keywords', () => {
-			it('match begin: keyword', () => {
-				fm.mock('begin:http://it.at.there', 200).catch();
-
-				return Promise.all([
+				await Promise.all([
 					fm.fetchHandler('http://it.at.there'),
 					fm.fetchHandler('http://it.at.thereabouts'),
 					fm.fetchHandler('http://it.at.hereabouts')
 				])
-					.then(function () {
-						expect(fm.called('route')).to.be.true;
-						expect(fm.calls('route').length).to.equal(2);
-						expect(fm.calls('route')[0][0]).to.equal('http://it.at.there');
-					});
+				expect(fm.calls('begin:http://it.at.there').length).to.equal(2);
 			});
 
-			it('match end: keyword', () => {
-				fm.mock({
-					name: 'route',
-					matcher: 'end:hereabouts',
-					response: 'ok'
-				}).catch();
-				return Promise.all([
+			it('match end: keyword', async () => {
+				fm
+					.mock('end:there', 200)
+					.catch();
+
+				await Promise.all([
 					fm.fetchHandler('http://it.at.there'),
 					fm.fetchHandler('http://it.at.thereabouts'),
-					fm.fetchHandler('http://it.at.hereabouts')
+					fm.fetchHandler('http://it.at.here')
 				])
-					.then(function () {
-						expect(fm.called('route')).to.be.true;
-						expect(fm.calls('route').length).to.equal(2);
-						expect(fm.calls('route')[0][0]).to.equal('http://it.at.thereabouts');
-					});
+
+				expect(fm.calls('end:there').length).to.equal(1);
 			});
 
-			it('match glob: keyword', () => {
-				fm.mock({
-					name: 'route',
-					matcher: 'glob:/its/*/*',
-					response: 'ok'
-				}).catch();
-				return Promise.all([
+			it('match glob: keyword', async () => {
+				fm
+					.mock('glob:/its/*/*', 200)
+					.catch();
+
+				await Promise.all([
 					fm.fetchHandler('/its/a/boy'),
 					fm.fetchHandler('/its/a/girl'),
 					fm.fetchHandler('/its/alive')
 				])
-					.then(function () {
-						expect(fm.called('route')).to.be.true;
-						expect(fm.calls('route').length).to.equal(2);
-						expect(fm.calls('route')[0][0]).to.equal('/its/a/boy');
-					});
+				expect(fm.calls('glob:/its/*/*').length).to.equal(2);
 			});
 
-			it('match express: keyword', () => {
-				fm.mock({
-					name: 'route',
-					matcher: 'express:/its/:word',
-					response: 'ok'
-				}).catch();
-				return Promise.all([
+			it('match express: keyword', async () => {
+				fm
+					.mock('express:/its/:word', 200)
+					.catch();
+
+				await  Promise.all([
 					fm.fetchHandler('/its/a/boy'),
 					fm.fetchHandler('/its/a/girl'),
 					fm.fetchHandler('/its/alive')
 				])
-					.then(function () {
-						expect(fm.called('route')).to.be.true;
-						expect(fm.calls('route').length).to.equal(1);
-						expect(fm.calls('route')[0][0]).to.equal('/its/alive');
-					});
+
+				expect(fm.calls('express:/its/:word').length).to.equal(1);
+			});
+
+			it('match wildcard string', async () => {
+				fm
+					.mock('*', 200);
+
+				await fm.fetchHandler('http://it.at.there');
+				expect(fm.calls('*').length).to.equal(1);
+			});
+
+			it('match regular expressions', async () => {
+				fm
+					.mock(/http\:\/\/it\.at\.there\/\d+/, 200)
+					.catch();
+				await Promise.all([
+					fm.fetchHandler('http://it.at.there/'),
+					fm.fetchHandler('http://it.at.there/12345'),
+					fm.fetchHandler('http://it.at.there/abcde')
+				])
+				expect(fm.calls(/http\:\/\/it\.at\.there\/\d+/.toString()).length).to.equal(1);
 			});
 
 		});
 
 
-		// 		it('match wildcard string', () => {
-		// 			fm.mock({
-		// 				name: 'route',
-		// 				matcher: '*',
-		// 				response: 'ok'
-		// 			}).catch();
-		// 			return Promise.all([
-		// 				fm.fetchHandler('http://it.at.there'),
-		// 				fm.fetchHandler('http://it.at.thereabouts'),
-		// 				fm.fetchHandler('http://it.at.hereabouts')]
-		// 			)
-		// 				.then(() => {
-		// 					expect(fm.called()).to.be.true;
-		// 					expect(fm.called('route')).to.be.true;
-		// 					expect(fm.calls().matched.length).to.equal(3);
-		// 					expect(fm.calls('route').length).to.equal(3);
-		// 				});
-		// 		});
 
-		// 		it('match regular expressions', () => {
-		// 			fm.mock({
-		// 				name: 'route',
-		// 				matcher: /http\:\/\/it\.at\.there\/\d+/,
-		// 				response: 'ok'
-		// 			}).catch();
-		// 			return Promise.all([fm.fetchHandler('http://it.at.there/'), fm.fetchHandler('http://it.at.there/12345'), fm.fetchHandler('http://it.at.there/abcde')])
-		// 				.then(() => {
-		// 					expect(fm.called()).to.be.true;
-		// 					expect(fm.called('route')).to.be.true;
-		// 					expect(fm.calls('route').length).to.equal(1);
-		// 					expect(fm.calls().matched.length).to.equal(1);
-		// 					expect(fm.calls().unmatched.length).to.equal(2);
-		// 				});
-		// 		});
 
 		// 		it('match using custom functions', () => {
 		// 			fm.mock({

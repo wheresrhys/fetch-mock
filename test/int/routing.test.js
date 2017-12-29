@@ -345,54 +345,40 @@ module.exports = (fetchMock, Request) => {
 
 		describe('unmatched calls', () => {
 
-			// it('throws if any calls unmatched', async () => {
-			// 	fm.mock(/a/, 200);
-			// 	expect(async () => {
-			// 		await fm.fetchHandler('http://1')
-			// 	}).to.throw;
-			// });
+			it('throws if any calls unmatched', async () => {
+				fm.mock(/a/, 200);
+				expect(async () => {
+					await fm.fetchHandler('http://1')
+				}).to.throw;
+			});
 
-			// it('can catch unmatched calls with empty 200', async () => {
-			// 	fm
-			// 		.catch()
-			// 		.mock(/a/, 200);
-			// 	await fm.fetchHandler('http://1')
-			// 		.then(res => {
-			// 			expect(fm.called()).to.be.true;
-			// 			expect(fm.calls().unmatched.length).to.equal(1);
-			// 			expect(res.status).to.equal(200);
-			// 		});
-			// });
+			it('catch unmatched calls with empty 200 by default', async () => {
+				fm
+					.catch();
 
-			// it('can catch unmatched calls with custom response', () => {
-			// 	fm
-			// 		.catch({iam: 'json'})
-			// 		.mock(/a/, 200);
-			// 	returnawait fm.fetchHandler('http://1')
-			// 		.then(res => {
-			// 			expect(fm.called()).to.be.true;
-			// 			expect(fm.calls().unmatched.length).to.equal(1);
-			// 			expect(res.status).to.equal(200);
-			// 			return res.json().then(json => {
-			// 				expect(json).to.eql({iam: 'json'});
-			// 			});
-			// 		});
-			// });
+				const res = await fm.fetchHandler('http://1');
+				expect(fm.calls().unmatched.length).to.equal(1);
+				expect(res.status).to.equal(200);
+			});
 
-			// it('can catch unmatched calls with function', () => {
-			// 	fm
-			// 		.catch(() => new Response('i am text', {status: 200	}))
-			// 		.mock(/a/, 200);
-			// 	returnawait fm.fetchHandler('http://1')
-			// 		.then(res => {
-			// 			expect(fm.called()).to.be.true;
-			// 			expect(fm.calls().unmatched.length).to.equal(1);
-			// 			expect(res.status).to.equal(200);
-			// 			return res.text().then(text => {
-			// 				expect(text).to.equal('i am text');
-			// 			});
-			// 		});
-			// });
+			it('can catch unmatched calls with custom response', async () => {
+				fm
+					.catch({iam: 'json'});
+
+				const res = await fm.fetchHandler('http://1');
+				expect(fm.calls().unmatched.length).to.equal(1);
+				expect(res.status).to.equal(200);
+				expect(await res.json()).to.eql({iam: 'json'});
+			});
+
+			it('can catch unmatched calls with function', async () => {
+				fm
+					.catch(() => new fm.config.Response('i am text', {status: 200	}));
+				const res = await fm.fetchHandler('http://1')
+				expect(fm.calls().unmatched.length).to.equal(1);
+				expect(res.status).to.equal(200);
+				expect(await res.text()).to.equal('i am text');
+			});
 
 		});
 
@@ -443,54 +429,6 @@ module.exports = (fetchMock, Request) => {
 		// 		});
 
 
-
-		// 	describe('unmatched routes', () => {
-
-
-
-
-
-		// 	});
-
-
-
-
-
-
-		// describe('catch()', () => {
-		// 	it('can catch all calls to fetch with good response by default', () => {
-		// 		fm.catch();
-		// 		returnawait fm.fetchHandler('http://place.com/')
-		// 			.then(res => {
-		// 				expect(res.status).to.equal(200);
-		// 				expect(fm.calls().unmatched[0]).to.eql([ 'http://place.com/', undefined ])
-		// 			})
-		// 	})
-
-		// 	it('can catch all calls to fetch with custom response', () => {
-		// 		fm.catch(Promise.resolve('carrot'));
-		// 		returnawait fm.fetchHandler('http://place.com/')
-		// 			.then(res => {
-		// 				expect(res.status).to.equal(200);
-		// 				expect(fm.calls().unmatched[0]).to.eql([ 'http://place.com/', undefined ])
-		// 				return res.text()
-		// 					.then(text => expect(text).to.equal('carrot'))
-		// 			})
-		// 	})
-
-		// 	it('can call catch after calls to mock', () => {
-		// 		fm
-		// 			.mock('http://other-place.com', 404)
-		// 			.catch();
-		// 		returnawait fm.fetchHandler('http://place.com/')
-		// 			.then(res => {
-		// 				expect(res.status).to.equal(200);
-		// 				expect(fm.calls().unmatched[0]).to.eql([ 'http://place.com/', undefined ])
-		// 			})
-		// 	})
-
-
-		// });
 			it('REGRESSION: match relative urls', async () => {
 				fm
 					.mock('/it.at.there/', 200)

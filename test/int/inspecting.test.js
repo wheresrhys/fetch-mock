@@ -5,7 +5,7 @@
 // + remember to test explicitly named routes
 // cover case where GET, POST etc are differently named routes
 // ... maybe accept method as second argument to calls, called etc
-
+// consider case where multiple routes match.. make sure only one matcher logs calls
 		// 		it('falls back to matcher.toString() as a name', () => {
 		// 			expect(() => {
 		// 				fm.mock({matcher: 'http://it.at.there/', response: 'ok'});

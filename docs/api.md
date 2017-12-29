@@ -100,8 +100,8 @@ Chainable method that clears all data recorded for `fetch()`'s calls
 **For the methods below `matcherName`, if given, should be either**
 - the name of a route (see advanced usage below) 
 - equal to `matcher.toString()` for any unnamed route. You _can_ pass in the original regex or function used as a matcher, but they will be converted to strings and used to look up values in fetch-mock's internal maps of calls, rather than used as regexes or functions
-- `true` to retrieve results for matched calls only
 - `false` to retrieve results for unmatched calls only
+By default all matched responses are returned
 
 #### `called(matcherName)`
 Returns a Boolean indicating whether fetch was called and a route was matched. If `matcherName` is specified it only returns `true` if that particular route was matched.

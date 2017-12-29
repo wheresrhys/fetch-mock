@@ -343,6 +343,29 @@ module.exports = (fetchMock, Request) => {
 			});
 		});
 
+		describe('multiple routes', () => {
+			it('match several routes with one instance', async () => {
+				fm
+					.mock('http://it.at.here/', 200)
+					.mock('http://it.at.there/', 200);
+
+				await fm.fetchHandler('http://it.at.here/');
+				expect(fm.calls().matched.length).to.equal(1);
+				await fm.fetchHandler('http://it.at.there/');
+				expect(fm.calls().matched.length).to.equal(2);
+			});
+
+			it('match first route that matches', async () => {
+				fm
+					.mock('http://it.at.there/', 200)
+					.mock('begin:http://it.at.there/', 300);
+
+				const res = await fm.fetchHandler('http://it.at.there/');
+				expect(fm.calls().matched.length).to.equal(1);
+				expect(res.status).to.equal(200)
+			});
+		});
+
 		describe('unmatched calls', () => {
 
 			it('throws if any calls unmatched', async () => {
@@ -382,71 +405,26 @@ module.exports = (fetchMock, Request) => {
 
 		});
 
-		describe('multiple routes', () => {
-
-		})
-
-		// 		it('match multiple routes', () => {
-		// 			fm.mock({
-		// 					name: 'route1',
-		// 					matcher: 'http://it.at.there/',
-		// 					response: 'ok'
-		// 				}).mock({
-		// 					name: 'route2',
-		// 					matcher: 'http://it.at.here/',
-		// 					response: 'ok'
-		// 				}).catch();
-		// 			return Promise.all(await fm.fetchHandler('http://it.at.there/'),await fm.fetchHandler('http://it.at.here/'),await fm.fetchHandler('http://it.at.nowhere')])
-		// 				.then(() => {
-		// 					expect(fm.called()).to.be.true;
-		// 					expect(fm.called('route1')).to.be.true;
-		// 					expect(fm.called('route2')).to.be.true;
-		// 					expect(fm.calls('route1').length).to.equal(1);
-		// 					expect(fm.calls('route2').length).to.equal(1);
-		// 					expect(fm.calls().matched.length).to.equal(2);
-		// 					expect(fm.calls().unmatched.length).to.equal(1);
-		// 				});
-		// 		});
-
-		// 		it('match first compatible route when many routes match', () => {
-		// 			fm.mock({
-		// 					name: 'route1',
-		// 					matcher: 'http://it.at.there/',
-		// 					response: 'ok'
-		// 				}).mock({
-		// 					name: 'route2',
-		// 					matcher: 'begin:http://it.at.there/',
-		// 					response: 'ok'
-		// 				}).catch();
-		// 			return Promise.all(await fm.fetchHandler('http://it.at.there/')])
-		// 				.then(() => {
-		// 					expect(fm.called()).to.be.true;
-		// 					expect(fm.called('route1')).to.be.true;
-		// 					expect(fm.calls('route1').length).to.equal(1);
-		// 					expect(fm.calls().matched.length).to.equal(1);
-		// 					expect(fm.calls('route2').length).to.equal(0);
-		// 				});
-		// 		});
-
-
-			it('REGRESSION: match relative urls', async () => {
+		describe('edge cases', () => {
+			it('match relative urls', async () => {
 				fm
 					.mock('/it.at.there/', 200)
 					.catch();
 
 				await fm.fetchHandler('/it.at.there/')
-				expect(fm.calls('/it.at.there/').length).to.equal(1);
+				expect(fm.calls().matched.length).to.equal(1);
 			});
 
-			it('REGRESSION: match when called with Request', async () => {
+			it('match when called with Request', async () => {
 				fm
 					.post('http://it.at.there/', 200)
 					.catch();
 
-				await fm.fetchHandler(new Request('http://it.at.there/', {method: 'POST'}));
-				await fm.fetchHandler(new Request('http://it.at.there/', {method: 'GET'}));
-				expect(fm.calls('http://it.at.there/').length).to.equal(1);
+				await fm.fetchHandler(new fm.config.Request('http://it.at.there/', {method: 'POST'}));
+				expect(fm.calls().matched.length).to.equal(1);
 			});
+		});
+
 
 	});
 }

@@ -3,9 +3,7 @@ chai.use(require('sinon-chai'));
 const expect = chai.expect;
 const sinon = require('sinon');
 
-// + new tests for overwriting routes
-
-module.exports = (fetchMock, Request) => {
+module.exports = (fetchMock) => {
 	describe.only('routing', () => {
 		let fm;
 		before(() => {
@@ -364,6 +362,20 @@ module.exports = (fetchMock, Request) => {
 				expect(fm.calls().matched.length).to.equal(1);
 				expect(res.status).to.equal(200)
 			});
+
+			describe.skip('duplicate routes', () => {
+				it('error when duplicate route added', async () => {
+
+				});
+
+				it('allow overwriting existing route', async () => {
+
+				});
+
+				it('allow adding additional route with same matcher', async () => {
+
+				});
+			})
 		});
 
 		describe('unmatched calls', () => {
@@ -424,7 +436,5 @@ module.exports = (fetchMock, Request) => {
 				expect(fm.calls().matched.length).to.equal(1);
 			});
 		});
-
-
 	});
 }

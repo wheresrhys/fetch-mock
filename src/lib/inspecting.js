@@ -11,12 +11,20 @@ FetchMock.lastCall = function (name) {
 	return [...this.calls(name)].pop();
 }
 
+FetchMock.normalizeLastCall = function (name) {
+	const call = this.lastCall(name) || [];
+	if (this.config.Request.prototype.isPrototypeOf(call[0])) {
+		return [call[0].url, call[0]];
+	}
+	return call;
+}
+
 FetchMock.lastUrl = function (name) {
-	return (this.lastCall(name) || [])[0]
+	return this.normalizeLastCall(name)[0];
 }
 
 FetchMock.lastOptions = function (name) {
-	return (this.lastCall(name) || [])[1]
+	return this.normalizeLastCall(name)[1];
 }
 
 FetchMock.called = function (name) {

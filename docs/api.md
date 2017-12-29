@@ -117,10 +117,10 @@ Returns an object `{matched: [], unmatched: []}` containing arrays of all calls 
 Returns the arguments for the last matched call to fetch
 
 #### `lastUrl(matcherName)`
-Returns the url for the last matched call to fetch
+Returns the url for the last matched call to fetch. When `fetch` was last called using a `Request` instance, the url will be extracted from this
 
 #### `lastOptions(matcherName)`
-Returns the options for the last matched call to fetch
+Returns the options for the last matched call to fetch. When `fetch` was last called using a `Request` instance, the entire `Request` instance will be returned
 
 ## Config
 

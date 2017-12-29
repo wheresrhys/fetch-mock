@@ -152,25 +152,36 @@ module.exports = (fetchMock) => {
 
 		});
 
-		describe.skip('retrieving call parameters', () => {
-			it('calls (call history)', async () => {
-
+		describe('retrieving call parameters', () => {
+			before(() => {
+				fm.mock('http://it.at.here/', 200);
+				fm.fetchHandler('http://it.at.here/');
+				fm.fetchHandler('http://it.at.here/', {method: 'POST'});
+			})
+			after(() => fm.restore());
+			it('calls (call history)', () => {
+				expect(fm.calls()[0]).to.eql(['http://it.at.here/', undefined]);
+				expect(fm.calls()[1]).to.eql(['http://it.at.here/', {method: 'POST'}]);
 			});
 
-			it('lastCall', async () => {
-
+			it('lastCall', () => {
+				expect(fm.lastCall()).to.eql(['http://it.at.here/', {method: 'POST'}]);
 			});
 
-			it('lastOptions', async () => {
-
+			it('lastOptions', () => {
+				expect(fm.lastOptions()).to.eql({method: 'POST'});
 			});
 
-			it('lastUrl', async () => {
-
+			it('lastUrl', () => {
+				expect(fm.lastUrl()).to.eql('http://it.at.here/');
 			});
 
-			describe('when called with Request instance', () => {
-
+			it('when called with Request instance', () => {
+				const req = new fm.config.Request('http://it.at.here/', {method: 'POST'});
+				fm.fetchHandler(req);
+				expect(fm.lastCall()).to.eql([req, undefined]);
+				expect(fm.lastUrl()).to.equal('http://it.at.here/');
+				expect(fm.lastOptions()).to.equal(req);
 			});
 
 		})
@@ -226,30 +237,3 @@ module.exports = (fetchMock) => {
 		});
 	});
 };
-
-
-
-				// it('have helpers to retrieve paramaters pf last call', () => {
-				// 	fetchMock.mock({
-				// 		name: 'route',
-				// 		matcher: 'begin:http://it.at.there',
-				// 		response: 200
-				// 	});
-				// 	// fail gracefully
-				// 	expect(() => {
-				// 		fetchMock.lastCall();
-				// 		fetchMock.lastUrl();
-				// 		fetchMock.lastOptions();
-				// 	}).to.not.throw;
-				// 	return Promise.all([
-				// 		fetch('http://it.at.there/first', {method: 'DELETE'}),
-				// 		fetch('http://it.at.there/second', {method: 'GET'})
-				// 	])
-				// 		.then(() => {
-				// 			expect(fetchMock.lastCall('route')).to.deep.equal(['http://it.at.there/second', {method: 'GET'}]);
-				// 			expect(fetchMock.lastCall()).to.deep.equal(['http://it.at.there/second', {method: 'GET'}]);
-				// 			expect(fetchMock.lastUrl()).to.equal('http://it.at.there/second');
-				// 			expect(fetchMock.lastOptions()).to.deep.equal({method: 'GET'});
-				// 		});
-
-				// })

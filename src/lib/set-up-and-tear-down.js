@@ -58,7 +58,7 @@ FetchMock.once = function (matcher, response, options) {
 	return this.mock(matcher, response, Object.assign({}, options, {repeat: 1}));
 };
 
-['get','post','put','delete','head', 'patch']
+['get', 'post', 'put', 'delete', 'head', 'patch']
 	.forEach(method => {
 		FetchMock[method] = function (matcher, response, options) {
 			return this.mock(matcher, response, Object.assign({}, options, {method: method.toUpperCase()}));

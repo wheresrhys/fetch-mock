@@ -1,6 +1,18 @@
 // can probably use tests very similar to existing ones
 // , flush
 // write some really exhaustive tests for called, calls, etc...
+// cover new case where true and false can be passed to calls and called
+// + remember to test explicitly named routes
+// cover case where GET, POST etc are differently named routes
+// ... maybe accept method as second argument to calls, called etc
+
+		// 		it('falls back to matcher.toString() as a name', () => {
+		// 			expect(() => {
+		// 				fm.mock({matcher: 'http://it.at.there/', response: 'ok'});
+		// 			}).not.to.throw();
+		// 		await fm.fetchHandler('http://it.at.there/');
+		// 			expect(fm.calls('http://it.at.there/').length).to.equal(1);
+		// 		});
 
 			// 	describe('flush', () => {
 			// 		it('flush resolves if all fetches have resolved', () => {
@@ -110,8 +122,42 @@
 
 
 
+	// 		it('record history of unmatched routes', () => {
+		// 			fm
+		// 				.catch()
+		// 				.mock(/a/, 200);
+		// 			return Promise.all([
+		// 			await fm.fetchHandler('http://1', {method: 'GET'}),
+		// 			await fm.fetchHandler('http://2', {method: 'POST'})
+		// 			])
+		// 				.then(() => {
+		// 					expect(fm.called()).to.be.true;
+		// 					const unmatchedCalls = fm.calls().unmatched;
+		// 					expect(unmatchedCalls.length).to.equal(2);
+		// 					expect(unmatchedCalls[0]).to.eql(['http://1', {method: 'GET'}]);
+		// 					expect(unmatchedCalls[1]).to.eql(['http://2', {method: 'POST'}]);
+		// 				})
+
+		// 		});
 
 
+
+
+		// 		it('record history of calls to matched routes', () => {
+		// 			fm.mock({
+		// 				name: 'route',
+		// 				matcher: 'begin:http://it.at.there',
+		// 				response: 'ok'
+		// 			}).catch();
+		// 			return Promise.all(await fm.fetchHandler('http://it.at.there/'),await fm.fetchHandler('http://it.at.thereabouts', {headers: {head: 'val'}})])
+		// 				.then(() => {
+		// 					expect(fm.called()).to.be.true;
+		// 					expect(fm.called('route')).to.be.true;
+		// 					expect(fm.calls().matched.length).to.equal(2);
+		// 					expect(fm.calls('route')[0]).to.eql(['http://it.at.there/', undefined]);
+		// 					expect(fm.calls('route')[1]).to.eql(['http://it.at.thereabouts', {headers: {head: 'val'}}]);
+		// 				});
+		// 		});
 
 
 

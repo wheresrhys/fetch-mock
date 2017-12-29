@@ -63,7 +63,6 @@ function getHeaderMatcher ({ headers: expectedHeaders }, Headers) {
 	const expectation = headersToLowerCase(expectedHeaders);
 
 	return ({ headers = {} }) => {
-
 		if (headers instanceof Headers) {
 			headers = headers.raw();
 		}

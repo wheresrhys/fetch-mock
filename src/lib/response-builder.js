@@ -45,7 +45,7 @@ module.exports = class ResponseBuilder {
 			return status;
 		}
 
-		throw new TypeError(`Invalid status ${responseConfig.status} passed on response object.
+		throw new TypeError(`Invalid status ${status} passed on response object.
 To respond with a JSON object that has status as a property assign the object to body
 e.g. {"body": {"status: "registered"}}`);
 	}

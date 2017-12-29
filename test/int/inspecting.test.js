@@ -6,6 +6,109 @@
 // cover case where GET, POST etc are differently named routes
 // ... maybe accept method as second argument to calls, called etc
 // consider case where multiple routes match.. make sure only one matcher logs calls
+const chai = require('chai');
+chai.use(require('sinon-chai'));
+const expect = chai.expect;
+const sinon = require('sinon');
+
+module.exports = (fetchMock) => {
+	describe('inspecting', () => {
+		let fm;
+		before(() => {
+			fm = fetchMock.createInstance();
+			fm.config.warnOnUnmatched = false;
+		});
+
+		describe('filtering', () => {
+			before(async () => {
+				fm
+					.mock('http://it.at.here/', 200)
+					.mock('http://it.at.there/', 200)
+					.mock('http://it.at.thereabouts/', 200)
+					.catch();
+
+				await fm.fetchHandler('http://it.at.here/', {method: 'get'})
+				await fm.fetchHandler('http://it.at.here/', {method: 'get'})
+				await fm.fetchHandler('http://it.at.there/', {method: 'get'})
+			});
+			after(() => fm.restore());
+
+			it('`called` filters on match types', () => {
+				expect(fm.called()).to.be.true;
+				expect(fm.called(true)).to.be.true;
+				expect(fm.called('http://it.at.here/')).to.be.true;
+				expect(fm.called('http://it.at.thereabouts/')).to.be.false;
+				expect(fm.called(false)).to.be.false;
+			});
+
+			it('`calls` filters on match types', () => {
+				expect(fm.calls().length).to.equal(3);
+				expect(fm.calls(true).length).to.equal(3);
+				expect(fm.calls('http://it.at.here/').length).to.equal(2);
+				expect(fm.calls('http://it.at.there/').length).to.equal(1);
+				expect(fm.calls('http://it.at.thereabouts/').length).to.equal(0);
+				expect(fm.calls(false).length).to.equal(0);
+			});
+
+			it('`lastCall` filters on match types', () => {
+				expect(fm.lastCall()).to.exist;
+				expect(fm.lastCall(true)).to.exist;
+				expect(fm.lastCall('http://it.at.here/')).to.exist;
+				expect(fm.lastCall('http://it.at.there/')).to.exist;
+				expect(fm.lastCall('http://it.at.thereabouts/')).not.to.exist;
+				expect(fm.lastCall(false)).not.to.exist;
+			});
+
+			it('`lastUrl` filters on match types', () => {
+				expect(fm.lastUrl()).to.exist;
+				expect(fm.lastUrl(true)).to.exist;
+				expect(fm.lastUrl('http://it.at.here/')).to.exist;
+				expect(fm.lastUrl('http://it.at.there/')).to.exist;
+				expect(fm.lastUrl('http://it.at.thereabouts/')).not.to.exist;
+				expect(fm.lastUrl(false)).not.to.exist;
+			});
+
+			it('`lastOptions` filters on match types', () => {
+				expect(fm.lastOptions()).to.exist;
+				expect(fm.lastOptions(true)).to.exist;
+				expect(fm.lastOptions('http://it.at.here/')).to.exist;
+				expect(fm.lastOptions('http://it.at.there/')).to.exist;
+				expect(fm.lastOptions('http://it.at.thereabouts/')).not.to.exist;
+				expect(fm.lastOptions(false)).not.to.exist;
+			});
+
+			describe('when unmatched calls exist', () => {
+				before(async () => {
+					await fm.fetchHandler('http://it.at.where/', {method: 'get'})
+				});
+				it('`called` filters on match types', () => {
+					expect(fm.called(false)).to.be.true;
+				});
+
+				it('`calls` filters on match types', () => {
+					expect(fm.calls(false).length).to.equal(1);
+				});
+
+				it('`lastCall` filters on match types', () => {
+					expect(fm.lastCall(false)).to.exist;
+				});
+
+				it('`lastUrl` filters on match types', () => {
+					expect(fm.lastUrl(false)).to.exist;
+				});
+
+				it('`lastOptions` filters on match types', () => {
+					expect(fm.lastOptions(false)).to.exist;
+				});
+			});
+		});
+
+		describe('route names', () => {
+
+		});
+	});
+};
+
 		// 		it('falls back to matcher.toString() as a name', () => {
 		// 			expect(() => {
 		// 				fm.mock({matcher: 'http://it.at.there/', response: 'ok'});
@@ -94,29 +197,29 @@
 
 
 
-			it('record history of calls to unnamed matched routes', function () {
-					const fourth = function (url) { return /fourth/.test(url) };
+			// it('record history of calls to unnamed matched routes', function () {
+			// 		const fourth = function (url) { return /fourth/.test(url) };
 
-					fetchMock
-						.mock('http://it.at.there/first', 200)
-						.mock('begin:http://it.at.there', 200)
-						.mock(/third/, 200)
-						.mock(fourth, 200)
+			// 		fetchMock
+			// 			.mock('http://it.at.there/first', 200)
+			// 			.mock('begin:http://it.at.there', 200)
+			// 			.mock(/third/, 200)
+			// 			.mock(fourth, 200)
 
-					return Promise.all([
-						fetch('http://it.at.there/first'),
-						fetch('http://it.at.there/second'),
-						fetch('http://it.at.here/third'),
-						fetch('http://it.at.here/fourth')
-					])
-						.then(function () {
-							expect(fetchMock.called('http://it.at.there/first')).to.be.true;
-							expect(fetchMock.called('begin:http://it.at.there')).to.be.true;
-							expect(fetchMock.called('/third/')).to.be.true;
-							// cope with babelified and various browser quirks version of the function
-							expect(Object.keys(fetchMock._calls).some(key => key === fourth.toString())).to.be.true;
-						});
-				});
+			// 		return Promise.all([
+			// 			fetch('http://it.at.there/first'),
+			// 			fetch('http://it.at.there/second'),
+			// 			fetch('http://it.at.here/third'),
+			// 			fetch('http://it.at.here/fourth')
+			// 		])
+			// 			.then(function () {
+			// 				expect(fetchMock.called('http://it.at.there/first')).to.be.true;
+			// 				expect(fetchMock.called('begin:http://it.at.there')).to.be.true;
+			// 				expect(fetchMock.called('/third/')).to.be.true;
+			// 				// cope with babelified and various browser quirks version of the function
+			// 				expect(Object.keys(fetchMock._calls).some(key => key === fourth.toString())).to.be.true;
+			// 			});
+			// 	});
 
 
 

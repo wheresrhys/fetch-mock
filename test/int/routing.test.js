@@ -21,10 +21,10 @@ module.exports = (fetchMock) => {
 					.catch();
 
 				await fm.fetchHandler('http://it.at.there/');
-				expect(fm.calls().matched.length).to.equal(1);
+				expect(fm.calls(true).length).to.equal(1);
 				await fm.fetchHandler('http://it.at.there/abouts');
 				await fm.fetchHandler('http://it.at.the');
-				expect(fm.calls().matched.length).to.equal(1);
+				expect(fm.calls(true).length).to.equal(1);
 			});
 
 			it('match begin: keyword', async () => {
@@ -33,11 +33,11 @@ module.exports = (fetchMock) => {
 					.catch();
 
 				await fm.fetchHandler('http://it.at.there');
-				expect(fm.calls().matched.length).to.equal(1);
+				expect(fm.calls(true).length).to.equal(1);
 				await fm.fetchHandler('http://it.at.thereabouts');
-				expect(fm.calls().matched.length).to.equal(2);
+				expect(fm.calls(true).length).to.equal(2);
 				await fm.fetchHandler('http://it.at.hereabouts');
-				expect(fm.calls().matched.length).to.equal(2);
+				expect(fm.calls(true).length).to.equal(2);
 			});
 
 			it('match end: keyword', async () => {
@@ -46,10 +46,10 @@ module.exports = (fetchMock) => {
 					.catch();
 
 				await fm.fetchHandler('http://it.at.there');
-				expect(fm.calls().matched.length).to.equal(1);
+				expect(fm.calls(true).length).to.equal(1);
 				await fm.fetchHandler('http://it.at.thereabouts');
 				await fm.fetchHandler('http://it.at.here');
-				expect(fm.calls().matched.length).to.equal(1);
+				expect(fm.calls(true).length).to.equal(1);
 			});
 
 			it('match glob: keyword', async () => {
@@ -59,9 +59,9 @@ module.exports = (fetchMock) => {
 
 				await fm.fetchHandler('/its/a/boy');
 				await fm.fetchHandler('/its/a/girl');
-				expect(fm.calls().matched.length).to.equal(2);
+				expect(fm.calls(true).length).to.equal(2);
 				await fm.fetchHandler('/its/alive');
-				expect(fm.calls().matched.length).to.equal(2);
+				expect(fm.calls(true).length).to.equal(2);
 			});
 
 			it('match express: keyword', async () => {
@@ -71,9 +71,9 @@ module.exports = (fetchMock) => {
 
 				await fm.fetchHandler('/its/a/boy');
 				await fm.fetchHandler('/its/a/girl');
-				expect(fm.calls().matched.length).to.equal(0);
+				expect(fm.calls(true).length).to.equal(0);
 				await fm.fetchHandler('/its/alive');
-				expect(fm.calls().matched.length).to.equal(1);
+				expect(fm.calls(true).length).to.equal(1);
 			});
 
 			it('match wildcard string', async () => {
@@ -81,7 +81,7 @@ module.exports = (fetchMock) => {
 					.mock('*', 200);
 
 				await fm.fetchHandler('http://it.at.there');
-				expect(fm.calls().matched.length).to.equal(1);
+				expect(fm.calls(true).length).to.equal(1);
 			});
 
 			it('match regular expressions', async () => {
@@ -91,11 +91,11 @@ module.exports = (fetchMock) => {
 					.catch();
 
 				await fm.fetchHandler('http://it.at.there/');
-				expect(fm.calls().matched.length).to.equal(0);
+				expect(fm.calls(true).length).to.equal(0);
 				await fm.fetchHandler('http://it.at.there/12345');
-				expect(fm.calls().matched.length).to.equal(1);
+				expect(fm.calls(true).length).to.equal(1);
 				await fm.fetchHandler('http://it.at.there/abcde');
-				expect(fm.calls().matched.length).to.equal(1);
+				expect(fm.calls(true).length).to.equal(1);
 			});
 		});
 
@@ -110,11 +110,11 @@ module.exports = (fetchMock) => {
 					.catch();
 
 				await fm.fetchHandler('http://it.at.there/12345', {headers:{authorized: true}});
-				expect(fm.calls().matched.length).to.equal(0);
+				expect(fm.calls(true).length).to.equal(0);
 				await fm.fetchHandler('http://it.at.there/logged-in');
-				expect(fm.calls().matched.length).to.equal(0);
+				expect(fm.calls(true).length).to.equal(0);
 				await fm.fetchHandler('http://it.at.there/logged-in', {headers:{authorized: true}});
-				expect(fm.calls().matched.length).to.equal(1);
+				expect(fm.calls(true).length).to.equal(1);
 			});
 
 			describe('headers', () => {
@@ -126,7 +126,7 @@ module.exports = (fetchMock) => {
 						.catch();
 
 					await fm.fetchHandler('http://it.at.there/')
-					expect(fm.calls().matched.length).to.equal(0);
+					expect(fm.calls(true).length).to.equal(0);
 				});
 
 				it('not match when headers don\'t match', async () => {
@@ -139,7 +139,7 @@ module.exports = (fetchMock) => {
 					await fm.fetchHandler('http://it.at.there/', {
 						headers: {a : 'c'}
 					})
-					expect(fm.calls().matched.length).to.equal(0);
+					expect(fm.calls(true).length).to.equal(0);
 				});
 
 				it('match simple headers', async () => {
@@ -152,7 +152,7 @@ module.exports = (fetchMock) => {
 					await fm.fetchHandler('http://it.at.there/', {
 						headers: {a : 'b'}
 					})
-					expect(fm.calls().matched.length).to.equal(1);
+					expect(fm.calls(true).length).to.equal(1);
 				});
 
 				it('be case insensitive', async () => {
@@ -165,7 +165,7 @@ module.exports = (fetchMock) => {
 					await fm.fetchHandler('http://it.at.there/', {
 						headers: { A : 'b'}
 					})
-					expect(fm.calls().matched.length).to.equal(1);
+					expect(fm.calls(true).length).to.equal(1);
 				});
 
 				it('match multivalue headers', async () => {
@@ -178,7 +178,7 @@ module.exports = (fetchMock) => {
 					await fm.fetchHandler('http://it.at.there/', {
 						headers: { a : [ 'b', 'c' ]}
 					})
-					expect(fm.calls().matched.length).to.equal(1);
+					expect(fm.calls(true).length).to.equal(1);
 				});
 
 				it('not match partially satisfied multivalue headers', async () => {
@@ -191,7 +191,7 @@ module.exports = (fetchMock) => {
 					await fm.fetchHandler('http://it.at.there/', {
 						headers: { a : [ 'b', 'c' ]}
 					})
-					expect(fm.calls().matched.length).to.equal(0);
+					expect(fm.calls(true).length).to.equal(0);
 				});
 
 				it('match multiple headers', async () => {
@@ -204,7 +204,7 @@ module.exports = (fetchMock) => {
 					await fm.fetchHandler('http://it.at.there/', {
 						headers: { a : 'b', c: 'd' }
 					})
-					expect(fm.calls().matched.length).to.equal(1);
+					expect(fm.calls(true).length).to.equal(1);
 				});
 
 				it('not match unsatisfied multiple headers', async () => {
@@ -217,7 +217,7 @@ module.exports = (fetchMock) => {
 					await fm.fetchHandler('http://it.at.there/', {
 						headers: { a : 'b' }
 					})
-					expect(fm.calls().matched.length).to.equal(0);
+					expect(fm.calls(true).length).to.equal(0);
 				});
 
 				it('match Headers instance', async () => {
@@ -230,7 +230,7 @@ module.exports = (fetchMock) => {
 					await fm.fetchHandler('http://it.at.there/', {
 						headers: new fm.config.Headers({ a : 'b' })
 					})
-					expect(fm.calls().matched.length).to.equal(1);
+					expect(fm.calls(true).length).to.equal(1);
 				});
 
 				it('match custom Headers instance', async () => {
@@ -256,7 +256,7 @@ module.exports = (fetchMock) => {
 					await customHeaderInstance.fetchHandler('http://it.at.there/', {
 						headers: new customHeaderInstance.config.Headers({ a : 'b' })
 					});
-					expect(customHeaderInstance.calls().matched.length).to.equal(1);
+					expect(customHeaderInstance.calls(true).length).to.equal(1);
 				});
 
 				it('can be used alongside function matchers', async () => {
@@ -265,9 +265,9 @@ module.exports = (fetchMock) => {
 						.catch();
 
 					await fm.fetchHandler('http://domain.com/person');
-					expect(fm.calls().matched.length).to.equal(0);
+					expect(fm.calls(true).length).to.equal(0);
 					await fm.fetchHandler('http://domain.com/person', {headers: {a: 'b'}});
-					expect(fm.calls().matched.length).to.equal(1);
+					expect(fm.calls(true).length).to.equal(1);
 				})
 
 			});
@@ -279,9 +279,9 @@ module.exports = (fetchMock) => {
 						.catch();
 
 					await fm.fetchHandler('http://it.at.there/', {method: 'GET'});
-					expect(fm.calls().matched.length).to.equal(1);
+					expect(fm.calls(true).length).to.equal(1);
 					await fm.fetchHandler('http://it.at.there/', {method: 'POST'});
-					expect(fm.calls().matched.length).to.equal(2);
+					expect(fm.calls(true).length).to.equal(2);
 				});
 
 				it('configure an exact method to match', async () => {
@@ -290,9 +290,9 @@ module.exports = (fetchMock) => {
 						.catch();
 
 					await fm.fetchHandler('http://it.at.there/', {method: 'GET'});
-					expect(fm.calls().matched.length).to.equal(0);
+					expect(fm.calls(true).length).to.equal(0);
 					await fm.fetchHandler('http://it.at.there/', {method: 'POST'});
-					expect(fm.calls().matched.length).to.equal(1);
+					expect(fm.calls(true).length).to.equal(1);
 				});
 
 				it('match implicit GET', async () => {
@@ -301,7 +301,7 @@ module.exports = (fetchMock) => {
 						.catch();
 
 					await fm.fetchHandler('http://it.at.there/');
-					expect(fm.calls().matched.length).to.equal(1);
+					expect(fm.calls(true).length).to.equal(1);
 				});
 
 				it('be case insensitive', async () => {
@@ -311,9 +311,9 @@ module.exports = (fetchMock) => {
 						.catch();
 
 					await fm.fetchHandler('http://it.at.there/', {method: 'post'});
-					expect(fm.calls().matched.length).to.equal(1);
+					expect(fm.calls(true).length).to.equal(1);
 					await fm.fetchHandler('http://it.at.there/', {method: 'PATCH'});
-					expect(fm.calls().matched.length).to.equal(2);
+					expect(fm.calls(true).length).to.equal(2);
 				});
 
 				it('can be used alongside function matchers', async () => {
@@ -322,9 +322,9 @@ module.exports = (fetchMock) => {
 						.catch();
 
 					await fm.fetchHandler('http://domain.com/person');
-					expect(fm.calls().matched.length).to.equal(0);
+					expect(fm.calls(true).length).to.equal(0);
 					await fm.fetchHandler('http://domain.com/person', {method: 'POST'});
-					expect(fm.calls().matched.length).to.equal(1);
+					expect(fm.calls(true).length).to.equal(1);
 				});
 
 				['get', 'post', 'put', 'delete', 'head', 'patch'].forEach(method => {
@@ -333,9 +333,9 @@ module.exports = (fetchMock) => {
 							.catch();
 
 						await fm.fetchHandler('http://it.at.there/', {method: 'bad-method'});
-						expect(fm.calls().matched.length).to.equal(0);
+						expect(fm.calls(true).length).to.equal(0);
 						await fm.fetchHandler('http://it.at.there/', {method});
-						expect(fm.calls().matched.length).to.equal(1);
+						expect(fm.calls(true).length).to.equal(1);
 					});
 				})
 			});
@@ -348,9 +348,9 @@ module.exports = (fetchMock) => {
 					.mock('http://it.at.there/', 200);
 
 				await fm.fetchHandler('http://it.at.here/');
-				expect(fm.calls().matched.length).to.equal(1);
+				expect(fm.calls(true).length).to.equal(1);
 				await fm.fetchHandler('http://it.at.there/');
-				expect(fm.calls().matched.length).to.equal(2);
+				expect(fm.calls(true).length).to.equal(2);
 			});
 
 			it('match first route that matches', async () => {
@@ -359,7 +359,7 @@ module.exports = (fetchMock) => {
 					.mock('begin:http://it.at.there/', 300);
 
 				const res = await fm.fetchHandler('http://it.at.there/');
-				expect(fm.calls().matched.length).to.equal(1);
+				expect(fm.calls(true).length).to.equal(1);
 				expect(res.status).to.equal(200)
 			});
 
@@ -392,7 +392,7 @@ module.exports = (fetchMock) => {
 					.catch();
 
 				const res = await fm.fetchHandler('http://1');
-				expect(fm.calls().unmatched.length).to.equal(1);
+				expect(fm.calls(false).length).to.equal(1);
 				expect(res.status).to.equal(200);
 			});
 
@@ -401,7 +401,7 @@ module.exports = (fetchMock) => {
 					.catch({iam: 'json'});
 
 				const res = await fm.fetchHandler('http://1');
-				expect(fm.calls().unmatched.length).to.equal(1);
+				expect(fm.calls(false).length).to.equal(1);
 				expect(res.status).to.equal(200);
 				expect(await res.json()).to.eql({iam: 'json'});
 			});
@@ -410,7 +410,7 @@ module.exports = (fetchMock) => {
 				fm
 					.catch(() => new fm.config.Response('i am text', {status: 200	}));
 				const res = await fm.fetchHandler('http://1')
-				expect(fm.calls().unmatched.length).to.equal(1);
+				expect(fm.calls(false).length).to.equal(1);
 				expect(res.status).to.equal(200);
 				expect(await res.text()).to.equal('i am text');
 			});
@@ -424,7 +424,7 @@ module.exports = (fetchMock) => {
 					.catch();
 
 				await fm.fetchHandler('/it.at.there/')
-				expect(fm.calls().matched.length).to.equal(1);
+				expect(fm.calls(true).length).to.equal(1);
 			});
 
 			it('match when called with Request', async () => {
@@ -433,7 +433,7 @@ module.exports = (fetchMock) => {
 					.catch();
 
 				await fm.fetchHandler(new fm.config.Request('http://it.at.there/', {method: 'POST'}));
-				expect(fm.calls().matched.length).to.equal(1);
+				expect(fm.calls(true).length).to.equal(1);
 			});
 		});
 	});

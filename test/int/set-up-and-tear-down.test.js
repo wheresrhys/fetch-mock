@@ -173,8 +173,9 @@ module.exports = fetchMock => {
 				expect(fm.called()).to.be.false;
 				expect(fm.called('/a/')).to.be.false;
 				expect(fm.calls('/a/').length).to.equal(0);
-				expect(fm.calls().matched.length).to.equal(0);
-				expect(fm.calls().unmatched.length).to.equal(0);
+				expect(fm.calls(true).length).to.equal(0);
+				expect(fm.calls(false).length).to.equal(0);
+				expect(fm.calls().length).to.equal(0);
 			});
 
 		});

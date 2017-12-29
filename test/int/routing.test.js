@@ -25,12 +25,11 @@ module.exports = (fetchMock, Request) => {
 					.mock('http://it.at.there/', 200)
 					.catch();
 
-				await Promise.all([
-					fm.fetchHandler('http://it.at.there/'),
-					fm.fetchHandler('http://it.at.there/abouts'),
-					fm.fetchHandler('http://it.at.the')
-				]);
+				await fm.fetchHandler('http://it.at.there/');
+				expect(fm.calls('http://it.at.there/').length).to.equal(1);
 
+				await fm.fetchHandler('http://it.at.there/abouts');
+				await fm.fetchHandler('http://it.at.the');
 				expect(fm.calls('http://it.at.there/').length).to.equal(1);
 			});
 
@@ -39,11 +38,11 @@ module.exports = (fetchMock, Request) => {
 					.mock('begin:http://it.at.there', 200)
 					.catch();
 
-				await Promise.all([
-					fm.fetchHandler('http://it.at.there'),
-					fm.fetchHandler('http://it.at.thereabouts'),
-					fm.fetchHandler('http://it.at.hereabouts')
-				])
+				await fm.fetchHandler('http://it.at.there');
+				expect(fm.calls('begin:http://it.at.there').length).to.equal(1);
+				await fm.fetchHandler('http://it.at.thereabouts');
+				expect(fm.calls('begin:http://it.at.there').length).to.equal(2);
+				await fm.fetchHandler('http://it.at.hereabouts');
 				expect(fm.calls('begin:http://it.at.there').length).to.equal(2);
 			});
 
@@ -52,12 +51,10 @@ module.exports = (fetchMock, Request) => {
 					.mock('end:there', 200)
 					.catch();
 
-				await Promise.all([
-					fm.fetchHandler('http://it.at.there'),
-					fm.fetchHandler('http://it.at.thereabouts'),
-					fm.fetchHandler('http://it.at.here')
-				])
-
+				await fm.fetchHandler('http://it.at.there');
+				expect(fm.calls('end:there').length).to.equal(1);
+				await fm.fetchHandler('http://it.at.thereabouts');
+				await fm.fetchHandler('http://it.at.here');
 				expect(fm.calls('end:there').length).to.equal(1);
 			});
 
@@ -66,11 +63,10 @@ module.exports = (fetchMock, Request) => {
 					.mock('glob:/its/*/*', 200)
 					.catch();
 
-				await Promise.all([
-					fm.fetchHandler('/its/a/boy'),
-					fm.fetchHandler('/its/a/girl'),
-					fm.fetchHandler('/its/alive')
-				])
+				await fm.fetchHandler('/its/a/boy');
+				await fm.fetchHandler('/its/a/girl');
+				expect(fm.calls('glob:/its/*/*').length).to.equal(2);
+				await fm.fetchHandler('/its/alive');
 				expect(fm.calls('glob:/its/*/*').length).to.equal(2);
 			});
 
@@ -79,12 +75,10 @@ module.exports = (fetchMock, Request) => {
 					.mock('express:/its/:word', 200)
 					.catch();
 
-				await  Promise.all([
-					fm.fetchHandler('/its/a/boy'),
-					fm.fetchHandler('/its/a/girl'),
-					fm.fetchHandler('/its/alive')
-				])
-
+				await fm.fetchHandler('/its/a/boy');
+				await fm.fetchHandler('/its/a/girl');
+				expect(fm.calls('express:/its/:word').length).to.equal(0);
+				await fm.fetchHandler('/its/alive');
 				expect(fm.calls('express:/its/:word').length).to.equal(1);
 			});
 
@@ -97,15 +91,17 @@ module.exports = (fetchMock, Request) => {
 			});
 
 			it('match regular expressions', async () => {
+				const rx = /http\:\/\/it\.at\.there\/\d+/;
 				fm
-					.mock(/http\:\/\/it\.at\.there\/\d+/, 200)
+					.mock(rx, 200)
 					.catch();
-				await Promise.all([
-					fm.fetchHandler('http://it.at.there/'),
-					fm.fetchHandler('http://it.at.there/12345'),
-					fm.fetchHandler('http://it.at.there/abcde')
-				])
-				expect(fm.calls(/http\:\/\/it\.at\.there\/\d+/.toString()).length).to.equal(1);
+
+				await fm.fetchHandler('http://it.at.there/');
+				expect(fm.calls(rx).length).to.equal(0);
+				await fm.fetchHandler('http://it.at.there/12345');
+				expect(fm.calls(rx).length).to.equal(1);
+				await fm.fetchHandler('http://it.at.there/abcde');
+				expect(fm.calls(rx).length).to.equal(1);
 			});
 
 		});
@@ -122,9 +118,9 @@ module.exports = (fetchMock, Request) => {
 		// 				response: 'ok'
 		// 			}).catch();
 		// 			return Promise.all([
-		// 				fm.fetchHandler('http://it.at.there/logged-in', {headers:{authorized: true}}),
-		// 				fm.fetchHandler('http://it.at.there/12345', {headers:{authorized: true}}),
-		// 				fm.fetchHandler('http://it.at.there/logged-in')
+		// 			await fm.fetchHandler('http://it.at.there/logged-in', {headers:{authorized: true}}),
+		// 			await fm.fetchHandler('http://it.at.there/12345', {headers:{authorized: true}}),
+		// 			await fm.fetchHandler('http://it.at.there/logged-in')
 		// 			])
 		// 				.then(() => {
 		// 					expect(fm.called()).to.be.true;
@@ -148,10 +144,10 @@ module.exports = (fetchMock, Request) => {
 		// 					response: 'ok'
 		// 				}).catch();
 		// 			return Promise.all([
-		// 				fm.fetchHandler('http://it.at.here/', {method: 'put'}),
-		// 				fm.fetchHandler('http://it.at.here/'),
-		// 				fm.fetchHandler('http://it.at.here/', {method: 'GET'}),
-		// 				fm.fetchHandler('http://it.at.here/', {method: 'delete'})
+		// 			await fm.fetchHandler('http://it.at.here/', {method: 'put'}),
+		// 			await fm.fetchHandler('http://it.at.here/'),
+		// 			await fm.fetchHandler('http://it.at.here/', {method: 'GET'}),
+		// 			await fm.fetchHandler('http://it.at.here/', {method: 'delete'})
 		// 			])
 		// 				.then(() => {
 		// 					expect(fm.called()).to.be.true;
@@ -183,10 +179,10 @@ module.exports = (fetchMock, Request) => {
 		// 					response: 'ok'
 		// 				}).catch();
 		// 			return Promise.all([
-		// 				fm.fetchHandler('http://it.at.here/', {headers: {test: 'yes'}}),
-		// 				fm.fetchHandler('http://it.at.here/', {headers: {test: 'else'}}),
-		// 				fm.fetchHandler('http://it.at.here/', {headers: {test: 'else', AGAIN: 'oh yes'}}),
-		// 				fm.fetchHandler('http://it.at.here/')
+		// 			await fm.fetchHandler('http://it.at.here/', {headers: {test: 'yes'}}),
+		// 			await fm.fetchHandler('http://it.at.here/', {headers: {test: 'else'}}),
+		// 			await fm.fetchHandler('http://it.at.here/', {headers: {test: 'else', AGAIN: 'oh yes'}}),
+		// 			await fm.fetchHandler('http://it.at.here/')
 		// 			])
 		// 				.then(() => {
 		// 					expect(fm.called()).to.be.true;
@@ -209,7 +205,7 @@ module.exports = (fetchMock, Request) => {
 		// 					matcher: 'http://it.at.here/',
 		// 					response: 'ok'
 		// 				}).catch();
-		// 			return Promise.all([fm.fetchHandler('http://it.at.there/'), fm.fetchHandler('http://it.at.here/'), fm.fetchHandler('http://it.at.nowhere')])
+		// 			return Promise.all(await fm.fetchHandler('http://it.at.there/'),await fm.fetchHandler('http://it.at.here/'),await fm.fetchHandler('http://it.at.nowhere')])
 		// 				.then(() => {
 		// 					expect(fm.called()).to.be.true;
 		// 					expect(fm.called('route1')).to.be.true;
@@ -231,7 +227,7 @@ module.exports = (fetchMock, Request) => {
 		// 					matcher: 'begin:http://it.at.there/',
 		// 					response: 'ok'
 		// 				}).catch();
-		// 			return Promise.all([fm.fetchHandler('http://it.at.there/')])
+		// 			return Promise.all(await fm.fetchHandler('http://it.at.there/')])
 		// 				.then(() => {
 		// 					expect(fm.called()).to.be.true;
 		// 					expect(fm.called('route1')).to.be.true;
@@ -245,7 +241,7 @@ module.exports = (fetchMock, Request) => {
 		// 			expect(() => {
 		// 				fm.mock({matcher: 'http://it.at.there/', response: 'ok'});
 		// 			}).not.to.throw();
-		// 			fm.fetchHandler('http://it.at.there/');
+		// 		await fm.fetchHandler('http://it.at.there/');
 		// 			expect(fm.calls('http://it.at.there/').length).to.equal(1);
 		// 		});
 
@@ -256,7 +252,7 @@ module.exports = (fetchMock, Request) => {
 		// 				matcher: 'begin:http://it.at.there',
 		// 				response: 'ok'
 		// 			}).catch();
-		// 			return Promise.all([fm.fetchHandler('http://it.at.there/'), fm.fetchHandler('http://it.at.thereabouts', {headers: {head: 'val'}})])
+		// 			return Promise.all(await fm.fetchHandler('http://it.at.there/'),await fm.fetchHandler('http://it.at.thereabouts', {headers: {head: 'val'}})])
 		// 				.then(() => {
 		// 					expect(fm.called()).to.be.true;
 		// 					expect(fm.called('route')).to.be.true;
@@ -272,7 +268,7 @@ module.exports = (fetchMock, Request) => {
 		// 		it('throws if any calls unmatched', () => {
 		// 			fm.mock(/a/, 200);
 		// 			expect(() => {
-		// 				fm.fetchHandler('http://1');
+		// 			await fm.fetchHandler('http://1');
 		// 			}).to.throw;
 		// 		});
 
@@ -280,7 +276,7 @@ module.exports = (fetchMock, Request) => {
 		// 			fm
 		// 				.catch()
 		// 				.mock(/a/, 200);
-		// 			return fm.fetchHandler('http://1')
+		// 			returnawait fm.fetchHandler('http://1')
 		// 				.then(res => {
 		// 					expect(fm.called()).to.be.true;
 		// 					expect(fm.calls().unmatched.length).to.equal(1);
@@ -292,7 +288,7 @@ module.exports = (fetchMock, Request) => {
 		// 			fm
 		// 				.catch({iam: 'json'})
 		// 				.mock(/a/, 200);
-		// 			return fm.fetchHandler('http://1')
+		// 			returnawait fm.fetchHandler('http://1')
 		// 				.then(res => {
 		// 					expect(fm.called()).to.be.true;
 		// 					expect(fm.calls().unmatched.length).to.equal(1);
@@ -307,7 +303,7 @@ module.exports = (fetchMock, Request) => {
 		// 			fm
 		// 				.catch(() => new Response('i am text', {status: 200	}))
 		// 				.mock(/a/, 200);
-		// 			return fm.fetchHandler('http://1')
+		// 			returnawait fm.fetchHandler('http://1')
 		// 				.then(res => {
 		// 					expect(fm.called()).to.be.true;
 		// 					expect(fm.calls().unmatched.length).to.equal(1);
@@ -324,8 +320,8 @@ module.exports = (fetchMock, Request) => {
 		// 				.catch()
 		// 				.mock(/a/, 200);
 		// 			return Promise.all([
-		// 				fm.fetchHandler('http://1', {method: 'GET'}),
-		// 				fm.fetchHandler('http://2', {method: 'POST'})
+		// 			await fm.fetchHandler('http://1', {method: 'GET'}),
+		// 			await fm.fetchHandler('http://2', {method: 'POST'})
 		// 			])
 		// 				.then(() => {
 		// 					expect(fm.called()).to.be.true;
@@ -347,8 +343,8 @@ module.exports = (fetchMock, Request) => {
 		// 			.mock(url => /person/.test(url) , 401, { method: 'POST' })
 
 		// 		return Promise.all([
-		// 			fm.fetchHandler('http://domain.com/person'),
-		// 			fm.fetchHandler('http://domain.com/person', {method: 'post'})
+		// 		await fm.fetchHandler('http://domain.com/person'),
+		// 		await fm.fetchHandler('http://domain.com/person', {method: 'post'})
 		// 		])
 		// 			.then(responses => {
 		// 				expect(responses[0].status).to.equal(301);
@@ -360,7 +356,7 @@ module.exports = (fetchMock, Request) => {
 		// describe('catch()', () => {
 		// 	it('can catch all calls to fetch with good response by default', () => {
 		// 		fm.catch();
-		// 		return fm.fetchHandler('http://place.com/')
+		// 		returnawait fm.fetchHandler('http://place.com/')
 		// 			.then(res => {
 		// 				expect(res.status).to.equal(200);
 		// 				expect(fm.calls().unmatched[0]).to.eql([ 'http://place.com/', undefined ])
@@ -369,7 +365,7 @@ module.exports = (fetchMock, Request) => {
 
 		// 	it('can catch all calls to fetch with custom response', () => {
 		// 		fm.catch(Promise.resolve('carrot'));
-		// 		return fm.fetchHandler('http://place.com/')
+		// 		returnawait fm.fetchHandler('http://place.com/')
 		// 			.then(res => {
 		// 				expect(res.status).to.equal(200);
 		// 				expect(fm.calls().unmatched[0]).to.eql([ 'http://place.com/', undefined ])
@@ -382,7 +378,7 @@ module.exports = (fetchMock, Request) => {
 		// 		fm
 		// 			.mock('http://other-place.com', 404)
 		// 			.catch();
-		// 		return fm.fetchHandler('http://place.com/')
+		// 		returnawait fm.fetchHandler('http://place.com/')
 		// 			.then(res => {
 		// 				expect(res.status).to.equal(200);
 		// 				expect(fm.calls().unmatched[0]).to.eql([ 'http://place.com/', undefined ])
@@ -405,10 +401,8 @@ module.exports = (fetchMock, Request) => {
 					.post('http://it.at.there/', 200)
 					.catch();
 
-				await Promise.all([
-					fm.fetchHandler(new Request('http://it.at.there/', {method: 'POST'})),
-					fm.fetchHandler(new Request('http://it.at.there/', {method: 'GET'}))
-				]);
+				await fm.fetchHandler(new Request('http://it.at.there/', {method: 'POST'}));
+				await fm.fetchHandler(new Request('http://it.at.there/', {method: 'GET'}));
 				expect(fm.calls('http://it.at.there/').length).to.equal(1);
 			});
 
@@ -448,9 +442,9 @@ module.exports = (fetchMock, Request) => {
 //                     response: 'ok'
 //                 }).catch();
 //                 return Promise.all([
-//                     fm.fetchHandler('http://it.at.here/', {headers: {test: 'yes'}}),
-//                     fm.fetchHandler('http://it.at.here/', {headers: new Headers({test: 'yes'})}),
-//                     fm.fetchHandler('http://it.at.here/')
+//                    await fm.fetchHandler('http://it.at.here/', {headers: {test: 'yes'}}),
+//                    await fm.fetchHandler('http://it.at.here/', {headers: new Headers({test: 'yes'})}),
+//                    await fm.fetchHandler('http://it.at.here/')
 //                 ])
 //                     .then(() => {
 //                         expect(fm.called()).to.be.true;
@@ -471,9 +465,9 @@ module.exports = (fetchMock, Request) => {
 //                     response: 'ok'
 //                 }).catch();
 //                 return Promise.all([
-//                     fm.fetchHandler('http://it.at.here/', {headers: {test: 'yes'}}),
-//                     fm.fetchHandler('http://it.at.here/', {headers: {test: ['foo', 'bar']}}),
-//                     fm.fetchHandler('http://it.at.here/')
+//                    await fm.fetchHandler('http://it.at.here/', {headers: {test: 'yes'}}),
+//                    await fm.fetchHandler('http://it.at.here/', {headers: {test: ['foo', 'bar']}}),
+//                    await fm.fetchHandler('http://it.at.here/')
 //                 ])
 //                     .then(() => {
 //                         expect(fm.called()).to.be.true;
@@ -494,7 +488,7 @@ module.exports = (fetchMock, Request) => {
 // 			// 	fm
 // 			// 		.spy();
 
-// 			// 	fm.fetchHandler('http://apples.and.pears')
+// 			// await fm.fetchHandler('http://apples.and.pears')
 // 			// 	expect(fetchSpy.calledWith('http://apples.and.pears')).to.be.true
 // 			// 	expect(fm.called()).to.be.true;
 // 			// 	expect(fm.calls().unmatched[0]).to.eql(['http://apples.and.pears', undefined]);

@@ -13,5 +13,6 @@ module.exports = (fetchMock, theGlobal, Request, Response) => {
 		require('./int/sandbox.test')(fetchMock, theGlobal);
 		require('./int/routing.test')(fetchMock);
 		require('./int/inspecting.test')(fetchMock);
+		require('./int/repeat.test')(fetchMock);
 	});
 }

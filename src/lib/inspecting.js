@@ -36,7 +36,7 @@ FetchMock.flush = function () {
 }
 
 FetchMock.done = function (name) {
-	const names = name ? [name] : this.routes.map(r => r.name);
+	const names = name && typeof name !== 'boolean' ? [name] : this.routes.map(r => r.name);
 
 	// Can't use array.every because
 	// a) not widely supported

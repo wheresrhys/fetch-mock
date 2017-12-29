@@ -1,8 +1,4 @@
-// can probably use tests very similar to existing ones
-// , flush
-// write some really exhaustive tests for called, calls, etc...
-// cover new case where true and false can be passed to calls and called
-// + remember to test explicitly named routes
+
 // cover case where GET, POST etc are differently named routes
 // ... maybe accept method as second argument to calls, called etc
 // consider case where multiple routes match.. make sure only one matcher logs calls

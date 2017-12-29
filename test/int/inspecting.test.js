@@ -103,71 +103,130 @@ module.exports = (fetchMock) => {
 			});
 		});
 
-		describe('route names', () => {
+		describe('route name resolution', () => {
+			afterEach(() => fm.restore());
+			it('can filter by named routes', async () => {
+				fm
+					.mock('http://it.at.here/', 200, {
+						name: 'my-route'
+					});
 
+				await fm.fetchHandler('http://it.at.here/');
+
+				expect(fm.called('http://it.at.here/')).to.be.false;
+				expect(fm.called('my-route')).to.be.true;
+			});
+
+			it('can filter by string based matchers', async () => {
+				fm
+					.mock('http://it.at.here/', 200)
+					.mock('begin:http://it.at.there/', 200)
+					.mock('glob:*/a/*', 200);
+
+				await fm.fetchHandler('http://it.at.here/');
+				await fm.fetchHandler('http://it.at.there/');
+
+				expect(fm.called('http://it.at.here/')).to.be.true;
+				expect(fm.called('begin:http://it.at.there/')).to.be.true;
+				expect(fm.called('glob:*/a/*')).to.be.false;
+			});
+
+			it('can filter by regex matchers', async () => {
+				fm
+					.mock(/it\.at\.here/, 200)
+
+				await fm.fetchHandler('http://it.at.here/');
+
+				expect(fm.called(/it\.at\.here/)).to.be.true;
+			});
+
+			it('can filter by function matchers', async () => {
+				const myFunc = () => true;
+				fm
+					.mock(myFunc, 200)
+
+				await fm.fetchHandler('http://it.at.here/');
+
+				expect(fm.called(myFunc)).to.be.true;
+			});
+
+		});
+
+		describe.skip('retrieving call parameters', () => {
+			it('calls (call history)', async () => {
+
+			});
+
+			it('lastCall', async () => {
+
+			});
+
+			it('lastOptions', async () => {
+
+			});
+
+			it('lastUrl', async () => {
+
+			});
+
+			describe('when called with Request instance', () => {
+
+			});
+
+		})
+
+
+		describe('flushing pending calls', () => {
+			afterEach(() => fm.restore());
+
+			it('flush resolves if all fetches have resolved', async () => {
+				fm
+					.mock('http://one.com', 200)
+					.mock('http://two.com', 200)
+				// no expectation, but if it doesn't work then the promises will hang
+				// or reject and the test will timeout
+				await fm.flush()
+				fetch('http://one.com')
+				await fm.flush()
+				fetch('http://two.com')
+				await fm.flush()
+			})
+
+			it('should resolve after fetches', async () => {
+				fm.mock('http://example', 'working!')
+				let data;
+				fetch('http://example')
+					.then(() => data = 'done');
+				await fm.flush()
+				expect(data).to.equal('done');
+			})
+
+			it('flush waits for unresolved promises', async () => {
+				fm
+					.mock('http://one.com', 200)
+					.mock('http://two.com', () => new Promise(res => setTimeout(() => res(200), 50)))
+
+				const orderedResults = []
+				fetch('http://one.com')
+				fetch('http://two.com')
+
+				setTimeout(() => orderedResults.push('not flush'), 25)
+
+				await fm.flush()
+				orderedResults.push('flush');
+				expect(orderedResults).to.deep.equal(['not flush', 'flush']);
+			})
+
+			it('flush resolves on expected error', async () => {
+				fm
+					.mock('http://one.com', {throws: 'Problem in space'})
+				fetch('http://one.com')
+				await fm.flush();
+			});
 		});
 	});
 };
 
-		// 		it('falls back to matcher.toString() as a name', () => {
-		// 			expect(() => {
-		// 				fm.mock({matcher: 'http://it.at.there/', response: 'ok'});
-		// 			}).not.to.throw();
-		// 		await fm.fetchHandler('http://it.at.there/');
-		// 			expect(fm.calls('http://it.at.there/').length).to.equal(1);
-		// 		});
-
-			// 	describe('flush', () => {
-			// 		it('flush resolves if all fetches have resolved', () => {
-			// 			fetchMock
-			// 				.mock('http://one.com', 200)
-			// 				.mock('http://two.com', 200)
-			// 			// no expectation, but if it doesn't work then the promises will hang
-			// 			// or reject and the test will timeout
-			// 			return fetchMock.flush()
-			// 				.then(() => {
-			// 					fetch('http://one.com')
-			// 					return fetchMock.flush()
-			// 				})
-			// 				.then(() => {
-			// 					fetch('http://two.com')
-			// 					return fetchMock.flush()
-			// 				})
-			// 		})
-
-			// 		it('should resolve after fetches', () => {
-			// 			fetchMock.mock('http://example', 'working!')
-			// 			let data;
-			// 			fetch('http://example')
-			// 				.then(() => data = 'done');
-			// 			return fetchMock.flush()
-			// 				.then(() => expect(data).to.equal('done'))
-			// 		})
-
-			// 		it('flush waits for unresolved promises', () => {
-			// 			fetchMock
-			// 				.mock('http://one.com', 200)
-			// 				.mock('http://two.com', () => new Promise(res => setTimeout(() => res(200), 50)))
-			// 			const orderedResults = []
-			// 			fetch('http://one.com')
-			// 			fetch('http://two.com')
-			// 			setTimeout(() => orderedResults.push('not flush'), 25)
-			// 			return fetchMock
-			// 				.flush()
-			// 				.then(() => orderedResults.push('flush'))
-			// 				.then(() => expect(orderedResults).to.deep.equal(['not flush', 'flush']))
-			// 		})
-
-			// 		it('flush resolves on expected error', () => {
-			// 			fetchMock
-			// 				.mock('http://one.com', {throws: 'Problem in space'})
-			// 			fetch('http://one.com')
-			// 			return fetchMock
-			// 				.flush()
-			// 		})
-
-			// 	})
-			// });
 
 
 				// it('have helpers to retrieve paramaters pf last call', () => {
@@ -194,79 +253,3 @@ module.exports = (fetchMock) => {
 				// 		});
 
 				// })
-
-
-
-			// it('record history of calls to unnamed matched routes', function () {
-			// 		const fourth = function (url) { return /fourth/.test(url) };
-
-			// 		fetchMock
-			// 			.mock('http://it.at.there/first', 200)
-			// 			.mock('begin:http://it.at.there', 200)
-			// 			.mock(/third/, 200)
-			// 			.mock(fourth, 200)
-
-			// 		return Promise.all([
-			// 			fetch('http://it.at.there/first'),
-			// 			fetch('http://it.at.there/second'),
-			// 			fetch('http://it.at.here/third'),
-			// 			fetch('http://it.at.here/fourth')
-			// 		])
-			// 			.then(function () {
-			// 				expect(fetchMock.called('http://it.at.there/first')).to.be.true;
-			// 				expect(fetchMock.called('begin:http://it.at.there')).to.be.true;
-			// 				expect(fetchMock.called('/third/')).to.be.true;
-			// 				// cope with babelified and various browser quirks version of the function
-			// 				expect(Object.keys(fetchMock._calls).some(key => key === fourth.toString())).to.be.true;
-			// 			});
-			// 	});
-
-
-
-
-
-	// 		it('record history of unmatched routes', () => {
-		// 			fm
-		// 				.catch()
-		// 				.mock(/a/, 200);
-		// 			return Promise.all([
-		// 			await fm.fetchHandler('http://1', {method: 'GET'}),
-		// 			await fm.fetchHandler('http://2', {method: 'POST'})
-		// 			])
-		// 				.then(() => {
-		// 					expect(fm.called()).to.be.true;
-		// 					const unmatchedCalls = fm.calls().unmatched;
-		// 					expect(unmatchedCalls.length).to.equal(2);
-		// 					expect(unmatchedCalls[0]).to.eql(['http://1', {method: 'GET'}]);
-		// 					expect(unmatchedCalls[1]).to.eql(['http://2', {method: 'POST'}]);
-		// 				})
-
-		// 		});
-
-
-
-
-		// 		it('record history of calls to matched routes', () => {
-		// 			fm.mock({
-		// 				name: 'route',
-		// 				matcher: 'begin:http://it.at.there',
-		// 				response: 'ok'
-		// 			}).catch();
-		// 			return Promise.all(await fm.fetchHandler('http://it.at.there/'),await fm.fetchHandler('http://it.at.thereabouts', {headers: {head: 'val'}})])
-		// 				.then(() => {
-		// 					expect(fm.called()).to.be.true;
-		// 					expect(fm.called('route')).to.be.true;
-		// 					expect(fm.calls().matched.length).to.equal(2);
-		// 					expect(fm.calls('route')[0]).to.eql(['http://it.at.there/', undefined]);
-		// 					expect(fm.calls('route')[1]).to.eql(['http://it.at.thereabouts', {headers: {head: 'val'}}]);
-		// 				});
-		// 		});
-
-
-
-
-
-
-
-
-

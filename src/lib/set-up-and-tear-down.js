@@ -69,7 +69,7 @@ FetchMock.once = function (matcher, response, options) {
 	});
 
 FetchMock.restore = function () {
-		if (this.realFetch) {
+	if (this.realFetch) {
 		this.global.fetch = this.realFetch;
 		this.realFetch = undefined;
 	}

@@ -53,6 +53,27 @@ e.g. {"body": {"status: "registered"}}`)
 					expect(await res.json()).to.eql({an: 'object'});
 				});
 
+				it('convert body properties to json', async () => {
+					fm.mock('http://it.at.there/', {
+						body: {an: 'object'}
+					});
+					const res = await fm.fetchHandler('http://it.at.there/')
+					expect(res.headers.get('content-type')).to.equal('application/json');
+					expect(await res.json()).to.eql({an: 'object'});
+				});
+
+				it('not overide existing content-type-header', async () => {
+					fm.mock('http://it.at.there/', {
+						body: {an: 'object'},
+						headers: {
+							'content-type': 'text/html'
+						}
+					});
+					const res = await fm.fetchHandler('http://it.at.there/')
+					expect(res.headers.get('content-type')).to.equal('text/html');
+					expect(await res.json()).to.eql({an: 'object'});
+				});
+
 				it('not convert if `body` property exists', async () => {
 					fm.mock('http://it.at.there/', {body: 'exists'});
 					const res = await fm.fetchHandler('http://it.at.there/')

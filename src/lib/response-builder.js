@@ -72,7 +72,9 @@ e.g. {"body": {"status: "registered"}}`);
 		// convert to json if we need to
 		if (this.getOption('sendAsJson') && this.responseConfig.body != null && typeof body === 'object') { //eslint-disable-line
 			body = JSON.stringify(body);
-			this.opts.headers.set('Content-Type', 'application/json');
+			if(!this.opts.headers.has('Content-Type')) {
+				this.opts.headers.set('Content-Type', 'application/json');
+			}
 		}
 
 		// add a Content-Length header if we need to

@@ -25,7 +25,6 @@ module.exports = (fetchMock, theGlobal) => {
 		it('implement full fetch-mock api', () => {
 			const sbx = fetchMock.sandbox();
 			for (key in fetchMock) {
-				console.log(key);
 				expect(typeof sbx[key]).to.equal(typeof fetchMock[key]);
 			}
 		});

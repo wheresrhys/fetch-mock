@@ -117,61 +117,46 @@ e.g. {"body": {"status: "registered"}}`)
 				expect(await res.text()).to.equal('http://it.at.there/val');
 			});
 
-			describe.skip('content-length', () => {
-				it('should work on body of type object', done => {
-					fetchMock.mock('http://it.at.there/', {body: {hello: 'world'}, includeContentLength: true});
-					fetch('http://it.at.there/')
-						.then(res => {
-							expect(res.headers.get('content-length')).to.equal('17');
-							done();
-						});
+			describe('content-length', () => {
+
+				it('should work on body of type string', async () => {
+					fm.mock('http://it.at.there/', 'Fetch-Mock rocks');
+					const res = await fetch('http://it.at.there/')
+					expect(res.headers.get('content-length')).to.equal('16');
 				});
 
-				it('should work on body of type string', done => {
-					fetchMock.mock('http://it.at.there/', {body: 'Fetch-Mock rocks', includeContentLength: true});
-					fetch('http://it.at.there/')
-						.then(res => {
-							expect(res.headers.get('content-length')).to.equal('16');
-							done();
-						});
+				it('should work on body of type object', async () => {
+					fm.mock('http://it.at.there/', {hello: 'world'});
+					const res = await fetch('http://it.at.there/')
+					expect(res.headers.get('content-length')).to.equal('17');
 				});
 
-				it('should not overrule explicit mocked content-length header', done => {
-					fetchMock.mock('http://it.at.there/', {
+				it('should not overrule explicit mocked content-length header', async () => {
+					fm.mock('http://it.at.there/', {
 						body: {
 							hello: 'world'
 						},
 						headers: {
 							'Content-Length': '100',
-						},
-						includeContentLength: true
+						}
 					});
-					fetch('http://it.at.there/')
-						.then(res => {
-							expect(res.headers.get('content-length')).to.equal('100');
-							done();
-						});
+					const res = await fetch('http://it.at.there/')
+					expect(res.headers.get('content-length')).to.equal('100');
 				});
 
-				it('should be case-insensitive when checking for explicit content-length header', done => {
-					fetchMock.mock('http://it.at.there/', {
+				it('should be case-insensitive when checking for explicit content-length header', async () => {
+					fm.mock('http://it.at.there/', {
 						body: {
 							hello: 'world'
 						},
 						headers: {
 							'CoNtEnT-LeNgTh': '100',
-						},
-						includeContentLength: true
+						}
 					});
-					fetch('http://it.at.there/')
-						.then(res => {
-							expect(res.headers.get('content-length')).to.equal('100');
-							done();
-						});
+					const res = await fetch('http://it.at.there/')
+					expect(res.headers.get('content-length')).to.equal('100');
 				});
-
 			});
-
 		});
 
 		describe('response negotiation', () => {

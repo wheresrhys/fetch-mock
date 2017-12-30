@@ -56,23 +56,20 @@ FetchMock.route = function (url, opts) {
 }
 
 FetchMock.negotiateResponse = async function (response, url, opts) {
-
-	if (typeof response === 'function') {
-		response = response(url, opts);
-	}
-
-	if (typeof response.then === 'function') {
-		// Strange .then is to cope with non ES Promises... god knows why it works
-		response = await response.then(it => it)
-	}
-
-	// It seems odd to check if response is a function again
-	// It's to handle the the need to support making it very easy to add a
-	// Promise-based delay to any sort of response (including responses which
-	// are defined with a function) while also allowing function responses to
-	// return a Promise for a response config.
-	if (typeof response === 'function') {
-		response = response(url, opts);
+	// We want to allow things like
+	// - function returning a Promise for a response
+	// - delaying (using a timeout Promise) a function's execution to generate
+	//   a response
+	// Because of this we can't safely check for function before Promisey-ness,
+	// or vice versa. So to keep it DRY, and flexible, we keep trying until we
+	// have something that looks like neither
+	while (typeof response === 'function' || typeof response.then === 'function') {
+		if (typeof response === 'function') {
+			response = response(url, opts);
+		} else {
+			// Strange .then is to cope with non ES Promises... god knows why it works
+			response = await response.then(it => it)
+		}
 	}
 
 	// If the response is a pre-made Response, respond with it

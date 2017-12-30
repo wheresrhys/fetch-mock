@@ -59,21 +59,3 @@ module.exports = (fetchMock, theGlobal) => {
 	});
 
 };
-
-
-			// todo rename to 'it logs to unmatched'
-			// it('can spy on all unmatched calls to fetch', () => {
-			// 	const theFetch = theGlobal.fetch
-			// 	const fetchSpy = theGlobal.fetch = sinon.spy(() => Promise.resolve());
-			// 	fetchMock
-			// 		.spy();
-
-			// 	fetch('http://apples.and.pears')
-			// 	expect(fetchSpy.calledWith('http://apples.and.pears')).to.be.true
-			// 	expect(fetchMock.called()).to.be.true;
-			// 	expect(fetchMock.calls().unmatched[0]).to.eql(['http://apples.and.pears', undefined]);
-			// 	fetchMock.restore();
-			// 	expect(theGlobal.fetch).to.equal(fetchSpy)
-			// 	theGlobal.fetch = theFetch;
-
-			// })

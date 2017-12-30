@@ -1,4 +1,3 @@
-
 // cover case where GET, POST etc are differently named routes
 // ... maybe accept method as second argument to calls, called etc
 // consider case where multiple routes match.. make sure only one matcher logs calls

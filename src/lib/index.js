@@ -10,7 +10,7 @@ FetchMock.config = {
 	sendAsJson: true,
 	warnOnFallback: true,
 	overwriteRoutes: undefined
-}
+};
 
 FetchMock.createInstance = function () {
 	const instance = Object.create(FetchMock);

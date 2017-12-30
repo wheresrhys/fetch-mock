@@ -364,7 +364,11 @@ module.exports = (fetchMock) => {
 			});
 
 			describe.skip('duplicate routes', () => {
-				it('error when duplicate route added', async () => {
+				it('error when duplicate route added using explicit route name', async () => {
+
+				});
+
+				it('error when duplicate route added using implicit route name', async () => {
 
 				});
 

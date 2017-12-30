@@ -191,6 +191,13 @@ module.exports = fetchMock => {
 				expect(fm.spy.lastCall.thisValue).to.equal(fm);
 				fm.spy.restore();
 			});
+
+			it('calls catch()', () => {
+				sinon.spy(fm, 'catch');
+				fm.spy();
+				expect(fm.catch).calledOnce;
+				fm.catch.restore();
+			});
 		});
 
 		describe('catch', () => {

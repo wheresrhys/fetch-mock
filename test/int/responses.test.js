@@ -42,13 +42,42 @@ e.g. {"body": {"status: "registered"}}`)
 				expect(await res.text()).to.equal('a string');
 			});
 
-			it('respond with a json', async () => {
-				fm.mock('http://it.at.there/', {an: 'object'});
-				const res = await fm.fetchHandler('http://it.at.there/')
-				expect(res.status).to.equal(200);
-				expect(res.statusText).to.equal('OK');
-				expect(await res.json()).to.eql({an: 'object'});
-			});
+			describe('json responses', () => {
+
+				it('respond with a json', async () => {
+					fm.mock('http://it.at.there/', {an: 'object'});
+					const res = await fm.fetchHandler('http://it.at.there/')
+					expect(res.status).to.equal(200);
+					expect(res.statusText).to.equal('OK');
+					expect(await res.json()).to.eql({an: 'object'});
+				});
+
+				it.skip('set correct content type', async () => {
+
+				});
+
+				it.skip('not convert if `body` property exists', async () => {
+
+				});
+
+				it.skip('not convert if `headers` property exists', async () => {
+
+				});
+
+				it.skip('not convert if `throws` property exists', async () => {
+
+				});
+
+				it.skip('not convert if `status` property exists', async () => {
+
+				});
+
+				it.skip('not convert if `redirectUrl` property exists', async () => {
+
+				});
+
+			})
+
 
 			it('respond with a complex response, including headers', async () => {
 				fm.mock('http://it.at.there/', {
@@ -86,6 +115,61 @@ e.g. {"body": {"status: "registered"}}`)
 				const res = await fm.fetchHandler('http://it.at.there/', {headers: {header: 'val'}})
 				expect(res.status).to.equal(200);
 				expect(await res.text()).to.equal('http://it.at.there/val');
+			});
+
+			describe.skip('content-length', () => {
+				it('should work on body of type object', done => {
+					fetchMock.mock('http://it.at.there/', {body: {hello: 'world'}, includeContentLength: true});
+					fetch('http://it.at.there/')
+						.then(res => {
+							expect(res.headers.get('content-length')).to.equal('17');
+							done();
+						});
+				});
+
+				it('should work on body of type string', done => {
+					fetchMock.mock('http://it.at.there/', {body: 'Fetch-Mock rocks', includeContentLength: true});
+					fetch('http://it.at.there/')
+						.then(res => {
+							expect(res.headers.get('content-length')).to.equal('16');
+							done();
+						});
+				});
+
+				it('should not overrule explicit mocked content-length header', done => {
+					fetchMock.mock('http://it.at.there/', {
+						body: {
+							hello: 'world'
+						},
+						headers: {
+							'Content-Length': '100',
+						},
+						includeContentLength: true
+					});
+					fetch('http://it.at.there/')
+						.then(res => {
+							expect(res.headers.get('content-length')).to.equal('100');
+							done();
+						});
+				});
+
+				it('should be case-insensitive when checking for explicit content-length header', done => {
+					fetchMock.mock('http://it.at.there/', {
+						body: {
+							hello: 'world'
+						},
+						headers: {
+							'CoNtEnT-LeNgTh': '100',
+						},
+						includeContentLength: true
+					});
+					fetch('http://it.at.there/')
+						.then(res => {
+							expect(res.headers.get('content-length')).to.equal('100');
+							done();
+						});
+				});
+
 			});
 
 		});

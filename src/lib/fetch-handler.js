@@ -39,6 +39,15 @@ FetchMock.route = function (url, opts) {
 
 		if (this.fallbackResponse) {
 			response = this.fallbackResponse;
+		} else if (this.config.fallbackToNetwork) {
+			if (this.isSandbox) {
+				if (!this.config.fetch) {
+					throw 'to fallbackToNetwork when using a sanboxed fetch-mock set fetchMock.config.fetch to your chosen fetch implementation';
+				}
+				response = this.config.fetch
+			} else {
+				response = this.realFetch;
+			}
 		} else {
 			throw new Error(`No fallback response defined for ${opts && opts.method || 'GET'} to ${url}`)
 		}

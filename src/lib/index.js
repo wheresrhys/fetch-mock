@@ -5,7 +5,7 @@ const inspecting = require('./inspecting');
 const FetchMock = Object.assign({}, fetchHandler, setUpAndTearDown, inspecting);
 
 FetchMock.config = {
-	fallThroughToNetwork: false,
+	fallbackToNetwork: false,
 	includeContentLength: true,
 	sendAsJson: true,
 	warnOnFallback: true,

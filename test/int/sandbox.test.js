@@ -23,7 +23,7 @@ module.exports = (fetchMock, theGlobal) => {
 		});
 
 		it('disallow calling on part configured parent', () => {
-			expect(() => fetchMock.mock('url', 200).sandbox()).to.throw
+			expect(() => fetchMock.mock('url', 200).sandbox()).to.throw()
 		});
 
 		it('implement full fetch-mock api', () => {

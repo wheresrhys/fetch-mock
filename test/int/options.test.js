@@ -6,27 +6,32 @@ const sinon = require('sinon');
 module.exports = (fetchMock) => {
 	describe('repeat and done()', () => {
 		let fm;
-		before(() => {
+		beforeEach(() => {
 			fm = fetchMock.createInstance();
 		});
 
-		afterEach(() => fm.restore());
-
-		describe.skip('fallThroughToNetwork', () => {
-			it('error by default', async () => {
-
+		describe('fallbackToNetwork', () => {
+			it('error by default', () => {
+				expect(() => fm.fetchHandler('http://it.at.there/')).to.throw();
 			});
 
 			it('not error when configured globally', async () => {
-
+				fm.config.fallbackToNetwork = true;
+				fm.mock('http://it.at.where', 200);
+				expect(() => fm.fetchHandler('http://it.at.there/')).not.to.throw();
 			});
 
-			it('error when configured on sandbox without fetch defined', async () => {
-
+			it('error when configured on sandbox without fetch defined', () => {
+				fm.config.fallbackToNetwork = true;
+				const sbx = fm.sandbox();
+				expect(() => sbx.fetchHandler('http://it.at.there/')).to.throw();
 			});
 
-			it('not error when configured on sandbox without fetch defined', async () => {
-
+			it('not error when configured on sandbox with fetch defined', async () => {
+				fm.config.fallbackToNetwork = true;
+				fm.config.fetch = () => Promise.resolve(200);
+				const sbx = fm.sandbox();
+				expect(() => sbx.fetchHandler('http://it.at.there/')).not.to.throw();
 			});
 
 		});

@@ -388,7 +388,7 @@ module.exports = (fetchMock) => {
 				fm.mock(/a/, 200);
 				expect(async () => {
 					await fm.fetchHandler('http://1')
-				}).to.throw;
+				}).to.throw();
 			});
 
 			it('catch unmatched calls with empty 200 by default', async () => {

@@ -78,8 +78,7 @@ FetchMock.negotiateResponse = async function (response, url, opts) {
 	}
 
 	// finally, if we need to convert config into a response, we do it
-	return new ResponseBuilder(url, response, this.config, this.statusTextMap)
-		.respond();
+	return new ResponseBuilder(url, response, this).exec();
 }
 
 

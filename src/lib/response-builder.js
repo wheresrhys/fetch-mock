@@ -1,14 +1,14 @@
 module.exports = class ResponseBuilder {
-	constructor (url, responseConfig, config, statusTextMap) {
+	constructor (url, responseConfig, fetchMock) {
 		this.url = url;
 		this.responseConfig = responseConfig;
-		this.fetchMockConfig = config;
-		this.statusTextMap = statusTextMap;
-		this.Response = this.fetchMockConfig.Response;
-		this.Headers = this.fetchMockConfig.Headers;
+		this.fetchMockConfig = fetchMock.config;
+		this.statusTextMap = fetchMock.statusTextMap;
+		this.Response = fetchMock.config.Response;
+		this.Headers = fetchMock.config.Headers;
 	}
 
-	respond () {
+	exec () {
 		this.normalizeResponseConfig();
 		this.constructFetchOpts();
 		this.constructResponseBody();

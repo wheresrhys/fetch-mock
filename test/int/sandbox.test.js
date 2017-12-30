@@ -22,13 +22,10 @@ module.exports = (fetchMock, theGlobal) => {
 			expect(sbx.config).to.eql(fetchMock.config)
 		});
 
-		it('disallow calling on part configured parent', () => {
-			expect(() => fetchMock.mock('url', 200).sandbox()).to.throw()
-		});
-
 		it('implement full fetch-mock api', () => {
 			const sbx = fetchMock.sandbox();
 			for (key in fetchMock) {
+				console.log(key);
 				expect(typeof sbx[key]).to.equal(typeof fetchMock[key]);
 			}
 		});

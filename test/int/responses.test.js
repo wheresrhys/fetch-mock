@@ -49,31 +49,37 @@ e.g. {"body": {"status: "registered"}}`)
 					const res = await fm.fetchHandler('http://it.at.there/')
 					expect(res.status).to.equal(200);
 					expect(res.statusText).to.equal('OK');
+					expect(res.headers.get('content-type')).to.equal('application/json');
 					expect(await res.json()).to.eql({an: 'object'});
 				});
 
-				it.skip('set correct content type', async () => {
-
+				it('not convert if `body` property exists', async () => {
+					fm.mock('http://it.at.there/', {body: 'exists'});
+					const res = await fm.fetchHandler('http://it.at.there/')
+					expect(res.headers.get('content-type')).not.to.exist;
 				});
 
-				it.skip('not convert if `body` property exists', async () => {
-
+				it('not convert if `headers` property exists', async () => {
+					fm.mock('http://it.at.there/', {headers: {}});
+					const res = await fm.fetchHandler('http://it.at.there/')
+					expect(res.headers.get('content-type')).not.to.exist;
 				});
 
-				it.skip('not convert if `headers` property exists', async () => {
-
+				it('throw `throws` property exists', async () => {
+					fm.mock('http://it.at.there/', {throws: 'exists'});
+					expect(() => fm.fetchHandler('http://it.at.there/')).to.throw();
 				});
 
-				it.skip('not convert if `throws` property exists', async () => {
-
+				it('not convert if `status` property exists', async () => {
+					fm.mock('http://it.at.there/', {status: 300});
+					const res = await fm.fetchHandler('http://it.at.there/')
+					expect(res.headers.get('content-type')).not.to.exist;
 				});
 
-				it.skip('not convert if `status` property exists', async () => {
-
-				});
-
-				it.skip('not convert if `redirectUrl` property exists', async () => {
-
+				it('not convert if `redirectUrl` property exists', async () => {
+					fm.mock('http://it.at.there/', {redirectUrl: 'http://url.to.hit'});
+					const res = await fm.fetchHandler('http://it.at.there/')
+					expect(res.headers.get('content-type')).not.to.exist;
 				});
 
 			})

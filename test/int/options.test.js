@@ -1,5 +1,6 @@
 const BluebirdPromise = require('bluebird');
 const GlobalPromise = Promise;
+
 		// describe('configurability', () => {
 		// 	it('can configure sendAsJson off', () => {
 		// 		sinon.spy(JSON, 'stringify');
@@ -58,111 +59,6 @@ const GlobalPromise = Promise;
 		// 				done();
 		// 			});
 		// 	});
-
-		// 	describe('fetch utility class implementations', () => {
-		// 		const originalConfig = fetchMock.config;
-
-		// 		const getHeadersSpy = () => {
-		// 			const spy = function (config) {
-		// 				spy.callCount += 1;
-		// 				if (config) {
-		// 					return new originalConfig.Headers(config);
-		// 				} else {
-		// 					return new originalConfig.Headers();
-		// 				}
-		// 			};
-		// 			spy.prototype = originalConfig.Headers;
-		// 			spy.callCount = 0;
-		// 			return spy;
-		// 		}
-
-		// 		const getResponseSpy = () => {
-		// 			const spy = function (body, opts) {
-		// 				spy.callCount += 1;
-		// 				return new originalConfig.Response(body, opts);
-		// 			};
-		// 			spy.prototype = originalConfig.Response;
-		// 			spy.callCount = 0;
-		// 			return spy;
-		// 		}
-
-		// 		let defaultSpies = null;
-
-		// 		beforeEach(() => {
-		// 			defaultSpies = {
-		// 				Headers: getHeadersSpy(),
-		// 				Request: originalConfig.Request,
-		// 				Response: getResponseSpy()
-		// 			};
-
-		// 			fetchMock.config = Object.assign({}, originalConfig, defaultSpies);
-		// 		});
-
-		// 		afterEach(() => {
-		// 			fetchMock.restore();
-		// 			fetchMock.config = originalConfig;
-		// 		});
-
-		// 		it('should use the configured Headers', () => {
-		// 			const spiedReplacementHeaders = getHeadersSpy();
-		// 			fetchMock.config.Headers = spiedReplacementHeaders;
-
-		// 			fetchMock.mock('http://example.com/', {
-		// 				status: 200,
-		// 				headers: { id: 1 }
-		// 			});
-
-		// 			return fetch('http://example.com/').then(() => {
-		// 				expect(spiedReplacementHeaders.callCount).to.equal(1);
-		// 				expect(defaultSpies.Headers.callCount).to.equal(0);
-		// 			});
-		// 		});
-
-		// 		it('should use the configured Response', () => {
-		// 			const spiedReplacementResponse = sinon.stub().returns({ isFake: true });
-		// 			fetchMock.config.Response = spiedReplacementResponse;
-
-		// 			fetchMock.mock('http://example.com/', { status: 200 });
-
-		// 			return fetch('http://example.com/').then((response) => {
-		// 				expect(response.isFake).to.equal(true);
-		// 				expect(spiedReplacementResponse.callCount).to.equal(1);
-		// 				expect(defaultSpies.Response.callCount).to.equal(0);
-		// 			});
-		// 		});
-
-		// 		it('should use the configured Request', () => {
-		// 			const ReplacementRequest = function (url) {
-		// 				this.url = url;
-		// 				this.method = 'GET';
-		// 				this.headers = [];
-		// 			};
-		// 			fetchMock.config.Request = ReplacementRequest;
-
-		// 			fetchMock.mock('http://example.com/', { status: 200 });
-
-		// 			const requestInstance = new ReplacementRequest('http://example.com/');
-
-		// 			// As long as this is successful, it's worked, as we've correctly
-		// 			// matched the request against overridden prototype.
-		// 			return fetch(requestInstance);
-		// 		});
-		// 	});
-
-		// 	it('can be configured to use alternate Promise implementations', () => {
-		// 		fetchMock.config.Promise = BluebirdPromise;
-		// 		fetchMock
-		// 			.mock('http://example.com', 200)
-		// 		const fetchCall = fetch('http://example.com');
-		// 		expect(fetchCall).to.be.instanceof(BluebirdPromise);
-		// 		return fetchCall.then(() => {
-		// 			fetchMock.restore();
-		// 			fetchMock.config.Promise = Promise;
-		// 		})
-
-		// 	});
-		// })
-
 		// describe('includeContentLength', () => {
 		// 	it('should work on body of type object', done => {
 		// 		fetchMock.mock('http://it.at.there/', {body: {hello: 'world'}, includeContentLength: true});
@@ -217,39 +113,3 @@ const GlobalPromise = Promise;
 		// 	});
 
 		// });
-
-	// 	it('works with global promise responses when using the global promise', () => {
-	// 		const sbx = fetchMock
-	// 			.sandbox()
-	// 			.mock('http://example.com', GlobalPromise.resolve(200));
-
-	// 		const responsePromise = sbx('http://example.com')
-	// 		expect(responsePromise).to.be.instanceof(GlobalPromise);
-	// 		return responsePromise.then(res => expect(res.status).to.equal(200));
-	// 	});
-
-	// 	it('works with custom promise responses when using the global promise', () => {
-	// 		const sbx = fetchMock
-	// 			.sandbox()
-	// 			.mock('http://example.com', BluebirdPromise.resolve(200));
-
-	// 		const responsePromise = sbx('http://example.com')
-	// 		expect(responsePromise).to.be.instanceof(GlobalPromise);
-	// 		return responsePromise.then(res => expect(res.status).to.equal(200));
-	// 	});
-
-
-
-
-			// 				it('should allow non native Promises as responses', () => {
-			// 	const stub = sinon.spy(() => Promise.resolve(new Response('', {status: 203})));
-			// 	fm.mock(/.*/, {
-			// 		then: stub
-			// 	})
-			// 	return fm.fetchHandler('http://thing.place')
-			// 		.then(res => {
-			// 			expect(stub.calledOnce).to.be.true
-			// 			expect(res.status).to.equal(203);
-			// 			fm.restore();
-			// 		})
-			// })

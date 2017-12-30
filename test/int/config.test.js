@@ -237,3 +237,19 @@ const GlobalPromise = Promise;
 	// 		expect(responsePromise).to.be.instanceof(GlobalPromise);
 	// 		return responsePromise.then(res => expect(res.status).to.equal(200));
 	// 	});
+
+
+
+
+			// 				it('should allow non native Promises as responses', () => {
+			// 	const stub = sinon.spy(() => Promise.resolve(new Response('', {status: 203})));
+			// 	fm.mock(/.*/, {
+			// 		then: stub
+			// 	})
+			// 	return fm.fetchHandler('http://thing.place')
+			// 		.then(res => {
+			// 			expect(stub.calledOnce).to.be.true
+			// 			expect(res.status).to.equal(203);
+			// 			fm.restore();
+			// 		})
+			// })

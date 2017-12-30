@@ -4,7 +4,7 @@ const expect = chai.expect;
 const sinon = require('sinon');
 
 module.exports = (fetchMock) => {
-	describe.only('responses', () => {
+	describe('responses', () => {
 		let fm;
 		before(() => {
 			fm = fetchMock.createInstance();
@@ -91,180 +91,65 @@ e.g. {"body": {"status: "registered"}}`)
 		});
 
 		describe('response negotiation', () => {
-			it('function that returns a response config', async () => {
-
+			it('function', async () => {
+				fm.mock('http://it.at.there/', url => url);
+				const res = await fm.fetchHandler('http://it.at.there/');
+				expect(res.status).to.equal(200);
+				expect(await res.text()).to.equal('http://it.at.there/');
 			});
 
-			it('Promise that returns a response config', async () => {
-
+			it('Promise', async () => {
+				fm.mock('http://it.at.there/', Promise.resolve(200));
+				const res = await fm.fetchHandler('http://it.at.there/');
+				expect(res.status).to.equal(200);
 			});
 
-			it('function that returns a Promise fro a response', async () => {
-
+			it('function that returns a Promise', async () => {
+				fm.mock('http://it.at.there/', url => Promise.resolve(url));
+				const res = await fm.fetchHandler('http://it.at.there/');
+				expect(res.status).to.equal(200);
+				expect(await res.text()).to.equal('http://it.at.there/');
 			});
 
 			it('Promise for a function that returns a response', async () => {
-
+				fm.mock('http://it.at.there/', Promise.resolve(url => url));
+				const res = await fm.fetchHandler('http://it.at.there/');
+				expect(res.status).to.equal(200);
+				expect(await res.text()).to.equal('http://it.at.there/');
 			});
 
 			it('response that throws', async () => {
+				fm.mock('http://it.at.there/', {
+					throws: 'Oh no'
+				});
 
+				try {
+					const res = fm.fetchHandler('http://it.at.there/')
+					expect(true).to.be.false
+				} catch (err) {
+					expect(err).to.equal('Oh no');
+				}
 			});
 
 			it('Response', async () => {
-
+				fm.mock('http://it.at.there/', new fm.config.Response('http://it.at.there/', {status: 200}));
+				const res = await fm.fetchHandler('http://it.at.there/');
+				expect(res.status).to.equal(200);
 			});
 
 			it('function that returns a Response', async () => {
-
+				fm.mock('http://it.at.there/', () => new fm.config.Response('http://it.at.there/', {status: 200}));
+				const res = await fm.fetchHandler('http://it.at.there/');
+				expect(res.status).to.equal(200);
 			});
 
 			it('Promise that returns a Response', async () => {
-
+				fm.mock('http://it.at.there/', Promise.resolve(new fm.config.Response('http://it.at.there/', {status: 200})));
+				const res = await fm.fetchHandler('http://it.at.there/');
+				expect(res.status).to.equal(200);
 			});
 
 		});
 
-
-
 	});
 }
-
-
-			// 				it('should allow non native Promises as responses', () => {
-			// 	const stub = sinon.spy(() => Promise.resolve(new Response('', {status: 203})));
-			// 	fm.mock(/.*/, {
-			// 		then: stub
-			// 	})
-			// 	return fm.fetchHandler('http://thing.place')
-			// 		.then(res => {
-			// 			expect(stub.calledOnce).to.be.true
-			// 			expect(res.status).to.equal(203);
-			// 			fm.restore();
-			// 		})
-			// })
-// describe('responding', () => {
-
-// 				it('respond with a Response', () => {
-// 					fm.mock({
-// 						name: 'route',
-// 						matcher: 'http://it.at.there/',
-// 						response: new Response('i am text', {status: 200})
-// 					});
-// 					return fm.fetchHandler('http://it.at.there/')
-// 						.then(res => {
-// 							expect(res.status).to.equal(200);
-// 							return res.text()
-// 								.then(text => {
-// 									expect(text).to.equal('i am text');
-// 								})
-// 						});
-// 				});
-
-// 				it('respond with a generated Response', () => {
-// 					fm.mock({
-// 						name: 'route',
-// 						matcher: 'http://it.at.there/',
-// 						response: () => new Response('i am text too', {status: 200})
-// 					});
-// 					return fm.fetchHandler('http://it.at.there/')
-// 						.then(res => {
-// 							expect(res.status).to.equal(200);
-// 							return res.text()
-// 								.then(text => {
-// 									expect(text).to.equal('i am text too');
-// 								})
-// 						});
-// 				});
-
-// 				it('imitate a failed request', () => {
-// 					fm.mock({
-// 						name: 'route',
-// 						matcher: 'http://it.at.there/',
-// 						response: {
-// 							throws: 'Oh no'
-// 						}
-// 					});
-// 					return fm.fetchHandler('http://it.at.there/')
-// 						.then(() => {
-// 							return Promise.reject('Expected fetch to fail');
-// 						}, err => {
-// 							expect(err).to.equal('Oh no');
-// 						});
-// 				});
-
-
-// 				it('construct a promised response based on the request', () => {
-// 					fm.mock({
-// 						name: 'route',
-// 						matcher: 'http://it.at.there/',
-// 						response: (url, opts) => {
-// 							return Promise.resolve(url + opts.headers.header);
-// 						}
-// 					});
-// 					return fm.fetchHandler('http://it.at.there/', {headers: {header: 'val'}})
-// 						.then(res => {
-// 							expect(res.status).to.equal(200);
-// 							return res.text().then(text => {
-// 								expect(text).to.equal('http://it.at.there/val');
-// 							});
-// 						});
-// 				});
-
-// 				it('respond with a promise of a response', done => {
-// 					let resolve;
-// 					const promise = new Promise(res => { resolve = res})
-// 					fm.mock({
-// 						name: 'route',
-// 						matcher: 'http://it.at.there/',
-// 						response: promise.then(() => 200)
-// 					});
-// 					const stub = sinon.spy(res => res);
-
-// 					fm.fetchHandler('http://it.at.there/', {headers: {header: 'val'}})
-// 						.then(stub)
-// 						.then(res => {
-// 							expect(res.status).to.equal(200);
-// 						});
-
-// 					setTimeout(() => {
-// 						expect(stub.called).to.be.false;
-// 						resolve();
-// 						setTimeout(() => {
-// 							expect(stub.called).to.be.true;
-// 							done();
-// 						}, 10)
-// 					}, 10)
-// 				});
-
-// 				it ('respond with a promise of a complex response', done => {
-// 					let resolve;
-
-// 					const promise = new Promise(res => {resolve = res})
-
-// 					fm.mock({
-// 						name: 'route',
-// 						matcher: 'http://it.at.there/',
-// 						response: promise.then(() => (url, opts) => {
-// 							return url + opts.headers.header;
-// 						})
-// 					});
-// 					const stub = sinon.spy(res => res);
-
-// 					fm.fetchHandler('http://it.at.there/', {headers: {header: 'val'}})
-// 						.then(stub)
-// 						.then(res => {
-// 							expect(res.status).to.equal(200);
-// 							return res.text().then(text => {
-// 								expect(text).to.equal('http://it.at.there/val');
-// 							});
-// 						});
-// 					setTimeout(() => {
-// 						expect(stub.called).to.be.false;
-// 						resolve();
-// 						setTimeout(() => {
-// 							expect(stub.called).to.be.true;
-// 							done();
-// 						}, 10)
-// 					}, 10)
-// 				});

@@ -32,9 +32,6 @@ FetchMock.bindMethods = function () {
 }
 
 FetchMock.sandbox = function () {
-	// if (this.routes.length || this.fallbackResponse) {
-	// 	throw new Error('.sandbox() can only be called on fetch-mock instances that don\'t have routes configured already')
-	// }
 	// this construct allows us to create a fetch-mock instance which is also
 	// a callable function, while circumventing circularity when defining the
 	// object that this function should be bound to
@@ -44,7 +41,7 @@ FetchMock.sandbox = function () {
 
 	const sandbox = Object.assign(
 		proxy, // Ensures that the entire returned object is a callable function
-		FetchMock, // all prototype methods
+		FetchMock, // prototype methods
 		this.createInstance() // instance data
 	);
 

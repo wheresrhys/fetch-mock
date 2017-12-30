@@ -61,7 +61,7 @@ module.exports = (fetchMock, theGlobal) => {
 };
 
 
-
+			// todo rename to 'it logs to unmatched'
 			// it('can spy on all unmatched calls to fetch', () => {
 			// 	const theFetch = theGlobal.fetch
 			// 	const fetchSpy = theGlobal.fetch = sinon.spy(() => Promise.resolve());

@@ -8,23 +8,28 @@ FetchMock.fetchHandler = function (url, opts) {
 	let done
 	this._holdingPromises.push(new this.config.Promise(res => done = res));
 
+	let response = this.route(url, opts);
+
+	// If the response says to throw an error, throw it
+	// It only makes sense to do this before doing any async stuff below
+	// as the async stuff swallows catastrophic errors in a promise
+	// type checking is to deal with sinon spies having a throws property :-0
+	if (response.throws && typeof response !== 'function') {
+		throw response.throws;
+	}
+
 	// wrapped in this promise to make sure we respect custom Promise
 	// constructors defined by the user
 	return new this.config.Promise((res, rej) => {
-		try {
-			this.negotiateResponse(url, opts)
-				.then(res, rej)
-				.then(done, done);
-		} catch (err) {
-			rej(err);
-			done();
-		}
+		this.negotiateResponse(response, url, opts)
+			.then(res, rej)
+			.then(done, done);
 	})
 }
 
 FetchMock.fetchHandler.isMock = true;
 
-FetchMock.negotiateResponse = async function (url, opts) {
+FetchMock.route = function (url, opts) {
 
 	let response = this.router(url, opts);
 
@@ -38,6 +43,10 @@ FetchMock.negotiateResponse = async function (url, opts) {
 			throw new Error(`No fallback response defined for ${opts && opts.method || 'GET'} to ${url}`)
 		}
 	}
+	return response;
+}
+
+FetchMock.negotiateResponse = async function (response, url, opts) {
 
 	if (typeof response === 'function') {
 		response = response(url, opts);
@@ -60,11 +69,6 @@ FetchMock.negotiateResponse = async function (url, opts) {
 	// If the response is a pre-made Response, respond with it
 	if (this.config.Response.prototype.isPrototypeOf(response)) {
 		return response;
-	}
-
-	// If the response says to throw an error, throw it
-	if (response.throws) {
-		throw response.throws;
 	}
 
 	// finally, if we need to convert config into a response, we do it

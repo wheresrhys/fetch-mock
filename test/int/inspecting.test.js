@@ -227,7 +227,6 @@ module.exports = (fetchMock) => {
 			it('flush resolves on expected error', async () => {
 				fm
 					.mock('http://one.com', {throws: 'Problem in space'})
-				fetch('http://one.com')
 				await fm.flush();
 			});
 		});

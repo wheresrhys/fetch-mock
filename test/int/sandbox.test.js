@@ -146,8 +146,15 @@ module.exports = (fetchMock, theGlobal) => {
 			expect(sbx2.routes.length).to.equal(2);
 		})
 
-		it('error if spy() is called', () => {
+		it('error if spy() is called and no fetch defined in config', () => {
 			expect(() => fetchMock.sandbox().spy()).to.throw();
+		});
+
+		it('don\'t error if spy() is called and fetch defined in config', () => {
+			const fm = fetchMock.sandbox();
+			fm.config.fetch = originalFetch;
+			expect(() => fm.spy()).not.to.throw();
 		});
 	});
 }
+

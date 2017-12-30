@@ -35,9 +35,7 @@ FetchMock.sandbox = function () {
 	// this construct allows us to create a fetch-mock instance which is also
 	// a callable function, while circumventing circularity when defining the
 	// object that this function should be bound to
-	const proxy = function (url, options) {
-		return sandbox.fetchHandler(url, options);
-	}
+	const proxy = (url, options) => sandbox.fetchHandler(url, options);
 
 	const sandbox = Object.assign(
 		proxy, // Ensures that the entire returned object is a callable function

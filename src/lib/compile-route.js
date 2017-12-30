@@ -110,6 +110,7 @@ const getUrlMatcher = route => {
 		}
 	}
 
+	// if none of the special syntaxes apply, it's just a simple string match
 	const expectedUrl = route.matcher;
 	return ({ url }) => url === expectedUrl;
 }

@@ -76,10 +76,8 @@ function getHeaderMatcher ({ headers: expectedHeaders }, Headers) {
 }
 
 const getMethodMatcher = route => {
-	const expectedMethod = route.method && route.method.toLowerCase();
-
 	return ({ method }) => {
-		return !expectedMethod || expectedMethod === (method ? method.toLowerCase() : 'get');
+		return !route.method || route.method === (method ? method.toLowerCase() : 'get');
 	};
 }
 
@@ -129,6 +127,10 @@ module.exports = function (route) {
 	if (!route.name) {
 		route.name = route.matcher.toString();
 		route.__unnamed = true;
+	}
+
+	if (route.method) {
+		route.method = route.method.toLowerCase();
 	}
 
 	const matchers = [

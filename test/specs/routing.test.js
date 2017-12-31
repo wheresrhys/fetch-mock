@@ -378,6 +378,27 @@ module.exports = (fetchMock) => {
 					).to.throw();
 				});
 
+				it('don\'t error when duplicate route added with non-clashing method', async () => {
+					expect(() => fm
+						.mock('http://it.at.there/', 200, {method: 'GET'})
+						.mock('http://it.at.there/', 300, {method: 'POST'})
+					).not.to.throw();
+				});
+
+				it('error when duplicate route added with no method', async () => {
+					expect(() => fm
+						.mock('http://it.at.there/', 200, {method: 'GET'})
+						.mock('http://it.at.there/', 300)
+					).to.throw();
+				});
+
+				it('error when duplicate route added with clashing method', async () => {
+					expect(() => fm
+						.mock('http://it.at.there/', 200, {method: 'GET'})
+						.mock('http://it.at.there/', 300, {method: 'GET'})
+					).to.throw();
+				});
+
 				it('allow overwriting existing route', async () => {
 					expect(() => fm
 						.mock('http://it.at.there/', 200)

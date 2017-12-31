@@ -111,7 +111,7 @@ module.exports = (fetchMock) => {
 			});
 		});
 
-		describe.only('overwriteRoutes', () => {
+		describe('overwriteRoutes', () => {
 			it('error on duplicate routes by default', async () => {
 				expect(() => fm
 					.mock('http://it.at.there/', 200)
@@ -130,27 +130,6 @@ module.exports = (fetchMock) => {
 				expect(res.status).to.equal(300);
 			});
 
-			it.skip('allow adding additional routes with same matcher if different method', async () => {
-				fm.config.overwriteRoutes = 'method';
-				expect(() => fm
-					.mock('http://it.at.there/', 200, {method: 'GET'})
-					.mock('http://it.at.there/', 300, {method: 'POST'})
-				).not.to.throw();
-
-				expect(() => fm
-					.mock('http://it.at.there/', 200, {method: 'GET'})
-				).to.throw();
-
-				expect(() => fm
-					.mock('http://it.at.there/', 200)
-				).to.throw();
-
-				const res = await fm.fetchHandler('http://it.at.there/');
-				expect(res.status).to.equal(200);
-				const res2 = await fm.fetchHandler('http://it.at.there/', {method: 'post'});
-				expect(res2.status).to.equal(300);
-			});
-
 			it('allow adding additional routes with same matcher', async () => {
 				fm.config.overwriteRoutes = false;
 				expect(() => fm
@@ -164,5 +143,6 @@ module.exports = (fetchMock) => {
 				expect(res2.status).to.equal(300);
 			});
 		});
+
 	});
 };

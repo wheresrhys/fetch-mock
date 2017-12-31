@@ -70,86 +70,35 @@ module.exports = (fetchMock) => {
 				expect(res.headers.get('content-length')).not.to.exist;
 			});
 
-
-
-
-		// 	it.skip('has includeContentLength off by default', done => {
-		// 		fetchMock.mock('http://it.at.there/', {body: {hello: 'world'}});
-		// 		fetch('http://it.at.there/')
-		// 			.then(res => {
-		// 				expect(res.headers.has('content-length')).to.be.false;
-		// 				done();
-		// 			});
-		// 	});
-
-		// 	it.skip('can configure includeContentLength on', done => {
-		// 		fetchMock.config.includeContentLength = true;
-		// 		fetchMock.mock('http://it.at.there/', {body: {hello: 'world'}});
-		// 		fetch('http://it.at.there/')
-		// 			.then(res => {
-		// 				expect(res.headers.get('content-length')).to.equal('17');
-		// 				fetchMock.config.includeContentLength = false;
-		// 				done();
-		// 			});
-		// 	});
-
-		// 	it.skip('includeContentLength can override the global setting to on', done => {
-		// 		fetchMock.config.includeContentLength = true;
-		// 		fetchMock.mock('http://it.at.there/', {body: {hello: 'world'}, includeContentLength: true});
-		// 		fetch('http://it.at.there/')
-		// 			.then(res => {
-		// 				expect(res.headers.get('content-length')).to.equal('17');
-		// 				fetchMock.config.includeContentLength = false;
-		// 				done();
-		// 			});
-		// 	});
-
-		// 	it.skip('includeContentLength can override the global setting to off', done => {
-		// 		fetchMock.config.includeContentLength = true;
-		// 		fetchMock.mock('http://it.at.there/', {body: {hello: 'world'}, includeContentLength: false});
-		// 		fetch('http://it.at.there/')
-		// 			.then(res => {
-		// 				expect(res.headers.has('content-length')).to.be.false;
-		// 				fetchMock.config.includeContentLength = false;
-		// 				done();
-		// 			});
-		// 	});
 		});
 
-		describe.skip('sendAsJson', () => {
+		describe('sendAsJson', () => {
 			it('convert object responses to json by default', async () => {
-
+				fm.mock('*', {an: 'object'});
+				const res = await fm.fetchHandler('http://it.at.there');
+				expect(res.headers.get('content-type')).to.equal('application/json');
 			});
 
 			it('don\'t convert when configured false', async () => {
-
+				fm.config.sendAsJson = false;
+				fm.mock('*', {an: 'object'});
+				const res = await fm.fetchHandler('http://it.at.there');
+				expect(res.headers.get('content-type')).not.to.exist;
 			});
 
 			it('local setting can override to true', async () => {
-
+				fm.config.sendAsJson = false;
+				fm.mock('*', {body: {an: 'object'}, sendAsJson: true});
+				const res = await fm.fetchHandler('http://it.at.there');
+				expect(res.headers.get('content-type')).to.equal('application/json');
 			});
 
 			it('local setting can override to false', async () => {
-
+				fm.config.sendAsJson = true;
+				fm.mock('*', {body: {an: 'object'}, sendAsJson: false});
+				const res = await fm.fetchHandler('http://it.at.there');
+				expect(res.headers.get('content-type')).not.to.exist;
 			});
-
-
-		// 	it.skip('can configure sendAsJson off', () => {
-		// 		sinon.spy(JSON, 'stringify');
-		// 		fetchMock.config.sendAsJson = false;
-		// 		fetchMock.mock('http://it.at.there/', {not: 'an object'});
-		// 		try {
-		// 			// it should throw as we're trying to respond with unstringified junk
-		// 			// ideally we'd use a buffer in the test, but the browser and node APIs differ
-		// 			fetch('http://it.at.there/')
-		// 			expect(false).to.be.true;
-		// 		} catch (e) {
-		// 			expect(JSON.stringify.calledWith({not: 'an object'})).to.be.false;
-		// 			JSON.stringify.restore();
-		// 			fetchMock.config.sendAsJson = true;
-		// 		}
-		// 	});
-
 		});
 
 		describe.skip('warnOnFallback', () => {

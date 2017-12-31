@@ -1,3 +1,13 @@
+const responseConfigProps = [
+	'body',
+	'headers',
+	'throws',
+	'status',
+	'redirectUrl',
+	'includeContentLength',
+	'sendAsJson'
+];
+
 module.exports = class ResponseBuilder {
 	constructor (url, responseConfig, fetchMock) {
 		this.url = url;
@@ -15,6 +25,18 @@ module.exports = class ResponseBuilder {
 		return this.redirect(new this.Response(this.body, this.opts));
 	}
 
+	sendAsObject () {
+		if (responseConfigProps.some(prop => this.responseConfig[prop])) {
+			if (Object.keys(this.responseConfig).every(key => responseConfigProps.includes(key))) {
+				return false;
+			} else {
+				return true;
+			}
+		} else {
+			return true;
+		}
+	}
+
 	normalizeResponseConfig () {
 		// If the response config looks like a status, start to generate a simple response
 		if (typeof this.responseConfig === 'number') {
@@ -23,13 +45,7 @@ module.exports = class ResponseBuilder {
 			};
 		// If the response config is not an object, or is an object that doesn't use
 		// any reserved properties, assume it is meant to be the body of the response
-		} else if (typeof this.responseConfig === 'string' || !(
-			this.responseConfig.body ||
-			this.responseConfig.headers ||
-			this.responseConfig.throws ||
-			this.responseConfig.status ||
-			this.responseConfig.redirectUrl
-		)) {
+		} else if (typeof this.responseConfig === 'string' || this.sendAsObject()) {
 			this.responseConfig = {
 				body: this.responseConfig
 			};

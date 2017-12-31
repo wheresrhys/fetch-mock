@@ -32,7 +32,6 @@ FetchMock.fetchHandler.isMock = true;
 FetchMock.executeRouter = function (url, opts) {
 
 	let response = this.router(url, opts);
-
 	if (!response) {
 		this.config.warnOnFallback && console.warn(`Unmatched ${opts && opts.method || 'GET'} to ${url}`);
 		this.push(null, [url, opts]);

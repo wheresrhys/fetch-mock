@@ -105,7 +105,6 @@ e.g. {"body": {"status: "registered"}}`)
 
 			})
 
-
 			it('respond with a complex response, including headers', async () => {
 				fm.mock('http://it.at.there/', {
 					status: 202,

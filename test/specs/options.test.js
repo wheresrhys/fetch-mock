@@ -4,7 +4,7 @@ const expect = chai.expect;
 const sinon = require('sinon');
 
 module.exports = (fetchMock) => {
-	describe('repeat and done()', () => {
+	describe.only('options', () => {
 		let fm;
 		beforeEach(() => {
 			fm = fetchMock.createInstance();
@@ -36,20 +36,38 @@ module.exports = (fetchMock) => {
 
 		});
 
-		describe.skip('includeContentLength', () => {
+		describe('includeContentLength', () => {
 			it('include content-length header by default', async () => {
-
+				fm.mock('*', 'string');
+				const res = await fm.fetchHandler('http://it.at.there');
+				expect(res.headers.get('content-length')).to.equal('6');
 			});
 
 			it('don\'t include when configured false', async () => {
-
+				fm.config.includeContentLength = false;
+				fm.mock('*', 'string');
+				const res = await fm.fetchHandler('http://it.at.there');
+				expect(res.headers.get('content-length')).not.to.exist;
 			});
-			it('local setting can override to true', async () => {
 
+			it('local setting can override to true', async () => {
+				fm.config.includeContentLength = false;
+				fm.mock('*', {
+					includeContentLength: true,
+					body: 'string'
+				});
+				const res = await fm.fetchHandler('http://it.at.there');
+				expect(res.headers.get('content-length')).to.equal('6');
 			});
 
 			it('local setting can override to false', async () => {
-
+				fm.config.includeContentLength = true;
+				fm.mock('*', {
+					includeContentLength: false,
+					body: 'string'
+				});
+				const res = await fm.fetchHandler('http://it.at.there');
+				expect(res.headers.get('content-length')).not.to.exist;
 			});
 
 

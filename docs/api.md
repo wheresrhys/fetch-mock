@@ -36,6 +36,7 @@ Replaces `fetch()` with a stub which records its calls, grouped by route, and op
         * `throws`: If this property is present then a `Promise` rejected with the value of `throws` is returned
         * `sendAsJson`: This property determines whether or not the request body should be JSON.stringified before being sent (defaults to true).
         * `includeContentLength`: Set this property to true to automatically add the `content-length` header (defaults to false).
+        * `redirectUrl`: *experimental* the url the response should be from (to imitate followed redirects - will set `redirected: true` on the response)
     * `Function(url, opts)`: A function that is passed the url and opts `fetch()` is called with and that returns any of the responses listed above (or a `Promise` for any of them)
 * `options`: A configuration object with all/additional properties to define a route to mock
     * `name`: A unique string naming the route. Used to subsequently retrieve references to the calls, grouped by name. If not specified defaults to `matcher.toString()` *Note: If a non-unique name is provided no error will be thrown (because names are optional, so auto-generated ones may legitimately clash)*
@@ -43,7 +44,6 @@ Replaces `fetch()` with a stub which records its calls, grouped by route, and op
     * `headers`: key/value map of headers to match
     * `matcher`: as specified above
     * `response`: as specified above
-    * `redirectUrl`: *experimental* the url the response should be from (to imitate followed redirects - will set `redirected: true` on the response)
     * `repeat`: An integer, `n`, limiting the number of times the matcher can be used. If the route has already been called `n` times the route will be ignored and the call to `fetch()` will fall through to be handled by any other routes defined (which may eventually result in an error if nothing matches it)
 
 #### `once()`

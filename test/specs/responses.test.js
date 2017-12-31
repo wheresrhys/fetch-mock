@@ -103,6 +103,11 @@ e.g. {"body": {"status: "registered"}}`)
 					expect(res.headers.get('content-type')).not.to.exist;
 				});
 
+				it('convert if non-whitelisted property exists', async () => {
+					fm.mock('http://it.at.there/', {status: 300, weird: true});
+					const res = await fm.fetchHandler('http://it.at.there/')
+					expect(res.headers.get('content-type')).to.equal('application/json');
+				});
 			})
 
 			it('respond with a complex response, including headers', async () => {

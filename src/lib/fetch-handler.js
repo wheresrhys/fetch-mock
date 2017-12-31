@@ -4,24 +4,24 @@ const FetchMock = {};
 
 FetchMock.fetchHandler = function (url, opts) {
 
-	// this is used to power the .flush() method
-	let done
-	this._holdingPromises.push(new this.config.Promise(res => done = res));
-
-	let response = this.route(url, opts);
+	let response = this.executeRouter(url, opts);
 
 	// If the response says to throw an error, throw it
 	// It only makes sense to do this before doing any async stuff below
 	// as the async stuff swallows catastrophic errors in a promise
-	// type checking is to deal with sinon spies having a throws property :-0
+	// Type checking is to deal with sinon spies having a throws property :-0
 	if (response.throws && typeof response !== 'function') {
 		throw response.throws;
 	}
 
+	// this is used to power the .flush() method
+	let done
+	this._holdingPromises.push(new this.config.Promise(res => done = res));
+
 	// wrapped in this promise to make sure we respect custom Promise
 	// constructors defined by the user
 	return new this.config.Promise((res, rej) => {
-		this.negotiateResponse(response, url, opts)
+		this.generateResponse(response, url, opts)
 			.then(res, rej)
 			.then(done, done);
 	})
@@ -29,7 +29,7 @@ FetchMock.fetchHandler = function (url, opts) {
 
 FetchMock.fetchHandler.isMock = true;
 
-FetchMock.route = function (url, opts) {
+FetchMock.executeRouter = function (url, opts) {
 
 	let response = this.router(url, opts);
 
@@ -55,14 +55,14 @@ FetchMock.route = function (url, opts) {
 	return response;
 }
 
-FetchMock.negotiateResponse = async function (response, url, opts) {
+FetchMock.generateResponse = async function (response, url, opts) {
 	// We want to allow things like
 	// - function returning a Promise for a response
 	// - delaying (using a timeout Promise) a function's execution to generate
 	//   a response
 	// Because of this we can't safely check for function before Promisey-ness,
 	// or vice versa. So to keep it DRY, and flexible, we keep trying until we
-	// have something that looks like neither
+	// have something that looks like neither Promise nor function
 	while (typeof response === 'function' || typeof response.then === 'function') {
 		if (typeof response === 'function') {
 			response = response(url, opts);
@@ -91,13 +91,13 @@ FetchMock.router = function (url, opts) {
 	}
 }
 
-FetchMock.push = function (name, call) {
+FetchMock.push = function (name, args) {
 	if (name) {
 		this._calls[name] = this._calls[name] || [];
-		this._calls[name].push(call);
-		this._matchedCalls.push(call);
+		this._calls[name].push(args);
+		this._matchedCalls.push(args);
 	} else {
-		this._unmatchedCalls.push(call);
+		this._unmatchedCalls.push(args);
 	}
 };
 

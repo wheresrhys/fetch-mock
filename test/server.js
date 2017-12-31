@@ -1,7 +1,7 @@
 const fetchMock = require('../src/server.js');
 const expect = require('chai').expect;
 
-require('./spec')(fetchMock, global, require('node-fetch').Request, require('node-fetch').Response);
+require('./runner')(fetchMock, global, require('node-fetch').Request, require('node-fetch').Response);
 
 describe('support for Buffers', () => {
 	it('can respond with a buffer', () => {

@@ -54,16 +54,16 @@ FetchMock.spy = function () {
 
 FetchMock.compileRoute = compileRoute;
 
-FetchMock.once = function (matcher, response, options) {
+FetchMock.once = function (matcher, response, options = {}) {
 	return this.mock(matcher, response, Object.assign({}, options, {repeat: 1}));
 };
 
 ['get', 'post', 'put', 'delete', 'head', 'patch']
 	.forEach(method => {
-		FetchMock[method] = function (matcher, response, options) {
+		FetchMock[method] = function (matcher, response, options = {}) {
 			return this.mock(matcher, response, Object.assign({}, options, {method: method.toUpperCase()}));
 		}
-		FetchMock[`${method}Once`] = function (matcher, response, options) {
+		FetchMock[`${method}Once`] = function (matcher, response, options = {}) {
 			return this.once(matcher, response, Object.assign({}, options, {method: method.toUpperCase()}));
 		}
 	});

@@ -4,7 +4,7 @@ const expect = chai.expect;
 const sinon = require('sinon');
 
 module.exports = (fetchMock) => {
-	describe.only('options', () => {
+	describe('options', () => {
 		let fm;
 		beforeEach(() => {
 			fm = fetchMock.createInstance();

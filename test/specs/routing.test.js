@@ -363,21 +363,41 @@ module.exports = (fetchMock) => {
 				expect(res.status).to.equal(200)
 			});
 
-			describe.skip('duplicate routes', () => {
+			describe.only('duplicate routes', () => {
 				it('error when duplicate route added using explicit route name', async () => {
-
+					expect(() => fm
+						.mock('http://it.at.there/', 200, {name: 'jam'})
+						.mock('begin:http://it.at.there/', 300, {name: 'jam'})
+					).to.throw();
 				});
 
 				it('error when duplicate route added using implicit route name', async () => {
-
+					expect(() => fm
+						.mock('http://it.at.there/', 200)
+						.mock('http://it.at.there/', 300)
+					).to.throw();
 				});
 
 				it('allow overwriting existing route', async () => {
+					expect(() => fm
+						.mock('http://it.at.there/', 200)
+						.mock('http://it.at.there/', 300, {overwriteRoutes: true})
+					).not.to.throw();
 
+					const res = await fm.fetchHandler('http://it.at.there/');
+					expect(res.status).to.equal(300);
 				});
 
 				it('allow adding additional route with same matcher', async () => {
+					expect(() => fm
+						.mock('http://it.at.there/', 200, {repeat: 1})
+						.mock('http://it.at.there/', 300, {overwriteRoutes: false})
+					).not.to.throw();
 
+					const res = await fm.fetchHandler('http://it.at.there/');
+					expect(res.status).to.equal(200);
+					const res2 = await fm.fetchHandler('http://it.at.there/');
+					expect(res2.status).to.equal(300);
 				});
 			})
 		});

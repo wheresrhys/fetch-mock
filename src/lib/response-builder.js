@@ -71,10 +71,10 @@ e.g. {"body": {"status: "registered"}}`);
 		this.opts.url = this.responseConfig.redirectUrl || this.url;
 		this.opts.status = this.validateStatus(this.responseConfig.status);
 		this.opts.statusText = this.statusTextMap['' + this.opts.status];
-		// Set up response headers. The ternary operator is to cope with
+		// Set up response headers. The empty object is to cope with
 		// new Headers(undefined) throwing in Chrome
 		// https://code.google.com/p/chromium/issues/detail?id=335871
-		this.opts.headers = this.responseConfig.headers ? new this.Headers(this.responseConfig.headers) : new this.Headers();
+		this.opts.headers = new this.Headers(this.responseConfig.headers || {});
 	}
 
 	getOption (name) {
@@ -99,7 +99,7 @@ e.g. {"body": {"status: "registered"}}`);
 		}
 
 		// On the server we need to manually construct the readable stream for the
-		// Response object (on the client this i automatically)
+		// Response object (on the client this done automatically)
 		if (this.stream) {
 			let s = new this.stream.Readable();
 			if (body != null) { //eslint-disable-line
@@ -113,7 +113,8 @@ e.g. {"body": {"status: "registered"}}`);
 
 	redirect (response) {
 		// When mocking a followed redirect we must wrap the response in an object
-		// which sets the redirected flag (not a writable property on the actual response)
+		// which sets the redirected flag (not a writable property on the actual
+		// response)
 		if (this.responseConfig.redirectUrl) {
 			response = Object.create(response, {
 				redirected: {
@@ -122,7 +123,7 @@ e.g. {"body": {"status: "registered"}}`);
 				url: {
 					value: this.responseConfig.redirectUrl
 				},
-				// TODO extend to all other methods as requested by users
+				// TODO extend to all other methods and properties as requested by users
 				// Such a nasty hack
 				text: {
 					value: response.text.bind(response)

@@ -2,7 +2,6 @@ const compileRoute = require('./compile-route');
 const FetchMock = {};
 
 FetchMock.mock = function (matcher, response, options) {
-
 	let route;
 
 	// Handle the variety of parameters accepted by mock (see README)
@@ -22,10 +21,26 @@ FetchMock.mock = function (matcher, response, options) {
 		throw new Error('Invalid parameters passed to fetch-mock')
 	}
 
-	this.routes.push(this.compileRoute(route));
+	this.addRoute(route);
 
 	return this._mock();
 }
+
+FetchMock.addRoute = function (route) {
+	route = this.compileRoute(route);
+
+	const foundIndex = this.routes
+		.findIndex(existingRoute => route.name === existingRoute.name);
+
+	if (foundIndex !== -1) {
+		if (route.overwriteRoutes === true) {
+	  	this.routes.splice(foundIndex, 1);
+	  } else if (typeof route.overwriteRoutes === 'undefined') {
+	  	throw new Error('Adding route with same name as existing route. See `overwriteRoutes` option.');
+	  }
+	}
+	this.routes.push(route);
+};
 
 FetchMock._mock = function () {
 	if (!this.isSandbox) {

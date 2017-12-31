@@ -32,10 +32,13 @@ FetchMock.addRoute = function (route) {
 	const foundIndex = this.routes
 		.findIndex(existingRoute => route.name === existingRoute.name);
 
+
+	const overwriteRoutes = ('overwriteRoutes' in route) ? route.overwriteRoutes : this.config.overwriteRoutes;
+
 	if (foundIndex !== -1) {
-		if (route.overwriteRoutes === true) {
+		if (overwriteRoutes === true) {
 	  	this.routes.splice(foundIndex, 1);
-	  } else if (typeof route.overwriteRoutes === 'undefined') {
+	  } else if (typeof overwriteRoutes === 'undefined') {
 	  	throw new Error('Adding route with same name as existing route. See `overwriteRoutes` option.');
 	  }
 	}

@@ -92,16 +92,21 @@ module.exports = fetchMock => {
 			'get,post,put,delete,head,patch'.split(',')
 				.forEach(method => {
 					it(`has shorthand for ${method.toUpperCase()}`, () => {
-						sinon.spy(fm, 'mock');
-						const result = fm[method]('a', 'b');
-						expect(result).to.equal(fm);
-
+						sinon.stub(fm, 'mock');
+						fm[method]('a', 'b');
 						fm[method]('a', 'b', {opt: 'c'});
 						expect(fm.mock)
 							.calledWith('a', 'b', {method: method.toUpperCase()});
 						expect(fm.mock)
 							.calledWith('a', 'b', {opt: 'c', method: method.toUpperCase()});
 						fm.mock.restore();
+						fm.restore();
+					});
+
+					it(`shorthand for ${method.toUpperCase()} is chainable`, () => {
+						const result = fm[method]('a', 'b');
+						expect(result).to.equal(fm);
+						fm.restore();
 					});
 				})
 		});

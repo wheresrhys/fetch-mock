@@ -89,7 +89,7 @@ module.exports = (fetchMock) => {
 		it('falls back to second route if first route already done', async () => {
 			fm
 				.mock('http://it.at.there1/', 404, {repeat: 1})
-				.mock('http://it.at.there1/', 200);
+				.mock('http://it.at.there1/', 200, {overwriteRoutes: false});
 
 			const res = await fm.fetchHandler('http://it.at.there1/');
 			expect(res.status).to.equal(404);

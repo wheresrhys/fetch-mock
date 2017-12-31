@@ -307,12 +307,12 @@ module.exports = (fetchMock) => {
 				it('be case insensitive', async () => {
 					fm
 						.mock('http://it.at.there/', 200, { method: 'POST'})
-						.mock('http://it.at.there/', 200, { method: 'patch'})
+						.mock('http://it.at.where/', 200, { method: 'patch'})
 						.catch();
 
 					await fm.fetchHandler('http://it.at.there/', {method: 'post'});
 					expect(fm.calls(true).length).to.equal(1);
-					await fm.fetchHandler('http://it.at.there/', {method: 'PATCH'});
+					await fm.fetchHandler('http://it.at.where/', {method: 'PATCH'});
 					expect(fm.calls(true).length).to.equal(2);
 				});
 
@@ -363,7 +363,7 @@ module.exports = (fetchMock) => {
 				expect(res.status).to.equal(200)
 			});
 
-			describe.only('duplicate routes', () => {
+			describe('duplicate routes', () => {
 				it('error when duplicate route added using explicit route name', async () => {
 					expect(() => fm
 						.mock('http://it.at.there/', 200, {name: 'jam'})

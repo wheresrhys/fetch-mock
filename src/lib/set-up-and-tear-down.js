@@ -106,8 +106,7 @@ FetchMock.restore = function () {
 
 FetchMock.reset = function () {
 	this._calls = {};
-	this._matchedCalls = [];
-	this._unmatchedCalls = [];
+	this._allCalls = [];
 	this._holdingPromises = [];
 	this.routes.forEach(route => route.reset && route.reset())
 	return this;

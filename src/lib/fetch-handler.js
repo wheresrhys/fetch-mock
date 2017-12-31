@@ -94,9 +94,10 @@ FetchMock.push = function (name, args) {
 	if (name) {
 		this._calls[name] = this._calls[name] || [];
 		this._calls[name].push(args);
-		this._matchedCalls.push(args);
+		this._allCalls.push(args);
 	} else {
-		this._unmatchedCalls.push(args);
+		args.unmatched = true;
+		this._allCalls.push(args);
 	}
 };
 

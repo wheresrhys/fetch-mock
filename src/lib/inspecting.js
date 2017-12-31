@@ -1,10 +1,10 @@
 const FetchMock = {};
 
 FetchMock.calls = function (name) {
-	return name === true ? this._matchedCalls :
-		name === false ? this._unmatchedCalls :
+	return name === true ? this._allCalls.filter(call => !call.unmatched) :
+		name === false ? this._allCalls.filter(call => call.unmatched) :
 		name ? (this._calls[name] || []) :
-		this._matchedCalls.concat(this._unmatchedCalls);
+		this._allCalls
 }
 
 FetchMock.lastCall = function (name) {

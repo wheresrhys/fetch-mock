@@ -32,26 +32,33 @@ FetchMock.fetchHandler.isMock = true;
 FetchMock.executeRouter = function (url, opts) {
 
 	let response = this.router(url, opts);
-	if (!response) {
-		this.config.warnOnFallback && console.warn(`Unmatched ${opts && opts.method || 'GET'} to ${url}`);
-		this.push(null, [url, opts]);
 
-		if (this.fallbackResponse) {
-			response = this.fallbackResponse;
-		} else if (this.config.fallbackToNetwork) {
-			if (this.isSandbox) {
-				if (!this.config.fetch) {
-					throw 'to fallbackToNetwork when using a sanboxed fetch-mock set fetchMock.config.fetch to your chosen fetch implementation';
-				}
-				response = this.config.fetch
-			} else {
-				response = this.realFetch;
-			}
-		} else {
-			throw new Error(`No fallback response defined for ${opts && opts.method || 'GET'} to ${url}`)
-		}
+	if (response) {
+		return response;
 	}
-	return response;
+
+	if (this.config.warnOnFallback) {
+		console.warn(`Unmatched ${opts && opts.method || 'GET'} to ${url}`);
+	}
+
+	this.push(null, [url, opts]);
+
+	if (this.fallbackResponse) {
+		return this.fallbackResponse;
+	}
+
+	if (!this.config.fallbackToNetwork) {
+		throw new Error(`No fallback response defined for ${opts && opts.method || 'GET'} to ${url}`)
+	}
+
+	if (this.isSandbox) {
+		if (this.config.fetch) {
+			return this.config.fetch;
+		}
+		throw new Error('to fallbackToNetwork when using a sanboxed fetch-mock set fetchMock.config.fetch to your chosen fetch implementation');
+	} else {
+		return this.realFetch;
+	}
 }
 
 FetchMock.generateResponse = async function (response, url, opts) {

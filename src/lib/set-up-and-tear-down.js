@@ -1,20 +1,15 @@
 const compileRoute = require('./compile-route');
 const FetchMock = {};
 
-FetchMock.mock = function (matcher, response, options) {
+FetchMock.mock = function (matcher, response, options = {}) {
 	let route;
 
 	// Handle the variety of parameters accepted by mock (see README)
-	if (matcher && response && options) {
+	if (matcher && response) {
 		route = Object.assign({
 			matcher,
 			response
 		}, options);
-	} else if (matcher && response) {
-		route = {
-			matcher,
-			response
-		}
 	} else if (matcher && matcher.matcher) {
 		route = matcher
 	} else {

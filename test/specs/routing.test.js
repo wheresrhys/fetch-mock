@@ -239,8 +239,8 @@ module.exports = (fetchMock) => {
 						constructor (obj) {
 							this.obj = obj;
 						}
-						raw () {
-							return this.obj;
+						* [Symbol.iterator] () {
+							yield ['a', 'b'];
 						}
 						has () {
 							return true

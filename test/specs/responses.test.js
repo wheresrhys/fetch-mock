@@ -77,7 +77,7 @@ e.g. {"body": {"status: "registered"}}`)
 				it('not convert if `body` property exists', async () => {
 					fm.mock('http://it.at.there/', {body: 'exists'});
 					const res = await fm.fetchHandler('http://it.at.there/')
-					expect(res.headers.get('content-type')).not.to.exist;
+					expect(res.headers.get('content-type')).not.to.equal('application/json');
 				});
 
 				it('not convert if `headers` property exists', async () => {
@@ -97,11 +97,16 @@ e.g. {"body": {"status: "registered"}}`)
 					expect(res.headers.get('content-type')).not.to.exist;
 				});
 
-				it('not convert if `redirectUrl` property exists', async () => {
-					fm.mock('http://it.at.there/', {redirectUrl: 'http://url.to.hit'});
-					const res = await fm.fetchHandler('http://it.at.there/')
-					expect(res.headers.get('content-type')).not.to.exist;
-				});
+				// in the browser the fetch spec disallows invoking res.headers on an
+				// object that inherits from a response, thus breaking the ability to
+				// read headers of a fake redirected response.
+				if (typeof window === 'undefined') {
+					it('not convert if `redirectUrl` property exists', async () => {
+						fm.mock('http://it.at.there/', {redirectUrl: 'http://url.to.hit'});
+						const res = await fm.fetchHandler('http://it.at.there/')
+						expect(res.headers.get('content-type')).not.to.exist;
+					});
+				}
 
 				it('convert if non-whitelisted property exists', async () => {
 					fm.mock('http://it.at.there/', {status: 300, weird: true});
@@ -124,11 +129,15 @@ e.g. {"body": {"status: "registered"}}`)
 				expect(await res.json()).to.eql({an: 'object'});
 			});
 
-			it('should set the url property on responses', async () => {
-				fm.mock('begin:http://foo.com', 200)
-				const res = await fm.fetchHandler('http://foo.com/path?query=string')
-				expect(res.url).to.equal('http://foo.com/path?query=string');
-			})
+			// The fetch spec does not allow for manual url setting
+			// However node-fetch does, so we only run this test on the server
+			if (typeof window === 'undefined') {
+				it('should set the url property on responses', async () => {
+					fm.mock('begin:http://foo.com', 200)
+					const res = await fm.fetchHandler('http://foo.com/path?query=string')
+					expect(res.url).to.equal('http://foo.com/path?query=string');
+				})
+			}
 
 			it('respond with a redirected response', async () => {
 				fm.mock('http://it.at.there/', {

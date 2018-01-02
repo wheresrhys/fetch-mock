@@ -64,7 +64,10 @@ function getHeaderMatcher ({ headers: expectedHeaders }, Headers) {
 
 	return ({ headers = {} }) => {
 		if (headers instanceof Headers) {
-			headers = headers.raw();
+			headers = [...headers].reduce((map, [key, val]) => {
+				map[key] = val;
+				return map;
+			}, {});
 		}
 
 		const lowerCaseHeaders = headersToLowerCase(headers);

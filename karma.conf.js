@@ -20,7 +20,7 @@ module.exports = function(karma) {
 			debug: true,
 			transform: [
 				['babelify', {
-					'presets': ['es2015'],
+					'presets': ['es2017'],
 					'plugins': ['transform-object-assign']
 				}]
 			]
@@ -41,4 +41,3 @@ module.exports = function(karma) {
 	karma.set(configuration);
 
 };
-

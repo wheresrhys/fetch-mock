@@ -6,8 +6,8 @@
   "browser": "es5/client.js",
   "scripts": {
     "test": "make test",
-    "browserify": "browserify -s fetchMock es5/client.js > es5/client-browserified.js",
-    "prepublish": "babel src --out-dir es5 --plugins transform-object-assign --presets es2015 && npm run browserify"
+    "browserify": "browserify -s fetchMock es5/client.js > es5/client-bundle.js",
+    "prepublish": "babel src --out-dir es5 --plugins transform-object-assign --presets es2017 && npm run browserify"
   },
   "repository": {
     "type": "git",
@@ -36,7 +36,7 @@
     "babel": "^6.0.15",
     "babel-cli": "^6.1.2",
     "babel-plugin-transform-object-assign": "^6.8.0",
-    "babel-preset-es2015": "^6.1.2",
+    "babel-preset-es2017": "^6.1.2",
     "babelify": "^7.3.0",
     "bluebird": "^3.4.6",
     "browserify": "^13.1.0",
@@ -47,10 +47,10 @@
     "karma": "^1.3.0",
     "karma-browserify": "^5.1.0",
     "karma-chai": "^0.1.0",
-    "karma-chrome-launcher": "^2.0.0",
-    "karma-firefox-launcher": "^1.0.0",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-firefox-launcher": "^1.1.0",
     "karma-mocha": "^1.2.0",
-    "karma-phantomjs-launcher": "^1.0.2",
+    "karma-phantomjs-launcher": "^1.0.4",
     "mocha": "^4.0.1",
     "node-fetch": "^2.0.0-alpha.9",
     "sinon": "^4.1.3",

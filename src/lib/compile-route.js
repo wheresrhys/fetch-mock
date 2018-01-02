@@ -116,7 +116,7 @@ const getUrlMatcher = route => {
 	return ({ url }) => url === expectedUrl;
 }
 
-module.exports = function (route) {
+const sanitizeRoute = route => {
 	route = Object.assign({}, route);
 
 	if (typeof route.response === 'undefined') {
@@ -136,30 +136,46 @@ module.exports = function (route) {
 		route.method = route.method.toLowerCase();
 	}
 
+	return route;
+}
+
+const generateMatcher = (route, config) => {
 	const matchers = [
 		getMethodMatcher(route),
-		getHeaderMatcher(route, this.config.Headers),
+		getHeaderMatcher(route, config.Headers),
 		getUrlMatcher(route)
 	];
 
-	const matcher = (url, options) => {
-		const req = normalizeRequest(url, options, this.config.Request);
+	return (url, options) => {
+		const req = normalizeRequest(url, options, config.Request);
 		return matchers.every(matcher => matcher(req, options));
 	};
+}
 
-	if (route.repeat) {
-		let timesLeft = route.repeat;
-		route.matcher = (url, options) => {
-			const match = timesLeft && matcher(url, options);
-			if (match) {
-				timesLeft--;
-				return true;
-			}
-		}
-		route.reset = () => timesLeft = route.repeat;
-	} else {
-		route.matcher = matcher;
+const limitMatcher = (route) => {
+
+	if (!route.repeat) {
+		return;
 	}
+
+	const matcher = route.matcher;
+	let timesLeft = route.repeat;
+	route.matcher = (url, options) => {
+		const match = timesLeft && matcher(url, options);
+		if (match) {
+			timesLeft--;
+			return true;
+		}
+	}
+	route.reset = () => timesLeft = route.repeat;
+}
+
+module.exports = function (route) {
+	route = sanitizeRoute(route);
+
+	route.matcher = generateMatcher(route, this.config);
+
+	limitMatcher(route);
 
 	return route;
 }

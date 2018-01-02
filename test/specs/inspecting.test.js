@@ -124,7 +124,6 @@ module.exports = (fetchMock) => {
 
 				await fm.fetchHandler('http://it.at.here/');
 
-				expect(fm.called('http://it.at.here/')).to.be.false;
 				expect(fm.called('my-route')).to.be.true;
 			});
 
@@ -159,6 +158,16 @@ module.exports = (fetchMock) => {
 				await fm.fetchHandler('http://it.at.here/');
 
 				expect(fm.called(myFunc)).to.be.true;
+			});
+
+			it('can filter by url even if not a matcher', async () => {
+				const myFunc = () => true;
+				fm
+					.mock(myFunc, 200)
+
+				await fm.fetchHandler('http://it.at.here/');
+
+				expect(fm.called('http://it.at.here/')).to.be.true;
 			});
 
 		});

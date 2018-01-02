@@ -97,29 +97,30 @@ Chainable method that clears all data recorded for `fetch()`'s calls
 
 ## Analysing how `fetch()` has been called
 
-**For the methods below `matcherName`, if given, should be either**
+**For the methods below `filter`, if given, should be either**
 - the name of a route (see advanced usage below) 
 - equal to `matcher.toString()` for any unnamed route. You _can_ pass in the original regex or function used as a matcher, but they will be converted to strings and used to look up values in fetch-mock's internal maps of calls, rather than used as regexes or functions
-- `false` to retrieve results for unmatched calls only
-- `true` to retrieve results for matched calls only
-By default all calls successfully dealt with by fetch-mock are returned
+- An exact url
+- `true` for matched calls only
+- `false` for unmatched calls only
+If `filter` is undefined all calls to `fetch` are included
 
-#### `called(matcherName)`
-Returns a Boolean indicating whether fetch was called and a route was matched. If `matcherName` is specified it only returns `true` if that particular route was matched.
+#### `called(filter)`
+Returns a Boolean indicating whether fetch was called and a route was matched. If `filter` is specified it only returns `true` if that particular route was matched.
 
-#### `done(matcherName)`
-Returns a Boolean indicating whether fetch was called the expected number of times (or at least once if the route defines no expectation is set for the route). If no `matcherName` is passed it returns `true` if every route has been called the number of expected times.
+#### `done(filter)`
+Returns a Boolean indicating whether fetch was called the expected number of times (or at least once if the route defines no expectation is set for the route). If no `filter` is passed it returns `true` if every route has been called the number of expected times.
 
-#### `calls(matcherName)`
-Returns an object `{matched: [], unmatched: []}` containing arrays of all calls to fetch, grouped by whether fetch-mock matched them or not. If `matcherName` is specified then only calls to fetch matching that route are returned.
+#### `calls(filter)`
+Returns an object `{matched: [], unmatched: []}` containing arrays of all calls to fetch, grouped by whether fetch-mock matched them or not. If `filter` is specified then only calls to fetch matching that route are returned.
 
-#### `lastCall(matcherName)`
+#### `lastCall(filter)`
 Returns the arguments for the last matched call to fetch
 
-#### `lastUrl(matcherName)`
+#### `lastUrl(filter)`
 Returns the url for the last matched call to fetch. When `fetch` was last called using a `Request` instance, the url will be extracted from this
 
-#### `lastOptions(matcherName)`
+#### `lastOptions(filter)`
 Returns the options for the last matched call to fetch. When `fetch` was last called using a `Request` instance, the entire `Request` instance will be returned
 
 ## Config

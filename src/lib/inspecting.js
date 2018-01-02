@@ -1,10 +1,22 @@
 const FetchMock = {};
 
 FetchMock.calls = function (name) {
-	return name === true ? this._allCalls.filter(call => !call.unmatched) :
-		name === false ? this._allCalls.filter(call => call.unmatched) :
-		name ? (this._calls[name] || []) :
-		this._allCalls
+	if (name === true) {
+		return this._allCalls.filter(call => !call.unmatched);
+	}
+	if (name === false) {
+		return this._allCalls.filter(call => call.unmatched);
+	}
+
+	if (typeof name === 'undefined') {
+		return this._allCalls;
+	}
+
+	if (this._calls[name]) {
+		return this._calls[name];
+	}
+	console.log(name)
+	return this._allCalls.filter(([url, opts]) => url === name || url.url === name);
 }
 
 FetchMock.lastCall = function (name) {

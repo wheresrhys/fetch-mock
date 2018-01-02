@@ -1,7 +1,5 @@
 const chai = require('chai');
-chai.use(require('sinon-chai'));
 const expect = chai.expect;
-const sinon = require('sinon');
 
 module.exports = (fetchMock) => {
 	describe('responses', () => {
@@ -233,7 +231,7 @@ e.g. {"body": {"status: "registered"}}`)
 				});
 
 				try {
-					const res = fm.fetchHandler('http://it.at.there/')
+					fm.fetchHandler('http://it.at.there/')
 					expect(true).to.be.false
 				} catch (err) {
 					expect(err).to.equal('Oh no');

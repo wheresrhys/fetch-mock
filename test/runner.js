@@ -1,4 +1,4 @@
-module.exports = (fetchMock, theGlobal, Request, Response) => {
+module.exports = (fetchMock, theGlobal) => {
 
 	describe('fetch-mock', () => {
 

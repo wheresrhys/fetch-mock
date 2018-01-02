@@ -1,7 +1,5 @@
 const chai = require('chai');
-chai.use(require('sinon-chai'));
 const expect = chai.expect;
-const sinon = require('sinon');
 
 module.exports = (fetchMock) => {
 	describe('routing', () => {

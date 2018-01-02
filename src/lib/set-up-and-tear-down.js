@@ -33,16 +33,13 @@ FetchMock.addRoute = function (route) {
 			clashingRoutes = clashingRoutes.filter(existingRoute => {
 	  		return route.method === existingRoute.method;
 	  	});
-	  	this.routes.splice(this.routes.indexOf(clashingRoutes[0]), 1);
-	  } else if (typeof overwriteRoutes === 'undefined') {
+	  	this.routes.splice(this.routes.indexOf(clashingRoutes[0]), 1); } else if (typeof overwriteRoutes === 'undefined') {
 	  	clashingRoutes = clashingRoutes.filter(existingRoute => {
 	  		return !route.method || (route.method === existingRoute.method);
 	  	});
 
 	  	if (clashingRoutes.length) {
-		  	throw new Error('Adding route with same name as existing route. See `overwriteRoutes` option.');
-		  }
-	  }
+		  	throw new Error('Adding route with same name as existing route. See `overwriteRoutes` option.'); } }
 	}
 	this.routes.push(route);
 };
@@ -58,7 +55,7 @@ FetchMock._mock = function () {
 
 FetchMock.catch = function (response) {
 	if (this.fallbackResponse) {
-		console.warn(`calling fetchMock.catch() twice - are you sure you want to overwrite the previous fallback response`);
+		console.warn('calling fetchMock.catch() twice - are you sure you want to overwrite the previous fallback response');// eslint-disable-line
 	}
 	this.fallbackResponse = response || 'ok';
 	return this._mock();

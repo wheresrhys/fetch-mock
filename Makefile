@@ -13,7 +13,7 @@ test-unit:
 	./node_modules/.bin/mocha test/server.js
 
 lint:
-	./node_modules/.bin/eslint src test
+	./node_modules/.bin/eslint --ignore-pattern test/fixtures/* src test
 
 test: test-unit lint test-browser coverage-report
 

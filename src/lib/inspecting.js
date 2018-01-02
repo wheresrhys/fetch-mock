@@ -15,8 +15,7 @@ FetchMock.calls = function (name) {
 	if (this._calls[name]) {
 		return this._calls[name];
 	}
-	console.log(name)
-	return this._allCalls.filter(([url, opts]) => url === name || url.url === name);
+	return this._allCalls.filter(([url]) => url === name || url.url === name);
 }
 
 FetchMock.lastCall = function (name) {
@@ -55,7 +54,7 @@ FetchMock.done = function (name) {
 	// b) would exit after first failure, which would break the logging
 	return names.map(name => {
 		if (!this.called(name)) {
-			console.warn(`Warning: ${name} not called`);
+			console.warn(`Warning: ${name} not called`);// eslint-disable-line
 			return false;
 		}
 		// would use array.find... but again not so widely supported
@@ -67,7 +66,7 @@ FetchMock.done = function (name) {
 
 		const actualTimes = this.calls(name).length;
 		if (expectedTimes > actualTimes) {
-			console.warn(`Warning: ${name} only called ${actualTimes} times, but ${expectedTimes} expected`);
+			console.warn(`Warning: ${name} only called ${actualTimes} times, but ${expectedTimes} expected`);// eslint-disable-line
 			return false;
 		} else {
 			return true;

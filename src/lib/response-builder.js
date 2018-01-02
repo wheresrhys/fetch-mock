@@ -81,7 +81,7 @@ e.g. {"body": {"status: "registered"}}`);
 		return this.responseConfig[name] === undefined ? this.fetchMockConfig[name] : this.responseConfig[name];
 	}
 
-	constructResponseBody() {
+	constructResponseBody () {
 		// start to construct the body
 		let body = this.responseConfig.body;
 

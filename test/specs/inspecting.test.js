@@ -2,9 +2,7 @@
 // ... maybe accept method as second argument to calls, called etc
 // consider case where multiple routes match.. make sure only one matcher logs calls
 const chai = require('chai');
-chai.use(require('sinon-chai'));
 const expect = chai.expect;
-const sinon = require('sinon');
 
 module.exports = (fetchMock) => {
 	describe('inspecting', () => {

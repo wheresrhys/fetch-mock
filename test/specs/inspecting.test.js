@@ -99,8 +99,18 @@ module.exports = (fetchMock) => {
 		});
 
 		describe('call order', () => {
-			it.skip('retrieves calls in correct order, for all', () => {
+			it('retrieves calls in correct order', () => {
+				fm
+					.mock('http://it.at.here', 200)
+					.mock('http://it.at.there', 200)
+					.catch()
 
+				fm.fetchHandler('http://it.at.here');
+				fm.fetchHandler('http://it.at.there');
+				fm.fetchHandler('http://it.at.where');
+				expect(fm.calls()[0][0]).to.equal('http://it.at.here');
+				expect(fm.calls()[1][0]).to.equal('http://it.at.there');
+				expect(fm.calls()[2][0]).to.equal('http://it.at.where');
 			})
 		});
 

@@ -39,7 +39,9 @@ FetchMock.addRoute = function (route) {
 	  	});
 
 	  	if (clashingRoutes.length) {
-		  	throw new Error('Adding route with same name as existing route. See `overwriteRoutes` option.'); } }
+		  	throw new Error('Adding route with same name as existing route. See `overwriteRoutes` option.');
+		  }
+		}
 	}
 	this.routes.push(route);
 };

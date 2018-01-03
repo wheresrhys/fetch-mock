@@ -1,17 +1,18 @@
-- [Introduction](/fetch-mock)
-- [Quickstart](/fetch-mock/quickstart)
-- Installation and usage 
-- [API documentation](/fetch-mock/api)
-- [Troubleshooting](/fetch-mock/troubleshooting)
-- [Examples](/fetch-mock/examples)
+- [Docs for latest version](/fetch-mock)
+- [Introduction](/fetch-mock/v5)
+- [Quickstart](/fetch-mock/v5/quickstart)
+- Installation and usage
+- [API documentation](/fetch-mock/v5/api)
+- [Troubleshooting](/fetch-mock/v5/troubleshooting)
+- [Examples](/fetch-mock/v5/examples)
 
-# Installation
+# V5 Installation
 Install fetch-mock using `npm install --save-dev fetch-mock`
 
 In most environments use `const fetchMock = require('fetch-mock')` to use it in your code. Some exceptions include:
 
 * If your client-side code or tests do not use a loader that respects the browser field of `package.json` use `require('fetch-mock/es5/client')`.
-* If you need to use fetch-mock without commonjs, you can include the precompiled `node_modules/fetch-mock/es5/client-bundle.js` in a script tag. This loads fetch-mock into the `fetchMock` global variable.
+* If you need to use fetch-mock without commonjs, you can include the precompiled `node_modules/fetch-mock/es5/client-browserified.js` in a script tag. This loads fetch-mock into the `fetchMock` global variable.
 * For server side tests running in nodejs 0.12 or lower use `require('fetch-mock/es5/server')`
 
 ## Global fetch

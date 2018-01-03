@@ -33,7 +33,8 @@ FetchMock.addRoute = function (route) {
 			clashingRoutes = clashingRoutes.filter(existingRoute => {
 	  		return route.method === existingRoute.method;
 	  	});
-	  	this.routes.splice(this.routes.indexOf(clashingRoutes[0]), 1); } else if (typeof overwriteRoutes === 'undefined') {
+	  	this.routes.splice(this.routes.indexOf(clashingRoutes[0]), 1);
+	  } else if (typeof overwriteRoutes === 'undefined') {
 	  	clashingRoutes = clashingRoutes.filter(existingRoute => {
 	  		return !route.method || (route.method === existingRoute.method);
 	  	});

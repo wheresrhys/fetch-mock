@@ -1,14 +1,15 @@
-- [Introduction](/fetch-mock)
-- [Quickstart](/fetch-mock/quickstart)
-- [Installation and usage](/fetch-mock/installation)
+- [Docs for latest version](/fetch-mock)
+- [Introduction](/fetch-mock/v5)
+- [Quickstart](/fetch-mock/v5/quickstart)
+- [Installation and usage](/fetch-mock/v5/installation)
 - API documentation
-- [Troubleshooting](/fetch-mock/troubleshooting)
-- [Examples](/fetch-mock/examples)
+- [Troubleshooting](/fetch-mock/v5/troubleshooting)
+- [Examples](/fetch-mock/v5/examples)
 
-# API Documentation
+# V5 API Documentation
 
-* [V5 - V6 upgrade guide](/fetch-mock/v5-v6-upgrade)
-* [V5 docs](/fetch-mock/v5)
+* [V4 - V5 upgrade guide](/fetch-mock/v5/v4-v5-upgrade)
+* [V4 docs](https://github.com/wheresrhys/fetch-mock/blob/95d79052efffef5c80b3d87d5050392293e1bfaa/README.md)
 
 ## Mocking calls to `fetch`
 
@@ -23,6 +24,7 @@ Replaces `fetch()` with a stub which records its calls, grouped by route, and op
         * `end:.jpg` to match urls ending with a string
         * `glob:http://*.*` to match glob patterns
         * `express:/user/:user` to match [express style paths](https://www.npmjs.com/package/path-to-regexp)
+        * [deprecated] if the string begins with a `^`, the string following the `^` must begin the url e.g. '^http://www.site.com' would match 'http://www.site.com' or 'http://www.site.com/page.html'
     * `RegExp`: A regular  expression to test the url against
     * `Function(url, opts)`: A function (returning a Boolean) that is passed the url and opts `fetch()` is called with (or, if `fetch()` was called with one, the `Request` instance)
 * `response`: Configures the http response returned by the mock. Can take any of the following values (or be a `Promise` for any of them, enabling full control when testing race conditions etc.)
@@ -36,7 +38,6 @@ Replaces `fetch()` with a stub which records its calls, grouped by route, and op
         * `throws`: If this property is present then a `Promise` rejected with the value of `throws` is returned
         * `sendAsJson`: This property determines whether or not the request body should be JSON.stringified before being sent (defaults to true).
         * `includeContentLength`: Set this property to true to automatically add the `content-length` header (defaults to false).
-        * `redirectUrl`: *experimental* the url the response should be from (to imitate followed redirects - will set `redirected: true` on the response)
     * `Function(url, opts)`: A function that is passed the url and opts `fetch()` is called with and that returns any of the responses listed above (or a `Promise` for any of them)
 * `options`: A configuration object with all/additional properties to define a route to mock
     * `name`: A unique string naming the route. Used to subsequently retrieve references to the calls, grouped by name. If not specified defaults to `matcher.toString()` *Note: If a non-unique name is provided no error will be thrown (because names are optional, so auto-generated ones may legitimately clash)*
@@ -44,7 +45,8 @@ Replaces `fetch()` with a stub which records its calls, grouped by route, and op
     * `headers`: key/value map of headers to match
     * `matcher`: as specified above
     * `response`: as specified above
-    * `repeat`: An integer, `n`, limiting the number of times the matcher can be used. If the route has already been called `n` times the route will be ignored and the call to `fetch()` will fall through to be handled by any other routes defined (which may eventually result in an error if nothing matches it)
+    * `__redirectUrl`: *experimental* the url the response should be from (to imitate followed redirects - will set `redirected: true` on the response)
+    * `times`: An integer, `n`, limiting the number of times the matcher can be used. If the route has already been called `n` times the route will be ignored and the call to `fetch()` will fall through to be handled by any other routes defined (which may eventually result in an error if nothing matches it)
 
 #### `once()`
 Shorthand for `mock()` which limits to being called one time only. (see `times` option above)
@@ -74,15 +76,14 @@ fetchMock
 #### `spy()`
 Similar to `catch()`, this records the call history of unmatched calls, but instead of responding with a stubbed response, the request is passed through to native `fetch()` and is allowed to communicate over the network.
 
-#### `chill()`
-Similar to `spy()`, but silences all fallback to network warnings
-
-#### `sandbox()`
+#### `sandbox(Promise)` *experimental*
 This returns a drop-in mock for fetch which can be passed to other mocking libraries. It implements the full fetch-mock api and maintains its own state independent of other instances, so tests can be run in parallel. e.g.
 
 ```
     fetchMock.sandbox().mock('http://domain.com', 200)
 ```
+
+`sandbox()` can optionally be passed a custom promise implementation. If not provided, the `Promise` global is used.
 
 #### `flush()`
 Returns a promise that resolves once all fetches handled by fetch-mock have resolved. Useful for testing code that uses `fetch` but doesn't return a promise.
@@ -97,43 +98,33 @@ Chainable method that clears all data recorded for `fetch()`'s calls
 
 ## Analysing how `fetch()` has been called
 
-**For the methods below `filter`, if given, should be either**
-- the name of a route (see advanced usage below) 
-- equal to `matcher.toString()` for any unnamed route. You _can_ pass in the original regex or function used as a matcher, but they will be converted to strings and used to look up values in fetch-mock's internal maps of calls, rather than used as regexes or functions
-- An exact url
-- `true` for matched calls only
-- `false` for unmatched calls only
-If `filter` is undefined all calls to `fetch` are included
+**For the methods below `matcherName`, if given, should be either the name of a route (see advanced usage below) or equal to `matcher.toString()` for any unnamed route. You _can_ pass in the original regex or function used as a matcher, but they will be converted to strings and used to look up values in fetch-mock's internal maps of calls, rather than used as regexes or functions**
 
-#### `called(filter)`
-Returns a Boolean indicating whether fetch was called and a route was matched. If `filter` is specified it only returns `true` if that particular route was matched.
+#### `called(matcherName)`
+Returns a Boolean indicating whether fetch was called and a route was matched. If `matcherName` is specified it only returns `true` if that particular route was matched.
 
-#### `done(filter)`
-Returns a Boolean indicating whether fetch was called the expected number of times (or at least once if the route defines no expectation is set for the route). If no `filter` is passed it returns `true` if every route has been called the number of expected times.
+#### `done(matcherName)`
+Returns a Boolean indicating whether fetch was called the expected number of times (or at least once if the route defines no expectation is set for the route). If no `matcherName` is passed it returns `true` if every route has been called the number of expected times.
 
-#### `calls(filter)`
-Returns an object `{matched: [], unmatched: []}` containing arrays of all calls to fetch, grouped by whether fetch-mock matched them or not. If `filter` is specified then only calls to fetch matching that route are returned.
+#### `calls(matcherName)`
+Returns an object `{matched: [], unmatched: []}` containing arrays of all calls to fetch, grouped by whether fetch-mock matched them or not. If `matcherName` is specified then only calls to fetch matching that route are returned.
 
-#### `lastCall(filter)`
+#### `lastCall(matcherName)`
 Returns the arguments for the last matched call to fetch
 
-#### `lastUrl(filter)`
-Returns the url for the last matched call to fetch. When `fetch` was last called using a `Request` instance, the url will be extracted from this
+#### `lastUrl(matcherName)`
+Returns the url for the last matched call to fetch
 
-#### `lastOptions(filter)`
-Returns the options for the last matched call to fetch. When `fetch` was last called using a `Request` instance, the entire `Request` instance will be returned
+#### `lastOptions(matcherName)`
+Returns the options for the last matched call to fetch
 
-## Config
+## Utilities
 
-On either the global or sandboxed fetchMock instances, the following config options can be set by changing properties on `fetchMock.config`
+#### `configure(opts)`
+Set some global config options, which include
 * `sendAsJson` [default `true`] - by default fetchMock will convert objects to JSON before sending. This is overrideable from each call but for some scenarios e.g. when dealing with a lot of array buffers, it can be useful to default to `false`
-* `includeContentLength` [default `true`]: When set to true this will make fetchMock automatically add the `content-length` header. This is especially useful when combined with `sendAsJson` because then fetchMock does the conversion to JSON for you and knows the resulting length so you don’t have to compute this yourself by basically doing the same conversion to JSON.
-* `fallbackToNetwork` [default `false`] If true then unmatched calls will transparently fall through to the network, if false an error will be thrown. Within individual tests `.catch()` and `spy()` can be used for fine-grained control of this
-* `warnOnFallback` [default `true`] If true then any unmatched calls that are caught by a fallback handler (either the network or a custom function set using `catch()`) will emit warnings
-* `Headers`,`Request`,`Response`,`Promise`, `fetch`
-When using non standard fetch (e.g. a ponyfill, or  aversion of `node-fetch` other than the one bundled with `fetch-mock`) or an alternative Promise implementation, this will configure fetch-mock to use your chosen implementations.
+* `includeContentLength` [default `false`]: When set to true this will make fetchMock automatically add the `content-length` header. This is especially useful when combined with `sendAsJson` because then fetchMock does the conversion to JSON for you and knows the resulting length so you don’t have to compute this yourself by basically doing the same conversion to JSON.
 
-.createInstance)()
-
-Note that `Object.assign(fetchMock.config, require('fetch-ponyfill')())` will configure fetch-mock to use all of fetch-ponyfill's classes. In most cases, it should only be necessary to set this once before any tests run.
+#### `setImplementations(opts)`
+When using non global fetch (e.g. a ponyfill) or an alternative Promise implementation, this will configure fetch-mock to use your chosen implementations. `opts` is an object with one or more of the following properties: `Headers`,`Request`,`Response`,`Promise`. Note that `setImplementations(require('fetch-ponyfill')())` will configure fetch-mock to use all of fetch-ponyfill's classes. `setImplementations()` shoul, in most cases, be called only once, before any tests run.
 

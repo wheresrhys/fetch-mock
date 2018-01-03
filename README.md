@@ -2,3 +2,5 @@
 Mock http requests made using fetch 
 
 [Documentation](http://www.wheresrhys.co.uk/fetch-mock/)
+
+Try v6 beta - `npm install fetch-mock@6.0.0-beta.2`

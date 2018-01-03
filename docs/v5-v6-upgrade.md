@@ -8,7 +8,7 @@ Feedback gratefully received when in beta - please raise an issue :-)
 
 To try it out:
 ```
-npm install fetch-mock@6.0.0-beta.1
+npm install fetch-mock@6.0.0-beta.2
 ```
 (Bear in mind that the docs may still include a few inaccuracies)
 

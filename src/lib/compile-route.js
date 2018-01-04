@@ -86,9 +86,10 @@ const getMethodMatcher = route => {
 
 const getUrlMatcher = route => {
 
+	// When the matcher is a function it shodul not be compared with the url
+	// in the normal way
 	if (typeof route.matcher === 'function') {
-		const matcher = route.matcher;
-		return ({ url }, options) => matcher(url, options);
+		return () => true;
 	}
 
 	if (route.matcher instanceof RegExp) {
@@ -139,16 +140,26 @@ const sanitizeRoute = route => {
 	return route;
 }
 
+const getFunctionMatcher = route => {
+	if (typeof route.matcher === 'function') {
+		const matcher = route.matcher;
+		return (req, [url, options]) => matcher(url, options);
+	} else {
+		return () => true;
+	}
+}
+
 const generateMatcher = (route, config) => {
 	const matchers = [
 		getMethodMatcher(route),
 		getHeaderMatcher(route, config.Headers),
-		getUrlMatcher(route)
+		getUrlMatcher(route),
+		getFunctionMatcher(route)
 	];
 
 	return (url, options) => {
 		const req = normalizeRequest(url, options, config.Request);
-		return matchers.every(matcher => matcher(req, options));
+		return matchers.every(matcher => matcher(req, [url, options]));
 	};
 }
 

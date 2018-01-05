@@ -94,6 +94,25 @@ module.exports = (fetchMock) => {
 					expect(fm.lastOptions(false)).to.exist;
 				});
 			});
+
+			describe('advanced filters', () => {
+				it('filter by method', async () => {
+					expect(fm.called('http://it.at.here/', 'post')).to.be.false;
+					expect(fm.calls('http://it.at.here/', 'post').length).to.equal(0);
+					expect(fm.lastCall('http://it.at.here/', 'post')).not.to.exist;
+					expect(fm.lastUrl('http://it.at.here/', 'post')).not.to.exist;
+					expect(fm.lastOptions('http://it.at.here/', 'post')).not.to.exist;
+					await fm.fetchHandler('http://it.at.here/', {method: 'POST'});
+					expect(fm.called('http://it.at.here/', 'post')).to.be.true;
+					expect(fm.called('http://it.at.here/', 'POST')).to.be.true;
+					expect(fm.calls('http://it.at.here/', 'post').length).to.equal(1);
+					expect(fm.lastCall('http://it.at.here/', 'post')).to.exist;
+					expect(fm.lastUrl('http://it.at.here/', 'post')).to.exist;
+					expect(fm.lastOptions('http://it.at.here/', 'post')).to.exist;
+					await fm.fetchHandler(new fm.config.Request('http://it.at.here/', {method: 'POST'}));
+					expect(fm.calls('http://it.at.here/', 'post').length).to.equal(2);
+				})
+			})
 		});
 
 		describe('call order', () => {
@@ -177,6 +196,7 @@ module.exports = (fetchMock) => {
 				fm.fetchHandler('http://it.at.here/', {method: 'POST'});
 			})
 			after(() => fm.restore());
+
 			it('calls (call history)', () => {
 				expect(fm.calls()[0]).to.eql(['http://it.at.here/', undefined]);
 				expect(fm.calls()[1]).to.eql(['http://it.at.here/', {method: 'POST'}]);

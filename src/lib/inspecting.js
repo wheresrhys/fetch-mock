@@ -1,6 +1,6 @@
 const FetchMock = {};
 
-FetchMock.calls = function (name) {
+FetchMock.callsFilteredByName = function (name) {
 	if (name === true) {
 		return this._allCalls.filter(call => !call.unmatched);
 	}
@@ -18,28 +18,46 @@ FetchMock.calls = function (name) {
 	return this._allCalls.filter(([url]) => url === name || url.url === name);
 }
 
-FetchMock.lastCall = function (name) {
-	return [...this.calls(name)].pop();
+FetchMock.calls = function (name, options = {}) {
+	if (typeof options === 'string') {
+		options = {method: options};
+	}
+
+	let calls = this.callsFilteredByName(name);
+
+	if (options.method) {
+		const testMethod = options.method.toLowerCase();
+		calls = calls.filter(([url, opts = {}]) => {
+			const method = (url.method || opts.method || 'get').toLowerCase();
+			return method === testMethod;
+		});
+	}
+	return calls;
+
 }
 
-FetchMock.normalizeLastCall = function (name) {
-	const call = this.lastCall(name) || [];
+FetchMock.lastCall = function (name, options) {
+	return [...this.calls(name, options)].pop();
+}
+
+FetchMock.normalizeLastCall = function (name, options) {
+	const call = this.lastCall(name, options) || [];
 	if (this.config.Request.prototype.isPrototypeOf(call[0])) {
 		return [call[0].url, call[0]];
 	}
 	return call;
 }
 
-FetchMock.lastUrl = function (name) {
-	return this.normalizeLastCall(name)[0];
+FetchMock.lastUrl = function (name, options) {
+	return this.normalizeLastCall(name, options)[0];
 }
 
-FetchMock.lastOptions = function (name) {
-	return this.normalizeLastCall(name)[1];
+FetchMock.lastOptions = function (name, options) {
+	return this.normalizeLastCall(name, options)[1];
 }
 
-FetchMock.called = function (name) {
-	return !!this.calls(name).length;
+FetchMock.called = function (name, options) {
+	return !!this.calls(name, options).length;
 }
 
 FetchMock.flush = function () {

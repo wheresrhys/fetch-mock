@@ -1,6 +1,8 @@
 'use strict';
 const glob = require('glob-to-regexp')
 const express = require('path-to-regexp');
+const URL = require('url');
+const querystring = require('querystring');
 
 function normalizeRequest (url, options, Request) {
 	if (Request.prototype.isPrototypeOf(url)) {
@@ -84,6 +86,17 @@ const getMethodMatcher = route => {
 	};
 }
 
+const getQueryStringMatcher = route => {
+	if (!route.query) {
+		return () => true;
+	}
+	const keys = Object.keys(route.query);
+	return ({ url }) => {
+		const query = querystring.parse(URL.parse(url).query);
+		return keys.every(key => query[key] === route.query[key]);
+	}
+}
+
 const getUrlMatcher = route => {
 
 	// When the matcher is a function it shodul not be compared with the url
@@ -114,7 +127,12 @@ const getUrlMatcher = route => {
 
 	// if none of the special syntaxes apply, it's just a simple string match
 	const expectedUrl = route.matcher;
-	return ({ url }) => url === expectedUrl;
+	return ({ url }) => {
+		if (route.query && expectedUrl.indexOf('?')) {
+			return url.indexOf(expectedUrl) === 0;
+		}
+		return url === expectedUrl;
+	}
 }
 
 const sanitizeRoute = route => {
@@ -151,6 +169,7 @@ const getFunctionMatcher = route => {
 
 const generateMatcher = (route, config) => {
 	const matchers = [
+		getQueryStringMatcher(route),
 		getMethodMatcher(route),
 		getHeaderMatcher(route, config.Headers),
 		getUrlMatcher(route),
@@ -159,7 +178,7 @@ const generateMatcher = (route, config) => {
 
 	return (url, options) => {
 		const req = normalizeRequest(url, options, config.Request);
-		return matchers.every(matcher => matcher(req, [url, options]));
+		return matchers.every(matcher => matcher(req, [url, options]))
 	};
 }
 

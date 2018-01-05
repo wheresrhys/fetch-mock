@@ -42,6 +42,7 @@ Replaces `fetch()` with a stub which records its calls, grouped by route, and op
     * `name`: A unique string naming the route. Used to subsequently retrieve references to the calls, grouped by name. If not specified defaults to `matcher.toString()` *Note: If a non-unique name is provided no error will be thrown (because names are optional, so auto-generated ones may legitimately clash)*
     * `method`: http method to match
     * `headers`: key/value map of headers to match
+    * `query`: key/value map of query strings to match, in any order
     * `matcher`: as specified above
     * `response`: as specified above
     * `repeat`: An integer, `n`, limiting the number of times the matcher can be used. If the route has already been called `n` times the route will be ignored and the call to `fetch()` will fall through to be handled by any other routes defined (which may eventually result in an error if nothing matches it)

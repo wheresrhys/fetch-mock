@@ -32,6 +32,6 @@ In that case `fetchMock.sandbox()` can be used to generate a function which you 
 ### Matching `Request` objects in node fails
 In node, if using npm at a version less than 2 the `Request` constructor used by `fetch-mock` won't necessarily be the same as the one used by `node-fetch`. To fix this either:
 * upgrade to npm@3
-* use `fetchMock.setImplementations({Request: myRequest})`, where `myRequest` is a reference to the Request constructor used in your application code.
+* use `fetchMock.config.Request = myRequest`, where `myRequest` is a reference to the Request constructor used in your application code.
 
 

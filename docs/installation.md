@@ -15,7 +15,7 @@ In most environments use `const fetchMock = require('fetch-mock')` to use it in 
 * For server side tests running in nodejs 0.12 or lower use `require('fetch-mock/es5/server')`
 
 ## Global fetch
-By default fetch-mock assumes `fetch` is a global so once you've required fetch-mock refer to the quickstart and api docs.
+By default fetch-mock assumes `fetch` is a global so once you've required fetch-mock refer to the quickstart and api docs.  
 
 ### Polyfilling fetch
 Many older browsers will require polyfilling the `fetch` global
@@ -35,17 +35,19 @@ const myMock = fetchMock.sandbox().mock('/home', 200);
 expect(myMock.called('/home')).to.be.true;
 ```
 
-## References to Request, Response, Helpers and Promise
-If you're using a non-global fetch implementation, or wish to use a custom Promise implementation, you may need to tell fetch-mock to use these when matching requests and returning responses. Do this using the `.setImplementations()` method. e.g. 
+## References to Request, Response, Headers, fetch and Promise
+If you're using a non-global fetch implementation, or wish to use a custom Promise implementation, you may need to tell fetch-mock to use these when matching requests and returning responses. Do this by setting these properties on `fetchMock.config`, e.g 
 
 ```
-fetchMock.setImplementations({Promise: require('Bluebird').promise})
+const ponyfill = require('fetch-ponyfill')();
+fetchMock.config = Object.assign(fetchMock.config, {
+    Promise: require('Bluebird').promise,
+    Headers: ponyfill.Headers,
+    Request: ponyfill.Headers,
+    Response: ponyfill.Response
+    fetch: ponyfill
+}, 
 ```
+This should be done before running any tests.
 
-In particular, when using fetch-ponyfill 
-
-```
-setImplementations(require('fetch-ponyfill')())`
-```
-
-will set all the internal references to point at fetch-ponyfill's classes.
+Note that when using `node-fetch`, `fetch-mock` will use the instance you already have installed so there should be no need to set any of the above (apart from `fetch`, which is required if you intend to use the `.spy()` method)

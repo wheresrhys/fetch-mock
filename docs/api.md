@@ -91,30 +91,33 @@ Chainable method that clears all data recorded for `fetch()`'s calls. *It will n
 
 ## Inspecting how `fetch()` has been called
 
-**For the methods below `filter`, if given, should be either**
-- the name of a route (see advanced usage below) 
-- equal to `matcher.toString()` for any unnamed route. You _can_ pass in the original regex or function used as a matcher, but they will be converted to strings and used to look up values in fetch-mock's internal maps of calls, rather than used as regexes or functions
-- An exact url
-- `true` for matched calls only
-- `false` for unmatched calls only
-If `filter` is undefined all calls to `fetch` are included
+### Filtering
+Most of the methods below accept two parameters, `(filter, method)`
+- `filter` Enables filtering fetch calls for the most commonly use cases. It can be:
+    - the name of a route 
+    - The value of `matcher` or `matcher.toString()` for any unnamed route. You _can_ pass in the original regex or function as a matcher, but they will be converted to strings and used to look up values in fetch-mock's internal maps of calls, _not_ used as regexes or functions executed on teh url
+    - An exact url
+    - `true` for matched calls only
+    - `false` for unmatched calls only
+    - `undefined` for all calls to fetch
+- `method` A http method to filter by   
 
-#### `called(filter)`
+#### `called(filter, method)`
 Returns a Boolean indicating whether fetch was called and a route was matched. If `filter` is specified it only returns `true` if that particular route was matched.
 
 #### `done(filter)`
-Returns a Boolean indicating whether fetch was called the expected number of times (or at least once if the route defines no expectation is set for the route). If no `filter` is passed it returns `true` if every route has been called the number of expected times.
+Returns a Boolean indicating whether fetch was called the expected number of times (or at least once if the route defines no expectation is set for the route). _Unlike the other methods for inspecting calls, unmatched calls are irrelevant_. Therefore, if no `filter` is passed, `done()` returns `true` if every route has been called the number of expected times.
 
-#### `calls(filter)`
+#### `calls(filter, method)`
 Returns an object `{matched: [], unmatched: []}` containing arrays of all calls to fetch, grouped by whether fetch-mock matched them or not. If `filter` is specified then only calls to fetch matching that route are returned.
 
-#### `lastCall(filter)`
+#### `lastCall(filter, method)`
 Returns the arguments for the last matched call to fetch
 
-#### `lastUrl(filter)`
+#### `lastUrl(filter, method)`
 Returns the url for the last matched call to fetch. When `fetch` was last called using a `Request` instance, the url will be extracted from this
 
-#### `lastOptions(filter)`
+#### `lastOptions(filter, method)`
 Returns the options for the last matched call to fetch. When `fetch` was last called using a `Request` instance, the entire `Request` instance will be returned
 
 #### `flush()`

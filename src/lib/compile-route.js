@@ -175,6 +175,14 @@ const getReferrerMatcher = route => {
 	}
 }
 
+const getCredentialsMatcher = route => {
+	return (req, [, options]) => {
+		const routeCreds = route && route.credentials && route.credentials.toLowerCase();
+		const optionsCreds = options && options.credentials && options.credentials.toLowerCase();
+		return routeCreds === optionsCreds;
+	}
+}
+
 const generateMatcher = (route, config) => {
 	const matchers = [
 		getQueryStringMatcher(route),
@@ -182,7 +190,8 @@ const generateMatcher = (route, config) => {
 		getHeaderMatcher(route, config.Headers),
 		getUrlMatcher(route),
 		getFunctionMatcher(route),
-		getReferrerMatcher(route)
+		getReferrerMatcher(route),
+		getCredentialsMatcher(route)
 	];
 
 	return (url, options) => {

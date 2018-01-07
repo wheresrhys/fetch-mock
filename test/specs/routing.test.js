@@ -461,6 +461,65 @@ module.exports = (fetchMock) => {
 					expect(fm.calls(true).length).to.equal(1);
 				})
 			});
+
+			describe('credentials', () => {
+				it('not match when credentials not present', async () => {
+					fm
+						.mock('http://it.at.there/', 200, {
+							credentials: 'same-origin'
+						})
+						.catch();
+
+					await fm.fetchHandler('http://it.at.there/')
+					expect(fm.calls(true).length).to.equal(0);
+				});
+
+				it('not match when credentials does\'t match', async () => {
+					fm
+						.mock('http://it.at.there/', 200, {
+							credentials: 'same-origin'
+						})
+						.catch();
+
+					await fm.fetchHandler('http://it.at.there/', { credentials: 'omit' })
+					expect(fm.calls(true).length).to.equal(0);
+				});
+
+				it('match credentialss', async () => {
+					fm
+						.mock('http://it.at.there/', 200, {
+							credentials: 'same-origin'
+						})
+						.catch();
+
+					await fm.fetchHandler('http://it.at.there/', { credentials: 'same-origin' })
+					expect(fm.calls(true).length).to.equal(1);
+				});
+
+				it('be case insensitive', async () => {
+					fm
+						.mock('http://it.at.there/', 200, {
+							credentials: 'same-origin'
+						})
+						.catch();
+
+					await fm.fetchHandler('http://it.at.there/', { credentials: 'SAME-ORIGIN' })
+					expect(fm.calls(true).length).to.equal(1);
+				});
+
+				it('can be used alongside function matchers', async () => {
+					fm
+						.mock(url => /person/.test(url), 200, {
+							credentials: 'same-origin'
+						})
+						.catch();
+
+					await fm.fetchHandler('http://domain.com/person');
+					expect(fm.calls(true).length).to.equal(0);
+					await fm.fetchHandler('http://domain.com/person', { credentials: 'same-origin' });
+					expect(fm.calls(true).length).to.equal(1);
+				})
+			});
 		});
 
 		describe('multiple routes', () => {

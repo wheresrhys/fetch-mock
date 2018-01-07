@@ -187,6 +187,16 @@ module.exports = (fetchMock) => {
 				expect(fm.called('http://it.at.here/')).to.be.true;
 			});
 
+			it('can filter by url even if not a matcher and called with Request', async () => {
+				const myFunc = () => true;
+				fm
+					.mock(myFunc, 200)
+
+				await fm.fetchHandler(new fm.config.Request('http://it.at.here/'));
+
+				expect(fm.called('http://it.at.here/')).to.be.true;
+			});
+
 		});
 
 		describe('retrieving call parameters', () => {

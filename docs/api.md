@@ -91,15 +91,18 @@ Chainable method that clears all data recorded for `fetch()`'s calls. *It will n
 
 ## Inspecting how `fetch()` has been called
 
-**For the methods below `filter`, if given, should be either**
-- the name of a route (see advanced usage below) 
-- equal to `matcher.toString()` for any unnamed route. You _can_ pass in the original regex or function used as a matcher, but they will be converted to strings and used to look up values in fetch-mock's internal maps of calls, rather than used as regexes or functions
-- An exact url
-- `true` for matched calls only
-- `false` for unmatched calls only
-If `filter` is undefined all calls to `fetch` are included
+### Filtering
+Most of the methods below accept two parameters, `(filter, method)`
+- `filter` Enables filtering fetch calls for the most commonly use cases. It can be:
+    - the name of a route 
+    - The value of `matcher` or `matcher.toString()` for any unnamed route. You _can_ pass in the original regex or function as a matcher, but they will be converted to strings and used to look up values in fetch-mock's internal maps of calls, _not_ used as regexes or functions executed on teh url
+    - If `filter` is a string, and it does not match any routes, it is asumed the string is a url, and calls to `fetch` made with that url are returned
+    - `true` for matched calls only
+    - `false` for unmatched calls only
+    - `undefined` for all calls to fetch
+- `method` A http method to filter by   
 
-#### `called(filter)`
+#### `called(filter, method)`
 Returns a Boolean indicating whether fetch was called and a route was matched. If `filter` is specified it only returns `true` if that particular route was matched.
 
 #### `done(filter)`

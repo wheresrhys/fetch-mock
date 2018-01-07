@@ -175,6 +175,14 @@ const getReferrerMatcher = route => {
 	}
 }
 
+const getReferrerPolicyMatcher = route => {
+	return (req, [, options]) => {
+		const routeReferrerPolicy = route && route.referrerPolicy && route.referrerPolicy.toLowerCase();
+		const optionsReferrerPolicy = options && options.referrerPolicy && options.referrerPolicy.toLowerCase();
+		return routeReferrerPolicy === optionsReferrerPolicy;
+	}
+}
+
 const getCredentialsMatcher = route => {
 	return (req, [, options]) => {
 		const routeCreds = route && route.credentials && route.credentials.toLowerCase();
@@ -191,6 +199,7 @@ const generateMatcher = (route, config) => {
 		getUrlMatcher(route),
 		getFunctionMatcher(route),
 		getReferrerMatcher(route),
+		getReferrerPolicyMatcher(route),
 		getCredentialsMatcher(route)
 	];
 

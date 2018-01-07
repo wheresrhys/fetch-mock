@@ -462,6 +462,65 @@ module.exports = (fetchMock) => {
 				})
 			});
 
+			describe('referrerPolicy', () => {
+				it('not match when credentials not present', async () => {
+					fm
+						.mock('http://it.at.there/', 200, {
+							referrerPolicy: 'origin'
+						})
+						.catch();
+
+					await fm.fetchHandler('http://it.at.there/')
+					expect(fm.calls(true).length).to.equal(0);
+				});
+
+				it('not match when referrer-policy does\'t match', async () => {
+					fm
+						.mock('http://it.at.there/', 200, {
+							referrerPolicy: 'origin'
+						})
+						.catch();
+
+					await fm.fetchHandler('http://it.at.there/', { referrerPolicy: 'no-referrer' })
+					expect(fm.calls(true).length).to.equal(0);
+				});
+
+				it('match referrer-policys', async () => {
+					fm
+						.mock('http://it.at.there/', 200, {
+							referrerPolicy: 'origin'
+						})
+						.catch();
+
+					await fm.fetchHandler('http://it.at.there/', { referrerPolicy: 'origin' })
+					expect(fm.calls(true).length).to.equal(1);
+				});
+
+				it('be case insensitive', async () => {
+					fm
+						.mock('http://it.at.there/', 200, {
+							referrerPolicy: 'origin'
+						})
+						.catch();
+
+					await fm.fetchHandler('http://it.at.there/', { referrerPolicy: 'ORIGIN' })
+					expect(fm.calls(true).length).to.equal(1);
+				});
+
+				it('can be used alongside function matchers', async () => {
+					fm
+						.mock(url => /person/.test(url), 200, {
+							referrerPolicy: 'origin'
+						})
+						.catch();
+
+					await fm.fetchHandler('http://domain.com/person');
+					expect(fm.calls(true).length).to.equal(0);
+					await fm.fetchHandler('http://domain.com/person', { referrerPolicy: 'origin' });
+					expect(fm.calls(true).length).to.equal(1);
+				})
+			});
+
 			describe('credentials', () => {
 				it('not match when credentials not present', async () => {
 					fm

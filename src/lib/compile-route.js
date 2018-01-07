@@ -170,6 +170,9 @@ const getFunctionMatcher = route => {
 const getStringOptionsMatcher = route => {
 	return (req, [, options]) => {
 		return ['referrer', 'referrerPolicy', 'credentials'].map(option => {
+			if (!route[option]) {
+				return true;
+			}
 			const matcherOption = route && route[option] && route[option].toLowerCase();
 			const requestOption = options && options[option] && options[option].toLowerCase();
 			return matcherOption === requestOption;

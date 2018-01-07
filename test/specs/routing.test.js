@@ -426,6 +426,15 @@ module.exports = (fetchMock) => {
 					expect(fm.calls(true).length).to.equal(0);
 				});
 
+				it('match when referrer option isn\'t passed as a matcher', async () => {
+					fm
+						.mock('http://it.at.there/', 200)
+						.catch();
+
+					await fm.fetchHandler('http://it.at.there/', { referrer: 'http://other.referrer.example.com' })
+					expect(fm.calls(true).length).to.equal(1);
+				});
+
 				it('match referrers', async () => {
 					fm
 						.mock('http://it.at.there/', 200, {
@@ -496,6 +505,15 @@ module.exports = (fetchMock) => {
 					expect(fm.calls(true).length).to.equal(1);
 				});
 
+				it('match when referrerPolicy option isn\'t passed as a matcher', async () => {
+					fm
+						.mock('http://it.at.there/', 200)
+						.catch();
+
+					await fm.fetchHandler('http://it.at.there/', { referrerPolicy: 'no-referrer' })
+					expect(fm.calls(true).length).to.equal(1);
+				});
+
 				it('be case insensitive', async () => {
 					fm
 						.mock('http://it.at.there/', 200, {
@@ -549,6 +567,15 @@ module.exports = (fetchMock) => {
 						.mock('http://it.at.there/', 200, {
 							credentials: 'same-origin'
 						})
+						.catch();
+
+					await fm.fetchHandler('http://it.at.there/', { credentials: 'same-origin' })
+					expect(fm.calls(true).length).to.equal(1);
+				});
+
+				it('match when credentials option isn\'t passed as a matcher', async () => {
+					fm
+						.mock('http://it.at.there/', 200)
 						.catch();
 
 					await fm.fetchHandler('http://it.at.there/', { credentials: 'same-origin' })

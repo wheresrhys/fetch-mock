@@ -1,7 +1,7 @@
 'use strict';
 
-module.exports = function(karma) {
-	var configuration = {
+module.exports = function (karma) {
+	const configuration = {
 
 		frameworks: [ 'mocha', 'chai', 'browserify'],
 		files: [

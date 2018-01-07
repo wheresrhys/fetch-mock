@@ -167,27 +167,13 @@ const getFunctionMatcher = route => {
 	}
 }
 
-const getReferrerMatcher = route => {
+const getStringOptionsMatcher = route => {
 	return (req, [, options]) => {
-		const routeReferrer = route && route.referrer && route.referrer.toLowerCase();
-		const optionsReferrer = options && options.referrer && options.referrer.toLowerCase();
-		return routeReferrer === optionsReferrer;
-	}
-}
-
-const getReferrerPolicyMatcher = route => {
-	return (req, [, options]) => {
-		const routeReferrerPolicy = route && route.referrerPolicy && route.referrerPolicy.toLowerCase();
-		const optionsReferrerPolicy = options && options.referrerPolicy && options.referrerPolicy.toLowerCase();
-		return routeReferrerPolicy === optionsReferrerPolicy;
-	}
-}
-
-const getCredentialsMatcher = route => {
-	return (req, [, options]) => {
-		const routeCreds = route && route.credentials && route.credentials.toLowerCase();
-		const optionsCreds = options && options.credentials && options.credentials.toLowerCase();
-		return routeCreds === optionsCreds;
+		return ['referrer', 'referrerPolicy', 'credentials'].map(option => {
+			const matcherOption = route && route[option] && route[option].toLowerCase();
+			const requestOption = options && options[option] && options[option].toLowerCase();
+			return matcherOption === requestOption;
+		}).every(match => match);
 	}
 }
 
@@ -198,9 +184,7 @@ const generateMatcher = (route, config) => {
 		getHeaderMatcher(route, config.Headers),
 		getUrlMatcher(route),
 		getFunctionMatcher(route),
-		getReferrerMatcher(route),
-		getReferrerPolicyMatcher(route),
-		getCredentialsMatcher(route)
+		getStringOptionsMatcher(route)
 	];
 
 	return (url, options) => {

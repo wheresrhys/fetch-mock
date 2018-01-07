@@ -463,7 +463,7 @@ module.exports = (fetchMock) => {
 			});
 
 			describe('referrerPolicy', () => {
-				it('not match when credentials not present', async () => {
+				it('not match when referrerPolicy not present', async () => {
 					fm
 						.mock('http://it.at.there/', 200, {
 							referrerPolicy: 'origin'

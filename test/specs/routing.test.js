@@ -402,6 +402,65 @@ module.exports = (fetchMock) => {
 					});
 				})
 			});
+
+			describe('referrer', () => {
+				it('not match when referrer not present', async () => {
+					fm
+						.mock('http://it.at.there/', 200, {
+							referrer: 'http://referrer.example.com'
+						})
+						.catch();
+
+					await fm.fetchHandler('http://it.at.there/')
+					expect(fm.calls(true).length).to.equal(0);
+				});
+
+				it('not match when referrer does\'t match', async () => {
+					fm
+						.mock('http://it.at.there/', 200, {
+							referrer: 'http://referrer.example.com'
+						})
+						.catch();
+
+					await fm.fetchHandler('http://it.at.there/', { referrer: 'http://other.referrer.example.com' })
+					expect(fm.calls(true).length).to.equal(0);
+				});
+
+				it('match referrers', async () => {
+					fm
+						.mock('http://it.at.there/', 200, {
+							referrer: 'http://referrer.example.com'
+						})
+						.catch();
+
+					await fm.fetchHandler('http://it.at.there/', { referrer: 'http://referrer.example.com' })
+					expect(fm.calls(true).length).to.equal(1);
+				});
+
+				it('be case insensitive', async () => {
+					fm
+						.mock('http://it.at.there/', 200, {
+							referrer: 'http://referrer.example.com'
+						})
+						.catch();
+
+					await fm.fetchHandler('http://it.at.there/', { referrer: 'HTTP://REFERRER.EXAMPLE.COM' })
+					expect(fm.calls(true).length).to.equal(1);
+				});
+
+				it('can be used alongside function matchers', async () => {
+					fm
+						.mock(url => /person/.test(url), 200, {
+							referrer: 'http://referrer.example.com'
+						})
+						.catch();
+
+					await fm.fetchHandler('http://domain.com/person');
+					expect(fm.calls(true).length).to.equal(0);
+					await fm.fetchHandler('http://domain.com/person', { referrer: 'http://referrer.example.com' });
+					expect(fm.calls(true).length).to.equal(1);
+				})
+			});
 		});
 
 		describe('multiple routes', () => {

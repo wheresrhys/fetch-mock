@@ -167,13 +167,22 @@ const getFunctionMatcher = route => {
 	}
 }
 
+const getReferrerMatcher = route => {
+	return (req, [, options]) => {
+		const routeReferrer = route && route.referrer && route.referrer.toLowerCase();
+		const optionsReferrer = options && options.referrer && options.referrer.toLowerCase();
+		return routeReferrer === optionsReferrer;
+	}
+}
+
 const generateMatcher = (route, config) => {
 	const matchers = [
 		getQueryStringMatcher(route),
 		getMethodMatcher(route),
 		getHeaderMatcher(route, config.Headers),
 		getUrlMatcher(route),
-		getFunctionMatcher(route)
+		getFunctionMatcher(route),
+		getReferrerMatcher(route)
 	];
 
 	return (url, options) => {

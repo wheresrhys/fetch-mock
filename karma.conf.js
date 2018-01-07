@@ -20,7 +20,7 @@ module.exports = function (karma) {
 			debug: true,
 			transform: [
 				['babelify', {
-					'presets': ['es2017'],
+					'presets': ['env'],
 					'plugins': ['transform-object-assign']
 				}]
 			]

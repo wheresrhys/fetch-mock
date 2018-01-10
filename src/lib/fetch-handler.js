@@ -51,14 +51,7 @@ FetchMock.executeRouter = function (url, opts) {
 		throw new Error(`No fallback response defined for ${opts && opts.method || 'GET'} to ${url}`)
 	}
 
-	if (this.isSandbox) {
-		if (this.config.fetch) {
-			return this.config.fetch;
-		}
-		throw new Error('to fallbackToNetwork when using a sanboxed fetch-mock set fetchMock.config.fetch to your chosen fetch implementation');
-	} else {
-		return this.realFetch;
-	}
+	return this.getNativeFetch();
 }
 
 FetchMock.generateResponse = async function (response, url, opts) {
@@ -95,6 +88,14 @@ FetchMock.router = function (url, opts) {
 		this.push(route.name, [url, opts]);
 		return route.response;
 	}
+}
+
+FetchMock.getNativeFetch = function () {
+	const func = this.realFetch || (this.isSandbox && this.config.fetch);
+	if (!func) {
+		throw new Error('Falling back to network only available on gloabl fetch-mock, or by setting config.fetch on sandboxed fetch-mock');
+	}
+	return func;
 }
 
 FetchMock.push = function (name, args) {

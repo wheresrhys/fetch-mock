@@ -65,11 +65,8 @@ FetchMock.catch = function (response) {
 }
 
 FetchMock.spy = function () {
-	if (this.isSandbox && !this.config.fetch) {
-		throw 'To spy() on sandboxed fetch mock instances, set fetchMock.config.fetch to your chosen `fetch` implementation';
-	}
 	this._mock();
-	return this.catch(this.realFetch)
+	return this.catch(this.getNativeFetch())
 }
 
 FetchMock.compileRoute = compileRoute;

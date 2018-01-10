@@ -21,29 +21,28 @@ FetchMock.mock = function (matcher, response, options = {}) {
 	return this._mock();
 }
 
+const getMatcher = (route, propName) => (route2) => route[propName] === route2[propName];
+
 FetchMock.addRoute = function (route) {
 	route = this.compileRoute(route);
 
-	let clashingRoutes = this.routes.filter(existingRoute => route.name === existingRoute.name);
+	const clashes = this.routes.filter(getMatcher(route, 'name'));
+	const overwriteRoutes = ('overwriteRoutes' in route) ? route.overwriteRoutes : this.config.overwriteRoutes;
 
-	if (clashingRoutes.length) {
-		const overwriteRoutes = ('overwriteRoutes' in route) ? route.overwriteRoutes : this.config.overwriteRoutes;
-
-		if (overwriteRoutes === true) {
-			clashingRoutes = clashingRoutes.filter(existingRoute => {
-	  		return route.method === existingRoute.method;
-	  	});
-	  	this.routes.splice(this.routes.indexOf(clashingRoutes[0]), 1);
-	  } else if (typeof overwriteRoutes === 'undefined') {
-	  	clashingRoutes = clashingRoutes.filter(existingRoute => {
-	  		return !route.method || (route.method === existingRoute.method);
-	  	});
-
-	  	if (clashingRoutes.length) {
-		  	throw new Error('Adding route with same name as existing route. See `overwriteRoutes` option.');
-		  }
-		}
+	if (overwriteRoutes === false || !clashes.length) {
+		return this.routes.push(route);
 	}
+
+	const methodsMatch = getMatcher(route, 'method');
+
+	if (overwriteRoutes === true) {
+		return this.routes.splice(this.routes.indexOf(clashes.find(methodsMatch)), 1, route);
+	}
+
+	if (clashes.some(existingRoute => !route.method || methodsMatch(existingRoute))) {
+		throw new Error('Adding route with same name as existing route. See `overwriteRoutes` option.');
+	}
+
 	this.routes.push(route);
 };
 

@@ -7,7 +7,7 @@
   "scripts": {
     "test": "make lint test",
     "browserify": "browserify -s fetchMock es5/client.js > es5/client-bundle.js",
-    "prepublish": "babel src --out-dir es5 --plugins transform-object-assign --presets babel-preset-env && npm run browserify"
+    "prepublish": "babel src --out-dir es5 --plugins transform-object-assign --presets es2017 && npm run browserify"
   },
   "repository": {
     "type": "git",
@@ -33,9 +33,10 @@
     "path-to-regexp": "^1.7.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
+    "babel": "^6.0.15",
+    "babel-cli": "^6.1.2",
     "babel-plugin-transform-object-assign": "^6.8.0",
-    "babel-preset-env": "^1.6.1",
+    "babel-preset-es2017": "^6.1.2",
     "babelify": "^7.3.0",
     "bluebird": "^3.4.6",
     "browserify": "^13.1.0",

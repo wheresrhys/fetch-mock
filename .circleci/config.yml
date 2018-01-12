@@ -24,11 +24,13 @@ workflows:
   test:
     jobs:
       requires:
+        - build
         - nodefetch1
         - nodefetch2
         - verify
 #         - chrome
 #         - firefox
+
 
 
 

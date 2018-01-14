@@ -1,11 +1,10 @@
 version: 2
 jobs:
-  checkout:
+  build:
     docker:
       - image: circleci/node:8.9.0
     steps:
       - checkout
-      - npm install
   # deploy:
   #   npm:
   #     tag: /v.*/
@@ -42,7 +41,6 @@ workflows:
   test:
     jobs:
       requires:
-        - checkout
         - nodefetch1
 #         - nodefetch2
 #         - verify
@@ -53,4 +51,5 @@ workflows:
 
 
 #       - test
+
 

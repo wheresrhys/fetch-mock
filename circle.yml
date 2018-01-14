@@ -1,0 +1,12 @@
+machine:
+  node:
+    version: 8.6.0
+test:
+	override:
+		- mocha
+deployment:
+  release:
+    tag: /.*/
+    owner: Financial-Times
+    commands:
+      - make deploy

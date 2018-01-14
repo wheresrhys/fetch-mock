@@ -15,7 +15,7 @@ jobs:
   #     - npm publish --access public
   nodefetch1:
     docker:
-        - image: circleci/node:8.9.0
+      - image: circleci/node:8.9.0
     steps:
       - npm install node-fetch@1
       - mocha

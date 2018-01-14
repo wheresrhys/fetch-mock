@@ -1,0 +1,55 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:8.9.0
+    steps:
+      - checkout
+  # deploy:
+  #   npm:
+  #     tag: /v.*/
+  #     owner: wheresrhys
+  #   command:
+  #     - npm version --no-git-tag-version ${CIRCLE_TAG}
+  #     - npm publish --access public
+  nodefetch1:
+    docker:
+      - image: circleci/node:8.9.0
+    steps:
+      - npm install node-fetch@1
+      - mocha
+  # chrome:
+  #   docker:
+  #       - image: circleci/node:8.9.0
+  #   steps:
+  #     - install chrome
+  #     - ./node_modules/karma/bin/karma start --single-run --browsers Chrome
+  # firefox:
+  #   docker:
+  #       - image: circleci/node:8.9.0
+  #   steps:
+  #     - install firefox
+  #     - ./node_modules/karma/bin/karma start --single-run --browsers Chrome
+
+  # nodefetch2:
+  #   - npm install node-fetch@2
+  #   - mocha
+  # verify:
+  #   - echo verifying
+workflows:
+  version: 2
+  test:
+    jobs:
+      requires:
+        - nodefetch1
+#         - nodefetch2
+#         - verify
+#         - chrome
+#         - firefox
+
+
+
+
+#       - test
+
+

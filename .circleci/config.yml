@@ -1,18 +1,23 @@
 version: 2
 jobs:
-  build:
+  checkout_code:
     docker:
       - image: circleci/node:8.9.0
     steps:
       - checkout
+      - run: npm install
   nodefetch1:
     docker:
       - image: circleci/node:8.9.0
     steps:
-      - npm install node-fetch@1
-      - mocha
+      - run: npm install node-fetch@1
+      - run: mocha
+
 workflows:
   version: 2
-  test:
-    requires:
-      - nodefetch1
+  checkout_and_test:
+    jobs:
+      - checkout_code
+      # - nodefetch1:
+      #   requires:
+      #     - checkout_code

@@ -5,38 +5,15 @@ jobs:
       - image: circleci/node:8.9.0
     steps:
       - checkout
-#   chrome:
-#     - install chrome
-#     - ./node_modules/karma/bin/karma start --single-run --browsers Chrome
-#   firefox:
-#     - install firefox
-#     - ./node_modules/karma/bin/karma start --single-run --browsers Chrome
-#   nodefetch1:
-#     - npm install node-fetch@1
-#     - mocha
-#   nodefetch2:
-#     - npm install node-fetch@2
-#     - mocha
-#   verify:
-#     - echo verifying
-# workflows:
-#   version: 2
-#   test:
-#     jobs:
-#       requires:
-#         - chrome
-#         - firefox
-#         - nodefetch1
-#         - nodefetch2
-#         - verify
-
-
-
-      # - test
-  #     - deploy:
-  #         npm:
-  #           tag: /v.*/
-  #           owner: wheresrhys
-  #           commands:
-  #             - npm version --no-git-tag-version ${CIRCLE_TAG}
-  #             - npm publish --access public
+  nodefetch1:
+    docker:
+      - image: circleci/node:8.9.0
+    steps:
+      - npm install node-fetch@1
+      - mocha
+workflows:
+  version: 2
+  test:
+    jobs:
+      requires:
+        - nodefetch1

@@ -11,13 +11,13 @@ jobs:
       - image: circleci/node:8.9.0
     steps:
       - run: npm install node-fetch@1
-      - run: mocha
+      - run: ./node_modules/.bin/mocha test/server.js
 
 workflows:
   version: 2
   checkout_and_test:
     jobs:
       - checkout_code
-      # - nodefetch1:
-      #   requires:
-      #     - checkout_code
+      - nodefetch1
+        # requires:
+          # - checkout_code

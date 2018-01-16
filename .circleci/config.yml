@@ -10,6 +10,14 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
           paths:
             - node_modules
+  lint:
+    docker:
+      - image: circleci/node:8.9.0
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run: ./node_modules/.bin/eslint src test
   nodefetch2:
     docker:
       - image: circleci/node:8.9.0
@@ -34,8 +42,18 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      - run: browserify test/fixtures/sw.js > test/fixtures/built-sw.js
       - run: ./node_modules/karma/bin/karma start --single-run --browsers Chrome
-
+  firefox:
+    docker:
+        - image: circleci/node:8.9.0-browsers
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run: npm install karma-firefox-launcher
+      - run: browserify test/fixtures/sw.js > test/fixtures/built-sw.js
+      - run: ./node_modules/karma/bin/karma start --single-run --browsers Firefox
 
 workflows:
   version: 2
@@ -49,5 +67,11 @@ workflows:
           requires:
             - checkout_code
       - chrome:
+          requires:
+            - checkout_code
+      - firefox:
+          requires:
+            - checkout_code
+      - lint:
           requires:
             - checkout_code

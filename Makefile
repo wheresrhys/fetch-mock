@@ -1,7 +1,7 @@
 .PHONY: test
 
 build-sw:
-	browserify test/fixtures/sw.js > test/fixtures/built-sw.js
+	./node_modules/.bin/browserify test/fixtures/sw.js > test/fixtures/built-sw.js
 
 test-dev: build-sw
 	./node_modules/karma/bin/karma start
@@ -19,8 +19,8 @@ lint:
 	./node_modules/.bin/eslint --ignore-pattern test/fixtures/* src test
 
 coverage-report:
-	istanbul cover node_modules/.bin/_mocha --report=lcovonly 'test/server.js'
+	./node_modules/.bin/istanbul cover node_modules/.bin/_mocha --report=lcovonly 'test/server.js'
 	cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
 
 local-coverage:
-	istanbul cover node_modules/.bin/_mocha 'test/server.js'
+	./node_modules/.bin/istanbul cover node_modules/.bin/_mocha 'test/server.js'

@@ -1,6 +1,7 @@
 'use strict';
 
 module.exports = function(karma) {
+
 	var configuration = {
 
 		frameworks: [ 'mocha', 'chai', 'browserify'],
@@ -24,19 +25,8 @@ module.exports = function(karma) {
 					'plugins': ['transform-object-assign']
 				}]
 			]
-		},
-		browsers: ['Chrome'],
-		customLaunchers: {
-			Chrome_travis_ci: {
-				base: 'Chrome',
-				flags: ['--no-sandbox']
-			}
 		}
 	};
-
-	if(process.env.TRAVIS){
-		configuration.browsers = ['Firefox', 'Chrome_travis_ci'];
-	}
 
 	karma.set(configuration);
 

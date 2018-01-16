@@ -23,7 +23,7 @@ Replaces `fetch` with a stub which records its calls, grouped by route, and opti
         * `glob:http://*.*` to match glob patterns
         * `express:/user/:user` to match [express style paths](https://www.npmjs.com/package/path-to-regexp)
     * `RegExp`: A regular  expression to test the url against
-    * `Function(url, opts)`: A function (returning a Boolean) that is passed the url and opts `fetch()` is called with (or, if `fetch()` was called with one, the `Request` instance)  
+    * `Function(url, opts)`: A function (returning a Boolean) that is passed the url and opts `fetch()` is called with (or, if `fetch()` was called with one, the `Request` instance)
 
 * `response`: Configures the http response returned by the mock. Can take any of the following values (or be a `Promise` for any of them, enabling full control when testing race conditions etc.)
     * `Response`: A `Response` instance - will be used unaltered
@@ -33,7 +33,7 @@ Replaces `fetch` with a stub which records its calls, grouped by route, and opti
         * `body`: Set the response body (`string` or `object`)
         * `status`: Set the response status (default `200`)
         * `headers`: Set the response headers. (`object`)
-        * `throws`: If this property is present then a `Promise` rejected with the value of `throws` is returned
+        * `throws`: If this property is present then a the value of `throws` is thrown
         * `sendAsJson`: This property determines whether or not the request body should be converted to `JSON` before being sent (defaults to `true`).
         * `includeContentLength`: Set this property to true to automatically add the `content-length` header (defaults to `true`).
         * `redirectUrl`: *experimental* the url the response should be from (to imitate followed redirects - will set `redirected: true` on the response)
@@ -94,30 +94,30 @@ Chainable method that clears all data recorded for `fetch()`'s calls. *It will n
 ### Filtering
 Most of the methods below accept two parameters, `(filter, method)`
 - `filter` Enables filtering fetch calls for the most commonly use cases. It can be:
-    - the name of a route 
+    - the name of a route
     - The value of `matcher` or `matcher.toString()` for any unnamed route. You _can_ pass in the original regex or function as a matcher, but they will be converted to strings and used to look up values in fetch-mock's internal maps of calls, _not_ used as regexes or functions executed on teh url
     - If `filter` is a string, and it does not match any routes, it is asumed the string is a url, and calls to `fetch` made with that url are returned
     - `true` for matched calls only
     - `false` for unmatched calls only
     - `undefined` for all calls to fetch
-- `method` A http method to filter by   
+- `method` A http method to filter by
 
 #### `called(filter, method)`
 Returns a Boolean indicating whether fetch was called and a route was matched. If `filter` is specified it only returns `true` if that particular route was matched.
 
 #### `done(filter)`
-Returns a Boolean indicating whether fetch was called the expected number of times (or at least once if the route defines no expectation is set for the route). If no `filter` is passed it returns `true` if every route has been called the number of expected times.
+Returns a Boolean indicating whether fetch was called the expected number of times (or at least once if the route defines no expectation is set for the route). _Unlike the other methods for inspecting calls, unmatched calls are irrelevant_. Therefore, if no `filter` is passed, `done()` returns `true` if every route has been called the number of expected times.
 
-#### `calls(filter)`
+#### `calls(filter, method)`
 Returns an object `{matched: [], unmatched: []}` containing arrays of all calls to fetch, grouped by whether fetch-mock matched them or not. If `filter` is specified then only calls to fetch matching that route are returned.
 
-#### `lastCall(filter)`
+#### `lastCall(filter, method)`
 Returns the arguments for the last matched call to fetch
 
-#### `lastUrl(filter)`
+#### `lastUrl(filter, method)`
 Returns the url for the last matched call to fetch. When `fetch` was last called using a `Request` instance, the url will be extracted from this
 
-#### `lastOptions(filter)`
+#### `lastOptions(filter, method)`
 Returns the options for the last matched call to fetch. When `fetch` was last called using a `Request` instance, the entire `Request` instance will be returned
 
 #### `flush()`

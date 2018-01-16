@@ -6,7 +6,7 @@ As well as shorthand methods for the simplest use cases, it offers a flexible AP
 
 ## These docs are for the v6 beta
 
-**Please try v6 beta -** `npm install fetch-mock@6.0.0-beta.2`
+**Please try v6 beta -** `npm install fetch-mock@6.0.0-beta.6`
 
 - [v5 docs](/fetch-mock/v5)
 - [V5 - V6 upgrade guide](/fetch-mock/v5-v6-upgrade)

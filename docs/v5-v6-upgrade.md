@@ -8,7 +8,11 @@ Feedback gratefully received when in beta - please raise an issue :-)
 
 To try it out:
 ```
+<<<<<<< HEAD
 npm install fetch-mock@6.0.0-beta.2
+=======
+npm install fetch-mock@6.0.0-beta.1
+>>>>>>> a7995c45182455fa46f83d0a21ae057cb6a25c22
 ```
 (Bear in mind that the docs may still include a few inaccuracies)
 

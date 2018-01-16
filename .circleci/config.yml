@@ -1,0 +1,102 @@
+version: 2.0
+jobs:
+  checkout_code:
+    docker:
+      - image: circleci/node:8.9.0
+    steps:
+      - checkout
+      - run: npm install
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+
+  lint:
+    docker:
+      - image: circleci/node:8.9.0
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run: make lint
+
+  nodefetch2:
+    docker:
+      - image: circleci/node:8.9.0
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run: make coverage-report
+
+  nodefetch1:
+    docker:
+      - image: circleci/node:8.9.0
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run: npm install node-fetch@1
+      - run: make test-unit
+
+  chrome:
+    docker:
+      - image: circleci/node:8.9.0-browsers
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run: make test-chrome
+
+  firefox:
+    docker:
+      - image: circleci/node:8.9.0-browsers
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run: npm install karma-firefox-launcher
+      - run: make test-firefox
+
+  deploy:
+    docker:
+      - image: circleci/node:8.9.0
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run: npm version --no-git-tag-version ${CIRCLE_TAG}
+      - run: npm publish --access public
+
+workflows:
+  version: 2
+  checkout_and_test:
+    jobs:
+      - checkout_code
+      - nodefetch1:
+          requires:
+            - checkout_code
+      - nodefetch2:
+          requires:
+            - checkout_code
+      - chrome:
+          requires:
+            - checkout_code
+      - firefox:
+          requires:
+            - checkout_code
+      - lint:
+          requires:
+            - checkout_code
+      - deploy:
+          requires:
+            - nodefetch1
+            - nodefetch2
+            - chrome
+            - firefox
+            - lint
+          filters:
+            tags:
+              only: /v.*/
+
+

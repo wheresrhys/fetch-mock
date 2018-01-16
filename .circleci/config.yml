@@ -11,9 +11,8 @@ jobs:
     steps:
       - npm install node-fetch@1
       - mocha
-# workflows:
-#   version: 2
-#   test:
-#     jobs:
-#       requires:
-#         - nodefetch1
+workflows:
+  version: 2
+  test:
+    requires:
+      - nodefetch1

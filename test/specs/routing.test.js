@@ -123,7 +123,7 @@ module.exports = (fetchMock) => {
 					.catch();
 
 				await fm.fetchHandler(new fm.config.Request('http://it.at.there/logged-in', {
-					headers:{authorized: true}
+					headers: {authorized: 'true'}
 				}));
 				expect(fm.calls(true).length).to.equal(1);
 			});

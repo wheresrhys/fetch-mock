@@ -66,6 +66,10 @@ function getHeaderMatcher ({ headers: expectedHeaders }, Headers) {
 
 	return ({ headers = {} }) => {
 		if (headers instanceof Headers) {
+			// node-fetch 1 Headers
+			if (typeof headers.raw === 'function') {
+				headers = Object.entries(headers.raw())
+			}
 			headers = [...headers].reduce((map, [key, val]) => {
 				map[key] = val;
 				return map;

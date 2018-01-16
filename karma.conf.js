@@ -1,9 +1,6 @@
 'use strict';
 
 module.exports = function(karma) {
-	// if (process.env.BROWSER === 'ChromeHeadless') {
-	// 	process.env.CHROME_BIN = require('puppeteer').executablePath()
-	// }
 
 	var configuration = {
 

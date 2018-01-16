@@ -18,7 +18,7 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - run: ./node_modules/.bin/eslint src test
+      - run: make lint
 
   nodefetch2:
     docker:
@@ -27,7 +27,7 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - run: ./node_modules/.bin/mocha test/server.js
+      - run: make coverage-report
 
   nodefetch1:
     docker:
@@ -37,7 +37,7 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run: npm install node-fetch@1
-      - run: ./node_modules/.bin/mocha test/server.js
+      - run: make test-unit
 
   chrome:
     docker:
@@ -46,8 +46,7 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - run: ./node_modules/.bin/browserify test/fixtures/sw.js > test/fixtures/built-sw.js
-      - run: ./node_modules/karma/bin/karma start --single-run --browsers Chrome
+      - run: make test-chrome
 
   firefox:
     docker:
@@ -57,8 +56,7 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run: npm install karma-firefox-launcher
-      - run: ./node_modules/.bin/browserify test/fixtures/sw.js > test/fixtures/built-sw.js
-      - run: ./node_modules/karma/bin/karma start --single-run --browsers Firefox
+      - run: make test-firefox
 
   deploy:
     docker:
@@ -67,8 +65,8 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - npm version --no-git-tag-version ${CIRCLE_TAG}
-      - npm publish --access public
+      - run: npm version --no-git-tag-version ${CIRCLE_TAG}
+      - run: npm publish --access public
 
 workflows:
   version: 2

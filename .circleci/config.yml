@@ -10,6 +10,7 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
           paths:
             - node_modules
+
   lint:
     docker:
       - image: circleci/node:8.9.0
@@ -18,6 +19,7 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run: ./node_modules/.bin/eslint src test
+
   nodefetch2:
     docker:
       - image: circleci/node:8.9.0
@@ -26,6 +28,7 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run: ./node_modules/.bin/mocha test/server.js
+
   nodefetch1:
     docker:
       - image: circleci/node:8.9.0
@@ -35,25 +38,37 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
       - run: npm install node-fetch@1
       - run: ./node_modules/.bin/mocha test/server.js
+
   chrome:
     docker:
-        - image: circleci/node:8.9.0-browsers
+      - image: circleci/node:8.9.0-browsers
     steps:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - run: browserify test/fixtures/sw.js > test/fixtures/built-sw.js
+      - run: ./node_modules/.bin/browserify test/fixtures/sw.js > test/fixtures/built-sw.js
       - run: ./node_modules/karma/bin/karma start --single-run --browsers Chrome
+
   firefox:
     docker:
-        - image: circleci/node:8.9.0-browsers
+      - image: circleci/node:8.9.0-browsers
     steps:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run: npm install karma-firefox-launcher
-      - run: browserify test/fixtures/sw.js > test/fixtures/built-sw.js
+      - run: ./node_modules/.bin/browserify test/fixtures/sw.js > test/fixtures/built-sw.js
       - run: ./node_modules/karma/bin/karma start --single-run --browsers Firefox
+
+  deploy:
+    docker:
+      - image: circleci/node:8.9.0
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - npm version --no-git-tag-version ${CIRCLE_TAG}
+      - npm publish --access public
 
 workflows:
   version: 2
@@ -75,3 +90,15 @@ workflows:
       - lint:
           requires:
             - checkout_code
+      - deploy:
+          requires:
+            - nodefetch1
+            - nodefetch2
+            - chrome
+            - firefox
+            - lint
+          filters:
+            tags:
+              only: /v.*/
+
+

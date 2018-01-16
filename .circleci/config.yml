@@ -19,6 +19,15 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
       - run: npm install node-fetch@1
       - run: ./node_modules/.bin/mocha test/server.js
+  nodefetch2:
+    docker:
+      - image: circleci/node:8.9.0
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run: npm install node-fetch@2
+      - run: ./node_modules/.bin/mocha test/server.js
 
 workflows:
   version: 2
@@ -28,4 +37,6 @@ workflows:
       - nodefetch1:
           requires:
             - checkout_code
-
+      - nodefetch2:
+          requires:
+            - checkout_code

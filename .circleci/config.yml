@@ -28,6 +28,16 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
       - run: npm install node-fetch@2
       - run: ./node_modules/.bin/mocha test/server.js
+  chrome:
+    docker:
+        - image: circleci/node:8.9.0
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run: npm install puppeteer
+      - run: BROWSER=ChromeHeadless ./node_modules/karma/bin/karma start --single-run --browsers ChromeHeadless
+
 
 workflows:
   version: 2
@@ -38,5 +48,8 @@ workflows:
           requires:
             - checkout_code
       - nodefetch2:
+          requires:
+            - checkout_code
+      - chrome:
           requires:
             - checkout_code

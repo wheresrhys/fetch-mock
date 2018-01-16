@@ -1,6 +1,10 @@
 'use strict';
 
 module.exports = function(karma) {
+	if (process.env.BROWSER === 'ChromeHeadless') {
+		process.env.CHROME_BIN = require('puppeteer').executablePath()
+	}
+
 	var configuration = {
 
 		frameworks: [ 'mocha', 'chai', 'browserify'],
@@ -24,19 +28,8 @@ module.exports = function(karma) {
 					'plugins': ['transform-object-assign']
 				}]
 			]
-		},
-		browsers: ['Chrome'],
-		customLaunchers: {
-			Chrome_travis_ci: {
-				base: 'Chrome',
-				flags: ['--no-sandbox']
-			}
 		}
 	};
-
-	if(process.env.TRAVIS){
-		configuration.browsers = ['PhantomJS', 'Firefox', 'Chrome_travis_ci'];
-	}
 
 	karma.set(configuration);
 

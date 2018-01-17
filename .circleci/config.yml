@@ -65,6 +65,7 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      - run: echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ${HOME}/.npmrc
       - run: npm version --no-git-tag-version ${CIRCLE_TAG}
       - run: npm publish --access public
 

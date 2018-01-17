@@ -82,18 +82,17 @@ workflows:
   version: 2
   checkout_and_test:
     jobs:
-      - checkout_code:
-          *triggerable-by-tag
+      - checkout_code: *triggerable-by-tag
       - nodefetch1:
-          *triggerable-by-tag
+          <<: *triggerable-by-tag
           requires:
             - checkout_code
       - nodefetch2:
-          *triggerable-by-tag
+          <<: *triggerable-by-tag
           requires:
             - checkout_code
       - chrome:
-          *triggerable-by-tag
+          <<: *triggerable-by-tag
           requires:
             - checkout_code
 # firefox version too old for sw, so postpone cross browser tests till updated in circleci
@@ -101,7 +100,7 @@ workflows:
 #          requires:
 #            - checkout_code
       - lint:
-          *triggerable-by-tag
+          <<: *triggerable-by-tag
           requires:
             - checkout_code
       - deploy:

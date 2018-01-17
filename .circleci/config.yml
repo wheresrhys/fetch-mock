@@ -65,7 +65,7 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - run: echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ${HOME}/.npmrc
+      - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ${HOME}/.npmrc'
       - run: npm version --no-git-tag-version ${CIRCLE_TAG}
       - run: npm publish --access public
 
@@ -83,9 +83,10 @@ workflows:
       - chrome:
           requires:
             - checkout_code
-      - firefox:
-          requires:
-            - checkout_code
+# firefox version too old for sw, so postpone cross browser tests till updated in circleci
+#      - firefox:
+#          requires:
+#            - checkout_code
       - lint:
           requires:
             - checkout_code
@@ -94,7 +95,7 @@ workflows:
             - nodefetch1
             - nodefetch2
             - chrome
-            - firefox
+           # - firefox
             - lint
           filters:
             tags:

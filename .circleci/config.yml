@@ -6,12 +6,16 @@ references:
     filters:
       tags:
         only: /.*/
-
+  env: &env
+    docker:
+      - image: circleci/node:8.9.0
+  env-browsers: &env-browsers
+    docker:
+      - image: circleci/node:8.9.0-browsers
 
 jobs:
   checkout_code:
-    docker:
-      - image: circleci/node:8.9.0
+    <<: *env
     steps:
       - checkout
       - run: npm install
@@ -21,8 +25,7 @@ jobs:
             - node_modules
 
   lint:
-    docker:
-      - image: circleci/node:8.9.0
+    <<: *env
     steps:
       - checkout
       - restore_cache:
@@ -30,8 +33,7 @@ jobs:
       - run: make lint
 
   nodefetch2:
-    docker:
-      - image: circleci/node:8.9.0
+    <<: *env
     steps:
       - checkout
       - restore_cache:
@@ -39,8 +41,7 @@ jobs:
       - run: make coverage-report
 
   nodefetch1:
-    docker:
-      - image: circleci/node:8.9.0
+    <<: *env
     steps:
       - checkout
       - restore_cache:
@@ -49,8 +50,7 @@ jobs:
       - run: make test-unit
 
   chrome:
-    docker:
-      - image: circleci/node:8.9.0-browsers
+    <<: *env-browsers
     steps:
       - checkout
       - restore_cache:
@@ -58,8 +58,7 @@ jobs:
       - run: make test-chrome
 
   firefox:
-    docker:
-      - image: circleci/node:8.9.0-browsers
+    <<: *env-browsers
     steps:
       - checkout
       - restore_cache:
@@ -68,8 +67,7 @@ jobs:
       - run: make test-firefox
 
   deploy:
-    docker:
-      - image: circleci/node:8.9.0
+    <<: *env
     steps:
       - checkout
       - restore_cache:

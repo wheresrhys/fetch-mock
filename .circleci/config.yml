@@ -98,9 +98,7 @@ workflows:
            # - firefox
             - lint
           filters:
-            tags:
-              only: /v.*/
             branches:
               ignore: /.*/
-
-
+            tags:
+              only: /^v?\d+\.\d+\.\d+(?:-beta\.\d+)?$/

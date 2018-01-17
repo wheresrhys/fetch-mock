@@ -94,7 +94,7 @@ workflows:
             - nodefetch1
             - nodefetch2
             - chrome
-            - firefox
+           # - firefox
             - lint
           filters:
             tags:

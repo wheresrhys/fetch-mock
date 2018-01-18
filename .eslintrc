@@ -6,16 +6,15 @@
     "mocha": true,
     "node": true
   },
-  "ecmaFeatures": {
-    "modules": true,
-    "jsx": true
+  "parserOptions": {
+    "ecmaVersion": 2017
   },
   "rules": {
     "no-unused-vars": 2,
     "no-undef": 2,
     "eqeqeq": 2,
     "no-underscore-dangle": 0,
-    "guard-for-in": 2,
+    "guard-for-in": 0,
     "no-extend-native": 2,
     "wrap-iife": 2,
     "new-cap": 2,
@@ -30,7 +29,6 @@
     "no-console": 1
   },
   "globals": {
-    "fetch": true,
-    "requireText": true
+    "fetch": true
   }
 }

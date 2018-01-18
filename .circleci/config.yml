@@ -1,8 +1,21 @@
 version: 2.0
-jobs:
-  checkout_code:
+references:
+  triggerable-by-tag: &triggerable-by-tag
+    # For a tag push unaffected by any filters, CircleCI skips the job
+    # https://circleci.com/docs/2.0/workflows/#git-tag-job-execution
+    filters:
+      tags:
+        only: /.*/
+  env: &env
     docker:
       - image: circleci/node:8.9.0
+  env-browsers: &env-browsers
+    docker:
+      - image: circleci/node:8.9.0-browsers
+
+jobs:
+  checkout_code:
+    <<: *env
     steps:
       - checkout
       - run: npm install
@@ -12,8 +25,7 @@ jobs:
             - node_modules
 
   lint:
-    docker:
-      - image: circleci/node:8.9.0
+    <<: *env
     steps:
       - checkout
       - restore_cache:
@@ -21,8 +33,7 @@ jobs:
       - run: make lint
 
   nodefetch2:
-    docker:
-      - image: circleci/node:8.9.0
+    <<: *env
     steps:
       - checkout
       - restore_cache:
@@ -30,8 +41,7 @@ jobs:
       - run: make coverage-report
 
   nodefetch1:
-    docker:
-      - image: circleci/node:8.9.0
+    <<: *env
     steps:
       - checkout
       - restore_cache:
@@ -40,8 +50,7 @@ jobs:
       - run: make test-unit
 
   chrome:
-    docker:
-      - image: circleci/node:8.9.0-browsers
+    <<: *env-browsers
     steps:
       - checkout
       - restore_cache:
@@ -49,8 +58,7 @@ jobs:
       - run: make test-chrome
 
   firefox:
-    docker:
-      - image: circleci/node:8.9.0-browsers
+    <<: *env-browsers
     steps:
       - checkout
       - restore_cache:
@@ -59,12 +67,12 @@ jobs:
       - run: make test-firefox
 
   deploy:
-    docker:
-      - image: circleci/node:8.9.0
+    <<: *env
     steps:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ${HOME}/.npmrc'
       - run: npm version --no-git-tag-version ${CIRCLE_TAG}
       - run: npm publish --access public
 
@@ -72,20 +80,25 @@ workflows:
   version: 2
   checkout_and_test:
     jobs:
-      - checkout_code
+      - checkout_code: *triggerable-by-tag
       - nodefetch1:
+          <<: *triggerable-by-tag
           requires:
             - checkout_code
       - nodefetch2:
+          <<: *triggerable-by-tag
           requires:
             - checkout_code
       - chrome:
+          <<: *triggerable-by-tag
           requires:
             - checkout_code
-      - firefox:
-          requires:
-            - checkout_code
+# firefox version too old for sw, so postpone cross browser tests till updated in circleci
+#      - firefox:
+#          requires:
+#            - checkout_code
       - lint:
+          <<: *triggerable-by-tag
           requires:
             - checkout_code
       - deploy:
@@ -93,10 +106,10 @@ workflows:
             - nodefetch1
             - nodefetch2
             - chrome
-            - firefox
+           # - firefox
             - lint
           filters:
+            branches:
+              ignore: /.*/
             tags:
-              only: /v.*/
-
-
+              only: /^v?\d+\.\d+\.\d+(?:-beta\.\d+)?$/

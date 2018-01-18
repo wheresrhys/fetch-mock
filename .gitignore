@@ -1,9 +1,7 @@
-/bower_components/
+/test/fixtures/built-sw.js
+/es5/
+package-lock.json
 /node_modules/
 npm-debug.log
-/es5/
 /dist/
-test/fixtures/built-sw.js
-_site
-.sass-cache
-.jekyll-metadata
+coverage/

@@ -19,8 +19,6 @@ describe('service worker', () => {
 						return navigator.serviceWorker.getRegistration()
 							.then(registration => registration ? registration.unregister() : false);
 					})
-
-
 			})
 	})
 })

@@ -23,7 +23,7 @@ Replaces `fetch` with a stub which records its calls, grouped by route, and opti
         * `glob:http://*.*` to match glob patterns
         * `express:/user/:user` to match [express style paths](https://www.npmjs.com/package/path-to-regexp)
     * `RegExp`: A regular  expression to test the url against
-    * `Function(url, opts)`: A function (returning a Boolean) that is passed the url and opts `fetch()` is called with (or, if `fetch()` was called with one, the `Request` instance)  
+    * `Function(url, opts)`: A function (returning a Boolean) that is passed the url and opts `fetch()` is called with (or, if `fetch()` was called with one, the `Request` instance)
 
 * `response`: Configures the http response returned by the mock. Can take any of the following values (or be a `Promise` for any of them, enabling full control when testing race conditions etc.)
     * `Response`: A `Response` instance - will be used unaltered
@@ -94,13 +94,13 @@ Chainable method that clears all data recorded for `fetch()`'s calls. *It will n
 ### Filtering
 Most of the methods below accept two parameters, `(filter, method)`
 - `filter` Enables filtering fetch calls for the most commonly use cases. It can be:
-    - the name of a route 
+    - the name of a route
     - The value of `matcher` or `matcher.toString()` for any unnamed route. You _can_ pass in the original regex or function as a matcher, but they will be converted to strings and used to look up values in fetch-mock's internal maps of calls, _not_ used as regexes or functions executed on teh url
-    - An exact url
+    - If `filter` is a string, and it does not match any routes, it is asumed the string is a url, and calls to `fetch` made with that url are returned
     - `true` for matched calls only
     - `false` for unmatched calls only
     - `undefined` for all calls to fetch
-- `method` A http method to filter by   
+- `method` A http method to filter by
 
 #### `called(filter, method)`
 Returns a Boolean indicating whether fetch was called and a route was matched. If `filter` is specified it only returns `true` if that particular route was matched.

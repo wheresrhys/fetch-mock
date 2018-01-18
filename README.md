@@ -2,7 +2,8 @@
 Mock http requests made using fetch
 [Documentation](http://www.wheresrhys.co.uk/fetch-mock/)
 
-Try v6 beta - `npm install fetch-mock@6.0.0-beta.6`
+Try v6 beta - `npm install fetch-mock@6.0.0-beta.9`
+
 [![npm version](https://badge.fury.io/js/fetch-mock.svg)](https://badge.fury.io/js/fetch-mock)
 [![maintainability](https://api.codeclimate.com/v1/badges/7f8abbf54ec9f3d07df3/maintainability)](https://codeclimate.com/github/wheresrhys/fetch-mock/maintainability)
 [![CircleCI](https://circleci.com/gh/wheresrhys/fetch-mock.svg?style=svg)](https://circleci.com/gh/wheresrhys/fetch-mock)

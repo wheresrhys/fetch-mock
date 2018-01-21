@@ -4,7 +4,7 @@ module.exports = function(karma) {
 
 	var configuration = {
 
-		frameworks: [ 'mocha', 'chai'],
+		frameworks: [ 'mocha' ],
 		files: [
 			'test/client.js',
 			{pattern: 'test/fixtures/sw.js', served: true, included: false},
@@ -16,7 +16,7 @@ module.exports = function(karma) {
 			'test/**/*.js': ['webpack']
 		},
 		webpack: {
-			// devtool: 'source-map',
+			devtool: 'source-map',
 			module: {
 				rules: [
 					{
@@ -26,15 +26,8 @@ module.exports = function(karma) {
 						query: {
 							babelrc: false, // ignore any .babelrc in project & dependencies
 							cacheDirectory: true,
-							plugins: [
-								// ensures a module reqired multiple times is only transpiled once and
-								// is shared by all that use it rather than transpiling it each time
-								[require.resolve('babel-plugin-transform-runtime'), {
-									helpers: true,
-									polyfill: true,
-								}],
-							],
-							presets: [require.resolve('babel-preset-env')]
+							plugins: ['transform-runtime'],
+							presets: ['env']
 						}
 					}
 				]
@@ -43,5 +36,4 @@ module.exports = function(karma) {
 	};
 
 	karma.set(configuration);
-
 };

@@ -6,8 +6,8 @@
   "browser": "es5/client.js",
   "scripts": {
     "test": "make lint test",
-    "browserify": "browserify -s fetchMock es5/client.js > es5/client-bundle.js",
-    "prepublish": "babel src --out-dir es5 --presets env --plugins transform-runtime && npm run browserify"
+    "bundle": "webpack --output-library fetchMock --entry ./es5/client.js --output-filename ./es5/client-bundle.js",
+    "prepublish": "babel src --out-dir es5 --presets env --plugins transform-runtime && npm run bundle"
   },
   "repository": {
     "type": "git",
@@ -37,7 +37,6 @@
     "babel-cli": "^6.1.2",
     "babel-loader": "^7.1.2",
     "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "bluebird": "^3.4.6",
     "chai": "^4.1.2",

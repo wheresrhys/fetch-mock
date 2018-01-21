@@ -33,7 +33,6 @@
     "path-to-regexp": "^2.1.0"
   },
   "devDependencies": {
-    "babel": "^6.0.15",
     "babel-cli": "^6.1.2",
     "babel-loader": "^7.1.2",
     "babel-plugin-transform-runtime": "^6.23.0",

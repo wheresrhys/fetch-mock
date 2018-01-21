@@ -30,7 +30,8 @@ module.exports = karma => {
 					}
 				]
 			}
-		}
+		},
+		reporters: ['mocha'],
 	};
 
 	karma.set(configuration);

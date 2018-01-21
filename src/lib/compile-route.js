@@ -1,4 +1,3 @@
-'use strict';
 const glob = require('glob-to-regexp')
 const express = require('path-to-regexp');
 const URL = require('url');

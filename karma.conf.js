@@ -4,30 +4,36 @@ module.exports = function(karma) {
 
 	var configuration = {
 
-		frameworks: [ 'mocha', 'chai', 'browserify'],
+		frameworks: [ 'mocha' ],
 		files: [
-			'http://cdn.polyfill.io/v2/polyfill.min.js?features=default,Promise,fetch,Array.prototype.map,Array.prototype.filter',
 			'test/client.js',
-			'test/sw.js',
-			{pattern: 'test/fixtures/built-sw.js', served: true, included: false},
+			{pattern: 'test/fixtures/sw.js', served: true, included: false},
 		],
 		proxies: {
-			'/__sw.js': '/base/test/fixtures/built-sw.js'
+			'/__sw.js': '/base/test/fixtures/sw.js'
 		},
 		preprocessors: {
-			'test/*.js': ['browserify']
+			'test/**/*.js': ['webpack']
 		},
-		browserify: {
-			debug: true,
-			transform: [
-				['babelify', {
-					'presets': ['es2017'],
-					'plugins': ['transform-object-assign']
-				}]
-			]
+		webpack: {
+			devtool: 'source-map',
+			module: {
+				rules: [
+					{
+						test: /\.js$/,
+						loader: 'babel-loader',
+						exclude: /node_modules/,
+						query: {
+							babelrc: false, // ignore any .babelrc in project & dependencies
+							cacheDirectory: true,
+							plugins: ['transform-runtime'],
+							presets: ['env']
+						}
+					}
+				]
+			}
 		}
 	};
 
 	karma.set(configuration);
-
 };

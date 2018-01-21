@@ -1,15 +1,12 @@
 .PHONY: test
 
-build-sw:
-	./node_modules/.bin/webpack --entry ./test/fixtures/sw.js --output-filename ./test/fixtures/built-sw.js
-
-test-dev: build-sw
+test-dev:
 	./node_modules/karma/bin/karma start --browsers=Chrome
 
-test-chrome: build-sw
+test-chrome:
 	./node_modules/karma/bin/karma start --single-run --browsers=Chrome
 
-test-firefox: build-sw
+test-firefox:
 	./node_modules/karma/bin/karma start --single-run --browsers=Firefox
 
 test-unit:

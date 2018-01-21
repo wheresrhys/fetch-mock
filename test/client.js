@@ -1,7 +1,3 @@
-'use strict';
-
-require('whatwg-fetch');
-
 const fetchMock = require('../src/client.js');
 const expect = require('chai').expect;
 

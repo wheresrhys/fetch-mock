@@ -4,9 +4,9 @@ The library will run in most JavaScript environments, including nodejs, web work
 
 As well as shorthand methods for the simplest use cases, it offers a flexible API for customising all aspects of mocking behaviour.
 
-## These docs are for the v6 beta
+* Uses `async / await` - for older node versions use v5, or require the transpiled version: require('fetch-mock/es5/server') *
 
-**Please try v6 beta -** `npm install fetch-mock@6.0.0-beta.6`
+## These docs are for v6
 
 - [v5 docs](/fetch-mock/v5)
 - [V5 - V6 upgrade guide](/fetch-mock/v5-v6-upgrade)

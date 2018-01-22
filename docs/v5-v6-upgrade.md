@@ -4,21 +4,10 @@ This is a long overdue refactor of the entire library. As feature requests have 
 
 For the most common use cases, and the basic mocking and inspecting api, very little has changed. The main changes are around how fetch-mock is configured and installed, and turning a few nice new features on by default (couldn't do so in v5 as would've been a breaking change)
 
-Feedback gratefully received when in beta - please raise an issue :-)
-
-To try it out:
-```
-<<<<<<< HEAD
-npm install fetch-mock@6.0.0-beta.2
-=======
-npm install fetch-mock@6.0.0-beta.1
->>>>>>> a7995c45182455fa46f83d0a21ae057cb6a25c22
-```
-(Bear in mind that the docs may still include a few inaccuracies)
-
 # Changes
 
 ## Configuration and installation
+- Requires `async / await` - for older node versions use v5, or require the transpiled version: `require('fetch-mock/es5/server')`
 - *No change to mocking fetch as a global*
 - Uses whatever version of `node-fetch` you have already installed in your project i.e. can be used with `node-fetch` 2
 - `.sandbox()` no longer accepts a custom `Promise` implementation as a parameter

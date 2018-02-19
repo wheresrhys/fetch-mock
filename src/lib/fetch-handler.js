@@ -3,6 +3,7 @@ const ResponseBuilder = require('./response-builder');
 const FetchMock = {};
 
 FetchMock.fetchHandler = function (url, opts) {
+	url = url instanceof Request ? url.url : url;
 
 	let response = this.executeRouter(url, opts);
 

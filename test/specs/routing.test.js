@@ -11,7 +11,7 @@ module.exports = (fetchMock) => {
 
 		afterEach(() => fm.restore());
 
-		xdescribe('url matching', () => {
+		describe('url matching', () => {
 			it('match exact strings', async () => {
 
 				fm
@@ -138,11 +138,11 @@ module.exports = (fetchMock) => {
 				await fm.fetchHandler(new Request('http://it.at.there/logged-in', {
 					headers: {authorized: 'true'}
 				}));
-				
+
 				expect(fm.calls(true).length).to.equal(1);
 			});
 
-			xdescribe('headers', () => {
+			describe('headers', () => {
 				it('not match when headers not present', async () => {
 					fm
 						.mock('http://it.at.there/', 200, {
@@ -297,7 +297,7 @@ module.exports = (fetchMock) => {
 
 			});
 
-			xdescribe('query strings', () => {
+			describe('query strings', () => {
 				it('can match a query string', async () => {
 					fm
 						.mock('http://it.at.there', 200, {query: {a: 'b'}})
@@ -349,7 +349,7 @@ module.exports = (fetchMock) => {
 				});
 			});
 
-			xdescribe('methods', () => {
+			describe('methods', () => {
 				it('match any method by default', async () => {
 					fm
 						.mock('http://it.at.there/', 200)
@@ -418,7 +418,7 @@ module.exports = (fetchMock) => {
 			});
 		});
 
-		xdescribe('multiple routes', () => {
+		describe('multiple routes', () => {
 			it('match several routes with one instance', async () => {
 				fm
 					.mock('http://it.at.here/', 200)
@@ -500,7 +500,7 @@ module.exports = (fetchMock) => {
 			})
 		});
 
-		xdescribe('unmatched calls', () => {
+		describe('unmatched calls', () => {
 
 			it('throws if any calls unmatched', async () => {
 				fm.mock(/a/, 200);
@@ -537,7 +537,7 @@ module.exports = (fetchMock) => {
 
 		});
 
-		xdescribe('edge cases', () => {
+		describe('edge cases', () => {
 			it('match relative urls', async () => {
 				fm
 					.mock('/it.at.there/', 200)

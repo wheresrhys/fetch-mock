@@ -52,7 +52,7 @@ const headersToLowerCase = headers => Object.keys(headers).reduce((obj, k) => {
 }, {});
 
 
-function areHeadersEqual(actualHeader, expectedHeader) {
+function areHeadersEqual (actualHeader, expectedHeader) {
 	actualHeader = Array.isArray(actualHeader) ? actualHeader : [actualHeader];
 	expectedHeader = Array.isArray(expectedHeader) ? expectedHeader : [expectedHeader];
 
@@ -63,7 +63,7 @@ function areHeadersEqual(actualHeader, expectedHeader) {
 	return actualHeader.every((val, i) => val === expectedHeader[i])
 }
 
-function getHeaderMatcher({ headers: expectedHeaders }, Headers) {
+function getHeaderMatcher ({ headers: expectedHeaders }, Headers) {
 	if (!expectedHeaders) {
 		return () => true;
 	}

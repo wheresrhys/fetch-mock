@@ -3,6 +3,7 @@ const ResponseBuilder = require('./response-builder');
 const FetchMock = {};
 
 FetchMock.fetchHandler = function (url, opts) {
+
 	let response = this.executeRouter(url, opts);
 
 	// If the response says to throw an error, throw it

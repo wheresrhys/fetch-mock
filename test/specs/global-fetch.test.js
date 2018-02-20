@@ -53,22 +53,8 @@ module.exports = (fetchMock, theGlobal) => {
 			fetchMock
 				.spy();
 
-			await theGlobal.fetch('http://a.com', { method: 'get' })
-			expect(originalFetch).calledWith('http://a.com', { method: 'get' });
-		});
-
-		it('spy falls through to default fetch with Request', async () => {
-			fetchMock
-				.spy();
-
-			const headers = { 'Content-type': 'application/json', 'AUTHORIZATION': `Bearer Dummy` };
-			const request = new Request('http://a.com', {
-				method: 'GET',
-				headers: headers
-			});
-
-			await theGlobal.fetch(request)
-			expect(originalFetch).calledWith(request);
+			await theGlobal.fetch('http://a.com', {method: 'get'})
+			expect(originalFetch).calledWith('http://a.com', {method: 'get'});
 		});
 	});
 

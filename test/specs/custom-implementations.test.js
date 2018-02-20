@@ -31,7 +31,7 @@ module.exports = (fetchMock) => {
 
 			it('should allow non-native Promises as responses', async () => {
 				fm.config.Promise = BluebirdPromise
-				const stub = sinon.spy(() => BluebirdPromise.resolve(new fm.config.Response('', { status: 203 })));
+				const stub = sinon.spy(() => BluebirdPromise.resolve(new fm.config.Response('', {status: 203})));
 				fm.mock(/.*/, {
 					then: stub
 				})
@@ -102,7 +102,7 @@ module.exports = (fetchMock) => {
 					});
 
 				await fetch('http://example.com/', {
-					headers: { id: 1 }
+					headers: {id: 1}
 				});
 				expect(spiedReplacementHeaders.callCount).to.equal(1);
 				expect(defaultSpies.Headers.callCount).to.equal(0);
@@ -139,27 +139,7 @@ module.exports = (fetchMock) => {
 				expect(spiedReplacementResponse.callCount).to.equal(1);
 				expect(defaultSpies.Response.callCount).to.equal(0);
 			});
-
-			it('should use fetch with Request object', async () => {
-				const url = 'http://example.com/';
-				const spiedReplacementHeaders = getHeadersSpy();
-				const spiedReplacementResponse = sinon.stub().returns({ isFake: true });
-				fm.config.Headers = spiedReplacementHeaders;
-				fm.config.Response = spiedReplacementResponse;
-
-				fm.mock(url, { status: 200 });
-
-				const headers = { 'Content-type': 'application/json', 'AUTHORIZATION': `Bearer Dummy` };
-				const request = new Request(url, {
-					method: 'GET',
-					headers: headers
-				});
-
-				const response = await fetch(request);
-				expect(spiedReplacementHeaders.callCount).to.equal(1);
-				expect(response.isFake).to.be.true;
-			});
-		});//
+		});
 
 	});
 }

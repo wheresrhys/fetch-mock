@@ -10,7 +10,7 @@ const responseConfigProps = [
 
 module.exports = class ResponseBuilder {
 	constructor (url, responseConfig, fetchMock) {
-		this.url = url instanceof Request ? url.url : url;
+		this.url = url;
 		this.responseConfig = responseConfig;
 		this.fetchMockConfig = fetchMock.config;
 		this.statusTextMap = fetchMock.statusTextMap;

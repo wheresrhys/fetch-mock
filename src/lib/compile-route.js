@@ -3,24 +3,30 @@ const express = require('path-to-regexp');
 const URL = require('url');
 const querystring = require('querystring');
 
-function normalizeRequest (url, options, Request) {
-	if (Request.prototype.isPrototypeOf(url)) {
+function normalizeRequest(input, options, Request) {
+	if (checkRequestInstance(input, Request)) {
+		const { url, method, headers } = input;
 		return {
-			url: url.url,
-			method: url.method,
+			url,
+			method,
 			headers: (() => {
-				const headers = {};
-				url.headers.forEach(name => headers[name] = url.headers.name);
-				return headers;
+				const mappedHeaders = {};
+				headers.forEach(name => mappedHeaders[name] = headers.name);
+				return mappedHeaders;
 			})()
 		};
 	} else {
 		return {
-			url: url,
+			url: input,
 			method: options && options.method || 'GET',
 			headers: options && options.headers
 		};
 	}
+}
+
+function checkRequestInstance(url, configRequest) {
+	const hasProperties = (typeof url === 'object' && url.hasOwnProperty('url') && url.hasOwnProperty('method'));
+	return configRequest.prototype.isPrototypeOf(url) || url instanceof Request || hasProperties;
 }
 
 const stringMatchers = {
@@ -46,7 +52,7 @@ const headersToLowerCase = headers => Object.keys(headers).reduce((obj, k) => {
 }, {});
 
 
-function areHeadersEqual (actualHeader, expectedHeader) {
+function areHeadersEqual(actualHeader, expectedHeader) {
 	actualHeader = Array.isArray(actualHeader) ? actualHeader : [actualHeader];
 	expectedHeader = Array.isArray(expectedHeader) ? expectedHeader : [expectedHeader];
 
@@ -57,7 +63,7 @@ function areHeadersEqual (actualHeader, expectedHeader) {
 	return actualHeader.every((val, i) => val === expectedHeader[i])
 }
 
-function getHeaderMatcher ({ headers: expectedHeaders }, Headers) {
+function getHeaderMatcher({ headers: expectedHeaders }, Headers) {
 	if (!expectedHeaders) {
 		return () => true;
 	}

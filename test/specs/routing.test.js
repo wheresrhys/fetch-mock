@@ -11,7 +11,7 @@ module.exports = (fetchMock) => {
 
 		afterEach(() => fm.restore());
 
-		describe('url matching', () => {
+		xdescribe('url matching', () => {
 			it('match exact strings', async () => {
 
 				fm
@@ -128,7 +128,21 @@ module.exports = (fetchMock) => {
 				expect(fm.calls(true).length).to.equal(1);
 			});
 
-			describe('headers', () => {
+			it('match using custom function with default Request', async () => {
+				fm
+					.mock(req => {
+						return req.url.indexOf('logged-in') > -1 && req.headers.get('authorized');
+					}, 200)
+					.catch();
+
+				await fm.fetchHandler(new Request('http://it.at.there/logged-in', {
+					headers: {authorized: 'true'}
+				}));
+				
+				expect(fm.calls(true).length).to.equal(1);
+			});
+
+			xdescribe('headers', () => {
 				it('not match when headers not present', async () => {
 					fm
 						.mock('http://it.at.there/', 200, {
@@ -283,7 +297,7 @@ module.exports = (fetchMock) => {
 
 			});
 
-			describe('query strings', () => {
+			xdescribe('query strings', () => {
 				it('can match a query string', async () => {
 					fm
 						.mock('http://it.at.there', 200, {query: {a: 'b'}})
@@ -335,7 +349,7 @@ module.exports = (fetchMock) => {
 				});
 			});
 
-			describe('methods', () => {
+			xdescribe('methods', () => {
 				it('match any method by default', async () => {
 					fm
 						.mock('http://it.at.there/', 200)
@@ -404,7 +418,7 @@ module.exports = (fetchMock) => {
 			});
 		});
 
-		describe('multiple routes', () => {
+		xdescribe('multiple routes', () => {
 			it('match several routes with one instance', async () => {
 				fm
 					.mock('http://it.at.here/', 200)
@@ -486,7 +500,7 @@ module.exports = (fetchMock) => {
 			})
 		});
 
-		describe('unmatched calls', () => {
+		xdescribe('unmatched calls', () => {
 
 			it('throws if any calls unmatched', async () => {
 				fm.mock(/a/, 200);
@@ -523,7 +537,7 @@ module.exports = (fetchMock) => {
 
 		});
 
-		describe('edge cases', () => {
+		xdescribe('edge cases', () => {
 			it('match relative urls', async () => {
 				fm
 					.mock('/it.at.there/', 200)

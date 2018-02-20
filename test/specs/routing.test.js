@@ -523,7 +523,7 @@ module.exports = (fetchMock) => {
 
 		});
 
-		xdescribe('edge cases', () => {
+		describe('edge cases', () => {
 			it('match relative urls', async () => {
 				fm
 					.mock('/it.at.there/', 200)

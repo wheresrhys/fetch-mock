@@ -3,7 +3,7 @@ const express = require('path-to-regexp');
 const URL = require('url');
 const querystring = require('querystring');
 
-function normalizeRequest(input, options, Request) {
+function normalizeRequest (input, options, Request) {
 	if (checkRequestInstance(input, Request)) {
 		const { url, method, headers } = input;
 		return {
@@ -24,7 +24,7 @@ function normalizeRequest(input, options, Request) {
 	}
 }
 
-function checkRequestInstance(url, configRequest) {
+function checkRequestInstance (url, configRequest) {
 	const hasProperties = (typeof url === 'object' && url.hasOwnProperty('url') && url.hasOwnProperty('method'));
 	return configRequest.prototype.isPrototypeOf(url) || url instanceof Request || hasProperties;
 }

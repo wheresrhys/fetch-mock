@@ -128,20 +128,6 @@ module.exports = (fetchMock) => {
 				expect(fm.calls(true).length).to.equal(1);
 			});
 
-			it('match using custom function with default Request', async () => {
-				fm
-					.mock(req => {
-						return req.url.indexOf('logged-in') > -1 && req.headers.get('authorized');
-					}, 200)
-					.catch();
-
-				await fm.fetchHandler(new Request('http://it.at.there/logged-in', {
-					headers: {authorized: 'true'}
-				}));
-
-				expect(fm.calls(true).length).to.equal(1);
-			});
-
 			describe('headers', () => {
 				it('not match when headers not present', async () => {
 					fm
@@ -537,7 +523,7 @@ module.exports = (fetchMock) => {
 
 		});
 
-		describe('edge cases', () => {
+		xdescribe('edge cases', () => {
 			it('match relative urls', async () => {
 				fm
 					.mock('/it.at.there/', 200)

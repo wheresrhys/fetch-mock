@@ -11,3 +11,7 @@ Mock http requests made using fetch
 [![bitHound Dependencies](https://www.bithound.io/github/wheresrhys/fetch-mock/badges/dependencies.svg)](https://www.bithound.io/github/wheresrhys/fetch-mock/master/dependencies/npm)
 [![bitHound Dev Dependencies](https://www.bithound.io/github/wheresrhys/fetch-mock/badges/devDependencies.svg)](https://www.bithound.io/github/wheresrhys/fetch-mock/master/dependencies/npm)
 [![bitHound Code](https://www.bithound.io/github/wheresrhys/fetch-mock/badges/code.svg)](https://www.bithound.io/github/wheresrhys/fetch-mock)
+
+<div style="padding: 10px; border: 4px dashed; font-size: 1.2em;">
+	I devote a lot of time to maintaining fetch-mock for free. I don't ask for payment, but am raising money for a refugee charity - <a href="https://www.justgiving.com/fundraising/rhys-evans-walk">please consider donating</a>
+</div>

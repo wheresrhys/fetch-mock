@@ -4,7 +4,12 @@ The library will run in most JavaScript environments, including nodejs, web work
 
 As well as shorthand methods for the simplest use cases, it offers a flexible API for customising all aspects of mocking behaviour.
 
-* Uses `async / await` - for older node versions use v5, or require the transpiled version: require('fetch-mock/es5/server') *
+**Uses `async / await` - for older node versions use v5, or require the transpiled version: require('fetch-mock/es5/server')**
+
+<div style="padding: 10px; border: 4px dashed; font-size: 1.2em;">
+	I devote a lot of time to maintaining fetch-mock for free. I don't ask for payment, but am raising money for a refugee charity - <a href="https://www.justgiving.com/fundraising/rhys-evans-walk">please consider donating</a>
+</div>
+
 
 ## These docs are for v6
 

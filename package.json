@@ -10,8 +10,22 @@
     "prepublish": "babel src --out-dir es5 && npm run bundle"
   },
   "babel": {
-    "presets": [["env", {"useBuiltIns": "entry"}]],
-    "plugins": [["transform-runtime", {"polyfill": true}]]
+    "presets": [
+      [
+        "env",
+        {
+          "useBuiltIns": "entry"
+        }
+      ]
+    ],
+    "plugins": [
+      [
+        "transform-runtime",
+        {
+          "polyfill": true
+        }
+      ]
+    ]
   },
   "repository": {
     "type": "git",

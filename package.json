@@ -23,8 +23,8 @@
     "mock",
     "testing",
     "spy",
-    "ajax",
-    "xhr"
+    "xhr",
+    "ajax"
   ],
   "author": "Rhys Evans",
   "license": "MIT",

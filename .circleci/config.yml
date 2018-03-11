@@ -20,7 +20,7 @@ jobs:
       - checkout
       - run: npm install
       - save_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
+          key: npm-cache-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
 
@@ -29,7 +29,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
+          key: npm-cache-{{ checksum "package-lock.json" }}
       - run: make lint
 
   nodefetch2:
@@ -37,7 +37,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
+          key: npm-cache-{{ checksum "package-lock.json" }}
       - run: make coverage-report
 
   nodefetch1:
@@ -45,7 +45,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
+          key: npm-cache-{{ checksum "package-lock.json" }}
       - run: npm install node-fetch@1
       - run: make test-unit
 
@@ -54,7 +54,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
+          key: npm-cache-{{ checksum "package-lock.json" }}
       - run: make test-chrome
 
   firefox:
@@ -62,7 +62,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
+          key: npm-cache-{{ checksum "package-lock.json" }}
       - run: npm install karma-firefox-launcher
       - run: make test-firefox
 
@@ -71,7 +71,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
+          key: npm-cache-{{ checksum "package-lock.json" }}
       - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ${HOME}/.npmrc'
       - run: npm version --no-git-tag-version ${CIRCLE_TAG}
       - run: npm publish --access public

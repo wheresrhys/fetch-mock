@@ -47,7 +47,7 @@ Replaces `fetch` with a stub which records its calls, grouped by route, and opti
     * `matcher`: as specified above
     * `response`: as specified above
     * `repeat`: An integer, `n`, limiting the number of times the matcher can be used. If the route has already been called `n` times the route will be ignored and the call to `fetch()` will fall through to be handled by any other routes defined (which may eventually result in an error if nothing matches it)
-
+    * `overwriteRoutes`: If the route you're adding clashes with an existing route, settig `true` here will overwrite the clashing route, `false` will add another route to the stack which will be used as a fallback (useful when using the `repeat` option). Adding a clashing route without specifying this option will throw an error. It can also be set as a global option (see the **Config** section below)
 
 #### `sandbox()`
 This returns a drop-in mock for fetch which can be passed to other mocking libraries. It implements the full fetch-mock api and maintains its own state independent of other instances, so tests can be run in parallel. e.g.
@@ -125,10 +125,11 @@ Returns a `Promise` that resolves once all fetches handled by fetch-mock have re
 
 ## Config
 
-On either the global or sandboxed `fetchMock` instances, the following config options can be set by setting properties on `fetchMock.config`
+On either the global or sandboxed `fetchMock` instances, the following config options can be set by setting properties on `fetchMock.config`. Many can also be set on individual calls to `.mock()`.
 * `sendAsJson` [default `true`] - by default fetchMock will convert objects to JSON before sending. This is overrideable from each call but for some scenarios e.g. when dealing with a lot of array buffers, it can be useful to default to `false`
 * `includeContentLength` [default `true`]: When set to true this will make fetchMock automatically add the `content-length` header. This is especially useful when combined with `sendAsJson` because then fetchMock does the conversion to JSON for you and knows the resulting length so you don’t have to compute this yourself by basically doing the same conversion to JSON.
 * `fallbackToNetwork` [default `false`] If true then unmatched calls will transparently fall through to the network, if false an error will be thrown. Within individual tests `.catch()` and `spy()` can be used for fine-grained control of this
+* `overwriteRoutes`: If a new route clashes with an existing route, setting `true` here will overwrite the clashing route, `false` will add another route to the stack which will be used as a fallback (useful when using the `repeat` option). Adding a clashing route without specifying this option will throw an error.
 * `warnOnFallback` [default `true`] If true then any unmatched calls that are caught by a fallback handler (either the network or a custom function set using `catch()`) will emit warnings
 * `Headers`,`Request`,`Response`,`Promise`, `fetch`
 When using non standard fetch (e.g. a ponyfill, or  aversion of `node-fetch` other than the one bundled with `fetch-mock`) or an alternative Promise implementation, this will configure fetch-mock to use your chosen implementations.

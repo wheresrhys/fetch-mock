@@ -18,7 +18,7 @@ jobs:
     <<: *env
     steps:
       - checkout
-      - run: npm install
+      - run: npm install --no-package-lock
       - save_cache:
           key: npm-cache-{{ checksum "package-lock.json" }}
           paths:

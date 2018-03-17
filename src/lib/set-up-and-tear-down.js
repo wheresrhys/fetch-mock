@@ -25,7 +25,7 @@ const getMatcher = (route, propName) => (route2) => route[propName] === route2[p
 
 FetchMock.addRoute = function (uncompiledRoute) {
 
-	route = this.compileRoute(uncompiledRoute);
+	const route = this.compileRoute(uncompiledRoute);
 
 	const clashes = this.routes.filter(getMatcher(route, 'name'));
 	const overwriteRoutes = ('overwriteRoutes' in route) ? route.overwriteRoutes : this.config.overwriteRoutes;

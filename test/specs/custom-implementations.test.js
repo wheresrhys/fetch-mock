@@ -108,25 +108,36 @@ module.exports = (fetchMock) => {
 				expect(defaultSpies.Headers.callCount).to.equal(0);
 			});
 
-
-			it('should use the configured Request', () => {
-
+			describe('Request', () => {
 				const ReplacementRequest = function (url) {
 					this.url = url;
 					this.method = 'GET';
 					this.headers = [];
 				};
 
-				fm.config.Request = ReplacementRequest;
-				fm.mock('http://example.com/', { status: 200 });
+				it('should use the configured Request', () => {
 
-				const requestInstance = new ReplacementRequest('http://example.com/');
+					fm.config.Request = ReplacementRequest;
+					fm.mock('http://example.com/', { status: 200 });
 
-				// As long as this is successful, it's worked, as we've correctly
-				// matched the request against overridden prototype.
-				return fetch(requestInstance);
+					const requestInstance = new ReplacementRequest('http://example.com/');
+
+					// As long as this is successful, it's worked, as we've correctly
+					// matched the request against overridden prototype.
+					return fetch(requestInstance);
+				});
+
+				it('should use the configured Request to match urls etc', async () => {
+					fm.config.Request = ReplacementRequest;
+					fm.get('http://test.com/', { body: 'test' });
+
+					const requestInstance = new ReplacementRequest('http://test.com/');
+
+					await fetch(requestInstance);
+
+					expect(fm.called('http://test.com/')).to.be.true;
+				});
 			});
-
 
 			it('should use the configured Response', async () => {
 				const spiedReplacementResponse = sinon.stub().returns({ isFake: true });

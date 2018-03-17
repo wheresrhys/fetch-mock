@@ -139,6 +139,24 @@ module.exports = (fetchMock) => {
 				expect(spiedReplacementResponse.callCount).to.equal(1);
 				expect(defaultSpies.Response.callCount).to.equal(0);
 			});
+
+			it('should use the Request as input of the fetch API', async () => {
+				fm.get('http://test.com', { body: 'test' });
+
+				//mock Request object
+				function Request(url, opt) {
+					return Object.assign({ url }, opt);
+				}
+
+				const r = Request('http://test.com', {
+					method: 'GET',
+					headers: []
+				});
+
+				const res = await fetch(r);
+
+				expect(fm.called('http://test.com')).to.be.true;
+			});
 		});
 
 	});

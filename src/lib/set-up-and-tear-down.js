@@ -24,6 +24,7 @@ FetchMock.mock = function (matcher, response, options = {}) {
 const getMatcher = (route, propName) => (route2) => route[propName] === route2[propName];
 
 FetchMock.addRoute = function (route) {
+	this._uncompiledRoutes.push(route);
 	route = this.compileRoute(route);
 
 	const clashes = this.routes.filter(getMatcher(route, 'name'));
@@ -91,6 +92,7 @@ FetchMock.restore = function () {
 	}
 	this.fallbackResponse = undefined;
 	this.routes = [];
+	this._uncompiledRoutes = [];
 	this.reset();
 	return this;
 }

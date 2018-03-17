@@ -12,7 +12,7 @@ In most environments use `const fetchMock = require('fetch-mock')` to use it in 
 
 * If your client-side code or tests do not use a loader that respects the browser field of `package.json` use `require('fetch-mock/es5/client')`.
 * If you need to use fetch-mock without commonjs, you can include the precompiled `node_modules/fetch-mock/es5/client-bundle.js` in a script tag. This loads fetch-mock into the `fetchMock` global variable.
-* For server side tests running in nodejs 0.12 or lower use `require('fetch-mock/es5/server')`
+* For server side tests running in nodejs 6 or lower use `require('fetch-mock/es5/server')`. You will also need to `npm i -D babel-polyfill`
 
 ## Global fetch
 By default fetch-mock assumes `fetch` is a global so once you've required fetch-mock refer to the quickstart and api docs.  

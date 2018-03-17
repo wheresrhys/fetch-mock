@@ -128,7 +128,7 @@ module.exports = (fetchMock) => {
 			console.warn.restore();//eslint-disable-line
 		});
 
-		describe.only('sandbox isolation', () => {
+		describe('sandbox isolation', () => {
 			it('done-ness doesn\'t propagate to children of global', () => {
 				fm
 					.mock('http://it.at.there1/', 200, {repeat: 1});
@@ -141,7 +141,7 @@ module.exports = (fetchMock) => {
 				expect(sb1.done()).to.be.false;
 			});
 
-			it.only('done-ness doesn\'t propagate to global from children', () => {
+			it('done-ness doesn\'t propagate to global from children', () => {
 				fm
 					.mock('http://it.at.there1/', 200, {repeat: 1});
 
@@ -150,7 +150,7 @@ module.exports = (fetchMock) => {
 				sb1.fetchHandler('http://it.at.there1/');
 
 				expect(fm.done()).to.be.false;
-				expect(sb1.done()).to.be.done;
+				expect(sb1.done()).to.be.true;
 			});
 
 			it('done-ness doesn\'t propagate to children of sandbox', () => {

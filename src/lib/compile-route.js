@@ -3,8 +3,13 @@ const express = require('path-to-regexp');
 const URL = require('url');
 const querystring = require('querystring');
 
+function isRequestInstance (url, configRequest) {
+	const hasProperties = (typeof url === 'object' && url.hasOwnProperty('url') && url.hasOwnProperty('method'));
+	return configRequest.prototype.isPrototypeOf(url) || url instanceof configRequest || hasProperties;
+}
+
 function normalizeRequest (input, options, Request) {
-	if (checkRequestInstance(input, Request)) {
+	if (isRequestInstance(input, Request)) {
 		const { url, method, headers } = input;
 		return {
 			url,
@@ -22,11 +27,6 @@ function normalizeRequest (input, options, Request) {
 			headers: options && options.headers
 		};
 	}
-}
-
-function checkRequestInstance (url, configRequest) {
-	const hasProperties = (typeof url === 'object' && url.hasOwnProperty('url') && url.hasOwnProperty('method'));
-	return configRequest.prototype.isPrototypeOf(url) || url instanceof Request || hasProperties;
 }
 
 const stringMatchers = {

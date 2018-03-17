@@ -135,6 +135,12 @@ e.g. {"body": {"status: "registered"}}`)
 					const res = await fm.fetchHandler('http://foo.com/path?query=string')
 					expect(res.url).to.equal('http://foo.com/path?query=string');
 				})
+
+				it('should set the url property on responses when called with Request', async () => {
+					fm.mock('begin:http://foo.com', 200)
+					const res = await fm.fetchHandler(new fm.config.Request('http://foo.com/path?query=string'))
+					expect(res.url).to.equal('http://foo.com/path?query=string');
+				})
 			}
 
 			it('respond with a redirected response', async () => {

@@ -18,7 +18,9 @@ jobs:
     <<: *env
     steps:
       - checkout
-      - run: npm install --no-package-lock
+      - restore_cache:
+          key: npm-cache-{{ checksum "package-lock.json" }}
+      - run: if [ ! -d "node_modules" ]; then npm install --no-package-lock; fi
       - save_cache:
           key: npm-cache-{{ checksum "package-lock.json" }}
           paths:
@@ -48,6 +50,17 @@ jobs:
           key: npm-cache-{{ checksum "package-lock.json" }}
       - run: npm install node-fetch@1
       - run: make test-unit
+
+  node6:
+    docker:
+      - image: circleci/node:6.13.0
+    steps:
+      - checkout
+      - restore_cache:
+          key: npm-cache-{{ checksum "package-lock.json" }}
+      - run: npm rebuild
+      - run: npm install babel-polyfill
+      - run: make test-node6
 
   chrome:
     <<: *env-browsers
@@ -86,6 +99,10 @@ workflows:
           requires:
             - checkout_code
       - nodefetch2:
+          <<: *triggerable-by-tag
+          requires:
+            - checkout_code
+      - node6:
           <<: *triggerable-by-tag
           requires:
             - checkout_code

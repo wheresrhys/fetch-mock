@@ -7,4 +7,4 @@ const fetchMock = require('../es5/server');
 
 fetchMock.mock('http://it.at.there/', 200);
 return fetchMock.fetchHandler('http://it.at.there/')
-	.then(res => expect(res.ok).to.be.true)
+	.catch(() => process.exit(2))

@@ -127,6 +127,7 @@ module.exports = (fetchMock) => {
 			expect(console.warn.calledWith('Warning: http://it.at.there2/ only called 1 times, but 2 expected')).to.be.false;//eslint-disable-line
 			console.warn.restore();//eslint-disable-line
 		});
+
 		describe.only('sandbox isolation', () => {
 			it('done-ness doesn\'t propagate to children of global', () => {
 				fm
@@ -140,7 +141,7 @@ module.exports = (fetchMock) => {
 				expect(sb1.done()).to.be.false;
 			});
 
-			it('done-ness doesn\'t propagate to global from children', () => {
+			it.only('done-ness doesn\'t propagate to global from children', () => {
 				fm
 					.mock('http://it.at.there1/', 200, {repeat: 1});
 

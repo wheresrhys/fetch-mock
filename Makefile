@@ -12,6 +12,9 @@ test-firefox:
 test-unit:
 	./node_modules/.bin/mocha test/server.js
 
+test-node6:
+	node test/node6.js
+
 lint:
 	./node_modules/.bin/eslint --ignore-pattern test/fixtures/* src test
 

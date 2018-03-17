@@ -58,7 +58,7 @@ jobs:
           key: npm-cache-{{ checksum "package-lock.json" }}
       - run: npm rebuild
       - run: npm install babel-polyfill
-      - run: make test-unit
+      - run: make test-node6
 
   chrome:
     <<: *env-browsers

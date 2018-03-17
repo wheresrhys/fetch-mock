@@ -105,7 +105,7 @@ Most of the methods below accept two parameters, `(filter, method)`
 #### `called(filter, method)`
 Returns a Boolean indicating whether fetch was called and a route was matched. If `filter` is specified it only returns `true` if that particular route was matched.
 
-#### `done(filter)`
+#### `done(filter, method)`
 Returns a Boolean indicating whether fetch was called the expected number of times (or at least once if the route defines no expectation is set for the route). _Unlike the other methods for inspecting calls, unmatched calls are irrelevant_. Therefore, if no `filter` is passed, `done()` returns `true` if every route has been called the number of expected times.
 
 #### `calls(filter, method)`

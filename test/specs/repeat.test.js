@@ -127,6 +127,57 @@ module.exports = (fetchMock) => {
 			expect(console.warn.calledWith('Warning: http://it.at.there2/ only called 1 times, but 2 expected')).to.be.false;//eslint-disable-line
 			console.warn.restore();//eslint-disable-line
 		});
+		describe.only('sandbox isolation', () => {
+			it('done-ness doesn\'t propagate to children of global', () => {
+				fm
+					.mock('http://it.at.there1/', 200, {repeat: 1});
+
+				const sb1 = fm.sandbox();
+
+				fm.fetchHandler('http://it.at.there1/');
+
+				expect(fm.done()).to.be.true;
+				expect(sb1.done()).to.be.false;
+			});
+
+			it('done-ness doesn\'t propagate to global from children', () => {
+				fm
+					.mock('http://it.at.there1/', 200, {repeat: 1});
+
+				const sb1 = fm.sandbox();
+
+				sb1.fetchHandler('http://it.at.there1/');
+
+				expect(fm.done()).to.be.false;
+				expect(sb1.done()).to.be.done;
+			});
+
+			it('done-ness doesn\'t propagate to children of sandbox', () => {
+				const sb1 = fm
+					.sandbox()
+					.mock('http://it.at.there1/', 200, {repeat: 1});
+				const sb2 = sb1.sandbox();
+
+				sb1.fetchHandler('http://it.at.there1/');
+
+				expect(sb1.done()).to.be.true;
+				expect(sb2.done()).to.be.false;
+			});
+
+			it('done-ness doesn\'t propagate to sandbox from children', () => {
+				const sb1 = fm
+					.sandbox()
+					.mock('http://it.at.there1/', 200, {repeat: 1});
+
+				const sb2 = sb1.sandbox();
+
+				sb2.fetchHandler('http://it.at.there1/');
+
+				expect(sb1.done()).to.be.false;
+				expect(sb2.done()).to.be.true;
+			});
+		});
+
 
 		describe('strict matching shorthands', () => {
 			it('has once shorthand method', () => {

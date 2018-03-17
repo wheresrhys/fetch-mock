@@ -7,7 +7,8 @@
   "scripts": {
     "test": "make lint test",
     "bundle": "webpack --output-library fetchMock --entry ./es5/client.js --output-filename ./es5/client-bundle.js",
-    "prepublishOnly": "babel src --out-dir es5 && npm run bundle"
+    "babelify": "babel src --out-dir es5",
+    "prepublishOnly": "npm run babelify && npm run bundle"
   },
   "babel": {
     "presets": [

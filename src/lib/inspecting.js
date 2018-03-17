@@ -64,25 +64,29 @@ FetchMock.flush = function () {
 	return Promise.all(this._holdingPromises);
 }
 
-FetchMock.done = function (name) {
-	const names = name && typeof name !== 'boolean' ? [name] : this.routes.map(r => r.name);
+FetchMock.done = function (name, options) {
+	const names = name && typeof name !== 'boolean' ? [ { name } ] : this.routes;
 
 	// Can't use array.every because
 	// a) not widely supported
 	// b) would exit after first failure, which would break the logging
-	return names.map(name => {
-		if (!this.called(name)) {
+	return names.map(({ name, method }) => {
+		// HACK - this is horrible. When the api is eventually updated to update other
+		// filters other than a method string it will break... but for now it's ok-ish
+		method = options || method;
+
+		if (!this.called(name, method)) {
 			console.warn(`Warning: ${name} not called`);// eslint-disable-line
 			return false;
 		}
-		// would use array.find... but again not so widely supported
-		const expectedTimes = (this.routes.filter(r => r.name === name) || [{}])[0].repeat;
 
+		// would use array.find... but again not so widely supported
+		const expectedTimes = (this.routes.filter(r => r.name === name && r.method === method) || [{}])[0].repeat;
 		if (!expectedTimes) {
 			return true;
 		}
 
-		const actualTimes = this.calls(name).length;
+		const actualTimes = this.calls(name, method).length;
 		if (expectedTimes > actualTimes) {
 			console.warn(`Warning: ${name} only called ${actualTimes} times, but ${expectedTimes} expected`);// eslint-disable-line
 			return false;

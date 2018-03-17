@@ -23,27 +23,31 @@ FetchMock.mock = function (matcher, response, options = {}) {
 
 const getMatcher = (route, propName) => (route2) => route[propName] === route2[propName];
 
-FetchMock.addRoute = function (route) {
-	this._uncompiledRoutes.push(route);
-	route = this.compileRoute(route);
+FetchMock.addRoute = function (uncompiledRoute) {
+
+	const route = this.compileRoute(uncompiledRoute);
 
 	const clashes = this.routes.filter(getMatcher(route, 'name'));
 	const overwriteRoutes = ('overwriteRoutes' in route) ? route.overwriteRoutes : this.config.overwriteRoutes;
 
 	if (overwriteRoutes === false || !clashes.length) {
+		this._uncompiledRoutes.push(uncompiledRoute);
 		return this.routes.push(route);
 	}
 
 	const methodsMatch = getMatcher(route, 'method');
 
 	if (overwriteRoutes === true) {
-		return this.routes.splice(this.routes.indexOf(clashes.find(methodsMatch)), 1, route);
+		const index = this.routes.indexOf(clashes.find(methodsMatch));
+		this._uncompiledRoutes.splice(index, 1, uncompiledRoute);
+		return this.routes.splice(index, 1, route);
 	}
 
 	if (clashes.some(existingRoute => !route.method || methodsMatch(existingRoute))) {
 		throw new Error('Adding route with same name as existing route. See `overwriteRoutes` option.');
 	}
 
+	this._uncompiledRoutes.push(uncompiledRoute);
 	this.routes.push(route);
 };
 

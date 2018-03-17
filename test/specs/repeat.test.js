@@ -129,53 +129,62 @@ module.exports = (fetchMock) => {
 		});
 
 		describe('sandbox isolation', () => {
-			it('done-ness doesn\'t propagate to children of global', () => {
+			it('doesn\'t propagate to children of global', () => {
 				fm
-					.mock('http://it.at.there1/', 200, {repeat: 1});
+					.mock('http://it.at.there/', 200, {repeat: 1});
 
 				const sb1 = fm.sandbox();
 
-				fm.fetchHandler('http://it.at.there1/');
+				fm.fetchHandler('http://it.at.there/');
 
 				expect(fm.done()).to.be.true;
 				expect(sb1.done()).to.be.false;
+
+				expect(() => sb1.fetchHandler('http://it.at.there/')).not.to.throw();
 			});
 
-			it('done-ness doesn\'t propagate to global from children', () => {
+			it('doesn\'t propagate to global from children', () => {
 				fm
-					.mock('http://it.at.there1/', 200, {repeat: 1});
+					.mock('http://it.at.there/', 200, {repeat: 1});
 
 				const sb1 = fm.sandbox();
 
-				sb1.fetchHandler('http://it.at.there1/');
+				sb1.fetchHandler('http://it.at.there/');
 
 				expect(fm.done()).to.be.false;
 				expect(sb1.done()).to.be.true;
+
+				expect(() => fm.fetchHandler('http://it.at.there/')).not.to.throw();
 			});
 
-			it('done-ness doesn\'t propagate to children of sandbox', () => {
+			it('doesn\'t propagate to children of sandbox', () => {
 				const sb1 = fm
 					.sandbox()
-					.mock('http://it.at.there1/', 200, {repeat: 1});
+					.mock('http://it.at.there/', 200, {repeat: 1});
+
 				const sb2 = sb1.sandbox();
 
-				sb1.fetchHandler('http://it.at.there1/');
+				sb1.fetchHandler('http://it.at.there/');
 
 				expect(sb1.done()).to.be.true;
 				expect(sb2.done()).to.be.false;
+
+				expect(() => sb2.fetchHandler('http://it.at.there/')).not.to.throw();
 			});
 
-			it('done-ness doesn\'t propagate to sandbox from children', () => {
+			it('doesn\'t propagate to sandbox from children', () => {
 				const sb1 = fm
 					.sandbox()
-					.mock('http://it.at.there1/', 200, {repeat: 1});
+					.mock('http://it.at.there/', 200, {repeat: 1});
 
 				const sb2 = sb1.sandbox();
 
-				sb2.fetchHandler('http://it.at.there1/');
+				sb2.fetchHandler('http://it.at.there/');
 
 				expect(sb1.done()).to.be.false;
 				expect(sb2.done()).to.be.true;
+
+				expect(() => sb1.fetchHandler('http://it.at.there/')).not.to.throw();
 			});
 		});
 

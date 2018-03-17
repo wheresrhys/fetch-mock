@@ -14,7 +14,8 @@ FetchMock.config = {
 
 FetchMock.createInstance = function () {
 	const instance = Object.create(FetchMock);
-	instance.routes = (this.routes || []).slice();
+	instance._uncompiledRoutes = (this._uncompiledRoutes || []).slice();
+	instance.routes = instance._uncompiledRoutes.map(config => instance.compileRoute(config));
 	instance.fallbackResponse = this.fallbackResponse || undefined;
 	instance.config = Object.assign({}, this.config || FetchMock.config);
 	instance._calls = {};

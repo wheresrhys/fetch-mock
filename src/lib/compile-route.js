@@ -186,7 +186,6 @@ const generateMatcher = (route, config) => {
 }
 
 const limitMatcher = (route) => {
-
 	if (!route.repeat) {
 		return;
 	}

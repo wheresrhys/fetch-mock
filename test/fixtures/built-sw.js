@@ -2156,7 +2156,7 @@ const getQueryStringMatcher = route => {
 
 const getUrlMatcher = route => {
 
-	// When the matcher is a function it shodul not be compared with the url
+	// When the matcher is a function it should not be compared with the url
 	// in the normal way
 	if (typeof route.matcher === 'function') {
 		return () => true;

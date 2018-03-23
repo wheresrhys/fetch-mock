@@ -5,6 +5,9 @@ http://www.wheresrhys.co.uk/fetch-mock/api
 
 Yeah, I know I shouldn't need to remind you, but _some_ people... :roll_eyes: 
 
-Please include a code sample to illustrate the problem you're having too. Ideally either
-- a repo with a minimal test case I can clone, install and run to replicate the problem
-- a pull request with a failing test
+Please include a code sample to illustrate the problem you're having.
+ 
+If you can, try to recreate the problem with a failing test and submit a PR.
+
+If you can't create a failing test, please create a repo with a minimal test case using your
+build/test setup, and link to this in the issue

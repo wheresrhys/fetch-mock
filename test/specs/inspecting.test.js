@@ -260,6 +260,28 @@ module.exports = (fetchMock) => {
 				expect(data).to.equal('done');
 			})
 
+			it.only('should resolve after .json()', async () => {
+				fm.mock('http://example', 'working!')
+				let data;
+				fetch('http://example')
+					.then(res => res.json())
+					.then(() => data = 'done');
+
+				await fm.flush()
+				expect(data).to.equal('done');
+			})
+
+			it('should resolve after .text()', async () => {
+				fm.mock('http://example', 'working!')
+				let data;
+				fetch('http://example')
+					.then(res => res.text())
+					.then(() => data = 'done');
+
+				await fm.flush()
+				expect(data).to.equal('done');
+			})
+
 			it('flush waits for unresolved promises', async () => {
 				fm
 					.mock('http://one.com', 200)

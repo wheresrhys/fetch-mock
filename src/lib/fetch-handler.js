@@ -16,8 +16,11 @@ FetchMock.fetchHandler = function (url, opts) {
 
 	// this is used to power the .flush() method
 	let done
-	this._holdingPromises.push(new this.config.Promise(res => done = res));
+	const it = new this.config.Promise(res => done = res);
+	it.a = 'a';
+	this._holdingPromises.push(it);
 
+	console.log(this._holdingPromises.map(p => p.a))
 	// wrapped in this promise to make sure we respect custom Promise
 	// constructors defined by the user
 	return new this.config.Promise((res, rej) => {

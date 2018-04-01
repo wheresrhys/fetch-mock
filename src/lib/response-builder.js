@@ -11,6 +11,7 @@ const responseConfigProps = [
 module.exports = class ResponseBuilder {
 	constructor (url, responseConfig, fetchMock) {
 		this.url = typeof url === 'object' ? url.url : url;
+		this.fetchMockInstance = fetchMock;
 		this.responseConfig = responseConfig;
 		this.fetchMockConfig = fetchMock.config;
 		this.statusTextMap = fetchMock.statusTextMap;
@@ -113,10 +114,13 @@ e.g. {"body": {"status: "registered"}}`);
 	}
 
 	observe (response) {
-		// When mocking a followed redirect we must wrap the response in a proxy
-		// which sets the redirected flag (not a writable property on the actual
-		// response)
-		const proxy = {
+
+		const fetchMock = this.fetchMockInstance;
+
+		// Using a proxy means we can set properties that may not be writable on
+		// the original Response. It also means we can track the resolution of
+		// promises returned by res.json(), res.text() etc
+		return new Proxy(response, {
 			get: (originalResponse, name) => {
 				if (this.responseConfig.redirectUrl) {
 					if (name === 'url') {
@@ -133,12 +137,9 @@ e.g. {"body": {"status: "registered"}}`);
 					return new Proxy(originalResponse[name], {
 						apply: (func, thisArg, args) => {
 							const result = func.apply(thisArg, args);
-
 							if (result.then) {
-								result.a = 'b';
-								this._holdingPromises.push(result.catch(() => null))
+								fetchMock._holdingPromises.push(result.catch(() => null))
 							}
-							console.log(this._holdingPromises.map(p => p.a));
 							return result;
 						}
 					})
@@ -146,8 +147,6 @@ e.g. {"body": {"status: "registered"}}`);
 
 				return originalResponse[name];
 			}
-		}
-
-		return new Proxy(response, proxy);
+		});
 	}
 }

@@ -136,7 +136,7 @@ e.g. {"body": {"status: "registered"}}`);
 
 					return new Proxy(originalResponse[name], {
 						apply: (func, thisArg, args) => {
-							const result = func.apply(thisArg, args);
+							const result = func.apply(response, args);
 							if (result.then) {
 								fetchMock._holdingPromises.push(result.catch(() => null))
 							}

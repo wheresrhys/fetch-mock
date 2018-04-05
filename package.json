@@ -49,6 +49,7 @@
   "homepage": "http://www.wheresrhys.co.uk/fetch-mock",
   "dependencies": {
     "glob-to-regexp": "^0.4.0",
+    "node-fetch": "^2.0.0",
     "path-to-regexp": "^2.1.0"
   },
   "devDependencies": {
@@ -69,7 +70,6 @@
     "karma-mocha-reporter": "^2.2.5",
     "karma-webpack": "^2.0.9",
     "mocha": "^5.0.0",
-    "node-fetch": "^2.0.0",
     "sinon": "^4.5.0",
     "sinon-chai": "^2.14.0",
     "webpack": "^3.10.0"

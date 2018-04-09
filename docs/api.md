@@ -109,7 +109,7 @@ Returns a Boolean indicating whether fetch was called and a route was matched. I
 Returns a Boolean indicating whether fetch was called the expected number of times (or at least once if the route defines no expectation is set for the route). _Unlike the other methods for inspecting calls, unmatched calls are irrelevant_. Therefore, if no `filter` is passed, `done()` returns `true` if every route has been called the number of expected times.
 
 #### `calls(filter, method)`
-Returns an object `{matched: [], unmatched: []}` containing arrays of all calls to fetch, grouped by whether fetch-mock matched them or not. If `filter` is specified then only calls to fetch matching that route are returned.
+Returns an array of all calls to fetch matchingthe given filters. Each call is returned as an array of length 2.
 
 #### `lastCall(filter, method)`
 Returns the arguments for the last matched call to fetch

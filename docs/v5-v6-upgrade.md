@@ -30,5 +30,5 @@ For the most common use cases, and the basic mocking and inspecting api, very li
     + An exact url
     + `true` for matched calls only
     + `false` for unmatched calls only
-    + `undefined` includes all calls to `fetch` in order
+    + `undefined` (or no argument) includes all calls to `fetch` in order in a single array, i.e. no longer an object with `matched` and `unmatched` properties
 - When `fetch` was last called with a `Request` object, `lastUrl()` and `lastOpts()` give easier access to the `url` and full `Request` object

@@ -2,18 +2,14 @@
 rectify this will normally be closed within a few days. If you want your issue fixed, 
 please stick to the rules **
 
-Please check the troubleshooting guide and read the API docs before raising an issue
+Check the troubleshooting guide and read the API docs before raising an issue
+    - http://www.wheresrhys.co.uk/fetch-mock/troubleshooting
+    - http://www.wheresrhys.co.uk/fetch-mock/api
 
-http://www.wheresrhys.co.uk/fetch-mock/troubleshooting
-http://www.wheresrhys.co.uk/fetch-mock/api
+Provide code that recreates the issue you're having. Ideally either
+    - recreate the problem with a failing test and submit a PR
+    - create a repo with a minimal test case using your build/test setup, and 
+      link to this in the issue
 
-Yeah, I know I shouldn't need to remind you, but _some_ people... :roll_eyes: 
-
-Please include a code sample to illustrate the problem you're having.
- - If you can, try to recreate the problem with a failing test and submit a PR.
- - If you can't create a failing test, please create a repo with a minimal test case using your
-build/test setup, and link to this in the issue. 
-
-Both the above may seem like a lot of work, but the majority of issues raised these days tend 
-to relate to interoperability problems with other libraries, and a brief code sample in the
-issue probably won't be enough to diagnose the problem
+Both the above may seem like a lot of work, but the easier you make it for me to 
+recreate the bug, the sooner it'll get fixed.

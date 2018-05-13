@@ -11,6 +11,7 @@ module.exports = karma => karma.set({
 		'test/**/*.js': ['webpack']
 	},
 	webpack: {
+		mode: 'development',
 		devtool: 'source-map',
 		module: {
 			rules: [

@@ -6,9 +6,7 @@
   "browser": "es5/client.js",
   "scripts": {
     "test": "make lint test",
-    "bundle": "webpack --output-library fetchMock --entry ./es5/client.js --output-filename ./es5/client-bundle.js",
-    "babelify": "babel src --out-dir es5",
-    "prepublishOnly": "npm run babelify && npm run bundle",
+    "prepublishOnly": "make transpile bundle",
     "postinstall": "node scripts/support-fetch-mock.js"
   },
   "babel": {
@@ -68,11 +66,12 @@
     "karma-chrome-launcher": "^2.2.0",
     "karma-mocha": "^1.3.0",
     "karma-mocha-reporter": "^2.2.5",
-    "karma-webpack": "^2.0.9",
+    "karma-webpack": "^3.0.0",
     "mocha": "^5.1.1",
     "node-fetch": "^2.0.0",
     "sinon": "^4.5.0",
     "sinon-chai": "^2.14.0",
-    "webpack": "^3.12.0"
+    "webpack": "^4.0.0",
+    "webpack-cli": "^2.1.3"
   }
 }

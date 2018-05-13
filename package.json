@@ -58,7 +58,7 @@
     "babel-preset-env": "^1.7.0",
     "bluebird": "^3.4.6",
     "chai": "^4.1.2",
-    "coveralls": "^2.11.16",
+    "coveralls": "^3.0.0",
     "eslint": "^4.14.0",
     "karma": "^2.0.2",
     "karma-chai": "^0.1.0",

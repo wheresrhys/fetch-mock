@@ -1,3 +1,5 @@
+export PATH := $(PATH):./node_modules/.bin
+
 .PHONY: test
 
 test-dev:
@@ -12,8 +14,7 @@ test-firefox:
 test-unit:
 	./node_modules/.bin/mocha test/server.js
 
-test-node6:
-	npm run babelify
+test-node6: transpile
 	node test/node6.js
 
 lint:
@@ -25,3 +26,9 @@ coverage-report:
 
 local-coverage:
 	./node_modules/.bin/istanbul cover node_modules/.bin/_mocha 'test/server.js'
+
+transpile:
+	babel src --out-dir es5
+
+bundle:
+	webpack --mode development --output-library fetchMock --entry ./es5/client.js --output-filename ./es5/client-bundle.js

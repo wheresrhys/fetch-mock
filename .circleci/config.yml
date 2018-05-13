@@ -59,7 +59,6 @@ jobs:
       - restore_cache:
           key: npm-cache-{{ checksum "package-lock.json" }}
       - run: npm rebuild
-      - run: npm install babel-polyfill
       - run: make test-node6
 
   chrome:
@@ -122,6 +121,7 @@ workflows:
           requires:
             - nodefetch1
             - nodefetch2
+            - node6
             - chrome
            # - firefox
             - lint

@@ -4,3 +4,4 @@ npm-debug.log
 /dist/
 coverage/
 /test/fixtures/built-sw.js
+.nyc_output

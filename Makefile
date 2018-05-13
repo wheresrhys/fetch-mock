@@ -1,3 +1,5 @@
+export PATH := $(PATH):./node_modules/.bin
+
 .PHONY: test
 
 test-dev:

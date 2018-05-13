@@ -12,8 +12,7 @@ test-firefox:
 test-unit:
 	./node_modules/.bin/mocha test/server.js
 
-test-node6:
-	npm run babelify
+test-node6: transpile
 	node test/node6.js
 
 lint:

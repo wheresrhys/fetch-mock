@@ -6,9 +6,8 @@
   "browser": "es5/client.js",
   "scripts": {
     "test": "make lint test",
-    "bundle": "webpack --output-library fetchMock --entry ./es5/client.js --output-filename ./es5/client-bundle.js",
-    "babelify": "babel src --out-dir es5",
-    "prepublishOnly": "npm run babelify && npm run bundle"
+    "prepublishOnly": "make transpile bundle",
+    "postinstall": "node scripts/support-fetch-mock.js"
   },
   "babel": {
     "presets": [
@@ -48,30 +47,31 @@
   },
   "homepage": "http://www.wheresrhys.co.uk/fetch-mock",
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
     "glob-to-regexp": "^0.4.0",
-    "path-to-regexp": "^2.1.0"
+    "path-to-regexp": "^2.2.1"
   },
   "devDependencies": {
     "babel-cli": "^6.1.2",
     "babel-loader": "^7.1.2",
     "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-polyfill": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
+    "babel-preset-env": "^1.7.0",
     "bluebird": "^3.4.6",
     "chai": "^4.1.2",
-    "coveralls": "^2.11.16",
+    "coveralls": "^3.0.0",
     "eslint": "^4.14.0",
-    "istanbul": "^1.1.0-alpha.1",
-    "karma": "^2.0.0",
+    "karma": "^2.0.2",
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^2.2.0",
     "karma-mocha": "^1.3.0",
     "karma-mocha-reporter": "^2.2.5",
-    "karma-webpack": "^2.0.9",
-    "mocha": "^5.0.0",
+    "karma-webpack": "^3.0.0",
+    "mocha": "^5.1.1",
     "node-fetch": "^2.0.0",
+    "nyc": "^11.7.3",
     "sinon": "^4.5.0",
     "sinon-chai": "^2.14.0",
-    "webpack": "^3.10.0"
+    "webpack": "^4.0.0",
+    "webpack-cli": "^2.1.3"
   }
 }

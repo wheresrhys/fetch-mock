@@ -1,7 +1,7 @@
-// Ideally woudl run the entire test suite, but then woudl need to get into
+// Ideally would run the entire test suite, but then would need to get into
 // transpiling all the tests, which muddies the waters a bit
 // So instead just making sure there are no syntax errors or issues with
-// missing globals or ethods
+// missing globals or methods
 require('babel-polyfill');
 const fetchMock = require('../es5/server');
 

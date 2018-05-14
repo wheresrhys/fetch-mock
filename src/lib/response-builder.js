@@ -11,18 +11,20 @@ const responseConfigProps = [
 module.exports = class ResponseBuilder {
 	constructor (url, responseConfig, fetchMock) {
 		this.url = typeof url === 'object' ? url.url : url;
+		this.fetchMockInstance = fetchMock;
 		this.responseConfig = responseConfig;
 		this.fetchMockConfig = fetchMock.config;
 		this.statusTextMap = fetchMock.statusTextMap;
 		this.Response = fetchMock.config.Response;
 		this.Headers = fetchMock.config.Headers;
+		this._holdingPromises = fetchMock._holdingPromises;
 	}
 
 	exec () {
 		this.normalizeResponseConfig();
 		this.constructFetchOpts();
 		this.constructResponseBody();
-		return this.redirect(new this.Response(this.body, this.opts));
+		return this.observe(new this.Response(this.body, this.opts));
 	}
 
 	sendAsObject () {
@@ -111,29 +113,40 @@ e.g. {"body": {"status: "registered"}}`);
 		this.body = body;
 	}
 
-	redirect (response) {
-		// When mocking a followed redirect we must wrap the response in an object
-		// which sets the redirected flag (not a writable property on the actual
-		// response)
-		if (this.responseConfig.redirectUrl) {
-			response = Object.create(response, {
-				redirected: {
-					value: true
-				},
-				url: {
-					value: this.responseConfig.redirectUrl
-				},
-				// TODO extend to all other methods and properties as requested by users
-				// Such a nasty hack
-				text: {
-					value: response.text.bind(response)
-				},
-				json: {
-					value: response.json.bind(response)
-				}
-			})
-		}
+	observe (response) {
 
-		return response;
+		const fetchMock = this.fetchMockInstance;
+
+		// Using a proxy means we can set properties that may not be writable on
+		// the original Response. It also means we can track the resolution of
+		// promises returned by res.json(), res.text() etc
+		return new Proxy(response, {
+			get: (originalResponse, name) => {
+				if (this.responseConfig.redirectUrl) {
+					if (name === 'url') {
+						return this.responseConfig.redirectUrl
+					}
+
+					if (name === 'redirected') {
+						return true;
+					}
+				}
+
+				if (typeof originalResponse[name] === 'function') {
+
+					return new Proxy(originalResponse[name], {
+						apply: (func, thisArg, args) => {
+							const result = func.apply(response, args);
+							if (result.then) {
+								fetchMock._holdingPromises.push(result.catch(() => null))
+							}
+							return result;
+						}
+					})
+				}
+
+				return originalResponse[name];
+			}
+		});
 	}
 }

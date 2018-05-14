@@ -84,11 +84,6 @@ e.g. {"body": {"status: "registered"}}`)
 					expect(res.headers.get('content-type')).not.to.exist;
 				});
 
-				it('throw `throws` property exists', async () => {
-					fm.mock('http://it.at.there/', {throws: 'exists'});
-					expect(() => fm.fetchHandler('http://it.at.there/')).to.throw();
-				});
-
 				it('not convert if `status` property exists', async () => {
 					fm.mock('http://it.at.there/', {status: 300});
 					const res = await fm.fetchHandler('http://it.at.there/')
@@ -204,6 +199,7 @@ e.g. {"body": {"status: "registered"}}`)
 		});
 
 		describe('response negotiation', () => {
+
 			it('function', async () => {
 				fm.mock('http://it.at.there/', url => url);
 				const res = await fm.fetchHandler('http://it.at.there/');
@@ -231,19 +227,6 @@ e.g. {"body": {"status: "registered"}}`)
 				expect(await res.text()).to.equal('http://it.at.there/');
 			});
 
-			it('response that throws', async () => {
-				fm.mock('http://it.at.there/', {
-					throws: 'Oh no'
-				});
-
-				try {
-					fm.fetchHandler('http://it.at.there/')
-					expect(true).to.be.false
-				} catch (err) {
-					expect(err).to.equal('Oh no');
-				}
-			});
-
 			it('Response', async () => {
 				fm.mock('http://it.at.there/', new fm.config.Response('http://it.at.there/', {status: 200}));
 				const res = await fm.fetchHandler('http://it.at.there/');
@@ -262,6 +245,32 @@ e.g. {"body": {"status: "registered"}}`)
 				expect(res.status).to.equal(200);
 			});
 
+			describe('rejecting', () => {
+				it('reject if object with `throws` property', async () => {
+					fm.mock('http://it.at.there/', {throws: 'as expected'});
+
+					return fm.fetchHandler('http://it.at.there/')
+						.then(() => {
+							throw 'not as expected';
+						})
+						.catch(err => {
+							expect(err).to.equal('as expected');
+						})
+				});
+
+				it('reject if function that returns object with `throws` property', async () => {
+					fm.mock('http://it.at.there/', () => ({throws: 'as expected'}));
+
+					return fm.fetchHandler('http://it.at.there/')
+						.then(() => {
+							throw 'not as expected';
+						})
+						.catch(err => {
+							expect(err).to.equal('as expected');
+						})
+				});
+
+			})
 		});
 
 	});

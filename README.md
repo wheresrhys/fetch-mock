@@ -4,7 +4,6 @@ Mock http requests made using [fetch](https://developer.mozilla.org/en-US/docs/W
 ![node version](https://img.shields.io/node/v/fetch-mock.svg?style=flat-square)
 [![licence](https://img.shields.io/npm/l/fetch-mock.svg?style=flat-square)](https://github.com/wheresrhys/fetch-mock/blob/master/LICENSE)
 ![npm downloads](https://img.shields.io/npm/dm/fetch-mock.svg?style=flat-square)
-
 [![CircleCI](https://img.shields.io/circleci/project/github/wheresrhys/fetch-mock.svg?style=flat-square)](https://circleci.com/gh/wheresrhys/workflows/fetch-mock)
 [![Code coverage](https://img.shields.io/coveralls/github/wheresrhys/fetch-mock.svg?style=flat-square)](https://coveralls.io/github/wheresrhys/fetch-mock)
 [![Known Vulnerabilities](https://snyk.io/test/github/wheresrhys/fetch-mock/badge.svg?targetFile=package.json&style=flat-square)](https://snyk.io/test/github/wheresrhys/fetch-mock?targetFile=package.json)

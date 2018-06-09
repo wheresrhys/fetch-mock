@@ -1,13 +1,14 @@
 # fetch-mock
 Mock http requests made using [fetch](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch)
 
-![node version](https://img.shields.io/node/v/fetch-mock.svg?style=for-the-badge)
-[![licence](https://img.shields.io/npm/l/fetch-mock.svg?style=for-the-badge)](https://github.com/wheresrhys/fetch-mock/blob/master/LICENSE)
-![npm downloads](https://img.shields.io/npm/dm/fetch-mock.svg?style=for-the-badge)
+![node version](https://img.shields.io/node/v/fetch-mock.svg?style=flat-square)
+[![licence](https://img.shields.io/npm/l/fetch-mock.svg?style=flat-square)](https://github.com/wheresrhys/fetch-mock/blob/master/LICENSE)
+![npm downloads](https://img.shields.io/npm/dm/fetch-mock.svg?style=flat-square)
 
-[![CircleCI](https://img.shields.io/circleci/project/github/wheresrhys/fetch-mock.svg?style=for-the-badge)](https://circleci.com/gh/wheresrhys/workflows/fetch-mock)
-[![Code coverage](https://img.shields.io/coveralls/github/wheresrhys/fetch-mock.svg?style=for-the-badge)](https://coveralls.io/github/wheresrhys/fetch-mock)
-[![bitHound dependencies](https://img.shields.io/bithound/dependencies/github/wheresrhys/fetch-mock.svg?style=for-the-badge)](https://www.bithound.io/github/wheresrhys/fetch-mock/master/dependencies/npm)
+[![CircleCI](https://img.shields.io/circleci/project/github/wheresrhys/fetch-mock.svg?style=flat-square)](https://circleci.com/gh/wheresrhys/workflows/fetch-mock)
+[![Code coverage](https://img.shields.io/coveralls/github/wheresrhys/fetch-mock.svg?style=flat-square)](https://coveralls.io/github/wheresrhys/fetch-mock)
+[![Known Vulnerabilities](https://snyk.io/test/github/wheresrhys/fetch-mock/badge.svg?targetFile=package.json&style=flat-square)](https://snyk.io/test/github/wheresrhys/fetch-mock?targetFile=package.json)
+
 
 ```js
 fetchMock.mock('http://example.com', 200);
@@ -52,9 +53,7 @@ Copyright © 2018, Rhys Evans
 
 ## Housekeeping
 
-![npm version](https://img.shields.io/npm/v/fetch-mock.svg?style=for-the-badge)
-[![bitHound dev dependencies](https://img.shields.io/bithound/devDependencies/github/wheresrhys/fetch-mock.svg?style=for-the-badge)](https://www.bithound.io/github/wheresrhys/fetch-mock/master/dependencies/npm)
-[![bitHound code](https://img.shields.io/bithound/code/github/wheresrhys/fetch-mock.svg?style=for-the-badge)](https://www.bithound.io/github/wheresrhys/fetch-mock/master/files)
-[![issues](https://img.shields.io/codeclimate/issues/wheresrhys/fetch-mock.svg?style=for-the-badge)](https://codeclimate.com/github/wheresrhys/fetch-mock/maintainability)
-[![maintainability](https://img.shields.io/codeclimate/maintainability/wheresrhys/fetch-mock.svg?style=for-the-badge)](https://codeclimate.com/github/wheresrhys/fetch-mock/maintainability)
-[![tech debt](https://img.shields.io/codeclimate/tech-debt/wheresrhys/fetch-mock.svg?style=for-the-badge)](https://codeclimate.com/github/wheresrhys/fetch-mock/maintainability)
+![npm version](https://img.shields.io/npm/v/fetch-mock.svg?style=flat-square)
+[![issues](https://img.shields.io/codeclimate/issues/wheresrhys/fetch-mock.svg?style=flat-square)](https://codeclimate.com/github/wheresrhys/fetch-mock/maintainability)
+[![maintainability](https://img.shields.io/codeclimate/maintainability/wheresrhys/fetch-mock.svg?style=flat-square)](https://codeclimate.com/github/wheresrhys/fetch-mock/maintainability)
+[![tech debt](https://img.shields.io/codeclimate/tech-debt/wheresrhys/fetch-mock.svg?style=flat-square)](https://codeclimate.com/github/wheresrhys/fetch-mock/maintainability)

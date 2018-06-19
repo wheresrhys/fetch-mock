@@ -5,6 +5,13 @@ please stick to the rules **
 Check the troubleshooting guide and read the API docs before raising an issue
     - http://www.wheresrhys.co.uk/fetch-mock/troubleshooting
     - http://www.wheresrhys.co.uk/fetch-mock/api
+    
+Be clear and precise about what the issue is. Take the time to include details of
+what's wrong, including the version of fetch-mock you're using and which environment
+it's running in.
+- Bad: 'It doesn't work', 'It conflicts with x', 'I get an error'
+- Good: 'When using webpack 4 and babel 7 I get an `Error: undefined array at line 191`
+  during compilation'
 
 Provide code that recreates the issue you're having. Ideally either
     - recreate the problem with a failing test and submit a PR

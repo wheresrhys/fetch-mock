@@ -16,6 +16,6 @@ module.exports = (fetchMock, theGlobal) => {
 		require('./specs/inspecting.test')(fetchMock);
 		require('./specs/repeat.test')(fetchMock);
 		require('./specs/custom-implementations.test')(fetchMock);
-		require('./specs/options.test')(fetchMock);
+		require('./specs/options.test')(fetchMock, theGlobal);
 	});
 }

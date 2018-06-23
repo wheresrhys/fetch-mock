@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-module.exports = (fetchMock, theGlobal) => {
+module.exports = (fetchMock, theGlobal, fetch) => {
 	describe('options', () => {
 		let fm;
 		beforeEach(() => {
@@ -19,15 +19,13 @@ module.exports = (fetchMock, theGlobal) => {
 				expect(() => fm.fetchHandler('http://it.at.there/')).not.to.throw();
 			});
 
-			it.only('actually falls back to network when confiured globally', async () => {
-				const originalFetch = theGlobal.fetch;
-				// we mock global fetch in order to verify that what fetch-mock _thinks_
-				// is the real global fetch gets called
-				theGlobal.fetch = fm.sandbox().mock('*', 'hi!');
+			it('actually falls back to network when configured globally', async () => {
+				fm.realFetch = fetch;
 				fm.config.fallbackToNetwork = true;
-				fm.mock('http://help.trapped', 400)
-				expect(await fetch('http://hello.world').then(res => res.text())).to.equal('hi!');
-				theGlobal.fetch = originalFetch;
+
+				fm.mock('http://it.at.where', 204);
+				const res = await fm.fetchHandler('http://localhost:9876/dummy-file.txt')
+				expect(res.status).to.equal(200);
 			});
 
 			it('error when configured on sandbox without fetch defined', () => {

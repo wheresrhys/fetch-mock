@@ -33,7 +33,7 @@ describe('request types that only work in the browser', function () {
 	});
 });
 
-require('./runner')(fetchMock, window, window.Request, window.Response);
+require('./runner')(fetchMock, window, window.fetch);
 
 describe('no real fetch', function () {
 	it('should cope when there is no global fetch defined', function () {

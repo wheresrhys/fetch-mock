@@ -1,7 +1,26 @@
 const fetchMock = require('../src/server.js');
 const expect = require('chai').expect;
+const http = require('http');
+const {promisify} = require('util');
 
-require('./runner')(fetchMock, global, require('node-fetch').Request, require('node-fetch').Response);
+
+describe('nodejs tests', () => {
+	let server;
+	before(() => {
+		server = http.createServer(function(req, res) {
+		  res.writeHead(200);
+		  res.end()
+		})
+
+		return promisify(server.listen.bind(server))(9876)
+	});
+	after(() => {
+		server.close();
+	});
+
+	require('./runner')(fetchMock, global, require('node-fetch'));
+})
+
 
 describe('support for Buffers', () => {
 	it('can respond with a buffer', () => {

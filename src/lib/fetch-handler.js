@@ -62,9 +62,6 @@ FetchMock.generateResponse = async function (response, url, opts) {
 	// Because of this we can't safely check for function before Promisey-ness,
 	// or vice versa. So to keep it DRY, and flexible, we keep trying until we
 	// have something that looks like neither Promise nor function
-
-
-	console.log(response)
 	while (typeof response === 'function' || typeof response.then === 'function') {
 		if (typeof response === 'function') {
 			response = response(url, opts);

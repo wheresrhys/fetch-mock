@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-module.exports = (fetchMock) => {
+module.exports = (fetchMock, theGlobal, fetch) => {
 	describe('options', () => {
 		let fm;
 		beforeEach(() => {
@@ -19,17 +19,35 @@ module.exports = (fetchMock) => {
 				expect(() => fm.fetchHandler('http://it.at.there/')).not.to.throw();
 			});
 
-			it('error when configured on sandbox without fetch defined', () => {
+			it('actually falls back to network when configured globally', async () => {
+				fm.realFetch = fetch;
 				fm.config.fallbackToNetwork = true;
+
+				fm.mock('http://it.at.where', 204);
+				const res = await fm.fetchHandler('http://localhost:9876/dummy-file.txt')
+				expect(res.status).to.equal(200);
+			});
+
+			it('error when configured on sandbox without fetch defined', () => {
 				const sbx = fm.sandbox();
-				expect(() => sbx.fetchHandler('http://it.at.there/')).to.throw();
+				sbx.config.fallbackToNetwork = true;
+				expect(() => sbx('http://it.at.there/')).to.throw();
 			});
 
 			it('not error when configured on sandbox with fetch defined', async () => {
-				fm.config.fallbackToNetwork = true;
-				fm.config.fetch = () => Promise.resolve(200);
 				const sbx = fm.sandbox();
-				expect(() => sbx.fetchHandler('http://it.at.there/')).not.to.throw();
+				sbx.config.fallbackToNetwork = true;
+				sbx.config.fetch = () => Promise.resolve(200);
+				expect(() => sbx('http://it.at.there/')).not.to.throw();
+			});
+
+			it('actually falls back to network when configured in a sandbox properly', async () => {
+				const sbx = fm.sandbox();
+				sbx.config.fetch = fetch;
+				sbx.config.fallbackToNetwork = true;
+				sbx.mock('http://it.at.where', 204);
+				const res = await sbx('http://localhost:9876/dummy-file.txt')
+				expect(res.status).to.equal(200);
 			});
 
 		});

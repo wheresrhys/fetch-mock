@@ -7,7 +7,7 @@ const {promisify} = require('util');
 describe('nodejs tests', () => {
 	let server;
 	before(() => {
-		server = http.createServer(function(req, res) {
+		server = http.createServer((req, res) => {
 		  res.writeHead(200);
 		  res.end()
 		})
@@ -19,19 +19,21 @@ describe('nodejs tests', () => {
 	});
 
 	require('./runner')(fetchMock, global, require('node-fetch'));
+
+	describe('support for Buffers', () => {
+		it('can respond with a buffer', () => {
+			fetchMock.mock(/a/, {
+				sendAsJson: false,
+				body: new Buffer('buffer')
+			})
+			return fetchMock.fetchHandler('http://a.com')
+				.then(res => res.text())
+				.then(txt => {
+					expect(txt).to.equal('buffer');
+				});
+		});
+	});
 })
 
 
-describe('support for Buffers', () => {
-	it('can respond with a buffer', () => {
-		fetchMock.mock(/a/, {
-			sendAsJson: false,
-			body: new Buffer('buffer')
-		})
-		return fetchMock.fetchHandler('http://a.com')
-			.then(res => res.text())
-			.then(txt => {
-				expect(txt).to.equal('buffer');
-			});
-	});
-});
+

@@ -59,16 +59,14 @@ FetchMock.generateResponse = async function (response, url, opts) {
 	// - function returning a Promise for a response
 	// - delaying (using a timeout Promise) a function's execution to generate
 	//   a response
-	// Because of this we can't safely check for function before Promisey-ness,
-	// or vice versa. So to keep it DRY, and flexible, we keep trying until we
+	// Keep it DRY, and flexible, we keep trying until we
 	// have something that looks like neither Promise nor function
+
 	while (typeof response === 'function' || typeof response.then === 'function') {
-		if (typeof response === 'function') {
-			response = response(url, opts);
-		} else {
-			// Strange .then is to cope with non ES Promises... god knows why it works
-			response = await response.then(it => it)
-		}
+		// got promise or async function, since we don't need to build a response
+		// with simply return it (ex. in case fallbackToNetwork == true)
+		if (response instanceof Promise) return response;
+		else response = response(url, opts);
 	}
 
 	// If the response is a pre-made Response, respond with it

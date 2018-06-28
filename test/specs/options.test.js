@@ -15,7 +15,7 @@ module.exports = (fetchMock, theGlobal, fetch) => {
 
 			it('not error when configured globally', async () => {
 				fm.config.fallbackToNetwork = true;
-				fm.mock('http://it.at.where', 200);
+				fm.mock('http://it.at.where/', 200);
 				expect(() => fm.fetchHandler('http://it.at.there/')).not.to.throw();
 			});
 
@@ -23,7 +23,7 @@ module.exports = (fetchMock, theGlobal, fetch) => {
 				fm.realFetch = fetch;
 				fm.config.fallbackToNetwork = true;
 
-				fm.mock('http://it.at.where', 204);
+				fm.mock('http://it.at.where/', 204);
 				const res = await fm.fetchHandler('http://localhost:9876/dummy-file.txt')
 				expect(res.status).to.equal(200);
 			});
@@ -45,7 +45,7 @@ module.exports = (fetchMock, theGlobal, fetch) => {
 				const sbx = fm.sandbox();
 				sbx.config.fetch = fetch;
 				sbx.config.fallbackToNetwork = true;
-				sbx.mock('http://it.at.where', 204);
+				sbx.mock('http://it.at.where/', 204);
 				const res = await sbx('http://localhost:9876/dummy-file.txt')
 				expect(res.status).to.equal(200);
 			});

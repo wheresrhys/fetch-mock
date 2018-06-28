@@ -21,7 +21,7 @@ module.exports = (fetchMock) => {
 			});
 
 			it('should error on invalid statuses', async () => {
-				fm.mock('http://foo.com', { status: 'not number' })
+				fm.mock('http://foo.com/', { status: 'not number' })
 				try {
 					await fm.fetchHandler('http://foo.com')
 					expect(true).to.be.false;

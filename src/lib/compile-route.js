@@ -1,12 +1,12 @@
 const glob = require('glob-to-regexp')
 const express = require('path-to-regexp');
-const URL = require('url');
+const nodeURL = require('url');
 const querystring = require('querystring');
 
 function normalizeRequest (url, options, Request) {
 	if (Request.prototype.isPrototypeOf(url)) {
 		return {
-			url: url.url,
+			url: normalizeURL(url.url),
 			method: url.method,
 			headers: (() => {
 				const headers = {};
@@ -16,10 +16,22 @@ function normalizeRequest (url, options, Request) {
 		};
 	} else {
 		return {
-			url: url,
+			url: normalizeURL(url),
 			method: options && options.method || 'GET',
 			headers: options && options.headers
 		};
+	}
+}
+
+function normalizeURL (url) {
+	var r = new RegExp('^(?:[a-z]+:)?//', 'i'); // https://stackoverflow.com/a/19709846/308237
+	const absolute = r.test(url);
+	if (absolute) {
+		const u = new URL(url);
+		return u.href;
+	} else {
+		const u = new URL(url, 'http://dummy');
+		return u.pathname;
 	}
 }
 
@@ -95,7 +107,7 @@ const getQueryStringMatcher = route => {
 	}
 	const keys = Object.keys(route.query);
 	return ({ url }) => {
-		const query = querystring.parse(URL.parse(url).query);
+		const query = querystring.parse(nodeURL.parse(url).query);
 		return keys.every(key => query[key] === route.query[key]);
 	}
 }

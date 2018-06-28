@@ -40,7 +40,7 @@ module.exports = (fetchMock) => {
 
 			it('match end: keyword', async () => {
 				fm
-					.mock('end:there', 200)
+					.mock('end:there/', 200)
 					.catch();
 
 				await fm.fetchHandler('http://it.at.there');
@@ -286,7 +286,7 @@ module.exports = (fetchMock) => {
 			describe('query strings', () => {
 				it('can match a query string', async () => {
 					fm
-						.mock('http://it.at.there', 200, {query: {a: 'b'}})
+						.mock('http://it.at.there/', 200, {query: {a: 'b'}})
 						.catch();
 
 					await fm.fetchHandler('http://it.at.there');
@@ -297,7 +297,7 @@ module.exports = (fetchMock) => {
 
 				it('can match multiple query strings', async () => {
 					fm
-						.mock('http://it.at.there', 200, {query: {a: 'b', c: 'd'}})
+						.mock('http://it.at.there/', 200, {query: {a: 'b', c: 'd'}})
 						.catch();
 
 					await fm.fetchHandler('http://it.at.there');
@@ -312,7 +312,7 @@ module.exports = (fetchMock) => {
 
 				it('can be used alongside existing query strings', async () => {
 					fm
-						.mock('http://it.at.there?c=d', 200, {query: {a: 'b'}})
+						.mock('http://it.at.there/?c=d', 200, {query: {a: 'b'}})
 						.catch();
 
 					await fm.fetchHandler('http://it.at.there?c=d');
@@ -531,6 +531,17 @@ module.exports = (fetchMock) => {
 
 				await fm.fetchHandler('/it.at.there/')
 				expect(fm.calls(true).length).to.equal(1);
+			});
+
+			it('match relative urls with dots', async () => {
+				fm
+					.mock('/it.at/there/', 200)
+					.catch();
+
+				await fm.fetchHandler('/it.at/not/../there/')
+				expect(fm.calls(true).length).to.equal(1);
+				await fm.fetchHandler('./it.at/there/')
+				expect(fm.calls(true).length).to.equal(2);
 			});
 
 			it('match when called with Request', async () => {

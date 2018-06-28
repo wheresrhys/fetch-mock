@@ -50,6 +50,25 @@ module.exports = (fetchMock, theGlobal, fetch) => {
 				expect(res.status).to.equal(200);
 			});
 
+            describe('always', () => {
+                it('ignores routes that are matched', async () => {
+                    fm.realFetch = fetch;
+                    fm.config.fallbackToNetwork = 'always';
+
+                    fm.mock('http://localhost:9876/dummy-file.txt', 204);
+                    const res = await fm.fetchHandler('http://localhost:9876/dummy-file.txt');
+                    expect(res.status).to.equal(200);
+                });
+
+                it('ignores routes that are not matched', async () => {
+                    fm.realFetch = fetch;
+                    fm.config.fallbackToNetwork = 'always';
+
+                    fm.mock('http://it.at.where', 204);
+                    const res = await fm.fetchHandler('http://localhost:9876/dummy-file.txt');
+                    expect(res.status).to.equal(200);
+                });
+            });
 		});
 
 		describe('includeContentLength', () => {

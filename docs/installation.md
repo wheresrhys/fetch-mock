@@ -43,7 +43,7 @@ const ponyfill = require('fetch-ponyfill')();
 fetchMock.config = Object.assign(fetchMock.config, {
     Promise: require('Bluebird').promise,
     Headers: ponyfill.Headers,
-    Request: ponyfill.Headers,
+    Request: ponyfill.Request,
     Response: ponyfill.Response
     fetch: ponyfill
 }, 

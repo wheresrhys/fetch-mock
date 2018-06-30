@@ -31,6 +31,10 @@ FetchMock.fetchHandler.isMock = true;
 
 FetchMock.executeRouter = function (url, opts) {
 
+	if (this.config.fallbackToNetwork === 'always') {
+		return this.getNativeFetch();
+	}
+
 	let response = this.router(url, opts);
 
 	if (response) {

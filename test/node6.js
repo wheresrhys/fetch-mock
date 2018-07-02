@@ -6,5 +6,4 @@ require('babel-polyfill');
 const fetchMock = require('../es5/server');
 
 fetchMock.mock('http://it.at.there/', 200);
-return fetchMock.fetchHandler('http://it.at.there/')
-	.catch(() => process.exit(2))
+fetchMock.fetchHandler('http://it.at.there/').catch(() => process.exit(2));

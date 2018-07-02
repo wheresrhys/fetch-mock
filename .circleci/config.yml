@@ -32,7 +32,7 @@ jobs:
       - checkout
       - restore_cache:
           key: npm-cache-{{ checksum "package-lock.json" }}
-      - run: make lint
+      - run: make lint-ci
 
   nodefetch2:
     <<: *env

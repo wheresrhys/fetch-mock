@@ -1,8 +1,7 @@
 const fetchMock = require('../../src/client');
 
 self.addEventListener('install', ev => {
-	fetchMock
-		.mock(/.*/, 203)
+	fetchMock.mock(/.*/, 203);
 	ev.waitUntil(
 		fetch('http://egg.on.face/')
 			.then(res => {
@@ -13,5 +12,4 @@ self.addEventListener('install', ev => {
 			})
 			.then(fetchMock.restore)
 	);
-})
-
+});

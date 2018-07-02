@@ -17,8 +17,12 @@ test-unit:
 test-node6: transpile
 	node test/node6.js
 
+lint-ci:
+	eslint --ignore-pattern test/fixtures/* src test
+
 lint:
-	./node_modules/.bin/eslint --ignore-pattern test/fixtures/* src test
+	eslint --cache --fix .
+	prettier --write *.md
 
 coverage-report:
 	nyc --reporter=lcovonly --reporter=text mocha test/server.js

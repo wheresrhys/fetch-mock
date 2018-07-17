@@ -1,4 +1,3 @@
-'use strict';
 const fetch = require('node-fetch');
 const Request = fetch.Request;
 const Response = fetch.Response;

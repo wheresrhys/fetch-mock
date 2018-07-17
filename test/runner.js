@@ -10,4 +10,4 @@ module.exports = (fetchMock, theGlobal, fetch) => {
 		require('./specs/custom-implementations.test')(fetchMock);
 		require('./specs/options.test')(fetchMock, theGlobal, fetch);
 	});
-}
+};

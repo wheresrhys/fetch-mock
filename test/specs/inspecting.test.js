@@ -4,7 +4,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-module.exports = (fetchMock) => {
+module.exports = fetchMock => {
 	describe('inspecting', () => {
 		let fm;
 		before(() => {
@@ -14,15 +14,14 @@ module.exports = (fetchMock) => {
 
 		describe('filtering', () => {
 			before(async () => {
-				fm
-					.mock('http://it.at.here/', 200)
+				fm.mock('http://it.at.here/', 200)
 					.mock('http://it.at.there/', 200)
 					.mock('http://it.at.thereabouts/', 200)
 					.catch();
 
-				await fm.fetchHandler('http://it.at.here/', {method: 'get'})
-				await fm.fetchHandler('http://it.at.here/', {method: 'get'})
-				await fm.fetchHandler('http://it.at.there/', {method: 'get'})
+				await fm.fetchHandler('http://it.at.here/', { method: 'get' });
+				await fm.fetchHandler('http://it.at.here/', { method: 'get' });
+				await fm.fetchHandler('http://it.at.there/', { method: 'get' });
 			});
 			after(() => fm.restore());
 
@@ -72,7 +71,7 @@ module.exports = (fetchMock) => {
 
 			describe('when unmatched calls exist', () => {
 				before(async () => {
-					await fm.fetchHandler('http://it.at.where/', {method: 'get'})
+					await fm.fetchHandler('http://it.at.where/', { method: 'get' });
 				});
 				it('`called` filters on match types', () => {
 					expect(fm.called(false)).to.be.true;
@@ -102,25 +101,26 @@ module.exports = (fetchMock) => {
 					expect(fm.lastCall('http://it.at.here/', 'post')).not.to.exist;
 					expect(fm.lastUrl('http://it.at.here/', 'post')).not.to.exist;
 					expect(fm.lastOptions('http://it.at.here/', 'post')).not.to.exist;
-					await fm.fetchHandler('http://it.at.here/', {method: 'POST'});
+					await fm.fetchHandler('http://it.at.here/', { method: 'POST' });
 					expect(fm.called('http://it.at.here/', 'post')).to.be.true;
 					expect(fm.called('http://it.at.here/', 'POST')).to.be.true;
 					expect(fm.calls('http://it.at.here/', 'post').length).to.equal(1);
 					expect(fm.lastCall('http://it.at.here/', 'post')).to.exist;
 					expect(fm.lastUrl('http://it.at.here/', 'post')).to.exist;
 					expect(fm.lastOptions('http://it.at.here/', 'post')).to.exist;
-					await fm.fetchHandler(new fm.config.Request('http://it.at.here/', {method: 'POST'}));
+					await fm.fetchHandler(
+						new fm.config.Request('http://it.at.here/', { method: 'POST' })
+					);
 					expect(fm.calls('http://it.at.here/', 'post').length).to.equal(2);
-				})
-			})
+				});
+			});
 		});
 
 		describe('call order', () => {
 			it('retrieves calls in correct order', () => {
-				fm
-					.mock('http://it.at.here', 200)
+				fm.mock('http://it.at.here', 200)
 					.mock('http://it.at.there', 200)
-					.catch()
+					.catch();
 
 				fm.fetchHandler('http://it.at.here');
 				fm.fetchHandler('http://it.at.there');
@@ -128,16 +128,15 @@ module.exports = (fetchMock) => {
 				expect(fm.calls()[0][0]).to.equal('http://it.at.here');
 				expect(fm.calls()[1][0]).to.equal('http://it.at.there');
 				expect(fm.calls()[2][0]).to.equal('http://it.at.where');
-			})
+			});
 		});
 
 		describe('route name resolution', () => {
 			afterEach(() => fm.restore());
 			it('can filter by named routes', async () => {
-				fm
-					.mock('http://it.at.here/', 200, {
-						name: 'my-route'
-					});
+				fm.mock('http://it.at.here/', 200, {
+					name: 'my-route'
+				});
 
 				await fm.fetchHandler('http://it.at.here/');
 
@@ -145,8 +144,7 @@ module.exports = (fetchMock) => {
 			});
 
 			it('can filter by string based matchers', async () => {
-				fm
-					.mock('http://it.at.here/', 200)
+				fm.mock('http://it.at.here/', 200)
 					.mock('begin:http://it.at.there/', 200)
 					.mock('glob:*/a/*', 200);
 
@@ -159,8 +157,7 @@ module.exports = (fetchMock) => {
 			});
 
 			it('can filter by regex matchers', async () => {
-				fm
-					.mock(/it\.at\.here/, 200)
+				fm.mock(/it\.at\.here/, 200);
 
 				await fm.fetchHandler('http://it.at.here/');
 
@@ -169,8 +166,7 @@ module.exports = (fetchMock) => {
 
 			it('can filter by function matchers', async () => {
 				const myFunc = () => true;
-				fm
-					.mock(myFunc, 200)
+				fm.mock(myFunc, 200);
 
 				await fm.fetchHandler('http://it.at.here/');
 
@@ -179,8 +175,7 @@ module.exports = (fetchMock) => {
 
 			it('can filter by url even if not a matcher', async () => {
 				const myFunc = () => true;
-				fm
-					.mock(myFunc, 200)
+				fm.mock(myFunc, 200);
 
 				await fm.fetchHandler('http://it.at.here/');
 
@@ -189,35 +184,39 @@ module.exports = (fetchMock) => {
 
 			it('can filter by url even if not a matcher and called with Request', async () => {
 				const myFunc = () => true;
-				fm
-					.mock(myFunc, 200)
+				fm.mock(myFunc, 200);
 
 				await fm.fetchHandler(new fm.config.Request('http://it.at.here/'));
 
 				expect(fm.called('http://it.at.here/')).to.be.true;
 			});
-
 		});
 
 		describe('retrieving call parameters', () => {
 			before(() => {
 				fm.mock('http://it.at.here/', 200);
 				fm.fetchHandler('http://it.at.here/');
-				fm.fetchHandler('http://it.at.here/', {method: 'POST'});
-			})
+				fm.fetchHandler('http://it.at.here/', { method: 'POST' });
+			});
 			after(() => fm.restore());
 
 			it('calls (call history)', () => {
 				expect(fm.calls()[0]).to.eql(['http://it.at.here/', undefined]);
-				expect(fm.calls()[1]).to.eql(['http://it.at.here/', {method: 'POST'}]);
+				expect(fm.calls()[1]).to.eql([
+					'http://it.at.here/',
+					{ method: 'POST' }
+				]);
 			});
 
 			it('lastCall', () => {
-				expect(fm.lastCall()).to.eql(['http://it.at.here/', {method: 'POST'}]);
+				expect(fm.lastCall()).to.eql([
+					'http://it.at.here/',
+					{ method: 'POST' }
+				]);
 			});
 
 			it('lastOptions', () => {
-				expect(fm.lastOptions()).to.eql({method: 'POST'});
+				expect(fm.lastOptions()).to.eql({ method: 'POST' });
 			});
 
 			it('lastUrl', () => {
@@ -225,60 +224,57 @@ module.exports = (fetchMock) => {
 			});
 
 			it('when called with Request instance', () => {
-				const req = new fm.config.Request('http://it.at.here/', {method: 'POST'});
+				const req = new fm.config.Request('http://it.at.here/', {
+					method: 'POST'
+				});
 				fm.fetchHandler(req);
 				expect(fm.lastCall()).to.eql([req, undefined]);
 				expect(fm.lastUrl()).to.equal('http://it.at.here/');
 				expect(fm.lastOptions()).to.equal(req);
 			});
-
-		})
-
+		});
 
 		describe('flushing pending calls', () => {
 			afterEach(() => fm.restore());
 
 			it('flush resolves if all fetches have resolved', async () => {
-				fm
-					.mock('http://one.com', 200)
-					.mock('http://two.com', 200)
+				fm.mock('http://one.com', 200).mock('http://two.com', 200);
 				// no expectation, but if it doesn't work then the promises will hang
 				// or reject and the test will timeout
-				await fm.flush()
-				fetch('http://one.com')
-				await fm.flush()
-				fetch('http://two.com')
-				await fm.flush()
-			})
+				await fm.flush();
+				fetch('http://one.com');
+				await fm.flush();
+				fetch('http://two.com');
+				await fm.flush();
+			});
 
 			it('should resolve after fetches', async () => {
-				fm.mock('http://example', 'working!')
+				fm.mock('http://example', 'working!');
 				let data;
-				fetch('http://example')
-					.then(() => data = 'done');
-				await fm.flush()
+				fetch('http://example').then(() => (data = 'done'));
+				await fm.flush();
 				expect(data).to.equal('done');
-			})
+			});
 
 			it('flush waits for unresolved promises', async () => {
-				fm
-					.mock('http://one.com', 200)
-					.mock('http://two.com', () => new Promise(res => setTimeout(() => res(200), 50)))
+				fm.mock('http://one.com', 200).mock(
+					'http://two.com',
+					() => new Promise(res => setTimeout(() => res(200), 50))
+				);
 
-				const orderedResults = []
-				fetch('http://one.com')
-				fetch('http://two.com')
+				const orderedResults = [];
+				fetch('http://one.com');
+				fetch('http://two.com');
 
-				setTimeout(() => orderedResults.push('not flush'), 25)
+				setTimeout(() => orderedResults.push('not flush'), 25);
 
-				await fm.flush()
+				await fm.flush();
 				orderedResults.push('flush');
 				expect(orderedResults).to.deep.equal(['not flush', 'flush']);
-			})
+			});
 
 			it('flush resolves on expected error', async () => {
-				fm
-					.mock('http://one.com', {throws: 'Problem in space'})
+				fm.mock('http://one.com', { throws: 'Problem in space' });
 				await fm.flush();
 			});
 		});

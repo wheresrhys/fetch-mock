@@ -48,8 +48,12 @@
   "homepage": "http://www.wheresrhys.co.uk/fetch-mock",
   "dependencies": {
     "babel-polyfill": "^6.26.0",
+    "eslint-config-origami-component": "^1.0.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-prettier": "^2.6.1",
     "glob-to-regexp": "^0.4.0",
-    "path-to-regexp": "^2.2.1"
+    "path-to-regexp": "^2.2.1",
+    "prettier": "^1.13.7"
   },
   "engines": {
     "node": ">=4.0.0"

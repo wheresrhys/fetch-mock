@@ -21,6 +21,12 @@ FetchMock.fetchHandler = function (url, opts) {
 	// wrapped in this promise to make sure we respect custom Promise
 	// constructors defined by the user
 	return new this.config.Promise((res, rej) => {
+		if (opts && opts.signal) {
+			opts.signal.addEventListener('abort', () => {
+				rej(new Error(`URL '${url}' aborted.`));
+			});
+		}
+
 		this.generateResponse(response, url, opts)
 			.then(res, rej)
 			.then(done, done);

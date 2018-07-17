@@ -183,5 +183,24 @@ module.exports = (fetchMock, theGlobal, fetch) => {
 			});
 		});
 
+		describe('signal', () => {
+			it('error on signal abort', async () => {
+				fm.mock('http://it.at.there/', () => {
+					return new Promise((resolve) => {
+						setTimeout(() => {
+							resolve();
+						}, 2000);
+					});
+				});
+
+				const controller = new AbortController();
+				setTimeout(() => controller.abort(), 300);
+
+				await fm.fetchHandler('http://it.at.there/', {signal: controller.signal}).catch((error) => {
+					expect(error.message).equals('URL \'http://it.at.there/\' aborted.');
+				});
+			});
+		});
+
 	});
 };

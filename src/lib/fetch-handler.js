@@ -5,14 +5,6 @@ const FetchMock = {};
 FetchMock.fetchHandler = function(url, opts) {
 	const response = this.executeRouter(url, opts);
 
-	// If the response says to throw an error, throw it
-	// It only makes sense to do this before doing any async stuff below
-	// as the async stuff swallows catastrophic errors in a promise
-	// Type checking is to deal with sinon spies having a throws property :-0
-	if (response.throws && typeof response !== 'function') {
-		throw response.throws;
-	}
-
 	// this is used to power the .flush() method
 	let done;
 	this._holdingPromises.push(new this.config.Promise(res => (done = res)));
@@ -59,7 +51,8 @@ FetchMock.executeRouter = function(url, opts) {
 	return this.getNativeFetch();
 };
 
-FetchMock.generateResponse = async function(response, url, opts) {
+FetchMock.generateResponse = async function (response, url, opts) {
+
 	// We want to allow things like
 	// - function returning a Promise for a response
 	// - delaying (using a timeout Promise) a function's execution to generate
@@ -77,6 +70,12 @@ FetchMock.generateResponse = async function(response, url, opts) {
 			// Strange .then is to cope with non ES Promises... god knows why it works
 			response = await response.then(it => it);
 		}
+	}
+
+	// If the response says to throw an error, throw it
+	// Type checking is to deal with sinon spies having a throws property :-0
+	if (response.throws && typeof response !== 'function') {
+		throw response.throws;
 	}
 
 	// If the response is a pre-made Response, respond with it

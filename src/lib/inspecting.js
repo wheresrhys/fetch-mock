@@ -59,8 +59,15 @@ FetchMock.called = function(name, options) {
 	return !!this.calls(name, options).length;
 };
 
-FetchMock.flush = function() {
-	return Promise.all(this._holdingPromises);
+FetchMock.flush = function(waitForResponseMethods) {
+	const queuedPromises = this._holdingPromises;
+	this._holdingPromises = [];
+
+	return Promise.all(queuedPromises).then(() => {
+		if (waitForResponseMethods && this._holdingPromises.length) {
+			return this.flush(waitForResponseMethods);
+		}
+	});
 };
 
 FetchMock.done = function(name, options) {

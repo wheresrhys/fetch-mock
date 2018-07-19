@@ -33,7 +33,7 @@ Replaces `fetch` with a stub which records its calls, grouped by route, and opti
         * `body`: Set the response body (`string` or `object`)
         * `status`: Set the response status (default `200`)
         * `headers`: Set the response headers. (`object`)
-        * `throws`: If this property is present then a the value of `throws` is thrown
+        * `throws`: If this property is present then fetch returns a `Promise` rejected with the value of `throws`
         * `sendAsJson`: This property determines whether or not the request body should be converted to `JSON` before being sent (defaults to `true`).
         * `includeContentLength`: Set this property to true to automatically add the `content-length` header (defaults to `true`).
         * `redirectUrl`: *experimental* the url the response should be from (to imitate followed redirects - will set `redirected: true` on the response)
@@ -121,7 +121,7 @@ Returns the url for the last matched call to fetch. When `fetch` was last called
 Returns the options for the last matched call to fetch. When `fetch` was last called using a `Request` instance, the entire `Request` instance will be returned
 
 #### `flush()`
-Returns a `Promise` that resolves once all fetches handled by fetch-mock have resolved. Useful for testing code that uses `fetch` but doesn't return a promise.
+Returns a `Promise` that resolves once all fetches handled by fetch-mock have resolved. Pass in `true` to wait for all response methods (`res.json()`, `res.text()`, etc.) to resolve too. Useful for testing code that uses `fetch` but doesn't return a promise.
 
 ## Config
 

@@ -31,7 +31,7 @@ module.exports = (fetchMock, theGlobal) => {
 		});
 
 		it('delegate to its own fetch handler', async () => {
-			const sbx = fetchMock.sandbox().mock('http://domain.url', 200);
+			const sbx = fetchMock.sandbox().mock('http://domain.url/', 200);
 
 			sinon.stub(sbx, 'fetchHandler');
 
@@ -40,7 +40,7 @@ module.exports = (fetchMock, theGlobal) => {
 		});
 
 		it("don't interfere with global fetch", () => {
-			const sbx = fetchMock.sandbox().mock('http://domain.url', 200);
+			const sbx = fetchMock.sandbox().mock('http://domain.url/', 200);
 
 			expect(theGlobal.fetch).to.equal(originalFetch);
 			expect(theGlobal.fetch).not.to.equal(sbx);
@@ -49,10 +49,10 @@ module.exports = (fetchMock, theGlobal) => {
 		it("don't interfere with global fetch-mock", async () => {
 			const sbx = fetchMock
 				.sandbox()
-				.mock('http://domain.url', 200)
+				.mock('http://domain.url/', 200)
 				.catch(302);
 
-			fetchMock.mock('http://domain2.url', 200).catch(301);
+			fetchMock.mock('http://domain2.url/', 200).catch(301);
 
 			expect(theGlobal.fetch).to.equal(fetchMock.fetchHandler);
 			expect(fetchMock.fetchHandler).not.to.equal(sbx);
@@ -77,12 +77,12 @@ module.exports = (fetchMock, theGlobal) => {
 		it("don't interfere with other sandboxes", async () => {
 			const sbx = fetchMock
 				.sandbox()
-				.mock('http://domain.url', 200)
+				.mock('http://domain.url/', 200)
 				.catch(301);
 
 			const sbx2 = fetchMock
 				.sandbox()
-				.mock('http://domain2.url', 200)
+				.mock('http://domain2.url/', 200)
 				.catch(302);
 
 			expect(sbx2).not.to.equal(sbx);

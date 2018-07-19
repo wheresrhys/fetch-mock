@@ -9,10 +9,10 @@ const absoluteUrlRX = new RegExp('^(?:[a-z]+:)?//', 'i');
 function normalizeURL(url) {
 
 	if (absoluteUrlRX.test(url)) {
-		const u = new URL(url);
+		const u = nodeURL.parse(url);
 		return u.href;
 	} else {
-		const u = new URL(url, 'http://dummy');
+		const u = nodeURL.parse(url, 'http://dummy');
 		return u.pathname;
 	}
 }

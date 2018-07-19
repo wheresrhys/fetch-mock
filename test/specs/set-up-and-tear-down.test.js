@@ -4,9 +4,7 @@ const expect = chai.expect;
 const sinon = require('sinon');
 
 module.exports = fetchMock => {
-
 	describe('Set up and tear down', () => {
-
 		let fm;
 		before(() => {
 			fm = fetchMock.createInstance();
@@ -19,7 +17,7 @@ module.exports = fetchMock => {
 				expect(fm.mock(/a/, 200)).to.equal(fm);
 			});
 
-			it('has \'this\'', () => {
+			it("has 'this'", () => {
 				sinon.spy(fm, 'mock');
 				fm.mock(/a/, 200);
 				expect(fm.mock.lastCall.thisValue).to.equal(fm);
@@ -28,16 +26,13 @@ module.exports = fetchMock => {
 
 			it('can be called multiple times', () => {
 				expect(() => {
-					fm
-						.mock('begin:http://route1', 200)
-						.mock('begin:http://route2', 200);
+					fm.mock('begin:http://route1', 200).mock('begin:http://route2', 200);
 				}).not.to.throw();
 			});
 
 			it('can be called after fetchMock is restored', () => {
 				expect(() => {
-					fm
-						.mock(/a/, 200)
+					fm.mock(/a/, 200)
 						.restore()
 						.mock(/a/, 200);
 				}).not.to.throw();
@@ -58,20 +53,30 @@ module.exports = fetchMock => {
 						response: 200
 					};
 					expect(() => fm.mock(config)).not.to.throw();
-					expect(fm.compileRoute)
-						.calledWith(config);
+					expect(fm.compileRoute).calledWith(config);
 				});
 
 				it('accepts matcher, route pairs', () => {
 					expect(() => fm.mock('http://it.at.there/', 200)).not.to.throw();
-					expect(fm.compileRoute)
-						.calledWith({matcher: 'http://it.at.there/', response: 200});
+					expect(fm.compileRoute).calledWith({
+						matcher: 'http://it.at.there/',
+						response: 200
+					});
 				});
 
 				it('accepts matcher, response, config triples', () => {
-					expect(() => fm.mock('http://it.at.there/', 'ok', {method: 'PUT', some: 'prop'})).not.to.throw();
-					expect(fm.compileRoute)
-						.calledWith({matcher: 'http://it.at.there/', response: 'ok', method: 'PUT', some: 'prop'});
+					expect(() =>
+						fm.mock('http://it.at.there/', 'ok', {
+							method: 'PUT',
+							some: 'prop'
+						})
+					).not.to.throw();
+					expect(fm.compileRoute).calledWith({
+						matcher: 'http://it.at.there/',
+						response: 'ok',
+						method: 'PUT',
+						some: 'prop'
+					});
 				});
 
 				it('expects a matcher', () => {
@@ -83,32 +88,36 @@ module.exports = fetchMock => {
 				});
 
 				it('REGRESSION: should accept object respones when passing options', () => {
-					expect(() => fm.mock('http://foo.com', { foo: 'bar' }, { method: 'GET' })).not.to.throw();
-				})
+					expect(() =>
+						fm.mock('http://foo.com', { foo: 'bar' }, { method: 'GET' })
+					).not.to.throw();
+				});
 			});
 		});
 
 		describe('method shorthands', () => {
-			'get,post,put,delete,head,patch'.split(',')
-				.forEach(method => {
-					it(`has shorthand for ${method.toUpperCase()}`, () => {
-						sinon.stub(fm, 'mock');
-						fm[method]('a', 'b');
-						fm[method]('a', 'b', {opt: 'c'});
-						expect(fm.mock)
-							.calledWith('a', 'b', {method: method.toUpperCase()});
-						expect(fm.mock)
-							.calledWith('a', 'b', {opt: 'c', method: method.toUpperCase()});
-						fm.mock.restore();
-						fm.restore();
+			'get,post,put,delete,head,patch'.split(',').forEach(method => {
+				it(`has shorthand for ${method.toUpperCase()}`, () => {
+					sinon.stub(fm, 'mock');
+					fm[method]('a', 'b');
+					fm[method]('a', 'b', { opt: 'c' });
+					expect(fm.mock).calledWith('a', 'b', {
+						method: method.toUpperCase()
 					});
+					expect(fm.mock).calledWith('a', 'b', {
+						opt: 'c',
+						method: method.toUpperCase()
+					});
+					fm.mock.restore();
+					fm.restore();
+				});
 
-					it(`shorthand for ${method.toUpperCase()} is chainable`, () => {
-						const result = fm[method]('a', 'b');
-						expect(result).to.equal(fm);
-						fm.restore();
-					});
-				})
+				it(`shorthand for ${method.toUpperCase()} is chainable`, () => {
+					const result = fm[method]('a', 'b');
+					expect(result).to.equal(fm);
+					fm.restore();
+				});
+			});
 		});
 
 		describe('restore', () => {
@@ -116,7 +125,7 @@ module.exports = fetchMock => {
 				expect(fm.restore()).to.equal(fm);
 			});
 
-			it('has \'this\'', () => {
+			it("has 'this'", () => {
 				sinon.spy(fm, 'restore');
 				fm.restore();
 				expect(fm.restore.lastCall.thisValue).to.equal(fm);
@@ -135,9 +144,7 @@ module.exports = fetchMock => {
 			});
 
 			it('removes all routing', () => {
-				fm
-					.mock(/a/, 200)
-					.catch(200)
+				fm.mock(/a/, 200).catch(200);
 
 				expect(fm.routes.length).to.equal(1);
 				expect(fm.fallbackResponse).to.exist;
@@ -147,7 +154,6 @@ module.exports = fetchMock => {
 				expect(fm.routes.length).to.equal(0);
 				expect(fm.fallbackResponse).not.to.exist;
 			});
-
 		});
 
 		describe('reset', () => {
@@ -155,7 +161,7 @@ module.exports = fetchMock => {
 				expect(fm.reset()).to.equal(fm);
 			});
 
-			it('has \'this\'', () => {
+			it("has 'this'", () => {
 				sinon.spy(fm, 'reset');
 				fm.reset();
 				expect(fm.reset.lastCall.thisValue).to.equal(fm);
@@ -167,9 +173,7 @@ module.exports = fetchMock => {
 			});
 
 			it('resets call history', async () => {
-				fm
-					.mock(/a/, 200)
-					.catch(200);
+				fm.mock(/a/, 200).catch(200);
 				await fm.fetchHandler('a');
 				await fm.fetchHandler('b');
 				expect(fm.called()).to.be.true;
@@ -182,7 +186,6 @@ module.exports = fetchMock => {
 				expect(fm.calls(false).length).to.equal(0);
 				expect(fm.calls().length).to.equal(0);
 			});
-
 		});
 
 		describe('spy', () => {
@@ -190,7 +193,7 @@ module.exports = fetchMock => {
 				expect(fm.spy()).to.equal(fm);
 			});
 
-			it('has \'this\'', () => {
+			it("has 'this'", () => {
 				sinon.spy(fm, 'spy');
 				fm.spy();
 				expect(fm.spy.lastCall.thisValue).to.equal(fm);
@@ -210,7 +213,7 @@ module.exports = fetchMock => {
 				expect(fm.catch(200)).to.equal(fm);
 			});
 
-			it('has \'this\'', () => {
+			it("has 'this'", () => {
 				sinon.spy(fm, 'catch');
 				fm.catch(200);
 				expect(fm.catch.lastCall.thisValue).to.equal(fm);

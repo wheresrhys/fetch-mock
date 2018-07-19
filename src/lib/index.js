@@ -12,10 +12,12 @@ FetchMock.config = {
 	overwriteRoutes: undefined
 };
 
-FetchMock.createInstance = function () {
+FetchMock.createInstance = function() {
 	const instance = Object.create(FetchMock);
 	instance._uncompiledRoutes = (this._uncompiledRoutes || []).slice();
-	instance.routes = instance._uncompiledRoutes.map(config => instance.compileRoute(config));
+	instance.routes = instance._uncompiledRoutes.map(config =>
+		instance.compileRoute(config)
+	);
 	instance.fallbackResponse = this.fallbackResponse || undefined;
 	instance.config = Object.assign({}, this.config || FetchMock.config);
 	instance._calls = {};
@@ -23,15 +25,15 @@ FetchMock.createInstance = function () {
 	instance._holdingPromises = [];
 	instance.bindMethods();
 	return instance;
-}
+};
 
-FetchMock.bindMethods = function () {
+FetchMock.bindMethods = function() {
 	this.fetchHandler = FetchMock.fetchHandler.bind(this);
 	this.restore = FetchMock.restore.bind(this);
 	this.reset = FetchMock.reset.bind(this);
-}
+};
 
-FetchMock.sandbox = function () {
+FetchMock.sandbox = function() {
 	// this construct allows us to create a fetch-mock instance which is also
 	// a callable function, while circumventing circularity when defining the
 	// object that this function should be bound to

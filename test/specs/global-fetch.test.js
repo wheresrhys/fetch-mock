@@ -7,7 +7,9 @@ module.exports = (fetchMock, theGlobal) => {
 	describe('use with global fetch', () => {
 		let originalFetch;
 		before(() => {
-			originalFetch = theGlobal.fetch = sinon.stub().returns(Promise.resolve('dummy'));
+			originalFetch = theGlobal.fetch = sinon
+				.stub()
+				.returns(Promise.resolve('dummy'));
 		});
 		afterEach(fetchMock.restore);
 
@@ -27,7 +29,7 @@ module.exports = (fetchMock, theGlobal) => {
 		});
 
 		it('restores global fetch after a mock', () => {
-			fetchMock.mock(/a/, 200).restore()
+			fetchMock.mock(/a/, 200).restore();
 			expect(theGlobal.fetch).to.equal(originalFetch);
 		});
 
@@ -37,25 +39,22 @@ module.exports = (fetchMock, theGlobal) => {
 				.mock(/b/, 200)
 				.spy()
 				.catch(404)
-				.restore()
+				.restore();
 			expect(theGlobal.fetch).to.equal(originalFetch);
 		});
 
 		it('not call default fetch when in mocked mode', async () => {
-			fetchMock
-				.mock(/a/, 200);
+			fetchMock.mock(/a/, 200);
 
-			await theGlobal.fetch('http://a.com')
+			await theGlobal.fetch('http://a.com');
 			expect(originalFetch).not.called;
 		});
 
 		it('spy falls through to default fetch', async () => {
-			fetchMock
-				.spy();
+			fetchMock.spy();
 
-			await theGlobal.fetch('http://a.com', {method: 'get'})
-			expect(originalFetch).calledWith('http://a.com', {method: 'get'});
+			await theGlobal.fetch('http://a.com', { method: 'get' });
+			expect(originalFetch).calledWith('http://a.com', { method: 'get' });
 		});
 	});
-
 };

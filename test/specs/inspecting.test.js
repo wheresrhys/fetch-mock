@@ -138,7 +138,7 @@ module.exports = fetchMock => {
 					name: 'my-route'
 				});
 
-				await fm.fetchHandler('http://it.at.here');
+				await fm.fetchHandler('http://it.at.here/');
 
 				expect(fm.called('my-route')).to.be.true;
 			});

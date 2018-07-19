@@ -505,6 +505,13 @@ module.exports = fetchMock => {
 				expect(fm.calls(true).length).to.equal(2);
 			});
 
+			it('match absolute urls with dots', async () => {
+				fm.mock('http://it.at/there/', 200).catch();
+
+				await fm.fetchHandler('http://it.at/not/../there/');
+				expect(fm.calls(true).length).to.equal(1);
+			});
+
 			it('match when called with Request', async () => {
 				fm.post('http://it.at.there/', 200).catch();
 

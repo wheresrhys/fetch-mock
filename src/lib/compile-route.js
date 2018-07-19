@@ -3,6 +3,20 @@ const express = require('path-to-regexp');
 const nodeURL = require('url');
 const querystring = require('querystring');
 
+// https://stackoverflow.com/a/19709846/308237
+const absoluteUrlRX = new RegExp('^(?:[a-z]+:)?//', 'i');
+
+function normalizeURL(url) {
+
+	if (absoluteUrlRX.test(url)) {
+		const u = new URL(url);
+		return u.href;
+	} else {
+		const u = new URL(url, 'http://dummy');
+		return u.pathname;
+	}
+}
+
 function normalizeRequest(url, options, Request) {
 	if (Request.prototype.isPrototypeOf(url)) {
 		return {
@@ -23,17 +37,6 @@ function normalizeRequest(url, options, Request) {
 	}
 }
 
-function normalizeURL(url) {
-	const r = new RegExp('^(?:[a-z]+:)?//', 'i'); // https://stackoverflow.com/a/19709846/308237
-	const absolute = r.test(url);
-	if (absolute) {
-		const u = new URL(url);
-		return u.href;
-	} else {
-		const u = new URL(url, 'http://dummy');
-		return u.pathname;
-	}
-}
 
 const stringMatchers = {
 	begin: targetString => {

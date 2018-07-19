@@ -134,11 +134,11 @@ module.exports = fetchMock => {
 		describe('route name resolution', () => {
 			afterEach(() => fm.restore());
 			it('can filter by named routes', async () => {
-				fm.mock('http://it.at.here/', 200, {
+				fm.mock('http://it.at.here2/', 200, {
 					name: 'my-route'
 				});
 
-				await fm.fetchHandler('http://it.at.here/');
+				await fm.fetchHandler('http://it.at.here2/');
 
 				expect(fm.called('my-route')).to.be.true;
 			});
@@ -258,9 +258,9 @@ module.exports = fetchMock => {
 
 			describe('response methods', () => {
 				it('should resolve after .json() if waitForResponseMethods option passed', async () => {
-					fm.mock('http://example', { a: 'ok' });
+					fm.mock('http://example/', { a: 'ok' });
 					let data;
-					fetch('http://example')
+					fetch('http://example/')
 						.then(res => res.json())
 						.then(() => (data = 'done'));
 
@@ -269,9 +269,9 @@ module.exports = fetchMock => {
 				});
 
 				it('should resolve after .json() if waitForResponseMethods option passed', async () => {
-					fm.mock('http://example', 'bleurgh');
+					fm.mock('http://example/', 'bleurgh');
 					let data;
-					fetch('http://example')
+					fetch('http://example/')
 						.then(res => res.json())
 						.catch(() => (data = 'done'));
 
@@ -280,9 +280,9 @@ module.exports = fetchMock => {
 				});
 
 				it('should resolve after .text() if waitForResponseMethods option passed', async () => {
-					fm.mock('http://example', 'working!');
+					fm.mock('http://example/', 'working!');
 					let data;
-					fetch('http://example')
+					fetch('http://example/')
 						.then(res => res.text())
 						.then(() => (data = 'done'));
 
@@ -298,8 +298,8 @@ module.exports = fetchMock => {
 				);
 
 				const orderedResults = [];
-				fetch('http://one.com');
-				fetch('http://two.com');
+				fetch('http://one.com/');
+				fetch('http://two.com/');
 
 				setTimeout(() => orderedResults.push('not flush'), 25);
 

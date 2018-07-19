@@ -3,16 +3,17 @@ const express = require('path-to-regexp');
 const nodeURL = require('url');
 const querystring = require('querystring');
 
+
 // https://stackoverflow.com/a/19709846/308237
 const absoluteUrlRX = new RegExp('^(?:[a-z]+:)?//', 'i');
 
 function normalizeURL(url) {
 
 	if (absoluteUrlRX.test(url)) {
-		const u = nodeURL.parse(url);
+		const u = new nodeURL.URL(url);
 		return u.href;
 	} else {
-		const u = nodeURL.parse(url, 'http://dummy');
+		const u = new nodeURL.URL(url, 'http://dummy');
 		return u.pathname;
 	}
 }

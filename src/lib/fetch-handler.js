@@ -51,8 +51,7 @@ FetchMock.executeRouter = function(url, opts) {
 	return this.getNativeFetch();
 };
 
-FetchMock.generateResponse = async function (response, url, opts) {
-
+FetchMock.generateResponse = async function(response, url, opts) {
 	// We want to allow things like
 	// - function returning a Promise for a response
 	// - delaying (using a timeout Promise) a function's execution to generate

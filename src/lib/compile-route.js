@@ -3,12 +3,10 @@ const express = require('path-to-regexp');
 const nodeURL = require('url');
 const querystring = require('querystring');
 
-
 // https://stackoverflow.com/a/19709846/308237
 const absoluteUrlRX = new RegExp('^(?:[a-z]+:)?//', 'i');
 
 function normalizeURL(url) {
-
 	if (absoluteUrlRX.test(url)) {
 		const u = new nodeURL.URL(url);
 		return u.href;
@@ -37,7 +35,6 @@ function normalizeRequest(url, options, Request) {
 		};
 	}
 }
-
 
 const stringMatchers = {
 	begin: targetString => {

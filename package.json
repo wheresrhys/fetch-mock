@@ -48,12 +48,8 @@
   "homepage": "http://www.wheresrhys.co.uk/fetch-mock",
   "dependencies": {
     "babel-polyfill": "^6.26.0",
-    "eslint-config-origami-component": "^1.0.0",
-    "eslint-config-prettier": "^2.9.0",
-    "eslint-plugin-prettier": "^2.6.1",
     "glob-to-regexp": "^0.4.0",
-    "path-to-regexp": "^2.2.1",
-    "prettier": "^1.13.7"
+    "path-to-regexp": "^2.2.1"
   },
   "engines": {
     "node": ">=4.0.0"
@@ -67,6 +63,9 @@
     "chai": "^4.1.2",
     "coveralls": "^3.0.0",
     "eslint": "^4.14.0",
+    "eslint-config-origami-component": "^1.0.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-prettier": "^2.6.1",
     "karma": "^2.0.2",
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^2.2.0",
@@ -76,6 +75,7 @@
     "mocha": "^5.1.1",
     "node-fetch": "^2.0.0",
     "nyc": "^11.7.3",
+    "prettier": "^1.13.7",
     "sinon": "^4.5.0",
     "sinon-chai": "^2.14.0",
     "webpack": "^4.0.0",

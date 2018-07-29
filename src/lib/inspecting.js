@@ -16,10 +16,11 @@ FetchMock.callsFilteredByName = function(name) {
 	if (this._calls[name]) {
 		return this._calls[name];
 	}
+
+	const normalizedName = normalizeURL(name);
+
 	return this._allCalls.filter(
-		([url]) =>
-			normalizeURL(url) === normalizeURL(name) ||
-			normalizeURL(url.url) === normalizeURL(name)
+		([url]) => normalizeURL(url.url || url) === normalizedName
 	);
 };
 

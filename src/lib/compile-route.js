@@ -1,6 +1,6 @@
 const glob = require('glob-to-regexp');
 const express = require('path-to-regexp');
-const nodeURL = require('url');
+const URL = require('whatwg-url');
 const querystring = require('querystring');
 
 // https://stackoverflow.com/a/19709846/308237
@@ -8,10 +8,10 @@ const absoluteUrlRX = new RegExp('^(?:[a-z]+:)?//', 'i');
 
 function normalizeURL(url) {
 	if (absoluteUrlRX.test(url)) {
-		const u = new nodeURL.URL(url);
+		const u = new URL.URL(url);
 		return u.href;
 	} else {
-		const u = new nodeURL.URL(url, 'http://dummy');
+		const u = new URL.URL(url, 'http://dummy');
 		return u.pathname;
 	}
 }
@@ -115,7 +115,7 @@ const getQueryStringMatcher = route => {
 	}
 	const keys = Object.keys(route.query);
 	return ({ url }) => {
-		const query = querystring.parse(nodeURL.parse(url).query);
+		const query = querystring.parse(URL.parseURL(url).query);
 		return keys.every(key => query[key] === route.query[key]);
 	};
 };

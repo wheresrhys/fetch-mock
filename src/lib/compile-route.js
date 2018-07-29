@@ -1,12 +1,25 @@
 const glob = require('glob-to-regexp');
 const express = require('path-to-regexp');
-const URL = require('url');
+const URL = require('whatwg-url');
 const querystring = require('querystring');
+
+// https://stackoverflow.com/a/19709846/308237
+const absoluteUrlRX = new RegExp('^(?:[a-z]+:)?//', 'i');
+
+function normalizeURL(url) {
+	if (absoluteUrlRX.test(url)) {
+		const u = new URL.URL(url);
+		return u.href;
+	} else {
+		const u = new URL.URL(url, 'http://dummy');
+		return u.pathname;
+	}
+}
 
 function normalizeRequest(url, options, Request) {
 	if (Request.prototype.isPrototypeOf(url)) {
 		return {
-			url: url.url,
+			url: normalizeURL(url.url),
 			method: url.method,
 			headers: (() => {
 				const headers = {};
@@ -16,7 +29,7 @@ function normalizeRequest(url, options, Request) {
 		};
 	} else {
 		return {
-			url: url,
+			url: normalizeURL(url),
 			method: (options && options.method) || 'GET',
 			headers: options && options.headers
 		};
@@ -102,7 +115,7 @@ const getQueryStringMatcher = route => {
 	}
 	const keys = Object.keys(route.query);
 	return ({ url }) => {
-		const query = querystring.parse(URL.parse(url).query);
+		const query = querystring.parse(URL.parseURL(url).query);
 		return keys.every(key => query[key] === route.query[key]);
 	};
 };
@@ -221,3 +234,5 @@ module.exports = function(route) {
 
 	return route;
 };
+
+module.exports.normalizeURL = normalizeURL;

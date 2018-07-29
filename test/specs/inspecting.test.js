@@ -118,8 +118,8 @@ module.exports = fetchMock => {
 
 		describe('call order', () => {
 			it('retrieves calls in correct order', () => {
-				fm.mock('http://it.at.here', 200)
-					.mock('http://it.at.there', 200)
+				fm.mock('http://it.at.here/', 200)
+					.mock('http://it.at.there/', 200)
 					.catch();
 
 				fm.fetchHandler('http://it.at.here');
@@ -134,11 +134,11 @@ module.exports = fetchMock => {
 		describe('route name resolution', () => {
 			afterEach(() => fm.restore());
 			it('can filter by named routes', async () => {
-				fm.mock('http://it.at.here/', 200, {
+				fm.mock('http://it.at.here2/', 200, {
 					name: 'my-route'
 				});
 
-				await fm.fetchHandler('http://it.at.here/');
+				await fm.fetchHandler('http://it.at.here2/');
 
 				expect(fm.called('my-route')).to.be.true;
 			});
@@ -238,7 +238,7 @@ module.exports = fetchMock => {
 			afterEach(() => fm.restore());
 
 			it('flush resolves if all fetches have resolved', async () => {
-				fm.mock('http://one.com', 200).mock('http://two.com', 200);
+				fm.mock('http://one.com/', 200).mock('http://two.com/', 200);
 				// no expectation, but if it doesn't work then the promises will hang
 				// or reject and the test will timeout
 				await fm.flush();
@@ -249,7 +249,7 @@ module.exports = fetchMock => {
 			});
 
 			it('should resolve after fetches', async () => {
-				fm.mock('http://example', 'working!');
+				fm.mock('http://example/', 'working!');
 				let data;
 				fetch('http://example').then(() => (data = 'done'));
 				await fm.flush();
@@ -258,9 +258,9 @@ module.exports = fetchMock => {
 
 			describe('response methods', () => {
 				it('should resolve after .json() if waitForResponseMethods option passed', async () => {
-					fm.mock('http://example', { a: 'ok' });
+					fm.mock('http://example/', { a: 'ok' });
 					let data;
-					fetch('http://example')
+					fetch('http://example/')
 						.then(res => res.json())
 						.then(() => (data = 'done'));
 
@@ -269,9 +269,9 @@ module.exports = fetchMock => {
 				});
 
 				it('should resolve after .json() if waitForResponseMethods option passed', async () => {
-					fm.mock('http://example', 'bleurgh');
+					fm.mock('http://example/', 'bleurgh');
 					let data;
-					fetch('http://example')
+					fetch('http://example/')
 						.then(res => res.json())
 						.catch(() => (data = 'done'));
 
@@ -280,9 +280,9 @@ module.exports = fetchMock => {
 				});
 
 				it('should resolve after .text() if waitForResponseMethods option passed', async () => {
-					fm.mock('http://example', 'working!');
+					fm.mock('http://example/', 'working!');
 					let data;
-					fetch('http://example')
+					fetch('http://example/')
 						.then(res => res.text())
 						.then(() => (data = 'done'));
 
@@ -292,14 +292,14 @@ module.exports = fetchMock => {
 			});
 
 			it('flush waits for unresolved promises', async () => {
-				fm.mock('http://one.com', 200).mock(
-					'http://two.com',
+				fm.mock('http://one.com/', 200).mock(
+					'http://two.com/',
 					() => new Promise(res => setTimeout(() => res(200), 50))
 				);
 
 				const orderedResults = [];
-				fetch('http://one.com');
-				fetch('http://two.com');
+				fetch('http://one.com/');
+				fetch('http://two.com/');
 
 				setTimeout(() => orderedResults.push('not flush'), 25);
 
@@ -309,7 +309,7 @@ module.exports = fetchMock => {
 			});
 
 			it('flush resolves on expected error', async () => {
-				fm.mock('http://one.com', { throws: 'Problem in space' });
+				fm.mock('http://one.com/', { throws: 'Problem in space' });
 				await fm.flush();
 			});
 		});

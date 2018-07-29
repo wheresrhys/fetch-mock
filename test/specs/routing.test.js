@@ -13,33 +13,33 @@ module.exports = fetchMock => {
 
 		describe('url matching', () => {
 			it('match exact strings', async () => {
-				fm.mock('http://it.at.there/', 200).catch();
+				fm.mock('http://it.at.there/path', 200).catch();
 
-				await fm.fetchHandler('http://it.at.there/');
+				await fm.fetchHandler('http://it.at.there/path');
 				expect(fm.calls(true).length).to.equal(1);
-				await fm.fetchHandler('http://it.at.there/abouts');
+				await fm.fetchHandler('http://it.at.there/path/abouts');
 				await fm.fetchHandler('http://it.at.the');
 				expect(fm.calls(true).length).to.equal(1);
 			});
 
 			it('match begin: keyword', async () => {
-				fm.mock('begin:http://it.at.there', 200).catch();
+				fm.mock('begin:http://it.at.there/path', 200).catch();
 
-				await fm.fetchHandler('http://it.at.there');
+				await fm.fetchHandler('http://it.at.there/path');
 				expect(fm.calls(true).length).to.equal(1);
-				await fm.fetchHandler('http://it.at.thereabouts');
+				await fm.fetchHandler('http://it.at.there/path/abouts');
 				expect(fm.calls(true).length).to.equal(2);
-				await fm.fetchHandler('http://it.at.hereabouts');
+				await fm.fetchHandler('http://it.at.here/path/abouts');
 				expect(fm.calls(true).length).to.equal(2);
 			});
 
 			it('match end: keyword', async () => {
-				fm.mock('end:there', 200).catch();
+				fm.mock('end:there/path', 200).catch();
 
-				await fm.fetchHandler('http://it.at.there');
+				await fm.fetchHandler('http://it.at.there/path');
 				expect(fm.calls(true).length).to.equal(1);
-				await fm.fetchHandler('http://it.at.thereabouts');
-				await fm.fetchHandler('http://it.at.here');
+				await fm.fetchHandler('http://it.at.there/path/abouts');
+				await fm.fetchHandler('http://it.at.here/path');
 				expect(fm.calls(true).length).to.equal(1);
 			});
 
@@ -80,6 +80,38 @@ module.exports = fetchMock => {
 				expect(fm.calls(true).length).to.equal(1);
 				await fm.fetchHandler('http://it.at.there/abcde');
 				expect(fm.calls(true).length).to.equal(1);
+			});
+
+			describe('host normalisation', () => {
+				it('match exact pathless urls regardless of trailing slash', async () => {
+					fm.mock('http://it.at.there/', 200)
+						.mock('http://it.at.here', 200)
+						.catch();
+
+					await fm.fetchHandler('http://it.at.there/');
+					await fm.fetchHandler('http://it.at.there');
+					expect(fm.calls('http://it.at.there').length).to.equal(2);
+					expect(fm.calls('http://it.at.there/').length).to.equal(2);
+					await fm.fetchHandler('http://it.at.here/');
+					await fm.fetchHandler('http://it.at.here');
+					expect(fm.calls('http://it.at.here').length).to.equal(2);
+					expect(fm.calls('http://it.at.here/').length).to.equal(2);
+				});
+
+				it('match end: keyword on pathless urls regardless of trailing slash', async () => {
+					fm.mock('end:.there/', 200)
+						.mock('end:.here', 200)
+						.catch();
+
+					await fm.fetchHandler('http://it.at.there/');
+					await fm.fetchHandler('http://it.at.there');
+					expect(fm.calls('http://it.at.there').length).to.equal(2);
+					expect(fm.calls('http://it.at.there/').length).to.equal(2);
+					await fm.fetchHandler('http://it.at.here/');
+					await fm.fetchHandler('http://it.at.here');
+					expect(fm.calls('http://it.at.here').length).to.equal(2);
+					expect(fm.calls('http://it.at.here/').length).to.equal(2);
+				});
 			});
 		});
 
@@ -261,7 +293,7 @@ module.exports = fetchMock => {
 
 			describe('query strings', () => {
 				it('can match a query string', async () => {
-					fm.mock('http://it.at.there', 200, { query: { a: 'b' } }).catch();
+					fm.mock('http://it.at.there/', 200, { query: { a: 'b' } }).catch();
 
 					await fm.fetchHandler('http://it.at.there');
 					expect(fm.calls(true).length).to.equal(0);
@@ -270,7 +302,7 @@ module.exports = fetchMock => {
 				});
 
 				it('can match multiple query strings', async () => {
-					fm.mock('http://it.at.there', 200, {
+					fm.mock('http://it.at.there/', 200, {
 						query: { a: 'b', c: 'd' }
 					}).catch();
 
@@ -285,7 +317,9 @@ module.exports = fetchMock => {
 				});
 
 				it('can be used alongside existing query strings', async () => {
-					fm.mock('http://it.at.there?c=d', 200, { query: { a: 'b' } }).catch();
+					fm.mock('http://it.at.there/?c=d', 200, {
+						query: { a: 'b' }
+					}).catch();
 
 					await fm.fetchHandler('http://it.at.there?c=d');
 					expect(fm.calls(true).length).to.equal(0);
@@ -491,6 +525,22 @@ module.exports = fetchMock => {
 				fm.mock('/it.at.there/', 200).catch();
 
 				await fm.fetchHandler('/it.at.there/');
+				expect(fm.calls(true).length).to.equal(1);
+			});
+
+			it('match relative urls with dots', async () => {
+				fm.mock('/it.at/there/', 200).catch();
+
+				await fm.fetchHandler('/it.at/not/../there/');
+				expect(fm.calls(true).length).to.equal(1);
+				await fm.fetchHandler('./it.at/there/');
+				expect(fm.calls(true).length).to.equal(2);
+			});
+
+			it('match absolute urls with dots', async () => {
+				fm.mock('http://it.at/there/', 200).catch();
+
+				await fm.fetchHandler('http://it.at/not/../there/');
 				expect(fm.calls(true).length).to.equal(1);
 			});
 

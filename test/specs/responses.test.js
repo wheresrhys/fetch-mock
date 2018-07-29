@@ -20,7 +20,7 @@ module.exports = fetchMock => {
 			});
 
 			it('should error on invalid statuses', async () => {
-				fm.mock('http://foo.com', { status: 'not number' });
+				fm.mock('http://foo.com/', { status: 'not number' });
 				try {
 					await fm.fetchHandler('http://foo.com');
 					expect(true).to.be.false;
@@ -208,7 +208,6 @@ e.g. {"body": {"status: "registered"}}`);
 		});
 
 		describe('response negotiation', () => {
-
 			it('function', async () => {
 				fm.mock('http://it.at.there/', url => url);
 				const res = await fm.fetchHandler('http://it.at.there/');
@@ -267,30 +266,31 @@ e.g. {"body": {"status: "registered"}}`);
 
 			describe('rejecting', () => {
 				it('reject if object with `throws` property', async () => {
-					fm.mock('http://it.at.there/', {throws: 'as expected'});
+					fm.mock('http://it.at.there/', { throws: 'as expected' });
 
-					return fm.fetchHandler('http://it.at.there/')
+					return fm
+						.fetchHandler('http://it.at.there/')
 						.then(() => {
 							throw 'not as expected';
 						})
 						.catch(err => {
 							expect(err).to.equal('as expected');
-						})
+						});
 				});
 
 				it('reject if function that returns object with `throws` property', async () => {
-					fm.mock('http://it.at.there/', () => ({throws: 'as expected'}));
+					fm.mock('http://it.at.there/', () => ({ throws: 'as expected' }));
 
-					return fm.fetchHandler('http://it.at.there/')
+					return fm
+						.fetchHandler('http://it.at.there/')
 						.then(() => {
 							throw 'not as expected';
 						})
 						.catch(err => {
 							expect(err).to.equal('as expected');
-						})
+						});
 				});
-
-			})
+			});
 		});
 	});
 };

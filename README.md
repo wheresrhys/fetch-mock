@@ -52,6 +52,4 @@ Copyright © 2018, Rhys Evans
 ## Housekeeping
 
 ![npm version](https://img.shields.io/npm/v/fetch-mock.svg?style=flat-square)
-[![issues](https://img.shields.io/codeclimate/issues/wheresrhys/fetch-mock.svg?style=flat-square)](https://codeclimate.com/github/wheresrhys/fetch-mock/maintainability)
-[![maintainability](https://img.shields.io/codeclimate/maintainability/wheresrhys/fetch-mock.svg?style=flat-square)](https://codeclimate.com/github/wheresrhys/fetch-mock/maintainability)
-[![tech debt](https://img.shields.io/codeclimate/tech-debt/wheresrhys/fetch-mock.svg?style=flat-square)](https://codeclimate.com/github/wheresrhys/fetch-mock/maintainability)
+[![maintainability](https://api.codeclimate.com/v1/badges/7f8abbf54ec9f3d07df3/maintainability?style=flat-square)](https://codeclimate.com/github/wheresrhys/fetch-mock/maintainability)

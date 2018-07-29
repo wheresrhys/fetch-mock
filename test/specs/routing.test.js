@@ -85,7 +85,8 @@ module.exports = fetchMock => {
 			describe('host normalisation', () => {
 				it('match exact pathless urls regardless of trailing slash', async () => {
 					fm.mock('http://it.at.there/', 200)
-						.mock('http://it.at.here', 200).catch();
+						.mock('http://it.at.here', 200)
+						.catch();
 
 					await fm.fetchHandler('http://it.at.there/');
 					await fm.fetchHandler('http://it.at.there');
@@ -99,7 +100,8 @@ module.exports = fetchMock => {
 
 				it('match end: keyword on pathless urls regardless of trailing slash', async () => {
 					fm.mock('end:.there/', 200)
-						.mock('end:.here', 200).catch();
+						.mock('end:.here', 200)
+						.catch();
 
 					await fm.fetchHandler('http://it.at.there/');
 					await fm.fetchHandler('http://it.at.there');
@@ -110,7 +112,7 @@ module.exports = fetchMock => {
 					expect(fm.calls('http://it.at.here').length).to.equal(2);
 					expect(fm.calls('http://it.at.here/').length).to.equal(2);
 				});
-			})
+			});
 		});
 
 		describe('non url matching', () => {

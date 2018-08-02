@@ -22,9 +22,6 @@ const stringMatchers = {
 };
 
 function getHeaderMatcher({ headers: expectedHeaders }) {
-	if (!expectedHeaders) {
-		return () => true;
-	}
 	const expectation = headerUtils.toLowerCase(expectedHeaders);
 	return (url, { headers = {} }) => {
 		const lowerCaseHeaders = headerUtils.toLowerCase(
@@ -37,58 +34,44 @@ function getHeaderMatcher({ headers: expectedHeaders }) {
 	};
 }
 
-const getMethodMatcher = route => {
-	return (url, { method }) => {
-		return (
-			!route.method || route.method === (method ? method.toLowerCase() : 'get')
-		);
-	};
+const getMethodMatcher = ({ method: expectedMethod }) => {
+	return (url, { method }) =>
+		expectedMethod === (method ? method.toLowerCase() : 'get');
 };
 
-const getQueryStringMatcher = route => {
-	if (!route.query) {
-		return () => true;
-	}
-	const keys = Object.keys(route.query);
+const getQueryStringMatcher = ({ query: expectedQuery }) => {
+	const keys = Object.keys(expectedQuery);
 	return url => {
 		const query = querystring.parse(URL.parse(url).query);
-		return keys.every(key => query[key] === route.query[key]);
+		return keys.every(key => query[key] === expectedQuery[key]);
 	};
 };
 
-const getUrlMatcher = route => {
-	// When the matcher is a function it should not be compared with the url
-	// in the normal way
-	if (typeof route.matcher === 'function') {
+const getUrlMatcher = ({ matcher, query }) => {
+	if (typeof matcher === 'function') {
+		return matcher;
+	}
+
+	if (matcher instanceof RegExp) {
+		return url => matcher.test(url);
+	}
+
+	if (matcher === '*') {
 		return () => true;
-	}
-
-	if (route.matcher instanceof RegExp) {
-		const urlRX = route.matcher;
-		return url => urlRX.test(url);
-	}
-
-	if (route.matcher === '*') {
-		return () => true;
-	}
-
-	if (route.matcher.indexOf('^') === 0) {
-		throw new Error(
-			"Using '^' to denote the start of a url is deprecated. Use 'begin:' instead"
-		);
 	}
 
 	for (const shorthand in stringMatchers) {
-		if (route.matcher.indexOf(shorthand + ':') === 0) {
-			const url = route.matcher.replace(new RegExp(`^${shorthand}:`), '');
+		if (matcher.indexOf(shorthand + ':') === 0) {
+			const url = matcher.replace(new RegExp(`^${shorthand}:`), '');
 			return stringMatchers[shorthand](url);
 		}
 	}
 
 	// if none of the special syntaxes apply, it's just a simple string match
-	const expectedUrl = route.matcher;
+	const expectedUrl = matcher;
+
 	return url => {
-		if (route.query && expectedUrl.indexOf('?')) {
+		if (query && expectedUrl.indexOf('?')) {
 			return url.indexOf(expectedUrl) === 0;
 		}
 		return url === expectedUrl;
@@ -120,23 +103,13 @@ const sanitizeRoute = route => {
 	return route;
 };
 
-const getFunctionMatcher = route => {
-	if (typeof route.matcher === 'function') {
-		const matcher = route.matcher;
-		return (url, options) => matcher(url, options);
-	} else {
-		return () => true;
-	}
-};
-
 const generateMatcher = route => {
 	const matchers = [
-		getQueryStringMatcher(route),
-		getMethodMatcher(route),
-		getHeaderMatcher(route),
-		getUrlMatcher(route),
-		getFunctionMatcher(route)
-	];
+		route.query && getQueryStringMatcher(route),
+		route.method && getMethodMatcher(route),
+		route.headers && getHeaderMatcher(route),
+		getUrlMatcher(route)
+	].filter(matcher => !!matcher);
 
 	return (url, options = {}) => {
 		return matchers.every(matcher => matcher(url, options));

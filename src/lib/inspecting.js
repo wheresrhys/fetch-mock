@@ -24,10 +24,9 @@ FetchMock.calls = function(name, options = {}) {
 	}
 
 	let calls = this.callsFilteredByName(name);
-
 	if (options.method) {
 		const testMethod = options.method.toLowerCase();
-		calls = calls.filter(([url, opts = {}]) => {
+		calls = calls.filter(([, opts = {}]) => {
 			const method = (opts.method || 'get').toLowerCase();
 			return method === testMethod;
 		});

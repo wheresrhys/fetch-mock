@@ -6,18 +6,18 @@ const headerUtils = require('./header-utils');
 
 const stringMatchers = {
 	begin: targetString => {
-		return ({ url }) => url.indexOf(targetString) === 0;
+		return url => url.indexOf(targetString) === 0;
 	},
 	end: targetString => {
-		return ({ url }) => url.substr(-targetString.length) === targetString;
+		return url => url.substr(-targetString.length) === targetString;
 	},
 	glob: targetString => {
 		const urlRX = glob(targetString);
-		return ({ url }) => urlRX.test(url);
+		return url => urlRX.test(url);
 	},
 	express: targetString => {
 		const urlRX = express(targetString);
-		return ({ url }) => urlRX.test(url);
+		return url => urlRX.test(url);
 	}
 };
 
@@ -26,7 +26,7 @@ function getHeaderMatcher({ headers: expectedHeaders }) {
 		return () => true;
 	}
 	const expectation = headerUtils.toLowerCase(expectedHeaders);
-	return ({ headers = {} }) => {
+	return (url, { headers = {} }) => {
 		const lowerCaseHeaders = headerUtils.toLowerCase(
 			headerUtils.normalize(headers)
 		);
@@ -38,7 +38,7 @@ function getHeaderMatcher({ headers: expectedHeaders }) {
 }
 
 const getMethodMatcher = route => {
-	return ({ method }) => {
+	return (url, { method }) => {
 		return (
 			!route.method || route.method === (method ? method.toLowerCase() : 'get')
 		);
@@ -50,7 +50,7 @@ const getQueryStringMatcher = route => {
 		return () => true;
 	}
 	const keys = Object.keys(route.query);
-	return ({ url }) => {
+	return url => {
 		const query = querystring.parse(URL.parse(url).query);
 		return keys.every(key => query[key] === route.query[key]);
 	};
@@ -65,7 +65,7 @@ const getUrlMatcher = route => {
 
 	if (route.matcher instanceof RegExp) {
 		const urlRX = route.matcher;
-		return ({ url }) => urlRX.test(url);
+		return url => urlRX.test(url);
 	}
 
 	if (route.matcher === '*') {
@@ -87,7 +87,7 @@ const getUrlMatcher = route => {
 
 	// if none of the special syntaxes apply, it's just a simple string match
 	const expectedUrl = route.matcher;
-	return ({ url }) => {
+	return url => {
 		if (route.query && expectedUrl.indexOf('?')) {
 			return url.indexOf(expectedUrl) === 0;
 		}
@@ -123,7 +123,7 @@ const sanitizeRoute = route => {
 const getFunctionMatcher = route => {
 	if (typeof route.matcher === 'function') {
 		const matcher = route.matcher;
-		return (req, url, options) => matcher(url, options);
+		return (url, options) => matcher(url, options);
 	} else {
 		return () => true;
 	}
@@ -138,10 +138,8 @@ const generateMatcher = route => {
 		getFunctionMatcher(route)
 	];
 
-	return (url, options) => {
-		const req = Object.assign({ url }, options);
-		// console.log(req)
-		return matchers.every(matcher => matcher(req, url, options));
+	return (url, options = {}) => {
+		return matchers.every(matcher => matcher(url, options));
 	};
 };
 

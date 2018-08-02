@@ -15,7 +15,7 @@ FetchMock.callsFilteredByName = function(name) {
 	if (this._calls[name]) {
 		return this._calls[name];
 	}
-	return this._allCalls.filter(([url]) => url === name || url.url === name);
+	return this._allCalls.filter(([url]) => url === name);
 };
 
 FetchMock.calls = function(name, options = {}) {
@@ -28,7 +28,7 @@ FetchMock.calls = function(name, options = {}) {
 	if (options.method) {
 		const testMethod = options.method.toLowerCase();
 		calls = calls.filter(([url, opts = {}]) => {
-			const method = (url.method || opts.method || 'get').toLowerCase();
+			const method = (opts.method || 'get').toLowerCase();
 			return method === testMethod;
 		});
 	}
@@ -39,20 +39,12 @@ FetchMock.lastCall = function(name, options) {
 	return [...this.calls(name, options)].pop();
 };
 
-FetchMock.normalizeLastCall = function(name, options) {
-	const call = this.lastCall(name, options) || [];
-	if (this.config.Request.prototype.isPrototypeOf(call[0])) {
-		return [call[0].url, call[0]];
-	}
-	return call;
-};
-
 FetchMock.lastUrl = function(name, options) {
-	return this.normalizeLastCall(name, options)[0];
+	return (this.lastCall(name, options) || [])[0];
 };
 
 FetchMock.lastOptions = function(name, options) {
-	return this.normalizeLastCall(name, options)[1];
+	return (this.lastCall(name, options) || [])[1];
 };
 
 FetchMock.called = function(name, options) {
@@ -84,7 +76,7 @@ FetchMock.done = function(name, options) {
 				method = options || method;
 
 				if (!this.called(name, method)) {
-			console.warn(`Warning: ${name} not called`);// eslint-disable-line
+					console.warn(`Warning: ${name} not called`);// eslint-disable-line
 					return false;
 				}
 

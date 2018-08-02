@@ -2,8 +2,35 @@ const ResponseBuilder = require('./response-builder');
 
 const FetchMock = {};
 
+
+function normalizeRequest(url, options, Request) {
+	if (Request.prototype.isPrototypeOf(url)) {
+		const hasHeaders = [...url.headers.entries()].length;
+		const obj = {
+			url: url.url,
+			opts: {
+				method: url.method
+			},
+			request: url
+		}
+
+		if (hasHeaders) {
+				obj.opts.headers = [...url.headers.entries()].reduce((obj, [key, val]) => Object.assign(obj, {[key]: val}), {})
+		}
+		return obj
+	} else {
+		return {
+			url,
+			opts: options
+		};
+	}
+}
+
+
 FetchMock.fetchHandler = function(url, opts) {
-	const response = this.executeRouter(url, opts);
+	({url, opts, request} = normalizeRequest(url, opts, this.config.Request))
+
+	const response = this.executeRouter(url, opts, request);
 
 	// this is used to power the .flush() method
 	let done;
@@ -20,12 +47,12 @@ FetchMock.fetchHandler = function(url, opts) {
 
 FetchMock.fetchHandler.isMock = true;
 
-FetchMock.executeRouter = function(url, opts) {
+FetchMock.executeRouter = function(url, opts, request) {
 	if (this.config.fallbackToNetwork === 'always') {
 		return this.getNativeFetch();
 	}
 
-	const response = this.router(url, opts);
+	const response = this.router(url, opts, request);
 
 	if (response) {
 		return response;
@@ -35,7 +62,7 @@ FetchMock.executeRouter = function(url, opts) {
 		console.warn(`Unmatched ${opts && opts.method || 'GET'} to ${url}`); // eslint-disable-line
 	}
 
-	this.push(null, [url, opts]);
+	this.push(null, request ? [url, opts, request] : [url, opts]);
 
 	if (this.fallbackResponse) {
 		return this.fallbackResponse;
@@ -87,11 +114,11 @@ FetchMock.generateResponse = async function (response, url, opts) {
 	return new ResponseBuilder(url, response, this).exec();
 };
 
-FetchMock.router = function(url, opts) {
+FetchMock.router = function(url, opts, request) {
 	const route = this.routes.find(route => route.matcher(url, opts));
 
 	if (route) {
-		this.push(route.name, [url, opts]);
+		this.push(route.name, request ? [url, opts, request] : [url, opts]);
 		return route.response;
 	}
 };

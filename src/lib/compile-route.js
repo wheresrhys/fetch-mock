@@ -3,26 +3,6 @@ const express = require('path-to-regexp');
 const URL = require('url');
 const querystring = require('querystring');
 
-function normalizeRequest(url, options, Request) {
-	if (Request.prototype.isPrototypeOf(url)) {
-		return {
-			url: url.url,
-			method: url.method,
-			headers: (() => {
-				const headers = {};
-				url.headers.forEach(name => (headers[name] = url.headers.name));
-				return headers;
-			})()
-		};
-	} else {
-		return {
-			url: url,
-			method: (options && options.method) || 'GET',
-			headers: options && options.headers
-		};
-	}
-}
-
 const stringMatchers = {
 	begin: targetString => {
 		return ({ url }) => url.indexOf(targetString) === 0;
@@ -64,7 +44,7 @@ function getHeaderMatcher({ headers: expectedHeaders }, Headers) {
 		return () => true;
 	}
 	const expectation = headersToLowerCase(expectedHeaders);
-
+	console.log({expectedHeaders, expectation})
 	return ({ headers = {} }) => {
 		if (headers instanceof Headers) {
 			// node-fetch 1 Headers
@@ -78,7 +58,7 @@ function getHeaderMatcher({ headers: expectedHeaders }, Headers) {
 		}
 
 		const lowerCaseHeaders = headersToLowerCase(headers);
-
+		console.log({expectation, lowerCaseHeaders})
 		return Object.keys(expectation).every(headerName => {
 			return areHeadersEqual(
 				lowerCaseHeaders[headerName],
@@ -174,7 +154,7 @@ const sanitizeRoute = route => {
 const getFunctionMatcher = route => {
 	if (typeof route.matcher === 'function') {
 		const matcher = route.matcher;
-		return (req, [url, options]) => matcher(url, options);
+		return (req, url, options) => matcher(url, options);
 	} else {
 		return () => true;
 	}
@@ -190,8 +170,9 @@ const generateMatcher = (route, config) => {
 	];
 
 	return (url, options) => {
-		const req = normalizeRequest(url, options, config.Request);
-		return matchers.every(matcher => matcher(req, [url, options]));
+		const req = Object.assign({url}, options);
+		// console.log(req)
+		return matchers.every(matcher => matcher(req, url, options));
 	};
 };
 

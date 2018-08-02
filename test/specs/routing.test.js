@@ -43,6 +43,18 @@ module.exports = fetchMock => {
 				expect(fm.calls(true).length).to.equal(1);
 			});
 
+			it('match end: keyword with Request', async () => {
+				fm
+					.mock('end:there', 200)
+					.catch();
+
+				await fm.fetchHandler(new fm.config.Request('http://it.at.there', {method: 'GET'}));
+				expect(fm.calls(true).length).to.equal(1);
+				await fm.fetchHandler(new fm.config.Request('http://it.at.thereabouts', {method: 'GET'}));
+				await fm.fetchHandler(new fm.config.Request('http://it.at.here', {method: 'GET'}));
+				expect(fm.calls(true).length).to.equal(1);
+			});
+
 			it('match glob: keyword', async () => {
 				fm.mock('glob:/its/*/*', 200).catch();
 

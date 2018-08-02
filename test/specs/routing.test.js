@@ -108,9 +108,7 @@ module.exports = fetchMock => {
 
 			it('match using custom function with Request', async () => {
 				fm.mock((url, options) => {
-					return (
-						url.indexOf('logged-in') > -1 && options.headers.authorized
-					);
+					return url.indexOf('logged-in') > -1 && options.headers.authorized;
 				}, 200).catch();
 
 				await fm.fetchHandler(

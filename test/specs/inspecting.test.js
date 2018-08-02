@@ -228,9 +228,13 @@ module.exports = fetchMock => {
 					method: 'POST'
 				});
 				fm.fetchHandler(req);
-				expect(fm.lastCall()).to.eql(['http://it.at.here/', {method: 'POST'}, req]);
+				expect(fm.lastCall()).to.eql([
+					'http://it.at.here/',
+					{ method: 'POST' },
+					req
+				]);
 				expect(fm.lastUrl()).to.equal('http://it.at.here/');
-				expect(fm.lastOptions()).to.eql({method: 'POST'});
+				expect(fm.lastOptions()).to.eql({ method: 'POST' });
 			});
 		});
 

@@ -1,23 +1,23 @@
 const ResponseBuilder = require('./response-builder');
-
+const headerUtils = require('./header-utils');
 const FetchMock = {};
-
 
 function normalizeRequest(url, options, Request) {
 	if (Request.prototype.isPrototypeOf(url)) {
-		const hasHeaders = [...url.headers.entries()].length;
 		const obj = {
 			url: url.url,
 			opts: {
 				method: url.method
 			},
 			request: url
-		}
+		};
 
-		if (hasHeaders) {
-				obj.opts.headers = [...url.headers.entries()].reduce((obj, [key, val]) => Object.assign(obj, {[key]: val}), {})
+		const headers = headerUtils.toArray(url.headers);
+
+		if (headers.length) {
+			obj.opts.headers = headerUtils.zip(headers);
 		}
-		return obj
+		return obj;
 	} else {
 		return {
 			url,
@@ -26,9 +26,8 @@ function normalizeRequest(url, options, Request) {
 	}
 }
 
-
-FetchMock.fetchHandler = function(url, opts) {
-	({url, opts, request} = normalizeRequest(url, opts, this.config.Request))
+FetchMock.fetchHandler = function(url, opts, request) {
+	({ url, opts, request } = normalizeRequest(url, opts, this.config.Request));
 
 	const response = this.executeRouter(url, opts, request);
 
@@ -78,8 +77,7 @@ FetchMock.executeRouter = function(url, opts, request) {
 	return this.getNativeFetch();
 };
 
-FetchMock.generateResponse = async function (response, url, opts) {
-
+FetchMock.generateResponse = async function(response, url, opts) {
 	// We want to allow things like
 	// - function returning a Promise for a response
 	// - delaying (using a timeout Promise) a function's execution to generate

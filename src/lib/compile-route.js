@@ -2,6 +2,7 @@ const glob = require('glob-to-regexp');
 const express = require('path-to-regexp');
 const URL = require('url');
 const querystring = require('querystring');
+const headerUtils = require('./header-utils');
 
 const stringMatchers = {
 	begin: targetString => {
@@ -20,51 +21,19 @@ const stringMatchers = {
 	}
 };
 
-const headersToLowerCase = headers =>
-	Object.keys(headers).reduce((obj, k) => {
-		obj[k.toLowerCase()] = headers[k];
-		return obj;
-	}, {});
-
-function areHeadersEqual(actualHeader, expectedHeader) {
-	actualHeader = Array.isArray(actualHeader) ? actualHeader : [actualHeader];
-	expectedHeader = Array.isArray(expectedHeader)
-		? expectedHeader
-		: [expectedHeader];
-
-	if (actualHeader.length !== expectedHeader.length) {
-		return false;
-	}
-
-	return actualHeader.every((val, i) => val === expectedHeader[i]);
-}
-
-function getHeaderMatcher({ headers: expectedHeaders }, Headers) {
+function getHeaderMatcher({ headers: expectedHeaders }) {
 	if (!expectedHeaders) {
 		return () => true;
 	}
-	const expectation = headersToLowerCase(expectedHeaders);
-	console.log({expectedHeaders, expectation})
+	const expectation = headerUtils.toLowerCase(expectedHeaders);
 	return ({ headers = {} }) => {
-		if (headers instanceof Headers) {
-			// node-fetch 1 Headers
-			if (typeof headers.raw === 'function') {
-				headers = Object.entries(headers.raw());
-			}
-			headers = [...headers].reduce((map, [key, val]) => {
-				map[key] = val;
-				return map;
-			}, {});
-		}
+		const lowerCaseHeaders = headerUtils.toLowerCase(
+			headerUtils.normalize(headers)
+		);
 
-		const lowerCaseHeaders = headersToLowerCase(headers);
-		console.log({expectation, lowerCaseHeaders})
-		return Object.keys(expectation).every(headerName => {
-			return areHeadersEqual(
-				lowerCaseHeaders[headerName],
-				expectation[headerName]
-			);
-		});
+		return Object.keys(expectation).every(headerName =>
+			headerUtils.equal(lowerCaseHeaders[headerName], expectation[headerName])
+		);
 	};
 }
 
@@ -160,17 +129,17 @@ const getFunctionMatcher = route => {
 	}
 };
 
-const generateMatcher = (route, config) => {
+const generateMatcher = route => {
 	const matchers = [
 		getQueryStringMatcher(route),
 		getMethodMatcher(route),
-		getHeaderMatcher(route, config.Headers),
+		getHeaderMatcher(route),
 		getUrlMatcher(route),
 		getFunctionMatcher(route)
 	];
 
 	return (url, options) => {
-		const req = Object.assign({url}, options);
+		const req = Object.assign({ url }, options);
 		// console.log(req)
 		return matchers.every(matcher => matcher(req, url, options));
 	};
@@ -196,7 +165,7 @@ const limitMatcher = route => {
 module.exports = function(route) {
 	route = sanitizeRoute(route);
 
-	route.matcher = generateMatcher(route, this.config);
+	route.matcher = generateMatcher(route);
 
 	limitMatcher(route);
 

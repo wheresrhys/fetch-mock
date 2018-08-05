@@ -1,5 +1,4 @@
 const ResponseBuilder = require('./response-builder');
-const URL = require('whatwg-url');
 const requestUtils = require('./request-utils');
 const FetchMock = {};
 
@@ -25,7 +24,7 @@ const normalizeRequest = (url, options, Request) => {
 			opts: options
 		};
 	}
-}
+};
 
 FetchMock.fetchHandler = function(url, opts, request) {
 	({ url, opts, request } = normalizeRequest(url, opts, this.config.Request));

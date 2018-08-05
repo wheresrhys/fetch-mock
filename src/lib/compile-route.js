@@ -2,7 +2,7 @@ const glob = require('glob-to-regexp');
 const URL = require('whatwg-url');
 const express = require('path-to-regexp');
 const querystring = require('querystring');
-const {headers: headerUtils} = require('./request-utils');
+const { headers: headerUtils } = require('./request-utils');
 
 const stringMatchers = {
 	begin: targetString => {

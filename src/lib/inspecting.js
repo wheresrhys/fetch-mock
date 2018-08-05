@@ -19,9 +19,7 @@ FetchMock.callsFilteredByName = function(name) {
 
 	const normalizedName = normalizeURL(name);
 
-	return this._allCalls.filter(
-		([url]) => normalizeURL(url) === normalizedName
-	);
+	return this._allCalls.filter(([url]) => normalizeURL(url) === normalizedName);
 };
 
 FetchMock.calls = function(name, options = {}) {

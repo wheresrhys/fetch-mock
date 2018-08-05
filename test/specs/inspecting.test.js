@@ -122,12 +122,12 @@ module.exports = fetchMock => {
 					.mock('http://it.at.there/', 200)
 					.catch();
 
-				fm.fetchHandler('http://it.at.here');
-				fm.fetchHandler('http://it.at.there');
-				fm.fetchHandler('http://it.at.where');
-				expect(fm.calls()[0][0]).to.equal('http://it.at.here');
-				expect(fm.calls()[1][0]).to.equal('http://it.at.there');
-				expect(fm.calls()[2][0]).to.equal('http://it.at.where');
+				fm.fetchHandler('http://it.at.here/');
+				fm.fetchHandler('http://it.at.there/');
+				fm.fetchHandler('http://it.at.where/');
+				expect(fm.calls()[0][0]).to.equal('http://it.at.here/');
+				expect(fm.calls()[1][0]).to.equal('http://it.at.there/');
+				expect(fm.calls()[2][0]).to.equal('http://it.at.where/');
 			});
 		});
 
@@ -228,9 +228,13 @@ module.exports = fetchMock => {
 					method: 'POST'
 				});
 				fm.fetchHandler(req);
-				expect(fm.lastCall()).to.eql([req, undefined]);
+				expect(fm.lastCall()).to.eql([
+					'http://it.at.here/',
+					{ method: 'POST' },
+					req
+				]);
 				expect(fm.lastUrl()).to.equal('http://it.at.here/');
-				expect(fm.lastOptions()).to.equal(req);
+				expect(fm.lastOptions()).to.eql({ method: 'POST' });
 			});
 		});
 

@@ -1,3 +1,7 @@
+const URL = require('whatwg-url');
+// https://stackoverflow.com/a/19709846/308237
+const absoluteUrlRX = new RegExp('^(?:[a-z]+:)?//', 'i');
+
 const toArray = headers => {
 	// node-fetch 1 Headers
 	if (typeof headers.raw === 'function') {
@@ -13,6 +17,17 @@ const zip = entries =>
 	entries.reduce((obj, [key, val]) => Object.assign(obj, { [key]: val }), {});
 
 module.exports = {
+
+	normalizeURL: (url) => {
+	if (absoluteUrlRX.test(url)) {
+		const u = new URL.URL(url);
+		return u.href;
+	} else {
+		const u = new URL.URL(url, 'http://dummy');
+		return u.pathname;
+	}
+},
+	headers: {
 	normalize: headers => zip(toArray(headers)),
 	toArray,
 	zip,
@@ -33,4 +48,4 @@ module.exports = {
 
 		return actualHeader.every((val, i) => val === expectedHeader[i]);
 	}
-};
+}}

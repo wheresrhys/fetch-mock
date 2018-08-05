@@ -25,6 +25,7 @@ Replaces `fetch` with a stub which records its calls, grouped by route, and opti
     * `RegExp`: A regular  expression to test the url against
     * `Function(url, opts)`: A function (returning a Boolean) that is passed the url and opts `fetch()` is called with (or, if `fetch()` was called with one, the `Request` instance)
 
+_Note that if using `end:` or an exact url matcher, `fetch-mock` ([for good reason](https://url.spec.whatwg.org/#url-equivalence)) is unable to distinguish whether URLs without a path end in a trailing slash or not i.e. `http://thing` is treated the same as `http://thing/`_
 * `response`: Configures the http response returned by the mock. Can take any of the following values (or be a `Promise` for any of them, enabling full control when testing race conditions etc.)
     * `Response`: A `Response` instance - will be used unaltered
     * `number`: Creates a response with this status

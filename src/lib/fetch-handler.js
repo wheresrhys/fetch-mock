@@ -1,26 +1,27 @@
 const ResponseBuilder = require('./response-builder');
-const headerUtils = require('./header-utils');
+const URL = require('whatwg-url');
+const requestUtils = require('./request-utils');
 const FetchMock = {};
 
-function normalizeRequest(url, options, Request) {
+const normalizeRequest = (url, options, Request) => {
 	if (Request.prototype.isPrototypeOf(url)) {
 		const obj = {
-			url: url.url,
+			url: requestUtils.normalizeURL(url.url),
 			opts: {
 				method: url.method
 			},
 			request: url
 		};
 
-		const headers = headerUtils.toArray(url.headers);
+		const headers = requestUtils.headers.toArray(url.headers);
 
 		if (headers.length) {
-			obj.opts.headers = headerUtils.zip(headers);
+			obj.opts.headers = requestUtils.headers.zip(headers);
 		}
 		return obj;
 	} else {
 		return {
-			url,
+			url: requestUtils.normalizeURL(url),
 			opts: options
 		};
 	}

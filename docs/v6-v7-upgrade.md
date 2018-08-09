@@ -18,3 +18,24 @@ A side-effect of the above normalisation - using [whatwg-url](https://www.npmjs.
 
 ## Request instances are normalized early to [url, options] pairs
 The `fetch` api can be called with either a `Request` object or a `url` with an `options` object. To make the library easier to maintain and its APIs - in particular the call inspecting APIs such as `called()` - agnostic as to how `fetch` was called, Request objects are normalised early into `url`, `options` pairs. So the fetch args returned by `calls()` will always be of the form `[url, options]` even if `fetch` was called with a `Request` object. The original `Request` object is still provided as a third item in the args array in case it is needed.
+
+## Exporting as property
+`fetch-mock` now has a property `fetchMock`, which means the libarry can be imported using any of the below
+
+```js
+const fetchMock = require('fetch-mock');
+const fetchMock = require('fetch-mock').fetchMock;
+const { fetchMock } = require('fetch-mock');
+```
+
+The reason for this shoudl become clear in the next point
+
+## Adds MATCHED and UNMATCHED constants
+The inspection APIs e.g. `calls()` can be passed `true` or `false` to return matched/unmatched calls respectively. To aid with more comprehensible code, fetchMock now exports `MATCHED` and `UNMATCHED` constants, equal to `true` and `false`. Using `true` or `false` still works, but I'd recommend using the constants. Compare the readbility of the following:
+
+```js
+const { fetchMock, MATCHED, UNMATCHED } = require('fetch-mock');
+
+fetchMock.called(true);
+fetchMock.called(MATCHED);
+```

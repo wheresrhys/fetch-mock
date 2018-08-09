@@ -98,8 +98,8 @@ Most of the methods below accept two parameters, `(filter, method)`
     - the name of a route
     - The value of `matcher` or `matcher.toString()` for any unnamed route. You _can_ pass in the original regex or function as a matcher, but they will be converted to strings and used to look up values in fetch-mock's internal maps of calls, _not_ used as regexes or functions executed on teh url
     - If `filter` is a string, and it does not match any routes, it is asumed the string is a url, and calls to `fetch` made with that url are returned
-    - `true` for matched calls only
-    - `false` for unmatched calls only
+    - `true` for matched calls only. For readability, it's recommended to use `fetchMock.MATCHED`, which is a constant equal to `true`
+    - `false` for unmatched calls only. For readability, it's recommended to use `fetchMock.UNMATCHED`, which is a constant equal to `false`
     - `undefined` for all calls to fetch
 - `method` A http method to filter by
 

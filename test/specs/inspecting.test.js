@@ -15,11 +15,11 @@ module.exports = fetchMock => {
 		describe('constants', () => {
 			it('has a MATCHED constant equal to true', () => {
 				expect(fetchMock.MATCHED).to.equal(true);
-			})
+			});
 			it('has a UNMATCHED constant equal to false', () => {
 				expect(fetchMock.UNMATCHED).to.equal(false);
-			})
-		})
+			});
+		});
 
 		describe('filtering', () => {
 			before(async () => {

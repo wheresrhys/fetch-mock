@@ -82,12 +82,12 @@ const sanitizeRoute = route => {
 	route = Object.assign({}, route);
 
 	if (typeof route.response === 'undefined') {
-		throw new Error('Each route must define a response');
+		throw new Error('fetch-mock: Each route must define a response');
 	}
 
 	if (!route.matcher) {
 		throw new Error(
-			'Each route must specify a string, regex or function to match calls to fetch'
+			'fetch-mock: Each route must specify a string, regex or function to match calls to fetch'
 		);
 	}
 

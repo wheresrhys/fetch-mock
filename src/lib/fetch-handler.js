@@ -18,11 +18,15 @@ const normalizeRequest = (url, options, Request) => {
 			obj.opts.headers = requestUtils.headers.zip(headers);
 		}
 		return obj;
-	} else {
+	} else if (typeof url === 'string') {
 		return {
 			url: requestUtils.normalizeURL(url),
 			opts: options
 		};
+	} else if (typeof Request === 'object')
+		throw new TypeError('fetch-mock: Unrecognised Request object. Read the Config and Installation sections of the docs')
+	} else {
+		throw new TypeError('fetch-mock: Invalid arguments passed to fetch')
 	}
 };
 
@@ -69,7 +73,7 @@ FetchMock.executeRouter = function(url, opts, request) {
 
 	if (!this.config.fallbackToNetwork) {
 		throw new Error(
-			`No fallback response defined for ${(opts && opts.method) ||
+			`fetch-mock: No fallback response defined for ${(opts && opts.method) ||
 				'GET'} to ${url}`
 		);
 	}
@@ -125,7 +129,7 @@ FetchMock.getNativeFetch = function() {
 	const func = this.realFetch || (this.isSandbox && this.config.fetch);
 	if (!func) {
 		throw new Error(
-			'Falling back to network only available on gloabl fetch-mock, or by setting config.fetch on sandboxed fetch-mock'
+			'fetch-mock: Falling back to network only available on gloabl fetch-mock, or by setting config.fetch on sandboxed fetch-mock'
 		);
 	}
 	return func;

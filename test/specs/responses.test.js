@@ -25,10 +25,9 @@ module.exports = fetchMock => {
 					await fm.fetchHandler('http://foo.com');
 					expect(true).to.be.false;
 				} catch (err) {
-					expect(err.message).to
-						.equal(`Invalid status not number passed on response object.
-To respond with a JSON object that has status as a property assign the object to body
-e.g. {"body": {"status: "registered"}}`);
+					expect(err.message).to.match(
+						/Invalid status not number passed on response object/
+					);
 				}
 			});
 

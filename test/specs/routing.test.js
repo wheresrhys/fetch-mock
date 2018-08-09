@@ -1,4 +1,5 @@
 const chai = require('chai');
+const URL = require('whatwg-url');
 const expect = chai.expect;
 
 module.exports = fetchMock => {
@@ -19,6 +20,13 @@ module.exports = fetchMock => {
 				expect(fm.calls(true).length).to.equal(1);
 				await fm.fetchHandler('http://it.at.there/path/abouts');
 				await fm.fetchHandler('http://it.at.the');
+				expect(fm.calls(true).length).to.equal(1);
+			});
+
+			it('match exact string against URL object', async () => {
+				fm.mock('http://it.at.there/path', 200).catch();
+				const url = new URL.URL('http://it.at.there/path');
+				await fm.fetchHandler(url);
 				expect(fm.calls(true).length).to.equal(1);
 			});
 
@@ -291,11 +299,23 @@ module.exports = fetchMock => {
 
 			describe('query strings', () => {
 				it('can match a query string', async () => {
-					fm.mock('http://it.at.there/', 200, { query: { a: 'b' } }).catch();
+					fm.mock('http://it.at.there/', 200, {
+						query: { a: 'b' }
+					}).catch();
 
 					await fm.fetchHandler('http://it.at.there');
 					expect(fm.calls(true).length).to.equal(0);
 					await fm.fetchHandler('http://it.at.there?a=b');
+					expect(fm.calls(true).length).to.equal(1);
+				});
+
+				it('match a query string against an URL object', async () => {
+					fm.mock('http://it.at.there/path', 200, {
+						query: { a: 'b' }
+					}).catch();
+					const url = new URL.URL('http://it.at.there/path');
+					url.searchParams.append('a', 'b');
+					await fm.fetchHandler(url);
 					expect(fm.calls(true).length).to.equal(1);
 				});
 

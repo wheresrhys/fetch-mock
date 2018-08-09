@@ -2,10 +2,7 @@ const setUpAndTearDown = require('./set-up-and-tear-down');
 const fetchHandler = require('./fetch-handler');
 const inspecting = require('./inspecting');
 
-const FetchMock = Object.assign({
-	MATCHED: true,
-	UNMATCHED: false
-}, fetchHandler, setUpAndTearDown, inspecting);
+const FetchMock = Object.assign({}, fetchHandler, setUpAndTearDown, inspecting);
 
 FetchMock.config = {
 	fallbackToNetwork: false,
@@ -15,7 +12,7 @@ FetchMock.config = {
 	overwriteRoutes: undefined
 };
 
-FetchMock.createInstance = function() {
+FetchMock.createInstance = function (isLibrary) {
 	const instance = Object.create(FetchMock);
 	instance._uncompiledRoutes = (this._uncompiledRoutes || []).slice();
 	instance.routes = instance._uncompiledRoutes.map(config =>
@@ -27,6 +24,13 @@ FetchMock.createInstance = function() {
 	instance._allCalls = [];
 	instance._holdingPromises = [];
 	instance.bindMethods();
+	if (isLibrary) {
+		Object.assign(instance, {
+			MATCHED: true,
+			UNMATCHED: false,
+			fetchMock: instance
+		});
+	}
 	return instance;
 };
 

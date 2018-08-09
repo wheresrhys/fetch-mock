@@ -17,4 +17,4 @@ FetchMock.config = Object.assign(FetchMock.config, {
 	Headers: Headers
 });
 
-module.exports = FetchMock.createInstance();
+module.exports = FetchMock.createInstance(true);

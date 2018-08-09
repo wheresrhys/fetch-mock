@@ -23,10 +23,12 @@ const normalizeRequest = (url, options, Request) => {
 			url: requestUtils.normalizeURL(url),
 			opts: options
 		};
-	} else if (typeof Request === 'object')
-		throw new TypeError('fetch-mock: Unrecognised Request object. Read the Config and Installation sections of the docs')
+	} else if (typeof Request === 'object') {
+		throw new TypeError(
+			'fetch-mock: Unrecognised Request object. Read the Config and Installation sections of the docs'
+		);
 	} else {
-		throw new TypeError('fetch-mock: Invalid arguments passed to fetch')
+		throw new TypeError('fetch-mock: Invalid arguments passed to fetch');
 	}
 };
 

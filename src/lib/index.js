@@ -2,7 +2,10 @@ const setUpAndTearDown = require('./set-up-and-tear-down');
 const fetchHandler = require('./fetch-handler');
 const inspecting = require('./inspecting');
 
-const FetchMock = Object.assign({}, fetchHandler, setUpAndTearDown, inspecting);
+const FetchMock = Object.assign({
+	MATCHED: true,
+	UNMATCHED: false
+}, fetchHandler, setUpAndTearDown, inspecting);
 
 FetchMock.config = {
 	fallbackToNetwork: false,

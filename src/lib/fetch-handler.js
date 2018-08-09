@@ -18,12 +18,16 @@ const normalizeRequest = (url, options, Request) => {
 			obj.opts.headers = requestUtils.headers.zip(headers);
 		}
 		return obj;
-	} else if (typeof url === 'string') {
+	} else if (
+		typeof url === 'string' ||
+		// horrible URL object duck-typing
+		(typeof url === 'object' && 'href' in url)
+	) {
 		return {
 			url: requestUtils.normalizeURL(url),
 			opts: options
 		};
-	} else if (typeof Request === 'object') {
+	} else if (typeof url === 'object') {
 		throw new TypeError(
 			'fetch-mock: Unrecognised Request object. Read the Config and Installation sections of the docs'
 		);

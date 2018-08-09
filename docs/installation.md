@@ -1,6 +1,6 @@
 - [Introduction](/fetch-mock)
 - [Quickstart](/fetch-mock/quickstart)
-- Installation and usage 
+- Installation and usage
 - [API documentation](/fetch-mock/api)
 - [Troubleshooting](/fetch-mock/troubleshooting)
 - [Examples](/fetch-mock/examples)
@@ -15,7 +15,7 @@ In most environments use `const fetchMock = require('fetch-mock')` to use it in 
 * For server side tests running in nodejs 6 or lower use `require('fetch-mock/es5/server')`. You will also need to `npm i -D babel-polyfill`
 
 ## Global fetch
-By default fetch-mock assumes `fetch` is a global so once you've required fetch-mock refer to the quickstart and api docs.  
+By default fetch-mock assumes `fetch` is a global so once you've required fetch-mock refer to the quickstart and api docs.
 
 ### Polyfilling fetch
 Many older browsers will require polyfilling the `fetch` global
@@ -36,7 +36,7 @@ expect(myMock.called('/home')).to.be.true;
 ```
 
 ## References to Request, Response, Headers, fetch and Promise
-If you're using a non-global fetch implementation, or wish to use a custom Promise implementation, you may need to tell fetch-mock to use these when matching requests and returning responses. Do this by setting these properties on `fetchMock.config`, e.g 
+If you're using a non-global fetch implementation, or wish to use a custom Promise implementation, you may need to tell fetch-mock to use these when matching requests and returning responses. Do this by setting these properties on `fetchMock.config`, e.g
 
 ```
 const ponyfill = require('fetch-ponyfill')();
@@ -46,7 +46,7 @@ fetchMock.config = Object.assign(fetchMock.config, {
     Request: ponyfill.Request,
     Response: ponyfill.Response,
     fetch: ponyfill
-}, 
+},
 ```
 This should be done before running any tests.
 

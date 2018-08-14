@@ -2,7 +2,7 @@ const glob = require('glob-to-regexp');
 const URL = require('whatwg-url');
 const express = require('path-to-regexp');
 const querystring = require('querystring');
-const { headers: headerUtils } = require('./request-utils');
+const { headers: headerUtils, getPath } = require('./request-utils');
 
 const stringMatchers = {
 	begin: targetString => {
@@ -18,7 +18,8 @@ const stringMatchers = {
 	express: targetString => {
 		const urlRX = express(targetString);
 		return url => urlRX.test(url);
-	}
+	},
+	path: targetString => url => getPath(url) === targetString
 };
 
 function getHeaderMatcher({ headers: expectedHeaders }) {

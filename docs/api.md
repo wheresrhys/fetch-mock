@@ -20,6 +20,7 @@ Replaces `fetch` with a stub which records its calls, grouped by route, and opti
         * `*` to match any url
         * `begin:http://www.site.com/` to match urls beginning with a string
         * `end:.jpg` to match urls ending with a string
+        * `path:/posts/2018/7/3` to match urls with a given path
         * `glob:http://*.*` to match glob patterns
         * `express:/user/:user` to match [express style paths](https://www.npmjs.com/package/path-to-regexp)
     * `RegExp`: A regular  expression to test the url against

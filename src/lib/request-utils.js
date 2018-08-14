@@ -26,6 +26,10 @@ module.exports = {
 			return u.pathname;
 		}
 	},
+	getPath: url => {
+		const u = absoluteUrlRX.test(url) ? new URL.URL(url) : new URL.URL(url, 'http://dummy');
+		return u.pathname;
+	},
 	headers: {
 		normalize: headers => zip(toArray(headers)),
 		toArray,

@@ -155,13 +155,16 @@ module.exports = fetchMock => {
 			it('can filter by string based matchers', async () => {
 				fm.mock('http://it.at.here/', 200)
 					.mock('begin:http://it.at.there/', 200)
-					.mock('glob:*/a/*', 200);
+					.mock('glob:*/a/*', 200)
+					.mock('path:/henry', 200);
 
 				await fm.fetchHandler('http://it.at.here/');
 				await fm.fetchHandler('http://it.at.there/');
+				await fm.fetchHandler('http://it.at.where/henry');
 
 				expect(fm.called('http://it.at.here/')).to.be.true;
 				expect(fm.called('begin:http://it.at.there/')).to.be.true;
+				expect(fm.called('path:/henry')).to.be.true;
 				expect(fm.called('glob:*/a/*')).to.be.false;
 			});
 

@@ -102,7 +102,7 @@ module.exports = fetchMock => {
 			});
 
 			describe('host normalisation', () => {
-				it('match exact pathless urls regardless of trailing slash', async () => {
+				it.only('match exact pathless urls regardless of trailing slash', async () => {
 					fm.mock('http://it.at.there/', 200)
 						.mock('http://it.at.here', 200)
 						.catch();

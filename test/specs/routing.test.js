@@ -71,6 +71,17 @@ module.exports = fetchMock => {
 				expect(fm.calls(true).length).to.equal(1);
 			});
 
+			it('match path: keyword', async () => {
+				fm.mock('path:/its/not/:clever', 200).catch();
+
+				await fm.fetchHandler('/its/not/boy');
+				await fm.fetchHandler('/its/not/:clever/still');
+				expect(fm.calls(true).length).to.equal(0);
+				await fm.fetchHandler('/its/not/:clever')
+				await fm.fetchHandler('/its/not/:clever?brain=false')
+				expect(fm.calls(true).length).to.equal(2);
+			});
+
 			it('match wildcard string', async () => {
 				fm.mock('*', 200);
 

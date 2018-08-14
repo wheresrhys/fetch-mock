@@ -143,3 +143,5 @@ module.exports = function(route) {
 
 	return route;
 };
+
+module.exports.generateMatcher = generateMatcher

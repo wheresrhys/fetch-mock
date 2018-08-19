@@ -74,6 +74,9 @@ const getUrlMatcher = route => {
 	}
 
 	// if none of the special syntaxes apply, it's just a simple string match
+	// but we have to be careful to normalize the url we check and the name
+	// of the route to allow for e.g. http://it.at.there being indistinguishable
+	// from http://it.at.there/ once we start generating Request/Url objects
 	const expectedUrl = normalizeUrl(matcher);
 	if (route.__unnamed) {
 		route.name = expectedUrl;

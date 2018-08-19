@@ -23,7 +23,9 @@ FetchMock.callsFilteredByName = function(name) {
 		}
 	}
 	return this._allCalls.filter(([url, opts]) =>
-		compileRoute({ matcher: name, response: 200 }).matcher(
+		// HACK: add dummy response so that we can generate a matcher without
+		// copileRoute's expectation that each route has a response defined
+		compileRoute({ matcher: name, response: 'ok' }).matcher(
 			normalizeUrl(url),
 			opts
 		)

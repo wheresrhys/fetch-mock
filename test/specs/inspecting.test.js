@@ -216,19 +216,19 @@ module.exports = fetchMock => {
 			after(() => fm.restore());
 
 			it('match as name first', async () => {
-				expect(fm.calls('path:/asname').length).to.equal(1)
+				expect(fm.calls('path:/asname').length).to.equal(1);
 			});
 
 			it('match as matcher.toString() second', async () => {
-				expect(fm.calls('begin:http://it.at.there').length).to.equal(1)
+				expect(fm.calls('begin:http://it.at.there').length).to.equal(1);
 			});
 
 			it('match as executable third', async () => {
-				expect(fm.calls('path:/notmatch').length).to.equal(2)
+				expect(fm.calls('path:/notmatch').length).to.equal(2);
 			});
 
 			it('not match as executable if is matcher.toString() of existing route', async () => {
-				expect(fm.calls('express:/notmatch').length).to.equal(0)
+				expect(fm.calls('express:/notmatch').length).to.equal(0);
 			});
 		});
 

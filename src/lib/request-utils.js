@@ -26,8 +26,17 @@ module.exports = {
 			return u.pathname;
 		}
 	},
+	normalisePathlessUrls: url => {
+		if (absoluteUrlRX.test(url)) {
+			const u = new URL.URL(url);
+			return u.href;
+		}
+		return url;
+	},
 	getPath: url => {
-		const u = absoluteUrlRX.test(url) ? new URL.URL(url) : new URL.URL(url, 'http://dummy');
+		const u = absoluteUrlRX.test(url)
+			? new URL.URL(url)
+			: new URL.URL(url, 'http://dummy');
 		return u.pathname;
 	},
 	headers: {

@@ -206,30 +206,30 @@ module.exports = fetchMock => {
 
 		describe('filtering cascade', () => {
 			before(async () => {
-				fm
-					.once('*', 200, {name: 'path:/asname'})
+				fm.once('*', 200, { name: 'path:/asname' })
 					.mock('begin:http://it.at.there', 200)
-					.mock('end:/notmatch', 200)
+					.mock('end:/notmatch', 200);
 
 				await fm.fetchHandler('http://it.at.there/notmatch');
 				await fm.fetchHandler('http://it.at.there/notmatch');
-			})
+			});
+			after(() => fm.restore());
+
 			it('match as name first', async () => {
-				expect(fm.calls('path:/asname').length).to.equal(1)
+				expect(fm.calls('path:/asname').length).to.equal(1);
 			});
 
 			it('match as matcher.toString() second', async () => {
-				expect(fm.calls('begin:http://it.at.there').length).to.equal(1)
+				expect(fm.calls('begin:http://it.at.there').length).to.equal(1);
 			});
 
 			it('match as executable third', async () => {
-				expect(fm.calls('path:/notmatch').length).to.equal(2)
+				expect(fm.calls('path:/notmatch').length).to.equal(2);
 			});
 
 			it('not match as executable if is matcher.toString() of existing route', async () => {
-				expect(fm.calls('end:/notmatch').length).to.equal(0)
+				expect(fm.calls('end:/notmatch').length).to.equal(0);
 			});
-
 		});
 
 		describe('retrieving call parameters', () => {

@@ -1,5 +1,6 @@
+const {normalizeURL} = require('./request-utils')
 const FetchMock = {};
-const {generateMatcher} = require('./compile-route');
+const compileRoute = require('./compile-route');
 FetchMock.callsFilteredByName = function(name) {
 	if (name === true) {
 		return this._allCalls.filter(call => !call.unmatched);
@@ -15,8 +16,15 @@ FetchMock.callsFilteredByName = function(name) {
 	if (this.routes.some(route => route.name === name)) {
 		return this._calls[name] || [];
 	}
-
-	return this._allCalls.filter(([url, opts]) => generateMatcher({matcher: name})(url, opts));
+	const normalizedURL = normalizeURL(name);
+	if (normalizedURL !== name) {
+		if (this.routes.some(route => route.name === normalizedURL)) {
+			return this._calls[normalizedURL] || [];
+		}
+	}
+	return this._allCalls.filter(([url, opts]) =>
+		compileRoute({ matcher: name, response: 200 }).matcher(normalizeURL(url), opts)
+	);
 };
 
 FetchMock.calls = function(name, options = {}) {

@@ -77,8 +77,8 @@ module.exports = fetchMock => {
 				await fm.fetchHandler('/its/not/boy');
 				await fm.fetchHandler('/its/not/:clever/still');
 				expect(fm.calls(true).length).to.equal(0);
-				await fm.fetchHandler('/its/not/:clever')
-				await fm.fetchHandler('/its/not/:clever?brain=false')
+				await fm.fetchHandler('/its/not/:clever');
+				await fm.fetchHandler('/its/not/:clever?brain=false');
 				expect(fm.calls(true).length).to.equal(2);
 			});
 

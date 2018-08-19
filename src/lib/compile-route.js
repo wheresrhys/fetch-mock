@@ -2,7 +2,11 @@ const glob = require('glob-to-regexp');
 const URL = require('whatwg-url');
 const express = require('path-to-regexp');
 const querystring = require('querystring');
-const { headers: headerUtils, getPath } = require('./request-utils');
+const {
+	headers: headerUtils,
+	getPath,
+	normalizeUrl
+} = require('./request-utils');
 
 const stringMatchers = {
 	begin: targetString => {
@@ -48,7 +52,8 @@ const getQueryStringMatcher = ({ query: expectedQuery }) => {
 	};
 };
 
-const getUrlMatcher = ({ matcher, query }) => {
+const getUrlMatcher = route => {
+	const { matcher, query } = route;
 	if (typeof matcher === 'function') {
 		return matcher;
 	}
@@ -69,13 +74,19 @@ const getUrlMatcher = ({ matcher, query }) => {
 	}
 
 	// if none of the special syntaxes apply, it's just a simple string match
-	const expectedUrl = matcher;
+	// but we have to be careful to normalize the url we check and the name
+	// of the route to allow for e.g. http://it.at.there being indistinguishable
+	// from http://it.at.there/ once we start generating Request/Url objects
+	const expectedUrl = normalizeUrl(matcher);
+	if (route.__unnamed) {
+		route.name = expectedUrl;
+	}
 
 	return url => {
 		if (query && expectedUrl.indexOf('?')) {
 			return url.indexOf(expectedUrl) === 0;
 		}
-		return url === expectedUrl;
+		return normalizeUrl(url) === expectedUrl;
 	};
 };
 

@@ -5,7 +5,7 @@ const FetchMock = {};
 const normalizeRequest = (url, options, Request) => {
 	if (Request.prototype.isPrototypeOf(url)) {
 		const obj = {
-			url: requestUtils.normalizeURL(url.url),
+			url: requestUtils.normalizeUrl(url.url),
 			opts: {
 				method: url.method
 			},
@@ -24,7 +24,7 @@ const normalizeRequest = (url, options, Request) => {
 		(typeof url === 'object' && 'href' in url)
 	) {
 		return {
-			url: requestUtils.normalizeURL(url),
+			url: requestUtils.normalizeUrl(url),
 			opts: options
 		};
 	} else if (typeof url === 'object') {

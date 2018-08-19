@@ -1,6 +1,6 @@
-const { normalizeURL } = require('./request-utils');
+const { normalizeUrl } = require('./request-utils');
 const FetchMock = {};
-
+const compileRoute = require('./compile-route');
 FetchMock.callsFilteredByName = function(name) {
 	if (name === true) {
 		return this._allCalls.filter(call => !call.unmatched);
@@ -13,13 +13,23 @@ FetchMock.callsFilteredByName = function(name) {
 		return this._allCalls;
 	}
 
-	if (this._calls[name]) {
-		return this._calls[name];
+	if (this.routes.some(route => route.name === name)) {
+		return this._calls[name] || [];
 	}
-
-	const normalizedName = normalizeURL(name);
-
-	return this._allCalls.filter(([url]) => normalizeURL(url) === normalizedName);
+	const normalizedURL = normalizeUrl(name);
+	if (normalizedURL !== name) {
+		if (this.routes.some(route => route.name === normalizedURL)) {
+			return this._calls[normalizedURL] || [];
+		}
+	}
+	return this._allCalls.filter(([url, opts]) =>
+		// HACK: add dummy response so that we can generate a matcher without
+		// copileRoute's expectation that each route has a response defined
+		compileRoute({ matcher: name, response: 'ok' }).matcher(
+			normalizeUrl(url),
+			opts
+		)
+	);
 };
 
 FetchMock.calls = function(name, options = {}) {

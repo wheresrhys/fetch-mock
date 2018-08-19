@@ -17,7 +17,7 @@ const zip = entries =>
 	entries.reduce((obj, [key, val]) => Object.assign(obj, { [key]: val }), {});
 
 module.exports = {
-	normalizeURL: url => {
+	normalizeUrl: url => {
 		if (absoluteUrlRX.test(url)) {
 			const u = new URL.URL(url);
 			return u.href;
@@ -27,7 +27,9 @@ module.exports = {
 		}
 	},
 	getPath: url => {
-		const u = absoluteUrlRX.test(url) ? new URL.URL(url) : new URL.URL(url, 'http://dummy');
+		const u = absoluteUrlRX.test(url)
+			? new URL.URL(url)
+			: new URL.URL(url, 'http://dummy');
 		return u.pathname;
 	},
 	headers: {

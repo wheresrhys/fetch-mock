@@ -5,8 +5,7 @@ const querystring = require('querystring');
 const {
 	headers: headerUtils,
 	getPath,
-	normalisePathlessUrls,
-	normalizeURL
+	normalizeUrl
 } = require('./request-utils');
 
 const stringMatchers = {
@@ -53,7 +52,8 @@ const getQueryStringMatcher = ({ query: expectedQuery }) => {
 	};
 };
 
-const getUrlMatcher = ({ matcher, query }) => {
+const getUrlMatcher = route => {
+	const { matcher, query } = route;
 	if (typeof matcher === 'function') {
 		return matcher;
 	}
@@ -74,14 +74,16 @@ const getUrlMatcher = ({ matcher, query }) => {
 	}
 
 	// if none of the special syntaxes apply, it's just a simple string match
-	let expectedUrl = matcher;
+	const expectedUrl = normalizeUrl(matcher);
+	if (route.__unnamed) {
+		route.name = expectedUrl;
+	}
 
 	return url => {
 		if (query && expectedUrl.indexOf('?')) {
 			return url.indexOf(expectedUrl) === 0;
 		}
-		expectedUrl = normalizeURL(expectedUrl);
-		return normalizeURL(url) === expectedUrl;
+		return normalizeUrl(url) === expectedUrl;
 	};
 };
 
@@ -99,10 +101,7 @@ const sanitizeRoute = route => {
 	}
 
 	if (!route.name) {
-		route.name =
-			typeof route.matcher === 'string'
-				? normalisePathlessUrls(route.matcher)
-				: route.matcher.toString();
+		route.name = route.matcher.toString();
 		route.__unnamed = true;
 	}
 

@@ -1,4 +1,4 @@
-const {normalizeURL} = require('./request-utils')
+const { normalizeUrl } = require('./request-utils');
 const FetchMock = {};
 const compileRoute = require('./compile-route');
 FetchMock.callsFilteredByName = function(name) {
@@ -16,14 +16,17 @@ FetchMock.callsFilteredByName = function(name) {
 	if (this.routes.some(route => route.name === name)) {
 		return this._calls[name] || [];
 	}
-	const normalizedURL = normalizeURL(name);
+	const normalizedURL = normalizeUrl(name);
 	if (normalizedURL !== name) {
 		if (this.routes.some(route => route.name === normalizedURL)) {
 			return this._calls[normalizedURL] || [];
 		}
 	}
 	return this._allCalls.filter(([url, opts]) =>
-		compileRoute({ matcher: name, response: 200 }).matcher(normalizeURL(url), opts)
+		compileRoute({ matcher: name, response: 200 }).matcher(
+			normalizeUrl(url),
+			opts
+		)
 	);
 };
 

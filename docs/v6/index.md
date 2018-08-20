@@ -10,16 +10,14 @@ As well as shorthand methods for the simplest use cases, it offers a flexible AP
 	I devote a lot of time to maintaining fetch-mock for free. I don't ask for payment, but am raising money for a refugee charity - <a href="https://www.justgiving.com/fundraising/rhys-evans-walk">please consider donating</a>
 </div>
 
-## These docs are for v7
 
+## These docs are for v6
+
+- [v5 docs](/fetch-mock/v5)
+- [V5 - V6 upgrade guide](/fetch-mock/v5-v6-upgrade)
 - Introduction
 - [Quickstart](/fetch-mock/quickstart)
 - [Installation and usage ](/fetch-mock/installation)
 - [API documentation](/fetch-mock/api)
 - [Troubleshooting](/fetch-mock/troubleshooting)
 - [Examples](/fetch-mock/examples)
-
-* [V6 - V7 upgrade guide](/fetch-mock/v6-v7-upgrade)
-* [V6 docs](/fetch-mock/v6)
-* [V5 - V6 upgrade guide](/fetch-mock/v5-v6-upgrade)
-* [V5 docs](/fetch-mock/v5)

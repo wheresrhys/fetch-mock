@@ -1,0 +1,4 @@
+markdown: kramdown
+theme: jekyll-theme-slate
+title: fetch-mock
+description: Mock http requests made using fetch

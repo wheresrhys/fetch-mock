@@ -12,13 +12,15 @@ function normalizeRequest(url, options, Request) {
 				const headers = {};
 				url.headers.forEach(name => (headers[name] = url.headers.name));
 				return headers;
-			})()
+			})(),
+			body: url.body
 		};
 	} else {
 		return {
 			url: url,
 			method: (options && options.method) || 'GET',
-			headers: options && options.headers
+			headers: options && options.headers,
+			body: options && options.body
 		};
 	}
 }

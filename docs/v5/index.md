@@ -1,4 +1,5 @@
-# Version 5 docs 
+# Version 5 docs
+
 - [Docs for latest version](/fetch-mock)
 
 fetch-mock allows mocking http requests made using fetch, or any one of the many libraries imitating its api such as [isomorphic-fetch](https://www.npmjs.com/package/isomorphic-fetch), [node-fetch](https://www.npmjs.com/package/node-fetch) and [fetch-ponyfill](https://www.npmjs.com/package/fetch-ponyfill).

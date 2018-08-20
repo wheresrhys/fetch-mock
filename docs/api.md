@@ -5,11 +5,6 @@
 - [Troubleshooting](/fetch-mock/troubleshooting)
 - [Examples](/fetch-mock/examples)
 
-* [V6 - V7 upgrade guide](/fetch-mock/v6-v7-upgrade)
-* [V6 docs](/fetch-mock/v6)
-* [V5 - V6 upgrade guide](/fetch-mock/v5-v6-upgrade)
-* [V5 docs](/fetch-mock/v5)
-
 # API Documentation
 
 ## Mocking calls to `fetch`

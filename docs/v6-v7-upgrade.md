@@ -49,21 +49,21 @@ Previously, any filter passed in to `calls(filter)` etc... would always be conve
 ### Example
 ```js
 fetchMock.mock('*', 200)
-await fetch('/main-course/lasagne', {headers: {discount: true}});
+await fetch('/main-course/lasagne', {method: 'POST', headers: {discount: true}});
 await fetch('/main-course/bolognaise');
 
 fetchMock.called(/l.+gne/) // true
-fetchMock.called('glob:/*/lasagne') // true
+fetchMock.called('glob:/*/lasagne', {method: 'post'}) // true
 fetchMock.called((url, options) => options.headers.discount) // true
 ```
 And, copied directly from the API docs:
 
-	Most of the methods below accept two parameters, `(filter, method)`
+	Most of the methods below accept two parameters, `(filter, options)`
 	- `filter` Enables filtering fetch calls for the most commonly use cases. The behaviour can be counterintuitive. The following rules, applied in the order they are described, are used to try to retrieve calls. If any rule retrieves no calls the next rule will be tried.
+	    - If `filter` is `undefined` all calls, matched _and_ unmatched, are returned
 	    - If `filter` is `true` (or `fetchMock.MATCHED`) all calls that matched some route are returned
 	    - If `filter` is `false` (or `fetchMock.UNMATCHED`) all calls that did not match any route are returned (when `.spy()`, `catch()` or `config.fallThroughToNetwork` were used to prevent errors being thrown)
-	    - If `filter` is `undefined` all calls, matched _and_ unmatched, are returned
 	    - If `filter` is the name of a named route, all calls handled by that route are returned
 	    - If `filter` is equal to `matcher` or `matcher.toString()` for a route, all calls handled by that route are returned
-	    - `filter` is executed using the same execution plan as matchers used in `.mock()`. Any calls matched by it will be returned.
-	- `method` A http method to filter by
+	    - `filter` is executed using the same execution plan as matchers used in `.mock()`. Any calls matched by it will be returned. If `options` is also passed this is used in a similar way to the options used by `mock()`. Alternatively, `options` can be a string specifying a `method` to filter by
+

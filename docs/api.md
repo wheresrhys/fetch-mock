@@ -94,16 +94,15 @@ Chainable method that clears all data recorded for `fetch()`'s calls. *It will n
 ## Inspecting how `fetch()` has been called
 
 ### Filtering
-Most of the methods below accept two parameters, `(filter, method)`
+Most of the methods below accept two parameters, `(filter, options)`
 - `filter` Enables filtering fetch calls for the most commonly use cases. The behaviour can be counterintuitive. The following rules, applied in the order they are described, are used to try to retrieve calls. If any rule retrieves no calls the next rule will be tried.
+    - If `filter` is `undefined` all calls, matched _and_ unmatched, are returned
     - If `filter` is `true` (or `fetchMock.MATCHED`) all calls that matched some route are returned
     - If `filter` is `false` (or `fetchMock.UNMATCHED`) all calls that did not match any route are returned (when `.spy()`, `catch()` or `config.fallThroughToNetwork` were used to prevent errors being thrown)
-    - If `filter` is `undefined` all calls, matched _and_ unmatched, are returned
     - If `filter` is the name of a named route, all calls handled by that route are returned
     - If `filter` is equal to `matcher` or `matcher.toString()` for a route, all calls handled by that route are returned
-    - `filter` is executed using the same execution plan as matchers used in `.mock()`. Any calls matched by it will be returned.
+    - `filter` is executed using the same execution plan as matchers used in `.mock()`. Any calls matched by it will be returned. If `options` is also passed this is used in a similar way to the options used by `mock()`. Alternatively, `options` can be a string specifying a `method` to filter by
 
-- `method` A http method to filter by
 
 #### `called(filter, method)`
 Returns a Boolean indicating whether fetch was called and a route was matched. If `filter` is specified it only returns `true` if that particular route was matched.

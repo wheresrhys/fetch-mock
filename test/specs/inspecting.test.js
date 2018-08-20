@@ -94,7 +94,7 @@ module.exports = fetchMock => {
 			});
 		});
 
-		describe.only('filtering', () => {
+		describe('filtering', () => {
 			before(async () => {
 				fm.mock('http://it.at.here/', 200, { name: 'fetch-mock' })
 					.mock('path:/path', 200)

@@ -11,13 +11,14 @@ As well as shorthand methods for the simplest use cases, it offers a flexible AP
 </div>
 
 
-## These docs are for v6
-
-- [v5 docs](/fetch-mock/v5)
-- [V5 - V6 upgrade guide](/fetch-mock/v5-v6-upgrade)
+## These docs are for v7
 - Introduction
 - [Quickstart](/fetch-mock/quickstart)
 - [Installation and usage ](/fetch-mock/installation)
 - [API documentation](/fetch-mock/api)
 - [Troubleshooting](/fetch-mock/troubleshooting)
 - [Examples](/fetch-mock/examples)
+* [V6 - V7 upgrade guide](/fetch-mock/v6-v7-upgrade)
+* [V6 docs](/fetch-mock/v6)
+* [V5 - V6 upgrade guide](/fetch-mock/v5-v6-upgrade)
+* [V5 docs](/fetch-mock/v5)

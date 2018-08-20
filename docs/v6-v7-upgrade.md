@@ -1,7 +1,5 @@
 # Upgrading from V6 to V7
 
-Most changes are relatively minor and shouldn't affect most users.
-
 # Changes
 
 ## `throws` option now rejects a Promise

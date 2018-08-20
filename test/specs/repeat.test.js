@@ -111,11 +111,11 @@ module.exports = fetchMock => {
 			expect(res2.status).to.equal(200);
 		});
 
-		it('reset() resets count', async () => {
+		it('resetHistory() resets count', async () => {
 			fm.mock('http://it.at.there1/', 200, { repeat: 1 });
 			await fm.fetchHandler('http://it.at.there1/');
 			expect(fm.done()).to.be.true;
-			fm.reset();
+			fm.resetHistory();
 			expect(fm.done()).to.be.false;
 			expect(fm.done('http://it.at.there1/')).to.be.false;
 			await fm.fetchHandler('http://it.at.there1/');

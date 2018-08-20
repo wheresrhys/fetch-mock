@@ -20,7 +20,6 @@ const fetchMock = require('fetch-mock');
 const { fetchMock, MATCHED, UNMATCHED } = require('fetch-mock');
 ```
 
-
 Some exceptions include:
 
 - If your client-side code or tests do not use a loader that respects the browser field of `package.json` use `require('fetch-mock/es5/client')`.
@@ -28,11 +27,13 @@ Some exceptions include:
 - For server side tests running in nodejs 6 or lower use `require('fetch-mock/es5/server')`. You will also need to `npm i -D babel-polyfill`
 
 ## Global fetch
+
 <<<<<<< HEAD
 
 =======
->>>>>>> 315bf4bee040aa243eaf3b2a418741d35444bccb
-By default fetch-mock assumes `fetch` is a global so once you've required fetch-mock refer to the quickstart and api docs.
+
+> > > > > > > 315bf4bee040aa243eaf3b2a418741d35444bccb
+> > > > > > > By default fetch-mock assumes `fetch` is a global so once you've required fetch-mock refer to the quickstart and api docs.
 
 ### Polyfilling fetch
 

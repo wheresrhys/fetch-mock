@@ -17,7 +17,7 @@ As resolving `../` and `./` as relative paths is [speced url behaviour](https://
 A side-effect of the above normalisation - using [whatwg-url](https://www.npmjs.com/package/whatwg-url) - is that fetch-mock is no longer able to distinguish between pathless URLs which do/do not end in a trailing slash i.e. `http://thing` behaves exactly the same as `http://thing/` when used in any of the library's APIs, and any mocks that match one will match the other. As mentioned above, URL normalization happens _before_ any matching is attempted.
 
 ## Request instances are normalized early to [url, options] pairs
-The `fetch` api can be called with either a `Request` object or a `url` with an `options` object. To make the library easier to maintain and its APIs - in particular the call inspecting APIs such as `called()` - agnostic as to how `fetch` was called, Request objects are normalised early into `url`, `options` pairs. So the fetch args returned by `calls()` will always be of the form `[url, options]` even if `fetch` was called with a `Request` object. The original `Request` object is still provided as a third item in the args array in case it is needed.
+The `fetch` api can be called with either a `Request` object or a `url` with an `options` object. To make the library easier to maintain and its APIs - in particular the call inspecting APIs such as `called()` - agnostic as to how `fetch` was called, Request objects are normalised early into `url`, `options` pairs. So the fetch args returned by `calls()` will always be of the form `[url, options]` even if `fetch` was called with a `Request` object. The original `Request` object is still provided as a `request` property on the `[url, opts]` array in case it is needed.
 
 ## Exporting as property
 `fetch-mock` now has a property `fetchMock`, which means the libarry can be imported using any of the below
@@ -49,21 +49,21 @@ Previously, any filter passed in to `calls(filter)` etc... would always be conve
 ### Example
 ```js
 fetchMock.mock('*', 200)
-await fetch('/main-course/lasagne', {headers: {discount: true}});
+await fetch('/main-course/lasagne', {method: 'POST', headers: {discount: true}});
 await fetch('/main-course/bolognaise');
 
 fetchMock.called(/l.+gne/) // true
-fetchMock.called('glob:/*/lasagne') // true
+fetchMock.called('glob:/*/lasagne', {method: 'post'}) // true
 fetchMock.called((url, options) => options.headers.discount) // true
 ```
 And, copied directly from the API docs:
 
-	Most of the methods below accept two parameters, `(filter, method)`
+	Most of the methods below accept two parameters, `(filter, options)`
 	- `filter` Enables filtering fetch calls for the most commonly use cases. The behaviour can be counterintuitive. The following rules, applied in the order they are described, are used to try to retrieve calls. If any rule retrieves no calls the next rule will be tried.
+	    - If `filter` is `undefined` all calls, matched _and_ unmatched, are returned
 	    - If `filter` is `true` (or `fetchMock.MATCHED`) all calls that matched some route are returned
 	    - If `filter` is `false` (or `fetchMock.UNMATCHED`) all calls that did not match any route are returned (when `.spy()`, `catch()` or `config.fallThroughToNetwork` were used to prevent errors being thrown)
-	    - If `filter` is `undefined` all calls, matched _and_ unmatched, are returned
 	    - If `filter` is the name of a named route, all calls handled by that route are returned
 	    - If `filter` is equal to `matcher` or `matcher.toString()` for a route, all calls handled by that route are returned
-	    - `filter` is executed using the same execution plan as matchers used in `.mock()`. Any calls matched by it will be returned.
-	- `method` A http method to filter by
+	    - `filter` is executed using the same execution plan as matchers used in `.mock()`. Any calls matched by it will be returned. If `options` is also passed this is used in a similar way to the options used by `mock()`. Alternatively, `options` can be a string specifying a `method` to filter by
+

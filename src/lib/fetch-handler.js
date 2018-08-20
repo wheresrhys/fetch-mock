@@ -56,22 +56,22 @@ FetchMock.fetchHandler = function(url, opts, request) {
 
 FetchMock.fetchHandler.isMock = true;
 
-FetchMock.executeRouter = function(url, opts, request) {
+FetchMock.executeRouter = function(url, options, request) {
 	if (this.config.fallbackToNetwork === 'always') {
 		return this.getNativeFetch();
 	}
 
-	const response = this.router(url, opts, request);
+	const response = this.router(url, options, request);
 
 	if (response) {
 		return response;
 	}
 
 	if (this.config.warnOnFallback) {
-		console.warn(`Unmatched ${opts && opts.method || 'GET'} to ${url}`); // eslint-disable-line
+		console.warn(`Unmatched ${options && options.method || 'GET'} to ${url}`); // eslint-disable-line
 	}
 
-	this.push(null, request ? [url, opts, request] : [url, opts]);
+	this.push(null, { url, options, request });
 
 	if (this.fallbackResponse) {
 		return this.fallbackResponse;
@@ -79,7 +79,8 @@ FetchMock.executeRouter = function(url, opts, request) {
 
 	if (!this.config.fallbackToNetwork) {
 		throw new Error(
-			`fetch-mock: No fallback response defined for ${(opts && opts.method) ||
+			`fetch-mock: No fallback response defined for ${(options &&
+				options.method) ||
 				'GET'} to ${url}`
 		);
 	}
@@ -122,11 +123,11 @@ FetchMock.generateResponse = async function(response, url, opts) {
 	return new ResponseBuilder(url, response, this).exec();
 };
 
-FetchMock.router = function(url, opts, request) {
-	const route = this.routes.find(route => route.matcher(url, opts));
+FetchMock.router = function(url, options, request) {
+	const route = this.routes.find(route => route.matcher(url, options));
 
 	if (route) {
-		this.push(route.name, request ? [url, opts, request] : [url, opts]);
+		this.push(route.name, { url, options, request });
 		return route.response;
 	}
 };
@@ -141,7 +142,9 @@ FetchMock.getNativeFetch = function() {
 	return func;
 };
 
-FetchMock.push = function(name, args) {
+FetchMock.push = function(name, { url, options, request }) {
+	const args = [url, options];
+	args.request = request;
 	if (name) {
 		this._calls[name] = this._calls[name] || [];
 		this._calls[name].push(args);

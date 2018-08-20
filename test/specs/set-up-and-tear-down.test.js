@@ -169,7 +169,7 @@ module.exports = fetchMock => {
 				sinon.spy(fm, 'resetBehavior');
 				fm.resetBehavior();
 				expect(fm.resetBehavior.lastCall.thisValue).to.equal(fm);
-				fm.resetBehavior.resetBehavior();
+				fm.resetBehavior.restore();
 			});
 
 			it('can be called even if no mocks set', () => {

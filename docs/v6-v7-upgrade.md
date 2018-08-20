@@ -1,7 +1,5 @@
 # Upgrading from V6 to V7
 
-<<<<<<< HEAD
-
 # Changes
 
 ## `throws` option now rejects a Promise
@@ -56,8 +54,6 @@ The `fetch` api can be called with either a `Request` object or a `url` with an 
 
 `fetch-mock` now has a property `fetchMock`, which means the libarry can be imported using any of the below
 
-> > > > > > > 315bf4bee040aa243eaf3b2a418741d35444bccb
-
 ```js
 const fetchMock = require('fetch-mock');
 const fetchMock = require('fetch-mock').fetchMock;
@@ -68,12 +64,7 @@ The reason for this should become clear in the next point
 
 ## Adds MATCHED and UNMATCHED constants
 
-<<<<<<< HEAD
-
-=======
-
-> > > > > > > 315bf4bee040aa243eaf3b2a418741d35444bccb
-> > > > > > > The inspection APIs e.g. `calls()` can be passed `true` or `false` to return matched/unmatched calls respectively. To aid with more comprehensible code, fetchMock now exports `MATCHED` and `UNMATCHED` constants, equal to `true` and `false`. Using `true` or `false` still works, but I'd recommend using the constants. Compare the readbility of the following:
+The inspection APIs e.g. `calls()` can be passed `true` or `false` to return matched/unmatched calls respectively. To aid with more comprehensible code, fetchMock now exports `MATCHED` and `UNMATCHED` constants, equal to `true` and `false`. Using `true` or `false` still works, but I'd recommend using the constants. Compare the readbility of the following:
 
 ```js
 const { fetchMock, MATCHED, UNMATCHED } = require('fetch-mock');
@@ -83,8 +74,6 @@ fetchMock.called(MATCHED);
 ```
 
 ## Able to match requests based on the path of the url
-
-<<<<<<< HEAD
 
 `fetchMock.mock('path:/apples/pears')` Will match any url whose `path` part is `/apples/pears`
 
@@ -109,46 +98,11 @@ fetchMock.called((url, options) => options.headers.discount); // true
 
 And, copied directly from the API docs:
 
-    Most of the methods below accept two parameters, `(filter, options)`
-    - `filter` Enables filtering fetch calls for the most commonly use cases. The behaviour can be counterintuitive. The following rules, applied in the order they are described, are used to try to retrieve calls. If any rule retrieves no calls the next rule will be tried.
-        - If `filter` is `undefined` all calls, matched _and_ unmatched, are returned
-        - If `filter` is `true` (or `fetchMock.MATCHED`) all calls that matched some route are returned
-        - If `filter` is `false` (or `fetchMock.UNMATCHED`) all calls that did not match any route are returned (when `.spy()`, `catch()` or `config.fallThroughToNetwork` were used to prevent errors being thrown)
-        - If `filter` is the name of a named route, all calls handled by that route are returned
-        - If `filter` is equal to `matcher` or `matcher.toString()` for a route, all calls handled by that route are returned
-        - `filter` is executed using the same execution plan as matchers used in `.mock()`. Any calls matched by it will be returned. If `options` is also passed this is used in a similar way to the options used by `mock()`. Alternatively, `options` can be a string specifying a `method` to filter by
-
-=======
-`fetchMock.mock('path:/apples/pears')` Will match any url whose `path` part is `apples/pears`
-
-## More powerful inspection filtering
-
-Previously, any filter passed in to `calls(filter)` etc... would always be converted to a string and then be used to lookup whether any fetch calls had been handled by a route matcher that also had the same `toString()` value. This is still the case, but if no calls match, then the filter will be converted into an on the fly route matcher, which is then used to filter the list of calls that were handled by fetch. This measn e.g. you can use any regex or glob to filter the calls.
-
-### Example
-
-```js
-fetchMock.mock('*', 200);
-await fetch('/main-course/lasagne', {
-	method: 'POST',
-	headers: { discount: true }
-});
-await fetch('/main-course/bolognaise');
-
-fetchMock.called(/l.+gne/); // true
-fetchMock.called('glob:/*/lasagne', { method: 'post' }); // true
-fetchMock.called((url, options) => options.headers.discount); // true
-```
-
-And, copied directly from the API docs:
-
-    Most of the methods below accept two parameters, `(filter, options)`
-    - `filter` Enables filtering fetch calls for the most commonly use cases. The behaviour can be counterintuitive. The following rules, applied in the order they are described, are used to try to retrieve calls. If any rule retrieves no calls the next rule will be tried.
-        - If `filter` is `undefined` all calls, matched _and_ unmatched, are returned
-        - If `filter` is `true` (or `fetchMock.MATCHED`) all calls that matched some route are returned
-        - If `filter` is `false` (or `fetchMock.UNMATCHED`) all calls that did not match any route are returned (when `.spy()`, `catch()` or `config.fallThroughToNetwork` were used to prevent errors being thrown)
-        - If `filter` is the name of a named route, all calls handled by that route are returned
-        - If `filter` is equal to `matcher` or `matcher.toString()` for a route, all calls handled by that route are returned
-        - `filter` is executed using the same execution plan as matchers used in `.mock()`. Any calls matched by it will be returned. If `options` is also passed this is used in a similar way to the options used by `mock()`. Alternatively, `options` can be a string specifying a `method` to filter by
-
-> > > > > > > 315bf4bee040aa243eaf3b2a418741d35444bccb
+Most of the methods below accept two parameters, `(filter, options)`
+- `filter` Enables filtering fetch calls for the most commonly use cases. The behaviour can be counterintuitive. The following rules, applied in the order they are described, are used to try to retrieve calls. If any rule retrieves no calls the next rule will be tried.
+    - If `filter` is `undefined` all calls, matched _and_ unmatched, are returned
+    - If `filter` is `true` (or `fetchMock.MATCHED`) all calls that matched some route are returned
+    - If `filter` is `false` (or `fetchMock.UNMATCHED`) all calls that did not match any route are returned (when `.spy()`, `catch()` or `config.fallThroughToNetwork` were used to prevent errors being thrown)
+    - If `filter` is the name of a named route, all calls handled by that route are returned
+    - If `filter` is equal to `matcher` or `matcher.toString()` for a route, all calls handled by that route are returned
+    - `filter` is executed using the same execution plan as matchers used in `.mock()`. Any calls matched by it will be returned. If `options` is also passed this is used in a similar way to the options used by `mock()`. Alternatively, `options` can be a string specifying a `method` to filter by

@@ -5,4 +5,3 @@ npm-debug.log
 coverage/
 /test/fixtures/built-sw.js
 .nyc_output
-.eslintcache

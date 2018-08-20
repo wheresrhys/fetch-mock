@@ -18,7 +18,7 @@ module.exports = fetchMock => {
 		describe('Promise', () => {
 			it('can be configured to use alternate Promise implementations', async () => {
 				fm.config.Promise = BluebirdPromise;
-				fm.mock('http://example.com/', 200);
+				fm.mock('http://example.com', 200);
 				const fetchCall = fetch('http://example.com');
 				expect(fetchCall).to.be.instanceof(BluebirdPromise);
 				await fetchCall;
@@ -40,7 +40,7 @@ module.exports = fetchMock => {
 			});
 
 			it('can use custom promises but return native promise', async () => {
-				fm.mock('http://example.com/', BluebirdPromise.resolve(200));
+				fm.mock('http://example.com', BluebirdPromise.resolve(200));
 
 				const responsePromise = fm.fetchHandler('http://example.com');
 				expect(responsePromise).to.be.instanceof(NativePromise);

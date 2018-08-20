@@ -53,8 +53,8 @@ module.exports = (fetchMock, theGlobal) => {
 		it('spy falls through to default fetch', async () => {
 			fetchMock.spy();
 
-			await theGlobal.fetch('http://a.com/', { method: 'get' });
-			expect(originalFetch).calledWith('http://a.com/', { method: 'get' });
+			await theGlobal.fetch('http://a.com', { method: 'get' });
+			expect(originalFetch).calledWith('http://a.com', { method: 'get' });
 		});
 	});
 };

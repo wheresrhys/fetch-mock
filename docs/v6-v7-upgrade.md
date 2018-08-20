@@ -2,9 +2,15 @@
 
 # Changes
 
+## Teardown methods names have changed
+To keep the library in line with `sinon`, the most popular mocking libarry in the js ecosystem, a few method names & behaviours have been changed
+- `reset()` now resets both call history _and_ the mocking behaviour of fetch-mock - It's a complete teardown of the mocks that have been set up. `restore()` has been kept as an alias for this method
+- `resetHistory()` now removes call history. Any previous uses of `reset()` shodul be replaced with `resetHistory()`
+- `resetBehavior()` is a new method which removes mocking behaviour without resetting call history
+
 ## `throws` option now rejects a Promise
 
-A regression was introduced in v6 whereby the `throws: true` option woudl throw an uncaught error. The `fetch` api catches all its internal errors and returns a rejected `Promise` in every case, so this change has been reverted to be more useful for mocking typical `fetch` errors.
+A regression was introduced in v6 whereby the `throws` option would throw an uncaught error. The `fetch` api catches all its internal errors and returns a rejected `Promise` in every case, so this change has been reverted to be more useful for mocking typical `fetch` errors.
 
 ## Responses are wrapped in an ES Proxy
 
@@ -21,34 +27,6 @@ A side-effect of the above normalisation - using [whatwg-url](https://www.npmjs.
 ## Request instances are normalized early to [url, options] pairs
 
 The `fetch` api can be called with either a `Request` object or a `url` with an `options` object. To make the library easier to maintain and its APIs - in particular the call inspecting APIs such as `called()` - agnostic as to how `fetch` was called, Request objects are normalised early into `url`, `options` pairs. So the fetch args returned by `calls()` will always be of the form `[url, options]` even if `fetch` was called with a `Request` object. The original `Request` object is still provided as a `request` property on the `[url, opts]` array in case it is needed.
-
-## Exporting as property
-
-# `fetch-mock` now has a property `fetchMock`, which means the libary can be imported using any of the below
-
-Most changes are relatively minor and shouldn't affect most users.
-
-# Changes
-
-## `throws` option now rejects a Promise
-
-A regression was introduced in v6 whereby the `throws: true` option woudl throw an uncaught error. The `fetch` api catches all its internal errors and returns a rejected `Promise` in every case, so this change has been reverted to be more useful for mocking typical `fetch` errors.
-
-## Responses are wrapped in an ES Proxy
-
-This is to enable a more powerful `flush()` method, able to wait for asynchronous resolution of response methods such as `.json()` and `.text()`. `flush(true)` will resolve only when Promises returnes by any response methods called before `flush()` have resolved
-
-## Supports resolving dots in urls
-
-As resolving `../` and `./` as relative paths is [speced url behaviour](https://url.spec.whatwg.org/#double-dot-path-segment), fetch-mock has been updated to also do this resolution when matching urls. URLs are normalised _before_ any matchers try to match against them as, to the `fetch` api, `http://thing/decoy/../quarry` is indistinguishable from `http://thing/quarry`, so it would make no sense to allow different mocking based on which variant is used.
-
-## Agnostic as to whether hosts have a trailing slash or not
-
-A side-effect of the above normalisation - using [whatwg-url](https://www.npmjs.com/package/whatwg-url) - is that fetch-mock is no longer able to distinguish between pathless URLs which do/do not end in a trailing slash i.e. `http://thing` behaves exactly the same as `http://thing/` when used in any of the library's APIs, and any mocks that match one will match the other. As mentioned above, URL normalization happens _before_ any matching is attempted.
-
-## Request instances are normalized early to [url, options] pairs
-
-The `fetch` api can be called with either a `Request` object or a `url` with an `options` object. To make the library easier to maintain and its APIs - in particular the call inspecting APIs such as `called()` - agnostic as to how `fetch` was called, Request objects are normalised early into `url`, `options` pairs. So the fetch args returned by `calls()` will always be of the form `[url, options]` even if `fetch` was called with a `Request` object. The original `Request` object is still provided as a third item in the args array in case it is needed.
 
 ## Exporting as property
 
@@ -106,3 +84,5 @@ Most of the methods below accept two parameters, `(filter, options)`
     - If `filter` is the name of a named route, all calls handled by that route are returned
     - If `filter` is equal to `matcher` or `matcher.toString()` for a route, all calls handled by that route are returned
     - `filter` is executed using the same execution plan as matchers used in `.mock()`. Any calls matched by it will be returned. If `options` is also passed this is used in a similar way to the options used by `mock()`. Alternatively, `options` can be a string specifying a `method` to filter by
+
+

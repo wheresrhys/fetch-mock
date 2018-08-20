@@ -3,6 +3,7 @@
 // consider case where multiple routes match.. make sure only one matcher logs calls
 const chai = require('chai');
 const expect = chai.expect;
+const sinon = require('sinon')
 
 module.exports = fetchMock => {
 	describe('inspecting', () => {
@@ -20,6 +21,66 @@ module.exports = fetchMock => {
 				expect(fetchMock.UNMATCHED).to.equal(false);
 			});
 		});
+
+		describe.only('api', () => {
+			describe('signatures', () => {
+				before(() => {
+					fm
+						.mock('http://it.at.here/', 200)
+						.mock('http://it.at.there/', 200)
+					return fm.fetchHandler('http://it.at.here/', {method: 'post'})
+				})
+				after(() => fm.restore())
+				it('called() returns boolean', () => {
+					expect(fm.called('http://it.at.here/')).to.be.true;
+					expect(fm.called('http://it.at.there/')).to.be.false;
+				});
+				it('calls() returns array of calls', () => {
+					expect(fm.calls('http://it.at.here/')).to.eql([['http://it.at.here/', {method: 'post'}]]);
+					expect(fm.calls('http://it.at.there/')).to.eql([]);
+				});
+				it('lastCall() returns array of parameters', () => {
+					expect(fm.lastCall('http://it.at.here/')).to.eql(['http://it.at.here/', {method: 'post'}]);
+					expect(fm.lastCall('http://it.at.there/')).to.be.undefined;
+				});
+				it('lastUrl() returns string', () => {
+					expect(fm.lastUrl('http://it.at.here/')).to.equal('http://it.at.here/');
+					expect(fm.lastUrl('http://it.at.there/')).to.be.undefined;
+				});
+				it('lastOptions() returns object', () => {
+					expect(fm.lastOptions('http://it.at.here/')).to.eql({method: 'post'});
+					expect(fm.lastOptions('http://it.at.there/')).to.be.undefined;
+				});
+			})
+			describe('filtering', () => {
+				beforeEach(() => {
+					sinon.stub(fm, 'filterCalls').returns([]);
+				})
+				afterEach(() => {
+					fm.filterCalls.restore()
+				})
+				it('called() uses the internal filtering method', () => {
+					fm.called('name', {an: 'option'})
+					expect(fm.filterCalls.calledWith('name', {an: 'option'})).to.be.true
+				});
+				it('calls() uses the internal filtering method', () => {
+					fm.calls('name', {an: 'option'})
+					expect(fm.filterCalls.calledWith('name', {an: 'option'})).to.be.true
+				});
+				it('lastCall() uses the internal filtering method', () => {
+					fm.lastCall('name', {an: 'option'})
+					expect(fm.filterCalls.calledWith('name', {an: 'option'})).to.be.true
+				});
+				it('lastUrl() uses the internal filtering method', () => {
+					fm.lastUrl('name', {an: 'option'})
+					expect(fm.filterCalls.calledWith('name', {an: 'option'})).to.be.true
+				});
+				it('lastOptions() uses the internal filtering method', () => {
+					fm.lastOptions('name', {an: 'option'})
+					expect(fm.filterCalls.calledWith('name', {an: 'option'})).to.be.true
+				});
+			})
+		})
 
 		describe('filtering', () => {
 			before(async () => {
@@ -104,7 +165,7 @@ module.exports = fetchMock => {
 			});
 
 			describe('advanced filters', () => {
-				it('filter by method', async () => {
+				it('filter by method as string', async () => {
 					expect(fm.called('http://it.at.here/', 'post')).to.be.false;
 					expect(fm.calls('http://it.at.here/', 'post').length).to.equal(0);
 					expect(fm.lastCall('http://it.at.here/', 'post')).not.to.exist;
@@ -122,6 +183,10 @@ module.exports = fetchMock => {
 					);
 					expect(fm.calls('http://it.at.here/', 'post').length).to.equal(2);
 				});
+			});
+
+			it('filter by query string', async () => {
+
 			});
 		});
 

@@ -1,45 +1,17 @@
 const ResponseBuilder = require('./response-builder');
-const requestUtils = require('./request-utils');
+
 const FetchMock = {};
 
-const normalizeRequest = (url, options, Request) => {
-	if (Request.prototype.isPrototypeOf(url)) {
-		const obj = {
-			url: requestUtils.normalizeUrl(url.url),
-			opts: {
-				method: url.method
-			},
-			request: url
-		};
+FetchMock.fetchHandler = function(url, opts) {
+	const response = this.executeRouter(url, opts);
 
-		const headers = requestUtils.headers.toArray(url.headers);
-
-		if (headers.length) {
-			obj.opts.headers = requestUtils.headers.zip(headers);
-		}
-		return obj;
-	} else if (
-		typeof url === 'string' ||
-		// horrible URL object duck-typing
-		(typeof url === 'object' && 'href' in url)
-	) {
-		return {
-			url: requestUtils.normalizeUrl(url),
-			opts: options
-		};
-	} else if (typeof url === 'object') {
-		throw new TypeError(
-			'fetch-mock: Unrecognised Request object. Read the Config and Installation sections of the docs'
-		);
-	} else {
-		throw new TypeError('fetch-mock: Invalid arguments passed to fetch');
+	// If the response says to throw an error, throw it
+	// It only makes sense to do this before doing any async stuff below
+	// as the async stuff swallows catastrophic errors in a promise
+	// Type checking is to deal with sinon spies having a throws property :-0
+	if (response.throws && typeof response !== 'function') {
+		throw response.throws;
 	}
-};
-
-FetchMock.fetchHandler = function(url, opts, request) {
-	({ url, opts, request } = normalizeRequest(url, opts, this.config.Request));
-
-	const response = this.executeRouter(url, opts, request);
 
 	// this is used to power the .flush() method
 	let done;
@@ -56,12 +28,12 @@ FetchMock.fetchHandler = function(url, opts, request) {
 
 FetchMock.fetchHandler.isMock = true;
 
-FetchMock.executeRouter = function(url, opts, request) {
+FetchMock.executeRouter = function(url, opts) {
 	if (this.config.fallbackToNetwork === 'always') {
 		return this.getNativeFetch();
 	}
 
-	const response = this.router(url, opts, request);
+	const response = this.router(url, opts);
 
 	if (response) {
 		return response;
@@ -71,7 +43,7 @@ FetchMock.executeRouter = function(url, opts, request) {
 		console.warn(`Unmatched ${opts && opts.method || 'GET'} to ${url}`); // eslint-disable-line
 	}
 
-	this.push(null, request ? [url, opts, request] : [url, opts]);
+	this.push(null, [url, opts]);
 
 	if (this.fallbackResponse) {
 		return this.fallbackResponse;
@@ -79,7 +51,7 @@ FetchMock.executeRouter = function(url, opts, request) {
 
 	if (!this.config.fallbackToNetwork) {
 		throw new Error(
-			`fetch-mock: No fallback response defined for ${(opts && opts.method) ||
+			`No fallback response defined for ${(opts && opts.method) ||
 				'GET'} to ${url}`
 		);
 	}
@@ -107,12 +79,6 @@ FetchMock.generateResponse = async function(response, url, opts) {
 		}
 	}
 
-	// If the response says to throw an error, throw it
-	// Type checking is to deal with sinon spies having a throws property :-0
-	if (response.throws && typeof response !== 'function') {
-		throw response.throws;
-	}
-
 	// If the response is a pre-made Response, respond with it
 	if (this.config.Response.prototype.isPrototypeOf(response)) {
 		return response;
@@ -122,11 +88,11 @@ FetchMock.generateResponse = async function(response, url, opts) {
 	return new ResponseBuilder(url, response, this).exec();
 };
 
-FetchMock.router = function(url, opts, request) {
+FetchMock.router = function(url, opts) {
 	const route = this.routes.find(route => route.matcher(url, opts));
 
 	if (route) {
-		this.push(route.name, request ? [url, opts, request] : [url, opts]);
+		this.push(route.name, [url, opts]);
 		return route.response;
 	}
 };
@@ -135,7 +101,7 @@ FetchMock.getNativeFetch = function() {
 	const func = this.realFetch || (this.isSandbox && this.config.fetch);
 	if (!func) {
 		throw new Error(
-			'fetch-mock: Falling back to network only available on gloabl fetch-mock, or by setting config.fetch on sandboxed fetch-mock'
+			'Falling back to network only available on gloabl fetch-mock, or by setting config.fetch on sandboxed fetch-mock'
 		);
 	}
 	return func;

@@ -16,7 +16,7 @@ module.exports = karma =>
 		},
 		webpack: {
 			mode: 'development',
-			devtool: 'inline-source-map',
+			devtool: 'source-map',
 			module: {
 				rules: [
 					{

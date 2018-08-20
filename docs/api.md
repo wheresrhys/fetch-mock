@@ -20,13 +20,11 @@ Replaces `fetch` with a stub which records its calls, grouped by route, and opti
         * `*` to match any url
         * `begin:http://www.site.com/` to match urls beginning with a string
         * `end:.jpg` to match urls ending with a string
-        * `path:/posts/2018/7/3` to match urls with a given path
         * `glob:http://*.*` to match glob patterns
         * `express:/user/:user` to match [express style paths](https://www.npmjs.com/package/path-to-regexp)
     * `RegExp`: A regular  expression to test the url against
     * `Function(url, opts)`: A function (returning a Boolean) that is passed the url and opts `fetch()` is called with (or, if `fetch()` was called with one, the `Request` instance)
 
-_Note that if using `end:` or an exact url matcher, `fetch-mock` ([for good reason](https://url.spec.whatwg.org/#url-equivalence)) is unable to distinguish whether URLs without a path end in a trailing slash or not i.e. `http://thing` is treated the same as `http://thing/`_
 * `response`: Configures the http response returned by the mock. Can take any of the following values (or be a `Promise` for any of them, enabling full control when testing race conditions etc.)
     * `Response`: A `Response` instance - will be used unaltered
     * `number`: Creates a response with this status
@@ -35,7 +33,7 @@ _Note that if using `end:` or an exact url matcher, `fetch-mock` ([for good reas
         * `body`: Set the response body (`string` or `object`)
         * `status`: Set the response status (default `200`)
         * `headers`: Set the response headers. (`object`)
-        * `throws`: If this property is present then fetch returns a `Promise` rejected with the value of `throws`
+        * `throws`: If this property is present then a the value of `throws` is thrown
         * `sendAsJson`: This property determines whether or not the request body should be converted to `JSON` before being sent (defaults to `true`).
         * `includeContentLength`: Set this property to true to automatically add the `content-length` header (defaults to `true`).
         * `redirectUrl`: *experimental* the url the response should be from (to imitate followed redirects - will set `redirected: true` on the response)
@@ -94,15 +92,15 @@ Chainable method that clears all data recorded for `fetch()`'s calls. *It will n
 ## Inspecting how `fetch()` has been called
 
 ### Filtering
-Most of the methods below accept two parameters, `(filter, options)`
-- `filter` Enables filtering fetch calls for the most commonly use cases. The behaviour can be counterintuitive. The following rules, applied in the order they are described, are used to try to retrieve calls. If any rule retrieves no calls the next rule will be tried.
-    - If `filter` is `undefined` all calls, matched _and_ unmatched, are returned
-    - If `filter` is `true` (or `fetchMock.MATCHED`) all calls that matched some route are returned
-    - If `filter` is `false` (or `fetchMock.UNMATCHED`) all calls that did not match any route are returned (when `.spy()`, `catch()` or `config.fallThroughToNetwork` were used to prevent errors being thrown)
-    - If `filter` is the name of a named route, all calls handled by that route are returned
-    - If `filter` is equal to `matcher` or `matcher.toString()` for a route, all calls handled by that route are returned
-    - `filter` is executed using the same execution plan as matchers used in `.mock()`. Any calls matched by it will be returned. If `options` is also passed this is used in a similar way to the options used by `mock()`. Alternatively, `options` can be a string specifying a `method` to filter by
-
+Most of the methods below accept two parameters, `(filter, method)`
+- `filter` Enables filtering fetch calls for the most commonly use cases. It can be:
+    - the name of a route
+    - The value of `matcher` or `matcher.toString()` for any unnamed route. You _can_ pass in the original regex or function as a matcher, but they will be converted to strings and used to look up values in fetch-mock's internal maps of calls, _not_ used as regexes or functions executed on teh url
+    - If `filter` is a string, and it does not match any routes, it is asumed the string is a url, and calls to `fetch` made with that url are returned
+    - `true` for matched calls only
+    - `false` for unmatched calls only
+    - `undefined` for all calls to fetch
+- `method` A http method to filter by
 
 #### `called(filter, method)`
 Returns a Boolean indicating whether fetch was called and a route was matched. If `filter` is specified it only returns `true` if that particular route was matched.
@@ -120,10 +118,10 @@ Returns the arguments for the last matched call to fetch
 Returns the url for the last matched call to fetch. When `fetch` was last called using a `Request` instance, the url will be extracted from this
 
 #### `lastOptions(filter, method)`
-Returns the options for the last matched call to fetch. When `fetch` was last called using a `Request` instance, a set of `options` inferred from the `Request` will be returned
+Returns the options for the last matched call to fetch. When `fetch` was last called using a `Request` instance, the entire `Request` instance will be returned
 
 #### `flush()`
-Returns a `Promise` that resolves once all fetches handled by fetch-mock have resolved. Pass in `true` to wait for all response methods (`res.json()`, `res.text()`, etc.) to resolve too. Useful for testing code that uses `fetch` but doesn't return a promise.
+Returns a `Promise` that resolves once all fetches handled by fetch-mock have resolved. Useful for testing code that uses `fetch` but doesn't return a promise.
 
 ## Config
 

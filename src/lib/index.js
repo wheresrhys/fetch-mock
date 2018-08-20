@@ -12,7 +12,7 @@ FetchMock.config = {
 	overwriteRoutes: undefined
 };
 
-FetchMock.createInstance = function() {
+FetchMock.createInstance = function(isLibrary) {
 	const instance = Object.create(FetchMock);
 	instance._uncompiledRoutes = (this._uncompiledRoutes || []).slice();
 	instance.routes = instance._uncompiledRoutes.map(config =>
@@ -24,6 +24,13 @@ FetchMock.createInstance = function() {
 	instance._allCalls = [];
 	instance._holdingPromises = [];
 	instance.bindMethods();
+	if (isLibrary) {
+		Object.assign(instance, {
+			MATCHED: true,
+			UNMATCHED: false,
+			fetchMock: instance
+		});
+	}
 	return instance;
 };
 

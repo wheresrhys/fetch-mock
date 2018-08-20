@@ -20,15 +20,14 @@ module.exports = fetchMock => {
 			});
 
 			it('should error on invalid statuses', async () => {
-				fm.mock('http://foo.com', { status: 'not number' });
+				fm.mock('http://foo.com/', { status: 'not number' });
 				try {
 					await fm.fetchHandler('http://foo.com');
 					expect(true).to.be.false;
 				} catch (err) {
-					expect(err.message).to
-						.equal(`Invalid status not number passed on response object.
-To respond with a JSON object that has status as a property assign the object to body
-e.g. {"body": {"status: "registered"}}`);
+					expect(err.message).to.match(
+						/Invalid status not number passed on response object/
+					);
 				}
 			});
 
@@ -83,11 +82,6 @@ e.g. {"body": {"status: "registered"}}`);
 					fm.mock('http://it.at.there/', { headers: {} });
 					const res = await fm.fetchHandler('http://it.at.there/');
 					expect(res.headers.get('content-type')).not.to.exist;
-				});
-
-				it('throw `throws` property exists', async () => {
-					fm.mock('http://it.at.there/', { throws: 'exists' });
-					expect(() => fm.fetchHandler('http://it.at.there/')).to.throw();
 				});
 
 				it('not convert if `status` property exists', async () => {
@@ -240,19 +234,6 @@ e.g. {"body": {"status: "registered"}}`);
 				expect(await res.text()).to.equal('http://it.at.there/');
 			});
 
-			it('response that throws', async () => {
-				fm.mock('http://it.at.there/', {
-					throws: 'Oh no'
-				});
-
-				try {
-					fm.fetchHandler('http://it.at.there/');
-					expect(true).to.be.false;
-				} catch (err) {
-					expect(err).to.equal('Oh no');
-				}
-			});
-
 			it('Response', async () => {
 				fm.mock(
 					'http://it.at.there/',
@@ -280,6 +261,34 @@ e.g. {"body": {"status: "registered"}}`);
 				);
 				const res = await fm.fetchHandler('http://it.at.there/');
 				expect(res.status).to.equal(200);
+			});
+
+			describe('rejecting', () => {
+				it('reject if object with `throws` property', async () => {
+					fm.mock('http://it.at.there/', { throws: 'as expected' });
+
+					return fm
+						.fetchHandler('http://it.at.there/')
+						.then(() => {
+							throw 'not as expected';
+						})
+						.catch(err => {
+							expect(err).to.equal('as expected');
+						});
+				});
+
+				it('reject if function that returns object with `throws` property', async () => {
+					fm.mock('http://it.at.there/', () => ({ throws: 'as expected' }));
+
+					return fm
+						.fetchHandler('http://it.at.there/')
+						.then(() => {
+							throw 'not as expected';
+						})
+						.catch(err => {
+							expect(err).to.equal('as expected');
+						});
+				});
 			});
 		});
 	});

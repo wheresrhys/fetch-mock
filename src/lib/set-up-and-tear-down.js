@@ -16,7 +16,7 @@ FetchMock.mock = function(matcher, response, options = {}) {
 	} else if (matcher && matcher.matcher) {
 		route = matcher;
 	} else {
-		throw new Error('Invalid parameters passed to fetch-mock');
+		throw new Error('fetch-mock: Invalid parameters passed to fetch-mock');
 	}
 
 	this.addRoute(route);
@@ -53,7 +53,7 @@ FetchMock.addRoute = function(uncompiledRoute) {
 		clashes.some(existingRoute => !route.method || methodsMatch(existingRoute))
 	) {
 		throw new Error(
-			'Adding route with same name as existing route. See `overwriteRoutes` option.'
+			'fetch-mock: Adding route with same name as existing route. See `overwriteRoutes` option.'
 		);
 	}
 

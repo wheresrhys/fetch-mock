@@ -46,6 +46,7 @@ _Note that if using `end:` or an exact url matcher, `fetch-mock` ([for good reas
   - `method`: http method to match
   - `headers`: key/value map of headers to match
   - `query`: key/value map of query strings to match, in any order
+  - `params`: when the `express:` keyword is used in a string matcher, a key/value map `params` can be passed here, to match the parameters extracted by express path matching
   - `matcher`: as specified above
   - `response`: as specified above
   - `repeat`: An integer, `n`, limiting the number of times the matcher can be used. If the route has already been called `n` times the route will be ignored and the call to `fetch()` will fall through to be handled by any other routes defined (which may eventually result in an error if nothing matches it)
@@ -106,12 +107,13 @@ _Note that `restore()`, `reset()` and `resetHistory()` are all bound to fetchMoc
 Most of the methods below accept two parameters, `(filter, options)`
 
 - `filter` Enables filtering fetch calls for the most commonly use cases. The behaviour can be counterintuitive. The following rules, applied in the order they are described, are used to try to retrieve calls. If any rule retrieves no calls the next rule will be tried.
+  - If `options` is defined (it can even be an empty object), `filter` is executed using the same execution plan as matchers used in `.mock()`. Any calls matched by it will be returned. `options` will be used in a similar way to the options used by `mock()`. `options` may be a string specifying a `method` to filter by
   - If `filter` is `undefined` all calls, matched _and_ unmatched, are returned
   - If `filter` is `true` (or `fetchMock.MATCHED`) all calls that matched some route are returned
   - If `filter` is `false` (or `fetchMock.UNMATCHED`) all calls that did not match any route are returned (when `.spy()`, `catch()` or `config.fallThroughToNetwork` were used to prevent errors being thrown)
   - If `filter` is the name of a named route, all calls handled by that route are returned
   - If `filter` is equal to `matcher` or `matcher.toString()` for a route, all calls handled by that route are returned
-  - `filter` is executed using the same execution plan as matchers used in `.mock()`. Any calls matched by it will be returned. If `options` is also passed this is used in a similar way to the options used by `mock()`. Alternatively, `options` can be a string specifying a `method` to filter by
+  - `filter` is executed using the same execution plan as matchers used in `.mock()`. Any calls matched by it will be returned.
 
 #### `called(filter, method)`
 

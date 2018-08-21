@@ -25,7 +25,7 @@ fetchMock.restore();
 
 ---
 
-**Version 7 is in alpha. Please consider trying it out. `npm install fetch-mock@7.0.0-alpha.2`**
+**Version 7 is in alpha. Please consider trying it out. `npm install fetch-mock@7.0.0-alpha.3`**
 
 ---
 
@@ -50,7 +50,7 @@ See the [project website](http://www.wheresrhys.co.uk/fetch-mock/)
 
 ## License
 
-fetch-mock is licensed under the [MIT](https://github.com/wheresrhys/fetch-mock/blob/master/LICENSE) license.  
+fetch-mock is licensed under the [MIT](https://github.com/wheresrhys/fetch-mock/blob/master/LICENSE) license.
 Copyright © 2018, Rhys Evans
 
 ## Housekeeping

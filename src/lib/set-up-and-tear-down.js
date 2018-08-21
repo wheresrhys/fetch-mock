@@ -135,6 +135,4 @@ FetchMock.restore = FetchMock.reset = function() {
 	return this;
 };
 
-
-
 module.exports = FetchMock;

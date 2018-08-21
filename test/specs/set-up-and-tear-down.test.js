@@ -156,8 +156,8 @@ module.exports = fetchMock => {
 			});
 
 			it('restore is an alias for reset', () => {
-				expect(fm.restore).to.equal(fm.reset)
-			})
+				expect(fm.restore).to.equal(fm.reset);
+			});
 		});
 
 		describe('resetBehavior', () => {

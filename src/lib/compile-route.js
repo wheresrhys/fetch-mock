@@ -123,8 +123,8 @@ const generateMatcher = route => {
 		getUrlMatcher(route)
 	].filter(matcher => !!matcher);
 
-	return (url, options = {}) => {
-		return matchers.every(matcher => matcher(url, options));
+	return (url, options = {}, request) => {
+		return matchers.every(matcher => matcher(url, options, request));
 	};
 };
 

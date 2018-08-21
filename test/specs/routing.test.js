@@ -157,6 +157,17 @@ module.exports = fetchMock => {
 				expect(fm.calls(true).length).to.equal(1);
 			});
 
+			it('match using custom function using request body', async () => {
+				fm.mock((url, opts) => opts.body === 'a string', 200).catch();
+				await fm.fetchHandler('http://it.at.there/logged-in');
+				expect(fm.calls(true).length).to.equal(0);
+				await fm.fetchHandler('http://it.at.there/logged-in', {
+					method: 'post',
+					body: 'a string'
+				});
+				expect(fm.calls(true).length).to.equal(1);
+			});
+
 			it('match using custom function with Request', async () => {
 				fm.mock((url, options) => {
 					return url.indexOf('logged-in') > -1 && options.headers.authorized;
@@ -165,6 +176,32 @@ module.exports = fetchMock => {
 				await fm.fetchHandler(
 					new fm.config.Request('http://it.at.there/logged-in', {
 						headers: { authorized: 'true' }
+					})
+				);
+				expect(fm.calls(true).length).to.equal(1);
+			});
+
+			it('match using custom function with Request with unusual options', async () => {
+				// as node-fetch does not try to emulate all the WHATWG standards, we can't check for the
+				// same properties in the browser and nodejs
+				const propertyToCheck = new fm.config.Request('http://example.com')
+					.cache
+					? 'cache'
+					: 'timeout';
+				const valueToSet = propertyToCheck === 'cache' ? 'force-cache' : 2000;
+
+				fm.mock(
+					(url, options, request) => request[propertyToCheck] === valueToSet,
+					200
+				).catch();
+
+				await fm.fetchHandler(
+					new fm.config.Request('http://it.at.there/logged-in')
+				);
+				expect(fm.calls(true).length).to.equal(0);
+				await fm.fetchHandler(
+					new fm.config.Request('http://it.at.there/logged-in', {
+						[propertyToCheck]: valueToSet
 					})
 				);
 				expect(fm.calls(true).length).to.equal(1);

@@ -36,8 +36,9 @@ FetchMock.createInstance = function(isLibrary) {
 
 FetchMock.bindMethods = function() {
 	this.fetchHandler = FetchMock.fetchHandler.bind(this);
-	this.restore = FetchMock.restore.bind(this);
-	this.reset = FetchMock.reset.bind(this);
+	this.reset = this.restore = FetchMock.reset.bind(this);
+	this.resetHistory = FetchMock.resetHistory.bind(this);
+	this.resetBehavior = FetchMock.resetBehavior.bind(this);
 };
 
 FetchMock.sandbox = function() {

@@ -89,15 +89,15 @@ To use `.spy()` on a sandboxed `fetchMock`, `fetchMock.config.fetch` must be set
 
 Existing sandboxed `fetchMock`s can also have `.sandbox()` called on them, thus building mocks that inherit some settings from a parent mock
 
-#### `restore()`
+#### `restore()/reset()`
 
 Chainable method that restores `fetch()` to its unstubbed state and clears all data recorded for its calls.
 
-#### `reset()`
+#### `resetHistory()`
 
 Chainable method that clears all data recorded for `fetch()`'s calls. _It will not restore fetch to its default implementation_
 
-_Note that `restore()` and `reset()` are both bound to fetchMock, and can be used directly as callbacks e.g. `afterEach(fetchMock.restore)` will work just fine. There is no need for `afterEach(function () {fetchMock.restore()})`_
+_Note that `restore()`, `reset()` and `resetHistory()` are all bound to fetchMock, and can be used directly as callbacks e.g. `afterEach(fetchMock.reset)` will work just fine. There is no need for `afterEach(function () {fetchMock.reset()})`_
 
 ## Inspecting how `fetch()` has been called
 

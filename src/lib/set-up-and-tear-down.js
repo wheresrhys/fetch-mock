@@ -110,7 +110,7 @@ FetchMock.once = function(matcher, response, options = {}) {
 	};
 });
 
-FetchMock.restore = function() {
+FetchMock.resetBehavior = function() {
 	if (this.realFetch) {
 		this.global.fetch = this.realFetch;
 		this.realFetch = undefined;
@@ -118,15 +118,20 @@ FetchMock.restore = function() {
 	this.fallbackResponse = undefined;
 	this.routes = [];
 	this._uncompiledRoutes = [];
-	this.reset();
 	return this;
 };
 
-FetchMock.reset = function() {
+FetchMock.resetHistory = function() {
 	this._calls = {};
 	this._allCalls = [];
 	this._holdingPromises = [];
 	this.routes.forEach(route => route.reset && route.reset());
+	return this;
+};
+
+FetchMock.restore = FetchMock.reset = function() {
+	this.resetBehavior();
+	this.resetHistory();
 	return this;
 };
 

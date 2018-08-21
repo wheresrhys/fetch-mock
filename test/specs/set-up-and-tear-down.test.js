@@ -120,7 +120,7 @@ module.exports = fetchMock => {
 			});
 		});
 
-		describe('restore', () => {
+		describe('reset', () => {
 			it('is chainable', () => {
 				expect(fm.restore()).to.equal(fm);
 			});
@@ -136,11 +136,11 @@ module.exports = fetchMock => {
 				expect(() => fm.restore()).not.to.throw();
 			});
 
-			it('calls reset', () => {
-				sinon.spy(fm, 'reset');
+			it('calls resetHistory', () => {
+				sinon.spy(fm, 'resetHistory');
 				fm.restore();
-				expect(fm.reset).calledOnce;
-				fm.reset.restore();
+				expect(fm.resetHistory).calledOnce;
+				fm.resetHistory.restore();
 			});
 
 			it('removes all routing', () => {
@@ -154,22 +154,55 @@ module.exports = fetchMock => {
 				expect(fm.routes.length).to.equal(0);
 				expect(fm.fallbackResponse).not.to.exist;
 			});
+
+			it('restore is an alias for reset', () => {
+				expect(fm.restore).to.equal(fm.reset);
+			});
 		});
 
-		describe('reset', () => {
+		describe('resetBehavior', () => {
 			it('is chainable', () => {
-				expect(fm.reset()).to.equal(fm);
+				expect(fm.resetBehavior()).to.equal(fm);
 			});
 
 			it("has 'this'", () => {
-				sinon.spy(fm, 'reset');
-				fm.reset();
-				expect(fm.reset.lastCall.thisValue).to.equal(fm);
-				fm.reset.restore();
+				sinon.spy(fm, 'resetBehavior');
+				fm.resetBehavior();
+				expect(fm.resetBehavior.lastCall.thisValue).to.equal(fm);
+				fm.resetBehavior.restore();
 			});
 
 			it('can be called even if no mocks set', () => {
-				expect(() => fm.reset()).not.to.throw();
+				expect(() => fm.resetBehavior()).not.to.throw();
+			});
+
+			it('removes all routing', () => {
+				fm.mock(/a/, 200).catch(200);
+
+				expect(fm.routes.length).to.equal(1);
+				expect(fm.fallbackResponse).to.exist;
+
+				fm.resetBehavior();
+
+				expect(fm.routes.length).to.equal(0);
+				expect(fm.fallbackResponse).not.to.exist;
+			});
+		});
+
+		describe('resetHistory', () => {
+			it('is chainable', () => {
+				expect(fm.resetHistory()).to.equal(fm);
+			});
+
+			it("has 'this'", () => {
+				sinon.spy(fm, 'resetHistory');
+				fm.resetHistory();
+				expect(fm.resetHistory.lastCall.thisValue).to.equal(fm);
+				fm.resetHistory.restore();
+			});
+
+			it('can be called even if no mocks set', () => {
+				expect(() => fm.resetHistory()).not.to.throw();
 			});
 
 			it('resets call history', async () => {
@@ -178,7 +211,7 @@ module.exports = fetchMock => {
 				await fm.fetchHandler('b');
 				expect(fm.called()).to.be.true;
 
-				fm.reset();
+				fm.resetHistory();
 				expect(fm.called()).to.be.false;
 				expect(fm.called('/a/')).to.be.false;
 				expect(fm.calls('/a/').length).to.equal(0);

@@ -25,6 +25,10 @@ fetchMock.restore();
 
 ---
 
+**Version 7 is in alpha. Please consider trying it out. `npm install fetch-mock@7.0.0-alpha.2`**
+
+---
+
 **I devote a lot of time to maintaining fetch-mock for free. I don't ask for payment, but am raising money for a refugee charity - <a href="https://www.justgiving.com/fundraising/rhys-evans-walk">please consider donating</a>**
 
 ---

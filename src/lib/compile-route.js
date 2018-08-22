@@ -52,20 +52,26 @@ const getQueryStringMatcher = ({ query: expectedQuery }) => {
 	};
 };
 
-const getParamsMatcher = ({params: expectedParams, matcher}) => {
+const getParamsMatcher = ({ params: expectedParams, matcher }) => {
 	if (!/express:/.test(matcher)) {
-		throw new Error('fetch-mock: matching on params is only possible when using an express: matcher')
+		throw new Error(
+			'fetch-mock: matching on params is only possible when using an express: matcher'
+		);
 	}
 	const expectedKeys = Object.keys(expectedParams);
 	const keys = [];
-	const re = pathToRegexp(matcher.replace(/^express:/, ''), keys)
+	const re = pathToRegexp(matcher.replace(/^express:/, ''), keys);
 	return url => {
 		const vals = re.exec(url) || [];
 		vals.shift();
-		const params = keys.reduce((map, {name}, i) => vals[i] ? Object.assign(map, {[name]: vals[i]}) : map, {})
+		const params = keys.reduce(
+			(map, { name }, i) =>
+				vals[i] ? Object.assign(map, { [name]: vals[i] }) : map,
+			{}
+		);
 		return expectedKeys.every(key => params[key] === expectedParams[key]);
-	}
-}
+	};
+};
 
 const getUrlMatcher = route => {
 	const { matcher, query } = route;

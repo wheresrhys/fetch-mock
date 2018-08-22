@@ -400,7 +400,6 @@ module.exports = fetchMock => {
 				});
 			});
 
-
 			describe('methods', () => {
 				it('match any method by default', async () => {
 					fm.mock('http://it.at.there/', 200).catch();

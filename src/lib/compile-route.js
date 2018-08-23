@@ -1,6 +1,6 @@
 const glob = require('glob-to-regexp');
 const URL = require('whatwg-url');
-const express = require('path-to-regexp');
+const pathToRegexp = require('path-to-regexp');
 const querystring = require('querystring');
 const {
 	headers: headerUtils,
@@ -20,7 +20,7 @@ const stringMatchers = {
 		return url => urlRX.test(url);
 	},
 	express: targetString => {
-		const urlRX = express(targetString);
+		const urlRX = pathToRegexp(targetString);
 		return url => urlRX.test(url);
 	},
 	path: targetString => url => getPath(url) === targetString
@@ -49,6 +49,27 @@ const getQueryStringMatcher = ({ query: expectedQuery }) => {
 	return url => {
 		const query = querystring.parse(URL.parseURL(url).query);
 		return keys.every(key => query[key] === expectedQuery[key]);
+	};
+};
+
+const getParamsMatcher = ({ params: expectedParams, matcher }) => {
+	if (!/express:/.test(matcher)) {
+		throw new Error(
+			'fetch-mock: matching on params is only possible when using an express: matcher'
+		);
+	}
+	const expectedKeys = Object.keys(expectedParams);
+	const keys = [];
+	const re = pathToRegexp(matcher.replace(/^express:/, ''), keys);
+	return url => {
+		const vals = re.exec(url) || [];
+		vals.shift();
+		const params = keys.reduce(
+			(map, { name }, i) =>
+				vals[i] ? Object.assign(map, { [name]: vals[i] }) : map,
+			{}
+		);
+		return expectedKeys.every(key => params[key] === expectedParams[key]);
 	};
 };
 
@@ -120,6 +141,7 @@ const generateMatcher = route => {
 		route.query && getQueryStringMatcher(route),
 		route.method && getMethodMatcher(route),
 		route.headers && getHeaderMatcher(route),
+		route.params && getParamsMatcher(route),
 		getUrlMatcher(route)
 	].filter(matcher => !!matcher);
 

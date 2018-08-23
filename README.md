@@ -25,7 +25,7 @@ fetchMock.restore();
 
 ---
 
-**Version 7 is in alpha. Please consider trying it out. `npm install fetch-mock@7.0.0-alpha.3`**
+**Version 7 is in alpha. Please consider trying it out. `npm install fetch-mock@7.0.0-alpha.4`**
 
 ---
 

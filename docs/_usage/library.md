@@ -20,4 +20,4 @@ content_markdown: |-
   // pass myMock in to your application code, instead of fetch, run it, then...
   expect(myMock.called('/home')).to.be.true;
   ```
---
+---

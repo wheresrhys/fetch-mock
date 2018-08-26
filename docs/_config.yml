@@ -13,7 +13,7 @@ permalink: pretty
 timezone: Etc/UTC
 
 collections:
-  documentation:
+  general:
     title: General documentation
     position: 1
   api:

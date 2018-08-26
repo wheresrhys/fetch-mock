@@ -14,7 +14,7 @@ content_markdown: |-
 
   The `sandbox()` method returns a function that can be used as a drop-in replacement for `fetch`, and can be passed into your choice of mocking library. The function returned by `sandbox()` supports the full fetch-mock api so once generated it can be worked with as if it were the original `fetch-mock` object, e.g.
 
-  ```
+  ```js
   const fetchMock = require('fetch-mock');
   const myMock = fetchMock.sandbox().mock('/home', 200);
   // pass myMock in to your application code, instead of fetch, run it, then...

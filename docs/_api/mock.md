@@ -16,22 +16,7 @@ content_markdown: |-
 
 
 
-right_code_blocks:
-  - title: Example
-    language: javascript
-    code_block: |-
-      fetchMock
-        .mock('begin:http://it.at.here/api', 200, {
-          headers: {
-            authorization: 'Basic dummy-token'
-          }
-        })
-        .mock('begin:http://it.at.here/api', 403)
 
-      callApi('/endpoint', 'dummy-token')
-        .then(res => {
-          expect(res.status).to.equal(200)
-        })
 
 left_code_blocks:
   - code_block: |-
@@ -63,6 +48,21 @@ left_code_blocks:
         .mock('*', new Promise(res => setTimeout(res, 1000, 404)))
     title: Responses
     language: javascript
+  - title: End to end example
+    language: javascript
+    code_block: |-
+      fetchMock
+        .mock('begin:http://it.at.here/api', 200, {
+          headers: {
+            authorization: 'Basic dummy-token'
+          }
+        })
+        .mock('begin:http://it.at.here/api', 403)
+
+      callApi('/endpoint', 'dummy-token')
+        .then(res => {
+          expect(res.status).to.equal(200)
+        })
 ---
 
 

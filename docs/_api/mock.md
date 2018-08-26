@@ -4,17 +4,15 @@ position: 1.1
 description: "Replaces `fetch` with a stub which records its calls and returns a `Response` instance."
 parameters:
   - name: matcher
-    content: "`String`|`Regex`|`Function`: Rule for matching calls to `fetch`"
+    content: "String|Regex|Function: Rule for matching calls to `fetch`"
   - name: response
-    content: "`String`|`Object`|`Function`|`Promise`: Response to send matched calls"
+    content: "String|Object|Function|Promise: Response to send matched calls"
   - name: options
-    content: "`Object`: More options configuring [mainly] matching behaviour"
+    content: "Object: More options configuring [mainly] matching behaviour"
 content_markdown: |-
 
-  Alternatively a single parameters, `options`, and `Object` with `matcher`, `response` and other options defined on it, can be passed
+  Alternatively a single parameter, `options`, an `Object` with `matcher`, `response` and other options defined, can be passed
   {: .info}
-
-
 
 left_code_blocks:
   - code_block: |-
@@ -29,14 +27,14 @@ left_code_blocks:
     language: javascript
 right_code_blocks:
   - code_block: |-
-      {
-        "id": 3,
-        "title": "The Book Thief",
-        "score": 4.3,
-        "dateAdded": "5/1/2015"
-      }
-    title: Response
-    language: json
+      fetchMock
+        .mock('http://it.at.there/route')
+        .mock('begin:http://it')
+        .mock('end:there/route')
+        .mock('path:/route')
+        .mock('*')
+    title: Strings
+    language: javascript
   - code_block: |-
       {
         "error": true,

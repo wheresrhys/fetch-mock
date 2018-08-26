@@ -14,18 +14,24 @@ content_markdown: |-
   Alternatively a single parameter, `options`, an `Object` with `matcher`, `response` and other options defined, can be passed
   {: .info}
 
-left_code_blocks:
-  - code_block: |-
-      $.post("http://api.myapp.com/books/", {
-        "token": "YOUR_APP_KEY",
-        "title": "The Book Thief",
-        "score": 4.3
-      }, function(data) {
-        alert(data);
-      });
-    title: jQuery
-    language: javascript
 right_code_blocks:
+  - title: Example
+    language: javascript
+    code_block: |-
+      fetchMock
+        .mock('begin:http://it.at.here/api', 200, {
+          headers: {
+            authorization: 'Basic dummy-token'
+          }
+        })
+        .mock('begin:http://it.at.here/api', 403)
+
+      callApi('/endpoint', 'dummy-token')
+        .then(res => {
+          expect(res.status).to.equal(200)
+        })
+
+left_code_blocks:
   - code_block: |-
       fetchMock
         .mock('http://it.at.here/route', 200)

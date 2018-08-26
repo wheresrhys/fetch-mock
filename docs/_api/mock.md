@@ -1,14 +1,14 @@
 ---
-title: .mock()
+title: ".mock()"
 position: 1.1
-description: Replaces `fetch` with a stub which records its calls and returns a `Response` instance.
+description: "Replaces `fetch` with a stub which records its calls and returns a `Response` instance."
 parameters:
   - name: matcher
-    content: `String`|`Regex`|`Function`: Rule for matching calls to `fetch`
+    content: "`String`|`Regex`|`Function`: Rule for matching calls to `fetch`"
   - name: response
-    content: `String`|`Object`|`Function`|`Promise`: Response to send matched calls
+    content: "`String`|`Object`|`Function`|`Promise`: Response to send matched calls"
   - name: options
-    content: `Object`: More options configuring [mainly] matching behaviour
+    content: "`Object`: More options configuring [mainly] matching behaviour"
 content_markdown: |-
 
   Alternatively a single parameters, `options`, and `Object` with `matcher`, `response` and other options defined on it, can be passed

@@ -1,7 +1,7 @@
 ---
 title: ".mock() - matcher "
 position: 1.1
-description: String|Regex|Function: Rule for matching calls to `fetch`
+description: "String|Regex|Function: Rule for matching calls to `fetch`"
 parameters:
   - name: *
     content: Matches any url

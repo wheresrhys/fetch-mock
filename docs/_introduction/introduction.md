@@ -1,5 +1,5 @@
 ---
-title: Introduction
+title:
 position: 1
 parameters:
   - name:

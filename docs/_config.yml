@@ -13,12 +13,15 @@ permalink: pretty
 timezone: Etc/UTC
 
 collections:
-  general:
-    title: ""
+  introduction:
+    title: "Introduction"
     position: 1
+  usage:
+    title: "Usage"
+    position: 2
   api:
     title: API documentation
-    position: 2
+    position: 3
 plugins:
   - jekyll-sitemap
   - jekyll-seo-tag
@@ -33,6 +36,9 @@ defaults:
       path: ""
     values:
       layout: default
+  -
+    scope:
+      type: "introduction"
   -
     scope:
       type: "general"

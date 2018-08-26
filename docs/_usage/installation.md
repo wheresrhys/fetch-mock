@@ -8,8 +8,7 @@ content_markdown: |-
 
   Install fetch-mock using `npm install --save-dev fetch-mock`
 
-  In most environments use one of the following to use it in your code.
-
+  In most environments use one of the following in your test files
 
   ```js
   const fetchMock = require('fetch-mock');

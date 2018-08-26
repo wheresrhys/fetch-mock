@@ -1,6 +1,9 @@
 ---
 title: Global fetch
 position: 3
+parameters:
+  - name:
+    content:
 content_markdown: |-
   In the following scenarios `fetch` will be a global
   - When using native `fetch` (or a polyfill) in the browser

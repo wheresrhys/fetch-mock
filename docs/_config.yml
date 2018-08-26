@@ -1,9 +1,9 @@
 # ----
 # Site
 
-title: Aviator
-description: Jekyll template for API documentation.
-url: https://example.com
+title: fetch-mock
+description: Mock http requets using fetch
+url: https://www.wheresrhys.co.uk/fetch-mock-docs-workspace
 google_analytics_key:
 permalink: pretty
 

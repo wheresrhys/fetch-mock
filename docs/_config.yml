@@ -13,8 +13,8 @@ permalink: pretty
 timezone: Etc/UTC
 
 collections:
-  introduction:
-    title: "Introduction"
+  about:
+    title: "About"
     position: 1
   usage:
     title: "Usage"

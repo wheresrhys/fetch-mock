@@ -1,7 +1,7 @@
 ---
 title: .mock()
 position: 1.1
-description: Create Book
+description: Replaces `fetch` with a stub which records its calls and returns a `Response` instance.
 parameters:
   - name: matcher
     content: `String`|`Regex`|`Function`: Rule for matching calls to `fetch`
@@ -14,7 +14,7 @@ content_markdown: |-
   Alternatively a single parameters, `options`, and `Object` with `matcher`, `response` and other options defined on it, can be passed
   {: .info}
 
-  Replaces `fetch` with a stub which records its calls, grouped by route, and returns a `Response` instance.
+
 
 left_code_blocks:
   - code_block: |-

@@ -1,6 +1,6 @@
 ---
 title: Getting Started
-position: 1
+position: 10
 parameters:
   - name:
     content:

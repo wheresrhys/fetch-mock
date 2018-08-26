@@ -14,10 +14,10 @@ timezone: Etc/UTC
 
 collections:
   documentation:
-    title: Documentation
+    title: General documentation
     position: 1
   api:
-    title: APIs
+    title: API documentation
     position: 2
 plugins:
   - jekyll-sitemap
@@ -35,7 +35,7 @@ defaults:
       layout: default
   -
     scope:
-      type: "documentation"
+      type: "general"
     values:
       _hide_content: true
   -
@@ -55,15 +55,7 @@ types:
 
 languages:
   bash: Bash
-  c: C
-  css: CSS
-  html: HTML
-  java: Java
   javascript: JavaScript
-  json: JSON
-  php: PHP
-  python: Python
-  ruby: Ruby
 
 _options:
   content_markdown:

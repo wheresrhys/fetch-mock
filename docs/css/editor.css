@@ -1,0 +1,24 @@
+.error, .warning, .info, .success {
+	border-left: 5px solid #FD0;
+	padding: 10px 15px;
+	margin-left: -20px;
+	margin-right: -15px;
+	background-color: #FAFAFA;
+	border-radius: 2px;
+}
+
+p.warning {
+    border-color: #ffc107;
+}
+
+p.info {
+	border-color: #56ADEC;
+}
+
+p.error {
+	border-color: #F20;
+}
+
+p.success {
+	border-color: #6c0;
+}

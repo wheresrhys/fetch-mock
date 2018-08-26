@@ -1,6 +1,6 @@
 ---
 title: ".mock()"
-position: 1.1
+position: 1.0
 description: "Replaces `fetch` with a stub which records its calls and returns a `Response` instance."
 parameters:
   - name: matcher
@@ -13,6 +13,8 @@ content_markdown: |-
 
   Alternatively a single parameter, `options`, an `Object` with `matcher`, `response` and other options defined, can be passed
   {: .info}
+
+
 
 right_code_blocks:
   - title: Example

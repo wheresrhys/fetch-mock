@@ -3,13 +3,13 @@ title: ".mock() - matcher "
 position: 1.1
 description: "String|Regex|Function: Rule for matching calls to `fetch`"
 parameters:
-  - name: *
+  - name: "*"
     content: Matches any url
-  - name: url, e.g. 'http://www.site.com/page.html'
+  - name: "url, e.g. 'http://www.site.com/page.html'"
     content: Match an exact url
 content_markdown: |-
 
-  - `matcher`: Condition for selecting which requests to mock. (For matching based on headers, query strings or other `fetch` options see the `options` parameter documented below). Accepts any of the following:
+  "- `matcher`: Condition for selecting which requests to mock. (For matching based on headers, query strings or other `fetch` options see the `options` parameter documented below). Accepts any of the following:
     - `string`: Either
       - an exact url to match e.g. 'http://www.site.com/page.html'
       - `*` to match any url
@@ -21,7 +21,7 @@ content_markdown: |-
     - `RegExp`: A regular expression to test the url against
     - `Function(url, opts)`: A function (returning a Boolean) that is passed the url and opts `fetch()` is called with (or, if `fetch()` was called with one, the `Request` instance)
 
-  _Note that if using `end:` or an exact url matcher, `fetch-mock` ([for good reason](https://url.spec.whatwg.org/#url-equivalence)) is unable to distinguish whether URLs without a path end in a trailing slash or not i.e. `http://thing` is treated the same as `http://thing/`_
+  _Note that if using `end:` or an exact url matcher, `fetch-mock` ([for good reason](https://url.spec.whatwg.org/#url-equivalence)) is unable to distinguish whether URLs without a path end in a trailing slash or not i.e. `http://thing` is treated the same as `http://thing/`_"
 
 
 

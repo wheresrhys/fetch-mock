@@ -11,5 +11,4 @@ content_markdown: |-
 	{: .info}
 	`npm install whatwg-fetch` and load `./node_modules/whatwg-fetch/fetch.js` into the page, either in a script tag or by referencing in your test runner config.
 	{: .info}
-
 ---

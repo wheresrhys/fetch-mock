@@ -12,7 +12,7 @@ content_markdown: |-
   - [npm](https://www.npmjs.com/package/npm) (normally comes with Node.js)
   - Either of the following
     - [node-fetch](https://www.npmjs.com/package/node-fetch) when testing in a nodejs
-    - A browser that supports the `fetch` API when testing in a browser
+    - A browser that supports the `fetch` API either natively or via a [polyfill/ponyfill](https://ponyfoo.com/articles/polyfills-or-ponyfills)
 left_code_blocks:
   - code_block:
     title:

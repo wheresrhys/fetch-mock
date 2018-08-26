@@ -1,9 +1,6 @@
 ---
 title: Non-global fetch
 position: 4
-parameters:
-  - name:
-    content:
 content_markdown: |-
   In the following scenarios `fetch` will not be a global
 

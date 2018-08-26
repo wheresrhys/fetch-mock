@@ -1,4 +1,4 @@
 markdown: kramdown
-remote_theme: Wiredcraft/carte
+theme: dinky
 title: fetch-mock
 description: Mock http requests made using fetch

@@ -147,18 +147,6 @@ dl dd {
 	padding-left: 15px;
 }
 
-dl dd + dd {
-	margin-top: 0;
-}
-
-dl dd:after {
-	visibility: hidden;
-	display: block;
-	content: "";
-	clear: both;
-	height: 0;
-}
-
 .sidebar h6 {
 	line-height: 1em;
 	font-size: 1.5rem;

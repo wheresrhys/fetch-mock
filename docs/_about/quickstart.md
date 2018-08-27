@@ -28,6 +28,7 @@ content_markdown: |-
   };
   ```
 
+
   We can use fetch-mock to mock `fetch`. In `mocked.js`:
 
   ```js

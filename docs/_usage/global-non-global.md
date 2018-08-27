@@ -1,10 +1,13 @@
 ---
-title: Global fetch
+title: Global or non-global fetch
 position: 3
 parameters:
   - name:
     content:
 content_markdown: |-
+	`fetch` can be used by your code in two different ways. It's important to determine which one applies to your codebase as it will impact how you use `fetch-mock`
+  {: .warning}
+	#### Global fetch
   In the following scenarios `fetch` will be a global
   - When using native `fetch` (or a polyfill) in the browser
   - When `node-fetch` has been assigned to `global` in your nodejs process (a pattern sometiems used in isomorphic codebases)

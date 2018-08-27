@@ -25,8 +25,5 @@ content_markdown: |-
   {: .info}
   For server side tests running in nodejs 6 or lower use `require('fetch-mock/es5/server')`
   {: .info}
-
-  `fetch` can be used by your code in two different ways. It's important to determine which one applies to your codebase as it will impact how you use `fetch-mock`
-  {: .warning}
 ---
 

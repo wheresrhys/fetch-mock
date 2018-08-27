@@ -12,10 +12,6 @@ content_markdown: |-
   As well as shorthand methods for the simplest use cases, it offers a flexible API for customising all aspects of mocking behaviour.
 
 left_code_blocks:
-  - code_block:
-    title:
-    language:
-right_code_blocks:
   - code_block: |-
       fetchMock.mock('http://example.com', 200);
       const res = await fetch('http://example.com');

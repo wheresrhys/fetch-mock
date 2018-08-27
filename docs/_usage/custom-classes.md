@@ -1,5 +1,5 @@
 ---
-title: Configuring fetch subclasses
+title: Custom subclasses
 position: 6
 parameters:
   - name:

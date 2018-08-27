@@ -294,11 +294,8 @@ hr {
 
 .doc-content {
 	border: 0;
-	border-bottom: 1px solid transparent;
-	border-image: linear-gradient(to right,	#eee 0%,#eee 100%);
-	border-image-slice: 1;
+	border-bottom: 1px solid #eee;
 	padding: 30px 0;
-	background: #ffffff; /* Old browsers */
 }
 
 .doc-content:after {

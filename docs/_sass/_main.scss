@@ -295,9 +295,7 @@ hr {
 .doc-content {
 	border: 0;
 	border-bottom: 1px solid transparent;
-	border-image: linear-gradient(to right,	#eee 0%,#eee 60%,#333333 60%);
-	-moz-border-image: -moz-linear-gradient(left,	#eee 0%, #eee 60%, #333333 60%);
-	-webkit-border-image: -webkit-linear-gradient(left,	#eee 0%,#eee 60%,#333333 60%);
+	border-image: linear-gradient(to right,	#eee 0%,#eee 100%);
 	border-image-slice: 1;
 	padding: 30px 0;
 	background: #ffffff; /* Old browsers */
@@ -316,9 +314,9 @@ hr {
 }
 
 .left-docs {
-	width: 80%;
+	width: 100%;
 	float: left;
-	padding: 0 150px;
+	padding: 0 200px;
 	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
 	-moz-box-sizing: border-box;		/* Firefox, other Gecko */
 	box-sizing: border-box;				 /* Opera/IE 8+ */

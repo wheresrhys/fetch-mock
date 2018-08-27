@@ -24,7 +24,7 @@ title: API Docs
 						<h6>{% if doc.parametersBlockTitle %}{{ doc.parametersBlockTitle }}{% else %}Parameters{% endif %}</h6>
 						<dl>
 								{% for parameter in doc.parameters %}
-										<dt>{{ parameter.name }}</dt>
+										<dt>{{ parameter.name }}{%if parameter.default %}<pre>{{ parameter.default}}</pre>{% endif %}</dt>
 										<dd>{{ parameter.content | markdownify }}</dd>
 								{% endfor %}
 						</dl>

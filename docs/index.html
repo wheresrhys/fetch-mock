@@ -25,7 +25,7 @@ title: API Docs
 						<dl>
 								{% for parameter in doc.parameters %}
 										<dt>{{ parameter.name }}</dt>
-										<dd>{{ parameter.content }}</dd>
+										<dd>{{ parameter.content | markdownify }}</dd>
 								{% endfor %}
 						</dl>
 				{% endif %}

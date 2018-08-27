@@ -5,7 +5,7 @@ description: "On any `fetchMock` instance, config can be set by setting properti
 parametersBlockTitle: Options
 parameters:
   - name: sendAsJson
-    content: Convert objects into JSON before delivering as stub reponses. Can be useful to set to `false` globally if e.g. dealing with a lot of array buffers. If `true`, will also add a content-type.
+    content: Convert objects into JSON before delivering as stub reponses. Can be useful to set to `false` globally if e.g. dealing with a lot of array buffers. If `true`, will also add a `content-type: application/json` header.
 
 content_markdown: |-
   Many of the options above can be overridden for individual calls to `.mock(matcher, response, options)` by setting as properties on the third parameter, `options`

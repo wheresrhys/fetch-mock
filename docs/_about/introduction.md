@@ -16,7 +16,11 @@ left_code_blocks:
     title:
     language:
 right_code_blocks:
-  - code_block:
-    title:
-    language:
+  - code_block: |-
+      fetchMock.mock('http://example.com', 200);
+      const res = await fetch('http://example.com');
+      assert(res.ok);
+      fetchMock.restore();
+    title: Example
+    language: javascript
 ---

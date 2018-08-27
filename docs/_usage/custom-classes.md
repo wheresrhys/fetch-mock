@@ -16,5 +16,5 @@ content_markdown: |-
       Response: ponyfill.Response,
       fetch: ponyfill
   })
-```
+  ```
 ---

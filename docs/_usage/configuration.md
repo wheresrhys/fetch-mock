@@ -11,6 +11,13 @@ parameters:
   - name: includeContentLength
     default: true
     content: Automatically sets a `content-length` header on each response.
+  - name: fallbackToNetwork
+    default: false
+    content: |-
+      `true` - Unhandled calls transparently fall through to the network
+      `false` - Unhandled calls throw an error
+      `'always'` - All calls fall through to the network, effectively disabling fetch-mock.
+
 content_markdown: |-
   Many of the options above can be overridden for individual calls to `.mock(matcher, response, options)` by setting as properties on the third parameter, `options`
   {: .info}

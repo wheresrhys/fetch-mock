@@ -130,20 +130,21 @@ dl {
 	border-bottom: 1px solid #eee;
 	padding: 0 0 20px 0;
 	margin: 0 0 20px 0;
+	display: grid;
+	grid-gap: 1rem;
+	grid-template-columns: 30% 1fr;
 }
 
 dl dt {
-	width: 30%;
-	float: left;
+	grid-column-start: 1;
+  girid-column-end: 2
 	font-weight: bold;
-	position: relative;
-	top: 20px;
 }
 
 dl dd {
-	margin-left: 30%;
+	grid-column-start: 2;
+  grid-column-end: 3;
 	padding-left: 15px;
-	margin-top: 20px;
 }
 
 dl dd + dd {

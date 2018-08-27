@@ -6,7 +6,7 @@ content_markdown: |-
 
   #### Setting up your mock
 
-  The commonest use case is `fetchMock.mock(matcher, response)`, where `matcher` is a string or regex to match and `response` is a statusCode, string or object literal. You can also use `fetchMock.once(url ...)` to limit to a single call or `fetchMock.get()`, `fetchMock.post()` etc. to limit to a method. All these methods are chainable so you can easily define several mocks in a single test.
+  The commonest use case is `fetchMock.mock(matcher, response)`, where `matcher` is an exact url or regex to match, and `response` is a statusCode, string or object literal. You can also use `fetchMock.once(url ...)` to limit to a single call or `fetchMock.get()`, `fetchMock.post()` etc. to limit to a method. All these methods are chainable so you can easily define several mocks in a single test.
 
   #### Analysing calls to your mock
 
@@ -14,7 +14,7 @@ content_markdown: |-
 
   #### Tearing down your mock
 
-  `fetchMock.reset()` resets the call history. `fetchMock.restore()` will also restore `fetch()` to its native implementation
+  `fetchMock.resetHistory()` resets the call history. `fetchMock.reset()` will also restore `fetch()` to its native implementation
 
   #### Example
 
@@ -43,7 +43,7 @@ content_markdown: |-
   });
 
   // Unmock.
-  fetchMock.restore();
+  fetchMock.reset();
   ```
 
   Result:

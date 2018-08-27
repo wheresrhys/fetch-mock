@@ -20,7 +20,7 @@ collections:
     title: "Usage"
     position: 2
   api:
-    title: API documentation
+    title: API
     position: 3
 plugins:
   - jekyll-sitemap

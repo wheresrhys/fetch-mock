@@ -301,13 +301,6 @@ hr {
 	border-image-slice: 1;
 	padding: 30px 0;
 	background: #ffffff; /* Old browsers */
-	background: -moz-linear-gradient(left,	#ffffff 0%, #ffffff 60%, #232323 60%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, right top, color-stop(0%,#ffffff), color-stop(60%,#ffffff), color-stop(60%,#232323)); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(left,	#ffffff 0%,#ffffff 60%,#232323 60%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(left,	#ffffff 0%,#ffffff 60%,#232323 60%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(left,	#ffffff 0%,#ffffff 60%,#232323 60%); /* IE10+ */
-	background: linear-gradient(to right,	#ffffff 0%,#ffffff 60%,#232323 60%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#232323',GradientType=1 ); /* IE6-9 */
 }
 
 .doc-content:after {
@@ -323,9 +316,9 @@ hr {
 }
 
 .left-docs {
-	width: 60%;
+	width: 80%;
 	float: left;
-	padding: 0 50px;
+	padding: 0 150px;
 	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
 	-moz-box-sizing: border-box;		/* Firefox, other Gecko */
 	box-sizing: border-box;				 /* Opera/IE 8+ */
@@ -339,6 +332,7 @@ hr {
 }
 
 .right-code {
+	display: none;
 	width: 40%;
 	float: left;
 	padding: 0 50px;

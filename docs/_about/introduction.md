@@ -5,7 +5,7 @@ parameters:
   - name:
     content:
 content_markdown: |-
-  fetch-mock allows mocking http requests made using fetch, or one of the many libraries imitating its api such as [node-fetch](https://www.npmjs.com/package/node-fetch) and [fetch-ponyfill](https://www.npmjs.com/package/fetch-ponyfill).
+  fetch-mock allows mocking http requests made using [fetch](https://fetch.spec.whatwg.org/), or one of the many libraries imitating its api, such as [node-fetch](https://www.npmjs.com/package/node-fetch) and [fetch-ponyfill](https://www.npmjs.com/package/fetch-ponyfill).
 
   It supports most JavaScript environments, including nodejs, web workers and service workers, and any browser that either supports fetch natively or that can have a fetch polyfill/ponyfill installed.
 

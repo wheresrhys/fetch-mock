@@ -1,5 +1,5 @@
 ---
-title: ".mock()"
+title: ".mock(matcher, response, options)"
 position: 1.0
 description: "Replaces `fetch` with a stub which records its calls and returns a `Response` instance."
 parameters:

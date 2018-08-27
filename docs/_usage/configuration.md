@@ -7,8 +7,10 @@ parameters:
   - name: sendAsJson
     default: true
     content: |-
-      Convert objects into JSON before delivering as stub reponses. Can be useful to set to `false` globally if e.g. dealing with a lot of array buffers. If `true`, will also add a `content-type: as` header.
-
+      Convert objects into JSON before delivering as stub reponses. Can be useful to set to `false` globally if e.g. dealing with a lot of array buffers. If `true`, will also add `content-type: application/json` header.
+  - name: includeContentLength
+    default: true
+    content: Automatically sets a `content-length` header on each response.
 content_markdown: |-
   Many of the options above can be overridden for individual calls to `.mock(matcher, response, options)` by setting as properties on the third parameter, `options`
   {: .info}

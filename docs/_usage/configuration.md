@@ -14,10 +14,20 @@ parameters:
   - name: fallbackToNetwork
     default: "false"
     content: |-
-      - `true`: Unhandled calls transparently fall through to the network
+      - `true`: Unhandled calls fall through to the network
       - `false`: Unhandled calls throw an error
       - `'always'`: All calls fall through to the network, effectively disabling fetch-mock.
-
+  - name: overwriteRoutes
+    default: "undefined"
+    content: |-
+      Determines behaviour if a new route has the same name (or inferred name) as an existing one
+      - `undefined`: An error will be throw when routes clash
+      - `true`: Overwrites the existing route
+      - `false`: Appends the new route to the list of routes
+  - name: warnOnFallback
+    default: true
+    content: |-
+      Print a warning if any call is caught by a fallback handler (set using the `fallbackToNetwork` option or `catch()`)
 content_markdown: |-
   Many of the options above can be overridden for individual calls to `.mock(matcher, response, options)` by setting as properties on the third parameter, `options`
   {: .info}

@@ -28,11 +28,18 @@ parameters:
     default: true
     content: |-
       Print a warning if any call is caught by a fallback handler (set using the `fallbackToNetwork` option or `catch()`)
+  - name: Promise
+    content: Reference to the `Promise` constructor of a custom `Promise` implementation
+  - name: fetch
+    content: Reference to a custom `fetch` implementation
+  - name: Headers
+    content: Reference to the `Headers` constructor of a custom `fetch` implementation
+  - name: Request
+    content: Reference to the `Request` constructor of a custom `fetch` implementation
+  - name: Response
+    content: Reference to the `Response` constructor of a custom `fetch` implementation
+
 content_markdown: |-
   Many of the options above can be overridden for individual calls to `.mock(matcher, response, options)` by setting as properties on the third parameter, `options`
   {: .info}
-
-  When using non standard fetch (e.g. a ponyfill, or aversion of `node-fetch` other than the one bundled with `fetch-mock`) or an alternative Promise implementation, this will configure fetch-mock to use your chosen implementations.
-
-  Note that `Object.assign(fetchMock.config, require('fetch-ponyfill')())` will configure fetch-mock to use all of fetch-ponyfill's classes. In most cases, it should only be necessary to set this once before any tests run.
 ---

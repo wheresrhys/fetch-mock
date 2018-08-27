@@ -313,11 +313,8 @@ hr {
 .left-docs {
 	width: 100%;
 	float: left;
-
 	padding: 0 150px;
-	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
-	-moz-box-sizing: border-box;		/* Firefox, other Gecko */
-	box-sizing: border-box;				 /* Opera/IE 8+ */
+	box-sizing: border-box;
 
 	pre {
 		 border: 0px;
@@ -326,31 +323,6 @@ hr {
 		 padding: 10px;
 	}
 }
-
-.right-code {
-	display: none;
-	width: 40%;
-	float: left;
-	padding: 0 50px;
-	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
-	-moz-box-sizing: border-box;		/* Firefox, other Gecko */
-	box-sizing: border-box;				 /* Opera/IE 8+ */
-
-	code {
-		color: #fff;
-	}
-
-	pre {
-		background: black;
-		padding: 10px;
-		border-radius: 5px;
-	}
-
-	.code-viewer .languages li a:hover {
-		border-color: #555;
-	}
-}
-
 .code-viewer {
 	.languages {
 		padding: 0;
@@ -405,13 +377,6 @@ hr {
 }
 
 @media (max-width: 1000px) {
-	.right-code {
-		float: none;
-		width: 100%;
-		background: #232323;
-		padding-top: 20px;
-		padding-bottom: 20px;
-	}
 
 	.left-docs {
 		float: none;
@@ -499,54 +464,6 @@ header {
 
 		h1 {
 			box-shadow: inset -10px 0 10px -10px rgba(0, 0, 0, 0.1);
-		}
-	}
-}
-
-#search-input {
-	-webkit-appearance: none;
-
-	display: block;
-	margin: 0;
-	padding: 10px 20px;
-	width: 100%;
-	box-sizing: border-box;
-
-	border: 0;
-	border-bottom: 1px solid rgba(0, 0, 0, 0.075);
-
-	font-size: 1.5rem;
-	font-weight: 600;
-	line-height: 1.8;
-
-	&:focus {
-		outline: none;
-		border-left: 5px solid $brand-colour;
-		padding-left: 15px;
-	}
-}
-
-.search-page {
-	max-width: 800px;
-	margin: 0 0 0 50px;
-	padding: 50px 20px 0 20px;
-}
-
-#search-results {
-	margin: 0;
-	padding: 0;
-
-	li {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-
-		h4 {
-			font-size: 2rem;
-		}
-
-		p {
-			line-height: 1.5;
 		}
 	}
 }

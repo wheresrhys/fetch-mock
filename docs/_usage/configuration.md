@@ -12,7 +12,7 @@ parameters:
     default: true
     content: Automatically sets a `content-length` header on each response.
   - name: fallbackToNetwork
-    default: false
+    default: "false"
     content: |-
       - `true`: Unhandled calls transparently fall through to the network
       - `false`: Unhandled calls throw an error

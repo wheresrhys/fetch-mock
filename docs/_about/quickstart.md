@@ -8,6 +8,12 @@ content_markdown: |-
 
   The commonest use case is `fetchMock.mock(matcher, response)`, where `matcher` is an exact url or regex to match, and `response` is a statusCode, string or object literal. You can also use `fetchMock.once(url ...)` to limit to a single call or `fetchMock.get()`, `fetchMock.post()` etc. to limit to a method. All these methods are chainable so you can easily define several mocks in a single test.
 
+  ```javascript
+  fetchMock
+    .get('http://good.com/', 200)
+    .post('http://good.com/', 400)
+    .get(/bad\.com/, 500)
+  ```
   #### Analysing calls to your mock
 
   `fetchMock.called(matcher)` reports if any calls matched your mock (or leave `matcher` out if you just want to check `fetch` was called at all). `fetchMock.lastCall()`, `fetchMock.lastUrl()` or `fetchMock.lastOptions()` give you access to the parameters last passed in to `fetch`. `fetchMock.done()` will tell you if `fetch` was called the expected number of times.

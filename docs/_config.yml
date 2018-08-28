@@ -38,7 +38,9 @@ defaults:
       layout: default
   -
     scope:
-      type: "introduction"
+      type: "about"
+    values:
+      _hide_content: true
   -
     scope:
       type: "general"

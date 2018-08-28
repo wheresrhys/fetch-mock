@@ -14,10 +14,10 @@ title: API Docs
 							<span class="endpoint {{ doc.type }}"></span>
 						{% endif %}
 					</a>
-					<a class="editor-link" href="cloudcannon:collections/{{ doc.relative_path }}">Edit</a>
+
 				</h3>
 				{% if doc.description %}
-					<p class="description">{{ doc.description }}</p>
+					<p class="description">{{ doc.description }}{% if doc.method %}<br>Parameter for <a href="#api{{doc.method}}">{{doc.method}}()</a>{% endif %}</p>
 				{% endif %}
 
 				{% if doc.parameters and doc.parameters[0].name %}
@@ -25,7 +25,11 @@ title: API Docs
 						<dl>
 								{% for parameter in doc.parameters %}
 										<dt>{{ parameter.name }}{%if parameter.type %} <code>{{ parameter.type}}{% endif %}{%if parameter.default %} [default&nbsp;<code>{{ parameter.default}}</code>]{% endif %}</dt>
-										<dd>{{ parameter.content | markdownify }}</dd>
+										<dd>{{ parameter.content | markdownify }}{%if parameter.examples %}
+											{% for example in parameter.examples %}
+											{% include tiny-syntax.html example=example %}
+											{% endfor %}
+											{% endif %}</dd>
 								{% endfor %}
 						</dl>
 				{% endif %}

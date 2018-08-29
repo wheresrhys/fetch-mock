@@ -1,9 +1,6 @@
 ---
 title: Global or non-global
 position: 3
-parameters:
-  - name:
-    content:
 content_markdown: |-
   `fetch` can be used by your code globally or locally. It's important to determine which one applies to your codebase as it will impact how you use `fetch-mock`
   {: .warning}

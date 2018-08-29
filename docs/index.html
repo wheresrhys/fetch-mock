@@ -10,28 +10,65 @@ title: API Docs
 				<h3>
 					<a id="{{ doc.id | replace: '/', '' | replace: '.', '' }}">
 						{{ doc.title }}
-						{% if doc.type %}
-							<span class="endpoint {{ doc.type }}"></span>
-						{% endif %}
 					</a>
 
 				</h3>
+
 				{% if doc.description %}
-					<p class="description">{{ doc.description }}{% if doc.method %}<br>Parameter for <a href="#api{{doc.method}}">{{doc.method}}()</a>{% endif %}</p>
+					<p class="description">
+						{% include types.html block=doc %}
+						{{ doc.description }}
+						{% if doc.parentMethod %}
+							<br>Parameter for <a href="#api{{doc.parentMethod}}">{{doc.parentMethod}}()</a>
+						{% endif %}
+					</p>
 				{% endif %}
 
-				{% if doc.parameters and doc.parameters[0].name %}
-						<h6>{% if doc.parametersBlockTitle %}{{ doc.parametersBlockTitle }}{% else %}Parameters{% endif %}</h6>
-						<dl>
-								{% for parameter in doc.parameters %}
-										<dt>{{ parameter.name }}{%if parameter.type %} <code>{{ parameter.type}}{% endif %}{%if parameter.default %} [default&nbsp;<code>{{ parameter.default}}</code>]{% endif %}</dt>
-										<dd>{{ parameter.content | markdownify }}{%if parameter.examples %}
-											{% for example in parameter.examples %}
-											{% include tiny-syntax.html example=example %}
-											{% endfor %}
-											{% endif %}</dd>
+				{% if doc.parameters %}
+					{% if doc.type == "parameter" %}
+						<h6>Values</h6>
+					{% elsif doc.parametersBlockTitle %}
+						<h6>{{ doc.parametersBlockTitle }}</h6>
+					{% else %}
+						<h6>Parameters</h6>
+					{% endif %}
+
+					<dl class="parameters">
+					{% for parameter in doc.parameters %}
+						<dt>
+							{{ parameter.name }}
+							{% include types.html block=parameter %}
+						</dt>
+						<dd>
+
+							{{ parameter.content | markdownify }}
+							{% if parameter.examples %}
+								{% for example in parameter.examples %}
+									{% include tiny-syntax.html example=example %}
 								{% endfor %}
-						</dl>
+							{% endif %}
+							{% if parameter.options %}
+								<dl class="options">
+								{% for option in parameter.options %}
+									<dt>
+										{{ option.name }}
+										{% include types.html block=option %}
+									</dt>
+									<dd>
+
+										{{ option.content | markdownify }}
+										{% if option.examples %}
+											{% for example in option.examples %}
+												{% include tiny-syntax.html example=example %}
+											{% endfor %}
+										{% endif %}
+									</dd>
+								{% endfor %}
+								</dl>
+							{% endif %}
+						</dd>
+					{% endfor %}
+					</dl>
 				{% endif %}
 
 				{{ doc.content_markdown | markdownify | replace: "<dl>", "<h6>Parameters</h6><dl>" }}
@@ -39,16 +76,9 @@ title: API Docs
 				{% if doc.left_code_blocks and doc.left_code_blocks[0].code_block %}
 						{% for block in doc.left_code_blocks %}
 								{% include syntax-highlight.html block=block %}
-								{% endfor %}
-						{% endif %}
-			</section>
-			{% if doc.right_code_blocks and doc.right_code_blocks[0].code_block %}
-					<section class="right-code">
-						{% for block in doc.right_code_blocks %}
-								{% include syntax-highlight.html block=block %}
 						{% endfor %}
-				</section>
-			{% endif %}
+				{% endif %}
+			</section>
 		</section>
 	{% endfor %}
 {% endfor %}

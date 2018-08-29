@@ -1,9 +1,6 @@
 ---
 title:
 position: 1
-parameters:
-  - name:
-    content:
 content_markdown: |-
   fetch-mock allows mocking http requests made using [fetch](https://fetch.spec.whatwg.org/), or one of the many libraries imitating its api, such as [node-fetch](https://www.npmjs.com/package/node-fetch) or [fetch-ponyfill](https://www.npmjs.com/package/fetch-ponyfill).
 

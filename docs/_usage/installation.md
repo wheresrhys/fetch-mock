@@ -6,7 +6,11 @@ parameters:
     content:
 content_markdown: |-
 
-  Install fetch-mock using `npm install --save-dev fetch-mock`
+  Install fetch-mock using
+
+  ```bash
+  npm install --save-dev fetch-mock
+  ```
 
   In most environments use one of the following in your test files
 
@@ -23,7 +27,8 @@ content_markdown: |-
   {: .warning}
   If you need to use fetch-mock without commonjs, you can include the precompiled `node_modules/fetch-mock/es5/client-bundle.js` in a script tag. This loads fetch-mock into the `fetchMock` global variable.
   {: .warning}
-  For server side tests running in nodejs 6 or lower use `require('fetch-mock/es5/server')`
+  For server side tests running in nodejs 6 or lower use<br>
+  `require('fetch-mock/es5/server')`
   {: .warning}
 ---
 

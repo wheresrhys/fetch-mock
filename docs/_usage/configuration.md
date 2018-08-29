@@ -1,7 +1,8 @@
 ---
 title: Configuration
 position: 7
-description: "On any `fetchMock` instance, config can be set by setting properties on `fetchMock.config`."
+description: |-
+  On any `fetchMock` instance, config can be set by setting properties on `fetchMock.config`.
 parametersBlockTitle: Options
 parameters:
   - name: sendAsJson

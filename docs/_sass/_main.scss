@@ -125,14 +125,20 @@ pre {
 	word-wrap: break-word;
 }
 
-dl {
+dl.parameters {
 	border-top: 1px solid #eee;
 	border-bottom: 1px solid #eee;
 	padding: 0 0 20px 0;
 	margin: 0 0 20px 0;
 	display: grid;
 	grid-gap: 1rem;
-	grid-template-columns: 30% 1fr;
+	grid-template-columns: 25% 1fr;
+}
+
+dl.options {
+	display: grid;
+	grid-gap: 1rem;
+	grid-template-columns: 15% 1fr;
 }
 
 dl dt {
@@ -144,7 +150,27 @@ dl dt {
 dl dd {
 	grid-column-start: 2;
   grid-column-end: 3;
-	padding-left: 15px;
+}
+
+dt > code {
+	color: #aa5500;
+	font-family: monospace;
+}
+
+p > code,
+dt > code.name,
+dd > code,
+li > code {
+	font-size: 1.2em;
+	font-family: monospace;
+	font-weight: bold;
+	background: none;
+	color: #aa5500;
+}
+
+
+em {
+	text-decoration: underline
 }
 
 .sidebar h6 {

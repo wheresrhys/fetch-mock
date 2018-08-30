@@ -21,10 +21,7 @@ describe('nodejs tests', () => {
 
 	describe('support for Buffers', () => {
 		it('can respond with a buffer', () => {
-			fetchMock.mock(/a/, {
-				sendAsJson: false,
-				body: new Buffer('buffer')
-			});
+			fetchMock.mock(/a/, new Buffer('buffer'), { sendAsJson: false });
 			return fetchMock
 				.fetchHandler('http://a.com')
 				.then(res => res.text())

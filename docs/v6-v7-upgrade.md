@@ -12,6 +12,9 @@ To keep the library in line with `sinon`, the most popular mocking libarry in th
 
 A regression was introduced in v6 whereby the `throws` option would throw an uncaught error. The `fetch` api catches all its internal errors and returns a rejected `Promise` in every case, so this change has been reverted to be more useful for mocking typical `fetch` errors.
 
+## sendAsJson and includeContentLength options have moved
+These shoudl no longer be set on the second - `response` - argument of `.mock()`, but on the third - `options` - argument
+
 ## Responses are wrapped in an ES Proxy
 
 This is to enable a more powerful `flush()` method, able to wait for asynchronous resolution of response methods such as `.json()` and `.text()`. `flush(true)` will resolve only when Promises returnes by any response methods called before `flush()` have resolved

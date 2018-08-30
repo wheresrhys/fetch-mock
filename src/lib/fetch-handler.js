@@ -39,7 +39,7 @@ const normalizeRequest = (url, options, Request) => {
 FetchMock.fetchHandler = function(url, opts, request) {
 	({ url, opts, request } = normalizeRequest(url, opts, this.config.Request));
 
-	const response = this.executeRouter(url, opts, request);
+	const route = this.executeRouter(url, opts, request);
 
 	// this is used to power the .flush() method
 	let done;
@@ -48,7 +48,7 @@ FetchMock.fetchHandler = function(url, opts, request) {
 	// wrapped in this promise to make sure we respect custom Promise
 	// constructors defined by the user
 	return new this.config.Promise((res, rej) => {
-		this.generateResponse(response, url, opts)
+		this.generateResponse(route, url, opts)
 			.then(res, rej)
 			.then(done, done);
 	});
@@ -58,23 +58,23 @@ FetchMock.fetchHandler.isMock = true;
 
 FetchMock.executeRouter = function(url, options, request) {
 	if (this.config.fallbackToNetwork === 'always') {
-		return this.getNativeFetch();
+		return { response: this.getNativeFetch() };
 	}
 
-	const response = this.router(url, options, request);
+	const match = this.router(url, options, request);
 
-	if (response) {
-		return response;
+	if (match) {
+		return match;
 	}
 
 	if (this.config.warnOnFallback) {
-		console.warn(`Unmatched ${options && options.method || 'GET'} to ${url}`); // eslint-disable-line
+		console.warn(`Unmatched ${(options && options.method) || 'GET'} to ${url}`); // eslint-disable-line
 	}
 
 	this.push(null, { url, options, request });
 
 	if (this.fallbackResponse) {
-		return this.fallbackResponse;
+		return { response: this.fallbackResponse };
 	}
 
 	if (!this.config.fallbackToNetwork) {
@@ -85,10 +85,10 @@ FetchMock.executeRouter = function(url, options, request) {
 		);
 	}
 
-	return this.getNativeFetch();
+	return { response: this.getNativeFetch() };
 };
 
-FetchMock.generateResponse = async function(response, url, opts) {
+FetchMock.generateResponse = async function(route, url, opts) {
 	// We want to allow things like
 	// - function returning a Promise for a response
 	// - delaying (using a timeout Promise) a function's execution to generate
@@ -96,6 +96,7 @@ FetchMock.generateResponse = async function(response, url, opts) {
 	// Because of this we can't safely check for function before Promisey-ness,
 	// or vice versa. So to keep it DRY, and flexible, we keep trying until we
 	// have something that looks like neither Promise nor function
+	let response = route.response;
 	while (
 		typeof response === 'function' ||
 		typeof response.then === 'function'
@@ -120,7 +121,12 @@ FetchMock.generateResponse = async function(response, url, opts) {
 	}
 
 	// finally, if we need to convert config into a response, we do it
-	return new ResponseBuilder(url, response, this).exec();
+	return new ResponseBuilder({
+		url,
+		shorthandResponse: response,
+		fetchMock: this,
+		route
+	}).exec();
 };
 
 FetchMock.router = function(url, options, request) {
@@ -128,7 +134,7 @@ FetchMock.router = function(url, options, request) {
 
 	if (route) {
 		this.push(route.name, { url, options, request });
-		return route.response;
+		return route;
 	}
 };
 

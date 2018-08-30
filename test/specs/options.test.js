@@ -93,20 +93,14 @@ module.exports = (fetchMock, theGlobal, fetch) => {
 
 			it('local setting can override to true', async () => {
 				fm.config.includeContentLength = false;
-				fm.mock('*', {
-					includeContentLength: true,
-					body: 'string'
-				});
+				fm.mock('*', 'string', {includeContentLength: true});
 				const res = await fm.fetchHandler('http://it.at.there');
 				expect(res.headers.get('content-length')).to.equal('6');
 			});
 
 			it('local setting can override to false', async () => {
 				fm.config.includeContentLength = true;
-				fm.mock('*', {
-					includeContentLength: false,
-					body: 'string'
-				});
+				fm.mock('*', 'string', {includeContentLength: false});
 				const res = await fm.fetchHandler('http://it.at.there');
 				expect(res.headers.get('content-length')).not.to.exist;
 			});
@@ -132,14 +126,14 @@ module.exports = (fetchMock, theGlobal, fetch) => {
 
 			it('local setting can override to true', async () => {
 				fm.config.sendAsJson = false;
-				fm.mock('*', { body: { an: 'object' }, sendAsJson: true });
+				fm.mock('*', { an: 'object' }, {sendAsJson: true });
 				const res = await fm.fetchHandler('http://it.at.there');
 				expect(res.headers.get('content-type')).to.equal('application/json');
 			});
 
 			it('local setting can override to false', async () => {
 				fm.config.sendAsJson = true;
-				fm.mock('*', { body: { an: 'object' }, sendAsJson: false });
+				fm.mock('*', { an: 'object' }, {sendAsJson: false });
 				const res = await fm.fetchHandler('http://it.at.there');
 				// can't check for existence as the spec says, in the browser, that
 				// a default value should be set

@@ -9,8 +9,9 @@ const responseConfigProps = [
 ];
 
 module.exports = class ResponseBuilder {
-	constructor(url, responseConfig, fetchMock) {
+	constructor(url, responseConfig, fetchMock, route) {
 		this.url = typeof url === 'object' ? url.url : url;
+		this.route = route;
 		this.fetchMockInstance = fetchMock;
 		this.responseConfig = responseConfig;
 		this.fetchMockConfig = fetchMock.config;
@@ -89,9 +90,9 @@ e.g. {"body": {"status: "registered"}}`);
 	}
 
 	getOption(name) {
-		return this.responseConfig[name] === undefined
+		return this.route[name] === undefined
 			? this.fetchMockConfig[name]
-			: this.responseConfig[name];
+			: this.route[name];
 	}
 
 	constructResponseBody() {

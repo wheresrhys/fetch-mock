@@ -206,7 +206,8 @@ module.exports = fetchMock => {
 			});
 
 			it('resets call history', async () => {
-				fm.mock(/a/, 200).catch(200);
+				fm.mock(/a/, 200)
+					.catch(200);
 				await fm.fetchHandler('a');
 				await fm.fetchHandler('b');
 				expect(fm.called()).to.be.true;

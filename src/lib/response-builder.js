@@ -97,10 +97,9 @@ e.g. {"body": {"status: "registered"}}`);
 		// convert to json if we need to
 		if (
 			this.getOption('sendAsJson') &&
-			this.shorthandResponse.body != null &&
+			this.shorthandResponse.body != null && //eslint-disable-line
 			typeof body === 'object'
 		) {
-			//eslint-disable-line
 			body = JSON.stringify(body);
 			if (!this.opts.headers.has('Content-Type')) {
 				this.opts.headers.set('Content-Type', 'application/json');
@@ -120,8 +119,7 @@ e.g. {"body": {"status: "registered"}}`);
 		// Response object (on the client this done automatically)
 		if (this.stream) {
 			const s = new this.stream.Readable();
-			if (body != null) {
-				//eslint-disable-line
+			if (body != null) { //eslint-disable-line
 				s.push(body, 'utf-8');
 			}
 			s.push(null);

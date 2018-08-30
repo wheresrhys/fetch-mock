@@ -18,30 +18,32 @@ parameters:
     types:
       - String
     content: |-
-      http method to match
+      Http method to match
   - name: headers
     types:
-      - Object | Headers
+      - Object
+      - Headers
     content: |-
-      key/value map of headers to match
+      Key/value map of headers to match
   - name: query
     types:
       - Object
     content: |-
-      key/value map of query strings to match, in any order
+      Key/value map of query strings to match, in any order
   - name: params
     types:
       - Object
     content: |-
-      when the `express:` keyword is used in a string matcher, a key/value map `params` can be passed here, to match the parameters extracted by express path matching
+      When the `express:` keyword is used in a string matcher, a key/value map `params` can be passed here, to match the parameters extracted by express path matching
   - name: repeat
-    type:
+    types:
       - Integer
     content: |-
       An integer, `n`, limiting the number of times the matcher can be used. If the route has already been called `n` times the route will be ignored and the call to `fetch()` will fall through to be handled by any other routes defined (which may eventually result in an error if nothing matches it)
   - name: overwriteRoutes
-    content: |-
-      If the route you're adding clashes with an existing route, setting `true` here will overwrite the clashing route, `false` will add another route to the stack which will be used as a fallback (useful when using the `repeat` option). Adding a clashing route without specifying this option will throw an error. It can also be set as a global option (see the **Config** section below)
+    types:
+      - Boolean
+    content: See [global configuration](#usageconfiguration)
   - name: sendAsJson
     default: true
     types:
@@ -52,42 +54,8 @@ parameters:
     types:
       - Boolean
     content: See [global configuration](#usageconfiguration)
----
-
-
   - name: matcher
-    content: |-
-      as specified above
+    content: When using the single argument variant of `.mock()`, any valid matcher as [defined above](#usageapimock_matcher) can be assigned to the options object
   - name: response
-    content: |-
-      as specified above
-
-
-
-  - name: sendAsJson<sup>†</sup>
-    default: true
-    content: |-
-      Convert objects into JSON before delivering as stub reponses. Can be useful to set to `false` globally if e.g. dealing with a lot of array buffers. If `true`, will also add `content-type: application/json` header.
-  - name: includeContentLength
-    default: true
-    content: Automatically sets a `content-length` header on each response.
-  - name: fallbackToNetwork<sup>†</sup>
-    default: "false"
-    content: |-
-      - `true`: Unhandled calls fall through to the network
-      - `false`: Unhandled calls throw an error
-      - `'always'`: All calls fall through to the network, effectively disabling fetch-mock.
-  - name: overwriteRoutes<sup>†</sup>
-    default: "undefined"
-    content: |-
-      Determines behaviour if a new route has the same name (or inferred name) as an existing one
-      - `undefined`: An error will be throw when routes clash
-      - `true`: Overwrites the existing route
-      - `false`: Appends the new route to the list of routes
-  - name: warnOnFallback<sup>†</sup>
-    default: true
-    content: |-
-      Print a warning if any call is caught by a fallback handler (set using the `fallbackToNetwork` option or `catch()`)
-
-
-
+    content: When using the single argument variant of `.mock()`, any valid response as [defined above](#usageapimock_response) can be assigned to the options object
+---

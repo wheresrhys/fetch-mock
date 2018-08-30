@@ -9,7 +9,7 @@ parameters:
     default: true
     content: |-
       Convert objects into JSON before delivering as stub reponses. Can be useful to set to `false` globally if e.g. dealing with a lot of array buffers. If `true`, will also add `content-type: application/json` header.
-  - name: includeContentLength<sup></sup>
+  - name: includeContentLength<sup>†</sup>
     default: true
     content: Automatically sets a `content-length` header on each response.
   - name: fallbackToNetwork
@@ -18,7 +18,7 @@ parameters:
       - `true`: Unhandled calls fall through to the network
       - `false`: Unhandled calls throw an error
       - `'always'`: All calls fall through to the network, effectively disabling fetch-mock.
-  - name: overwriteRoutes
+  - name: overwriteRoutes<sup>†</sup>
     default: "undefined"
     content: |-
       Determines behaviour if a new route has the same name (or inferred name) as an existing one

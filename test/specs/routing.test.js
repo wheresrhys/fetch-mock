@@ -186,9 +186,9 @@ module.exports = fetchMock => {
 				// same properties in the browser and nodejs
 				const propertyToCheck = new fm.config.Request('http://example.com')
 					.cache
-					? 'cache'
+					? 'credentials'
 					: 'timeout';
-				const valueToSet = propertyToCheck === 'cache' ? 'force-cache' : 2000;
+				const valueToSet = propertyToCheck === 'credentials' ? 'same-origin' : 2000;
 
 				fm.mock(
 					(url, options, request) => request[propertyToCheck] === valueToSet,

@@ -1,8 +1,13 @@
 ---
 title: API Docs
 ---
-{% assign sorted_collections = site.collections | sort: "position" %}
+{% assign sorted_collections = site.collections | sort: "position"  %}
 {% for collection in sorted_collections %}
+	{% if collection.title %}
+	{% unless collection.title == "About" %}
+		<h2>{{collection.title}}</h2>
+	{% endunless %}
+	{% endif %}
 	{% assign sorted_docs = collection.docs | sort: "position" %}
 	{% for doc in sorted_docs %}
 		<section class="doc-content">

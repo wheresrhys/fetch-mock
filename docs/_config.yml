@@ -15,16 +15,19 @@ timezone: Etc/UTC
 collections:
   about:
     title: "About"
-    position: 1
+    position: 0
   usage:
     title: "Usage"
-    position: 2
+    position: 1
   api-mocking:
     title: Mocking API
-    position: 3
+    position: 2
   api-lifecycle:
     title: Lifecycle methods
-    position: 5
+    position: 3
+  troubleshooting:
+    title: Troubleshooting
+    position: 4
 plugins:
   - jekyll-sitemap
   - jekyll-seo-tag
@@ -57,13 +60,6 @@ defaults:
 
 # -----------
 # CloudCannon
-
-types:
-  - get
-  - put
-  - delete
-  - post
-
 languages:
   bash: Bash
   javascript: JavaScript

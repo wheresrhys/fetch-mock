@@ -72,7 +72,9 @@ FetchMock._mock = function() {
 
 FetchMock.catch = function(response) {
 	if (this.fallbackResponse) {
-		console.warn('calling fetchMock.catch() twice - are you sure you want to overwrite the previous fallback response');// eslint-disable-line
+		console.warn(
+			'calling fetchMock.catch() twice - are you sure you want to overwrite the previous fallback response'
+		); // eslint-disable-line
 	}
 	this.fallbackResponse = response || 'ok';
 	return this._mock();

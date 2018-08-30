@@ -124,20 +124,32 @@ module.exports = fetchMock => {
 		});
 
 		it('logs unmatched calls', () => {
-			sinon.spy(console, 'warn')//eslint-disable-line
+			sinon.spy(console, 'warn'); //eslint-disable-line
 			fm.mock('http://it.at.there1/', 200).mock('http://it.at.there2/', 200, {
 				repeat: 2
 			});
 
 			fm.fetchHandler('http://it.at.there2/');
 			fm.done();
-			expect(console.warn.calledWith('Warning: http://it.at.there1/ not called')).to.be.true; //eslint-disable-line
-			expect(console.warn.calledWith('Warning: http://it.at.there2/ only called 1 times, but 2 expected')).to.be.true;//eslint-disable-line
-			console.warn.reset();//eslint-disable-line
+			expect(
+				console.warn.calledWith('Warning: http://it.at.there1/ not called')
+			).to.be.true; //eslint-disable-line
+			expect(
+				console.warn.calledWith(
+					'Warning: http://it.at.there2/ only called 1 times, but 2 expected'
+				)
+			).to.be.true; //eslint-disable-line
+			console.warn.reset(); //eslint-disable-line
 			fm.done('http://it.at.there1/');
-			expect(console.warn.calledWith('Warning: http://it.at.there1/ not called')).to.be.true;//eslint-disable-line
-			expect(console.warn.calledWith('Warning: http://it.at.there2/ only called 1 times, but 2 expected')).to.be.false;//eslint-disable-line
-			console.warn.restore();//eslint-disable-line
+			expect(
+				console.warn.calledWith('Warning: http://it.at.there1/ not called')
+			).to.be.true; //eslint-disable-line
+			expect(
+				console.warn.calledWith(
+					'Warning: http://it.at.there2/ only called 1 times, but 2 expected'
+				)
+			).to.be.false; //eslint-disable-line
+			console.warn.restore(); //eslint-disable-line
 		});
 
 		describe('sandbox isolation', () => {

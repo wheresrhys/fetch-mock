@@ -2,6 +2,12 @@
 
 Mock http requests made using [fetch](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch)
 
+---
+
+**Version 7 is in alpha. Please consider trying it out. `npm install fetch-mock@7.0.0-alpha.5`**
+
+---
+
 ![node version](https://img.shields.io/node/v/fetch-mock.svg?style=flat-square)
 [![licence](https://img.shields.io/npm/l/fetch-mock.svg?style=flat-square)](https://github.com/wheresrhys/fetch-mock/blob/master/LICENSE)
 ![npm downloads](https://img.shields.io/npm/dm/fetch-mock.svg?style=flat-square)
@@ -22,12 +28,6 @@ fetchMock.restore();
 - [Documentation and Usage](http://www.wheresrhys.co.uk/fetch-mock/)
 - [License](#license)
 - [Housekeeping](#housekeping)
-
----
-
-**Version 7 is in alpha. Please consider trying it out. `npm install fetch-mock@7.0.0-alpha.4`**
-
----
 
 **I devote a lot of time to maintaining fetch-mock for free. I don't ask for payment, but am raising money for a refugee charity - <a href="https://www.justgiving.com/fundraising/rhys-evans-walk">please consider donating</a>**
 

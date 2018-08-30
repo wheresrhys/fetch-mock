@@ -92,7 +92,7 @@ FetchMock.done = function(name, options) {
 				method = options || method;
 
 				if (!this.called(name, method)) {
-					console.warn(`Warning: ${name} not called`);// eslint-disable-line
+					console.warn(`Warning: ${name} not called`); // eslint-disable-line
 					return false;
 				}
 
@@ -106,7 +106,9 @@ FetchMock.done = function(name, options) {
 
 				const actualTimes = this.filterCalls(name, method).length;
 				if (expectedTimes > actualTimes) {
-			console.warn(`Warning: ${name} only called ${actualTimes} times, but ${expectedTimes} expected`);// eslint-disable-line
+					console.warn(
+						`Warning: ${name} only called ${actualTimes} times, but ${expectedTimes} expected`
+					); // eslint-disable-line
 					return false;
 				} else {
 					return true;

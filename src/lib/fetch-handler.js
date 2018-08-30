@@ -68,7 +68,7 @@ FetchMock.executeRouter = function(url, options, request) {
 	}
 
 	if (this.config.warnOnFallback) {
-		console.warn(`Unmatched ${options && options.method || 'GET'} to ${url}`); // eslint-disable-line
+		console.warn(`Unmatched ${(options && options.method) || 'GET'} to ${url}`); // eslint-disable-line
 	}
 
 	this.push(null, { url, options, request });

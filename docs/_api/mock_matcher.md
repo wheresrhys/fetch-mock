@@ -2,13 +2,13 @@
 title: "matcher"
 position: 1.1
 description: |-
-  Rule for matching calls to `fetch`.
-  Condition for selecting which requests to mock. (For matching based on headers, query strings or other `fetch` options see the `options` parameter documented below). Accepts any of the following:
+  Condition for selecting which requests to mock. For matching based on headers, query strings or other `fetch` options see the `options` parameter documented below
 types:
   - String
   - Regex
   - Function
 type: parameter
+parametersBlockTitle: Argument values
 parentMethod: mock
 parameters:
   - name: "*"
@@ -78,7 +78,7 @@ parameters:
         (url, {headers}) => !!headers.Authorization
       - |-
         (_, _, request) => !!request.headers.get('Authorization')
-    content: Matches if a function returns something truthy. the function will receive the `url` and `options` arguments `fetch` was called with. If `fetch` was called with a `Request` instance, it will be passed `url` and `options` inferred from the `Request` instance. The original `Request` will be passed as a third argument.
+    content: Matches if a function returns something truthy. The function will be passed the arguments `fetch` was called with. If `fetch` was called with a `Request` instance, it will be passed `url` and `options` inferred from the `Request` instance. The original `Request` will be passed as a third argument.
 
 
 content_markdown: |-

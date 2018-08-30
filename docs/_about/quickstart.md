@@ -6,7 +6,7 @@ content_markdown: |-
 
   #### Setting up your mock
 
-  The commonest use case is `fetchMock.mock(matcher, response)`, where `matcher` is an exact url or regex to match, and `response` is a statusCode, string or object literal. You can also use `fetchMock.once(url ...)` to limit to a single call or `fetchMock.get()`, `fetchMock.post()` etc. to limit to a method. All these methods are chainable so you can easily define several mocks in a single test.
+  The commonest use case is `fetchMock.mock(matcher, response)`, where `matcher` is an exact url or regex to match, and `response` is a status code, string or object literal. You can also use `fetchMock.once()` to limit to a single call or `fetchMock.get()`, `fetchMock.post()` etc. to limit to a method. All these methods are chainable so you can easily define several mocks in a single test.
 
   ```javascript
   fetchMock

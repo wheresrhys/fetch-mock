@@ -25,9 +25,7 @@ title: API Docs
 				{% endif %}
 
 				{% if doc.parameters %}
-					{% if doc.type == "parameter" %}
-						<h6>Values</h6>
-					{% elsif doc.parametersBlockTitle %}
+					{% if doc.parametersBlockTitle %}
 						<h6>{{ doc.parametersBlockTitle }}</h6>
 					{% else %}
 						<h6>Parameters</h6>
@@ -36,11 +34,9 @@ title: API Docs
 					<dl class="parameters">
 					{% for parameter in doc.parameters %}
 						<dt>
-							{{ parameter.name }}
 							{% include types.html block=parameter %}
 						</dt>
 						<dd>
-
 							{{ parameter.content | markdownify }}
 							{% if parameter.examples %}
 								{% for example in parameter.examples %}
@@ -51,11 +47,9 @@ title: API Docs
 								<dl class="options">
 								{% for option in parameter.options %}
 									<dt>
-										{{ option.name }}
 										{% include types.html block=option %}
 									</dt>
 									<dd>
-
 										{{ option.content | markdownify }}
 										{% if option.examples %}
 											{% for example in option.examples %}

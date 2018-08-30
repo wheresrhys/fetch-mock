@@ -11,6 +11,7 @@ types:
   - Promise
   - Response
 type: parameter
+parametersBlockTitle: Argument values
 parentMethod: mock
 parameters:
   - types:
@@ -18,7 +19,7 @@ parameters:
     examples:
       - "new Response('ok', {status: 200})"
     content: A `Response` instance - will be used unaltered
-  - name: Status code
+  - name: status code
     types:
       - String
     examples:
@@ -30,52 +31,61 @@ parameters:
     examples:
       - Server responded ok
       - Bad Response
-  - types:
+  - name: config
+    types:
       - Object
-    content: If an object _only_ contains properties listed below it used to configure a `Response`
+    content: If an object _only_ contains properties listed below it is used to configure a `Response`
     options:
       - name: body
         types:
           - String
           - Object
         content: |-
-          Set the response body
+          Set the response body. For behaviour for `Object`s, see the non-config `Object` section of the docs below
         examples:
           - Server responded ok
           - { token: 'abcdef' }
       - name: status
+        types:
+          - Integer
         content: Set the response status
         examples:
           - 200, 404, 503
       - name: headers
+        types:
+          - Object
         content: Set the response headers
         examples:
           - {'Content-Type': 'text/html'}
+      - name: redirectUrl
+        types:
+          - String
+        content: |-
+          The url the response should claim to originate from (to imitate followed directs). Will also set `redirected: true` on the response
       - name: throws
+        types:
+          - Error
         content: |-
           `fetch` will return a `Promise` rejected with the value of `throws`
         examples:
           - "new TypeError('Failed to fetch')"
-
+  - types:
+    - Object
+    - ArrayBuffer
+    content: |-
+      All objects that do not meet the criteria above will be converted to JSON and set as the response `body` if the `sendAsJson` option is on. Otherwise, they will be set as the response `body` (useful for array buffers etc.)
+  - types:
+    - Promise
+    content: |-
+      A `Promise` that resolves to any of the options documented above
+    examples:
+      - "new Promise(res => setTimeout(() => res(200), 50))"
+  - types:
+    - Function
+    content: |-
+      A function that is passed the arguments `fetch` is called with and that returns any of the responses listed above
+    examples:
+      - "(url, opts) => opts.headers.Authorization ? 200 : 403"
+      - "(_, _, request) => request.headers.get('Authorization') ?  200 : 403"
 
 ---
-
-
-
-content: |-
-      - `sendAsJson`: This property determines whether or not the request body should be converted to `JSON` before being sent (defaults to `true`).
-      - `includeContentLength`: Set this property to true to automatically add the `content-length` header (defaults to `true`).
-      - `redirectUrl`: _experimental_ the url the response should be from (to imitate followed redirects - will set `redirected: true` on the response)
-content_markdown: |-
-
-
-  - `configObject` If an object _does not contain_ any properties aside from those listed below it is treated as config to build a `Response`
-    - `body`: Set the response body (`string` or `object`)
-    - `status`: Set the response status (default `200`)
-    - `headers`: Set the response headers. (`object`)
-    - `throws`: If this property is present then fetch returns a `Promise` rejected with the value of `throws`
-    - `sendAsJson`: This property determines whether or not the request body should be converted to `JSON` before being sent (defaults to `true`).
-    - `includeContentLength`: Set this property to true to automatically add the `content-length` header (defaults to `true`).
-    - `redirectUrl`: _experimental_ the url the response should be from (to imitate followed redirects - will set `redirected: true` on the response)
-  - `object`: All objects that do not meet the criteria above are converted to `JSON` and returned as the body of a 200 response.
-  - `Function(url, opts)`: A function that is passed the url and opts `fetch()` is called with and that returns any of the responses listed above (or a `Promise` for any of them)

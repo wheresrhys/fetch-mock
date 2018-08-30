@@ -1,5 +1,6 @@
-
+{{ include.block.name }}
 {% if include.block.types %}
+{% if include.block.name %}<br>{% endif %}
 	{% for type in include.block.types %}
 		<code{% unless include.block.name %} class="name"{% endunless %}>{{type}}</code>
 		{% if forloop.last != true %}|{% endif %}

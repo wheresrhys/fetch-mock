@@ -132,13 +132,16 @@ dl.parameters {
 	margin: 0 0 20px 0;
 	display: grid;
 	grid-gap: 1rem;
-	grid-template-columns: 25% 1fr;
+	grid-template-columns: 20% 1fr;
 }
 
 dl.options {
 	display: grid;
 	grid-gap: 1rem;
 	grid-template-columns: 15% 1fr;
+	margin-right: -30%;
+	background: #f3f3f3;
+	padding: 10px;
 }
 
 dl dt {
@@ -147,7 +150,7 @@ dl dt {
 	font-weight: bold;
 }
 
-dl dd {
+dl dd > *:not(dl) {
 	grid-column-start: 2;
   grid-column-end: 3;
 }
@@ -333,7 +336,7 @@ hr {
 .left-docs {
 	width: 100%;
 	float: left;
-	padding: 0 150px;
+	padding: 0 50px;
 	box-sizing: border-box;
 
 	pre {
@@ -341,6 +344,14 @@ hr {
 		 box-shadow: 0 0 0 1px #eee;
 		 border-radius: 3px;
 		 padding: 10px;
+	}
+
+	p, pre, ul, dd {
+		max-width: 560px
+	}
+
+	dd {
+		max-width: 400px
 	}
 }
 .code-viewer {

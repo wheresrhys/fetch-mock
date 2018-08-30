@@ -58,7 +58,7 @@ FetchMock.fetchHandler.isMock = true;
 
 FetchMock.executeRouter = function(url, options, request) {
 	if (this.config.fallbackToNetwork === 'always') {
-		return {response: this.getNativeFetch()};
+		return { response: this.getNativeFetch() };
 	}
 
 	const match = this.router(url, options, request);
@@ -74,7 +74,7 @@ FetchMock.executeRouter = function(url, options, request) {
 	this.push(null, { url, options, request });
 
 	if (this.fallbackResponse) {
-		return {response: this.fallbackResponse};
+		return { response: this.fallbackResponse };
 	}
 
 	if (!this.config.fallbackToNetwork) {
@@ -85,7 +85,7 @@ FetchMock.executeRouter = function(url, options, request) {
 		);
 	}
 
-	return {response: this.getNativeFetch()};
+	return { response: this.getNativeFetch() };
 };
 
 FetchMock.generateResponse = async function(route, url, opts) {
@@ -96,7 +96,7 @@ FetchMock.generateResponse = async function(route, url, opts) {
 	// Because of this we can't safely check for function before Promisey-ness,
 	// or vice versa. So to keep it DRY, and flexible, we keep trying until we
 	// have something that looks like neither Promise nor function
-	let response = route.response
+	let response = route.response;
 	while (
 		typeof response === 'function' ||
 		typeof response.then === 'function'
@@ -121,7 +121,12 @@ FetchMock.generateResponse = async function(route, url, opts) {
 	}
 
 	// finally, if we need to convert config into a response, we do it
-	return new ResponseBuilder(url, response, this, route).exec();
+	return new ResponseBuilder({
+		url,
+		shorthandResponse: response,
+		fetchMock: this,
+		route
+	}).exec();
 };
 
 FetchMock.router = function(url, options, request) {

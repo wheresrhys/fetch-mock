@@ -1,38 +1,30 @@
-const responseConfigProps = [
+const shorthandResponseProps = [
 	'body',
 	'headers',
 	'throws',
 	'status',
-	'redirectUrl',
-	'includeContentLength',
-	'sendAsJson'
+	'redirectUrl'
 ];
 
 module.exports = class ResponseBuilder {
-	constructor(url, responseConfig, fetchMock, route) {
-		this.url = typeof url === 'object' ? url.url : url;
-		this.route = route;
-		this.fetchMockInstance = fetchMock;
-		this.responseConfig = responseConfig;
-		this.fetchMockConfig = fetchMock.config;
-		this.statusTextMap = fetchMock.statusTextMap;
-		this.Response = fetchMock.config.Response;
-		this.Headers = fetchMock.config.Headers;
-		this._holdingPromises = fetchMock._holdingPromises;
+	constructor(options) {
+		Object.assign(this, options);
 	}
 
 	exec() {
 		this.normalizeResponseConfig();
 		this.constructFetchOpts();
 		this.constructResponseBody();
-		return this.observe(new this.Response(this.body, this.opts));
+		return this.buildObservableResponse(
+			new this.fetchMock.config.Response(this.body, this.opts)
+		);
 	}
 
 	sendAsObject() {
-		if (responseConfigProps.some(prop => this.responseConfig[prop])) {
+		if (shorthandResponseProps.some(prop => this.shorthandResponse[prop])) {
 			if (
-				Object.keys(this.responseConfig).every(key =>
-					responseConfigProps.includes(key)
+				Object.keys(this.shorthandResponse).every(key =>
+					shorthandResponseProps.includes(key)
 				)
 			) {
 				return false;
@@ -46,15 +38,18 @@ module.exports = class ResponseBuilder {
 
 	normalizeResponseConfig() {
 		// If the response config looks like a status, start to generate a simple response
-		if (typeof this.responseConfig === 'number') {
-			this.responseConfig = {
-				status: this.responseConfig
+		if (typeof this.shorthandResponse === 'number') {
+			this.shorthandResponse = {
+				status: this.shorthandResponse
 			};
 			// If the response config is not an object, or is an object that doesn't use
 			// any reserved properties, assume it is meant to be the body of the response
-		} else if (typeof this.responseConfig === 'string' || this.sendAsObject()) {
-			this.responseConfig = {
-				body: this.responseConfig
+		} else if (
+			typeof this.shorthandResponse === 'string' ||
+			this.sendAsObject()
+		) {
+			this.shorthandResponse = {
+				body: this.shorthandResponse
 			};
 		}
 	}
@@ -79,28 +74,30 @@ e.g. {"body": {"status: "registered"}}`);
 	}
 
 	constructFetchOpts() {
-		this.opts = this.responseConfig.opts || {};
-		this.opts.url = this.responseConfig.redirectUrl || this.url;
-		this.opts.status = this.validateStatus(this.responseConfig.status);
-		this.opts.statusText = this.statusTextMap['' + this.opts.status];
+		this.opts = this.shorthandResponse.opts || {};
+		this.opts.url = this.shorthandResponse.redirectUrl || this.url;
+		this.opts.status = this.validateStatus(this.shorthandResponse.status);
+		this.opts.statusText = this.fetchMock.statusTextMap['' + this.opts.status];
 		// Set up response headers. The empty object is to cope with
 		// new Headers(undefined) throwing in Chrome
 		// https://code.google.com/p/chromium/issues/detail?id=335871
-		this.opts.headers = new this.Headers(this.responseConfig.headers || {});
+		this.opts.headers = new this.fetchMock.config.Headers(
+			this.shorthandResponse.headers || {}
+		);
 	}
 
 	getOption(name) {
 		return this.route[name] === undefined
-			? this.fetchMockConfig[name]
+			? this.fetchMock.config[name]
 			: this.route[name];
 	}
 
 	constructResponseBody() {
 		// start to construct the body
-		let body = this.responseConfig.body;
+		let body = this.shorthandResponse.body;
 
 		// convert to json if we need to
-		if (this.getOption('sendAsJson') && this.responseConfig.body != null && typeof body === 'object') { //eslint-disable-line
+		if (this.getOption('sendAsJson') && this.shorthandResponse.body != null && typeof body === 'object') { //eslint-disable-line
 			body = JSON.stringify(body);
 			if (!this.opts.headers.has('Content-Type')) {
 				this.opts.headers.set('Content-Type', 'application/json');
@@ -129,17 +126,17 @@ e.g. {"body": {"status: "registered"}}`);
 		this.body = body;
 	}
 
-	observe(response) {
-		const fetchMock = this.fetchMockInstance;
+	buildObservableResponse(response) {
+		const fetchMock = this.fetchMock;
 
 		// Using a proxy means we can set properties that may not be writable on
 		// the original Response. It also means we can track the resolution of
 		// promises returned by res.json(), res.text() etc
 		return new Proxy(response, {
 			get: (originalResponse, name) => {
-				if (this.responseConfig.redirectUrl) {
+				if (this.shorthandResponse.redirectUrl) {
 					if (name === 'url') {
-						return this.responseConfig.redirectUrl;
+						return this.shorthandResponse.redirectUrl;
 					}
 
 					if (name === 'redirected') {

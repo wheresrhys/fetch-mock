@@ -130,7 +130,7 @@ FetchMock.generateResponse = async function(route, url, opts) {
 };
 
 FetchMock.router = function(url, options, request) {
-	const route = this.routes.find(route => route.matcher(url, options));
+	const route = this.routes.find(route => route.matcher(url, options, request));
 
 	if (route) {
 		this.push(route.name, { url, options, request });

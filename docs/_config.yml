@@ -19,9 +19,12 @@ collections:
   usage:
     title: "Usage"
     position: 2
-  api:
-    title: API
+  api-mocking:
+    title: Mocking API
     position: 3
+  api-lifecycle:
+    title: Lifecycle methods
+    position: 5
 plugins:
   - jekyll-sitemap
   - jekyll-seo-tag

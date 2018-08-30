@@ -8,6 +8,7 @@ types:
 type: parameter
 parametersBlockTitle: Options
 parentMethod: mock
+parentMethodGroup: mocking
 parameters:
   - name: name
     types:

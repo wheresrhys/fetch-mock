@@ -13,6 +13,7 @@ types:
 type: parameter
 parametersBlockTitle: Argument values
 parentMethod: mock
+parentMethodGroup: mocking
 parameters:
   - types:
       - Response

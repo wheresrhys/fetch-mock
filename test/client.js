@@ -14,11 +14,7 @@ describe('native fetch behaviour', function() {
 describe('request types that only work in the browser', function() {
 	it('respond with blob', function(done) {
 		const blob = new Blob();
-		fetchMock.mock({
-			name: 'route',
-			matcher: 'http://it.at.there/',
-			response: { body: blob, sendAsJson: false }
-		});
+		fetchMock.mock('http://it.at.there/', blob, { sendAsJson: false });
 		fetch('http://it.at.there/').then(function(res) {
 			expect(res.status).to.equal(200);
 			res.blob().then(function(blobData) {

@@ -12,20 +12,20 @@ parameters:
   - name: includeContentLength<sup></sup>
     default: true
     content: Automatically sets a `content-length` header on each response.
-  - name: fallbackToNetwork<sup>†</sup>
+  - name: fallbackToNetwork
     default: "false"
     content: |-
       - `true`: Unhandled calls fall through to the network
       - `false`: Unhandled calls throw an error
       - `'always'`: All calls fall through to the network, effectively disabling fetch-mock.
-  - name: overwriteRoutes<sup>†</sup>
+  - name: overwriteRoutes
     default: "undefined"
     content: |-
       Determines behaviour if a new route has the same name (or inferred name) as an existing one
       - `undefined`: An error will be throw when routes clash
       - `true`: Overwrites the existing route
       - `false`: Appends the new route to the list of routes
-  - name: warnOnFallback<sup>†</sup>
+  - name: warnOnFallback
     default: true
     content: |-
       Print a warning if any call is caught by a fallback handler (set using the `fallbackToNetwork` option or `catch()`)

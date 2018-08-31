@@ -22,7 +22,7 @@ parameters:
     content: A `Response` instance - will be used unaltered
   - name: status code
     types:
-      - String
+      - Integer
     examples:
       - 200, 404, 503
     content: Creates a response with the given status code. The response's `statusText` will also be set to the [default value corresponding to the status](https://fetch.spec.whatwg.org/#dom-response-statustext)

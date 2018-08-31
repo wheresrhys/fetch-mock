@@ -26,7 +26,7 @@ parameters:
         "http://www.site.com/page.html"
     content: Matches an exact url
   - name: |-
-      begin:
+      begin:...
     types:
       - String
     examples:
@@ -34,7 +34,7 @@ parameters:
         "begin:http://www.site.com"
     content: Matches a url beginning with a string
   - name: |-
-      end:
+      end:...
     types:
       - String
     examples:
@@ -42,7 +42,7 @@ parameters:
         "end:.jpg"
     content: Matches a url ending with a string
   - name: |-
-      path:
+      path:...
     types:
       - String
     examples:
@@ -50,7 +50,7 @@ parameters:
         "path:/posts/2018/7/3"
     content: Matches a url which has a given path
   - name: |-
-      glob:
+      glob:...
     types:
       - String
     examples:
@@ -58,7 +58,7 @@ parameters:
         "glob:http://*.*"
     content: Matches a url using a glob pattern
   - name: |-
-      express:
+      express:...
     types:
       - String
     examples:

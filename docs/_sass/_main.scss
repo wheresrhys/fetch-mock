@@ -155,9 +155,20 @@ dl dd > *:not(dl) {
   grid-column-end: 3;
 }
 
-dt > code {
-	color: #aa5500;
+.default,
+dt code  {
+	color: #888;
 	font-family: monospace;
+}
+
+dt code,
+dt sup {
+	color: #aa5500;
+}
+
+.default,
+dt > code {
+	font-size: 0.9em;
 }
 
 p > code,

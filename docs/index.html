@@ -21,11 +21,11 @@ title: API Docs
 						{% endif %}
 
 				</h3>
-
+				{% include types.html block=doc %}
 				{% if doc.description %}
 					<p class="description">
-						{% include types.html block=doc %}
-						{{ doc.description }}
+
+						{{ doc.description | markdownify }}
 					</p>
 				{% endif %}
 

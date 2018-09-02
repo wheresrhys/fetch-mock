@@ -5,7 +5,7 @@ description: |-
   Condition for selecting which requests to mock. For matching based on headers, query strings or other `fetch` options see the `options` parameter documented below
 types:
   - String
-  - Regex
+  - RegExp
   - Function
 type: parameter
 parametersBlockTitle: Argument values

@@ -123,7 +123,7 @@ FetchMock.generateResponse = async function(route, url, opts) {
 	// finally, if we need to convert config into a response, we do it
 	return new ResponseBuilder({
 		url,
-		shorthandResponse: response,
+		responseConfig: response,
 		fetchMock: this,
 		route
 	}).exec();

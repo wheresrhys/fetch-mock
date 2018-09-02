@@ -1,4 +1,4 @@
-const shorthandResponseProps = [
+const responseConfigProps = [
 	'body',
 	'headers',
 	'throws',
@@ -21,10 +21,10 @@ module.exports = class ResponseBuilder {
 	}
 
 	sendAsObject() {
-		if (shorthandResponseProps.some(prop => this.shorthandResponse[prop])) {
+		if (responseConfigProps.some(prop => this.responseConfig[prop])) {
 			if (
-				Object.keys(this.shorthandResponse).every(key =>
-					shorthandResponseProps.includes(key)
+				Object.keys(this.responseConfig).every(key =>
+					responseConfigProps.includes(key)
 				)
 			) {
 				return false;
@@ -38,18 +38,15 @@ module.exports = class ResponseBuilder {
 
 	normalizeResponseConfig() {
 		// If the response config looks like a status, start to generate a simple response
-		if (typeof this.shorthandResponse === 'number') {
-			this.shorthandResponse = {
-				status: this.shorthandResponse
+		if (typeof this.responseConfig === 'number') {
+			this.responseConfig = {
+				status: this.responseConfig
 			};
 			// If the response config is not an object, or is an object that doesn't use
 			// any reserved properties, assume it is meant to be the body of the response
-		} else if (
-			typeof this.shorthandResponse === 'string' ||
-			this.sendAsObject()
-		) {
-			this.shorthandResponse = {
-				body: this.shorthandResponse
+		} else if (typeof this.responseConfig === 'string' || this.sendAsObject()) {
+			this.responseConfig = {
+				body: this.responseConfig
 			};
 		}
 	}
@@ -74,15 +71,15 @@ e.g. {"body": {"status: "registered"}}`);
 	}
 
 	constructFetchOpts() {
-		this.opts = this.shorthandResponse.opts || {};
-		this.opts.url = this.shorthandResponse.redirectUrl || this.url;
-		this.opts.status = this.validateStatus(this.shorthandResponse.status);
+		this.opts = this.responseConfig.opts || {};
+		this.opts.url = this.responseConfig.redirectUrl || this.url;
+		this.opts.status = this.validateStatus(this.responseConfig.status);
 		this.opts.statusText = this.fetchMock.statusTextMap['' + this.opts.status];
 		// Set up response headers. The empty object is to cope with
 		// new Headers(undefined) throwing in Chrome
 		// https://code.google.com/p/chromium/issues/detail?id=335871
 		this.opts.headers = new this.fetchMock.config.Headers(
-			this.shorthandResponse.headers || {}
+			this.responseConfig.headers || {}
 		);
 	}
 
@@ -90,42 +87,48 @@ e.g. {"body": {"status: "registered"}}`);
 		return name in this.route ? this.route[name] : this.fetchMock.config[name];
 	}
 
-	constructResponseBody() {
-		// start to construct the body
-		let body = this.shorthandResponse.body;
-
+	convertToJson() {
 		// convert to json if we need to
 		if (
 			this.getOption('sendAsJson') &&
-			this.shorthandResponse.body != null && //eslint-disable-line
-			typeof body === 'object'
+			this.responseConfig.body != null && //eslint-disable-line
+			typeof this.body === 'object'
 		) {
-			body = JSON.stringify(body);
+			this.body = JSON.stringify(this.body);
 			if (!this.opts.headers.has('Content-Type')) {
 				this.opts.headers.set('Content-Type', 'application/json');
 			}
 		}
+	}
 
+	setContentLength() {
 		// add a Content-Length header if we need to
 		if (
 			this.getOption('includeContentLength') &&
-			typeof body === 'string' &&
+			typeof this.body === 'string' &&
 			!this.opts.headers.has('Content-Length')
 		) {
-			this.opts.headers.set('Content-Length', body.length.toString());
+			this.opts.headers.set('Content-Length', this.body.length.toString());
 		}
+	}
+
+	constructResponseBody() {
+		// start to construct the body
+		this.body = this.responseConfig.body;
+		this.convertToJson();
+		this.setContentLength();
 
 		// On the server we need to manually construct the readable stream for the
 		// Response object (on the client this done automatically)
-		if (this.stream) {
-			const s = new this.stream.Readable();
-			if (body != null) { //eslint-disable-line
-				s.push(body, 'utf-8');
+		if (this.Stream) {
+			const stream = new this.Stream.Readable();
+			if (this.body != null) { //eslint-disable-line
+				stream.push(this.body, 'utf-8');
 			}
-			s.push(null);
-			body = s;
+			stream.push(null);
+			this.body = stream;
 		}
-		this.body = body;
+		this.body = this.body;
 	}
 
 	buildObservableResponse(response) {
@@ -136,9 +139,9 @@ e.g. {"body": {"status: "registered"}}`);
 		// promises returned by res.json(), res.text() etc
 		return new Proxy(response, {
 			get: (originalResponse, name) => {
-				if (this.shorthandResponse.redirectUrl) {
+				if (this.responseConfig.redirectUrl) {
 					if (name === 'url') {
-						return this.shorthandResponse.redirectUrl;
+						return this.responseConfig.redirectUrl;
 					}
 
 					if (name === 'redirected') {

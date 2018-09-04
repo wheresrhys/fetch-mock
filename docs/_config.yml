@@ -14,16 +14,19 @@ timezone: Etc/UTC
 
 collections:
   about:
-    title: "About"
+    title: About
     position: 0
   usage:
-    title: "Usage"
+    title: Usage
     position: 1
   api-mocking:
     title: Mocking API
     position: 2
   api-lifecycle:
     title: Lifecycle methods
+    position: 3
+  api-inspection:
+    title: Inspection methods
     position: 3
   troubleshooting:
     title: Troubleshooting

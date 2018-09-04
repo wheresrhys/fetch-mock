@@ -132,22 +132,29 @@ dl.parameters {
 	margin: 0 0 20px 0;
 	display: grid;
 	grid-gap: 1rem;
-	grid-template-columns: 20% 1fr;
+	grid-template-columns: 25% 1fr;
 }
 
 dl.options {
 	display: grid;
 	grid-gap: 1rem;
-	grid-template-columns: 15% 1fr;
-	margin-right: -30%;
-	background: #f3f3f3;
+	grid-template-columns: 25% 1fr;
+	border-color: #eee;
+	border-top-width: 1px;
+	border-top-style: solid;
 	padding: 10px;
+	margin-left: -39%;
+	font-size: 0.85em;
 }
 
 dl dt {
 	grid-column-start: 1;
   grid-column-end: 2;
 	font-weight: bold;
+}
+
+dd {
+	margin-left: 0
 }
 
 dl dd > *:not(dl) {
@@ -158,6 +165,11 @@ dl dd > *:not(dl) {
 .types-zone {
 	// font-family: monospace;
 	font-size: 0.9em;
+}
+
+dl.options .types-zone {
+	// font-family: monospace;
+	font-size: 1em;
 }
 .default,
 dt code  {

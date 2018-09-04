@@ -1,6 +1,6 @@
 ---
 title: "Filtering basics"
-position: 1
+position: 0
 description: |-
   Most inspection methods take two arguments — `filter` and `options` — which allow groups of fetch calls to be extracted and inspected.
 parameters:

@@ -1,0 +1,2628 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<!-- Begin Jekyll SEO tag v2.4.0 -->
+<title>API Docs | fetch-mock</title>
+<meta name="generator" content="Jekyll v3.8.3" />
+<meta property="og:title" content="API Docs" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Mock http requets using fetch" />
+<meta property="og:description" content="Mock http requets using fetch" />
+<link rel="canonical" href="http://localhost:4000/" />
+<meta property="og:url" content="http://localhost:4000/" />
+<meta property="og:site_name" content="fetch-mock" />
+<script type="application/ld+json">
+{"headline":"API Docs","description":"Mock http requets using fetch","@type":"WebSite","name":"fetch-mock","url":"http://localhost:4000/","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+		<link rel="stylesheet" href="/css/style.css">
+		<link rel="icon" type="image/png" href="/favicon.png">
+
+		
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+		<script src="/js/main.js"></script>
+	</head>
+	<body>
+		<header>
+			<h1>
+				<button type="button" class="open-nav" id="open-nav"></button>
+				<a href="/">fetch-mock</a>
+			</h1>
+
+			<div id="sidebar" class="sidebar">
+	
+	
+		
+	
+		
+			<section>
+				<h6>About</h6>
+				<ul>
+					
+					
+						<li>
+							<a href="#aboutintroduction">
+								Introduction
+								
+							</a>
+						</li>
+					
+						<li>
+							<a href="#aboutquickstart">
+								Quickstart
+								
+							</a>
+						</li>
+					
+				</ul>
+			</section>
+		
+	
+		
+			<section>
+				<h6>Usage</h6>
+				<ul>
+					
+					
+						<li>
+							<a href="#usagerequirements">
+								Requirements
+								
+							</a>
+						</li>
+					
+						<li>
+							<a href="#usageinstallation">
+								Installation
+								
+							</a>
+						</li>
+					
+						<li>
+							<a href="#usageglobal-non-global">
+								Global or non-global
+								
+							</a>
+						</li>
+					
+						<li>
+							<a href="#usagepolyfilling">
+								Polyfilling fetch
+								
+							</a>
+						</li>
+					
+						<li>
+							<a href="#usagecustom-classes">
+								Custom subclasses
+								
+							</a>
+						</li>
+					
+						<li>
+							<a href="#usageconfiguration">
+								Configuration
+								
+							</a>
+						</li>
+					
+				</ul>
+			</section>
+		
+	
+		
+			<section>
+				<h6>Mocking API</h6>
+				<ul>
+					
+					
+						<li>
+							<a href="#api-mockingmock">
+								.mock()
+								
+							</a>
+						</li>
+					
+						<li class="parameter">
+							<a href="#api-mockingmock_matcher">
+								matcher
+								<span class="endpoint parameter"></span>
+							</a>
+						</li>
+					
+						<li class="parameter">
+							<a href="#api-mockingmock_response">
+								response
+								<span class="endpoint parameter"></span>
+							</a>
+						</li>
+					
+						<li class="parameter">
+							<a href="#api-mockingmock_options">
+								options
+								<span class="endpoint parameter"></span>
+							</a>
+						</li>
+					
+						<li>
+							<a href="#api-mockingmock_once">
+								.once()
+								
+							</a>
+						</li>
+					
+						<li>
+							<a href="#api-mockingget_post">
+								.get(), .post() ...
+								
+							</a>
+						</li>
+					
+						<li>
+							<a href="#api-mockinggetOnce_postOnce">
+								.getOnce(), .postOnce() ...
+								
+							</a>
+						</li>
+					
+						<li>
+							<a href="#api-mockingcatch">
+								.catch()
+								
+							</a>
+						</li>
+					
+						<li>
+							<a href="#api-mockingspy">
+								.spy()
+								
+							</a>
+						</li>
+					
+				</ul>
+			</section>
+		
+	
+		
+			<section>
+				<h6>Lifecycle methods</h6>
+				<ul>
+					
+					
+						<li>
+							<a href="#api-lifecyclesandbox">
+								.sandbox()
+								
+							</a>
+						</li>
+					
+						<li>
+							<a href="#api-lifecycleflush">
+								.flush()
+								
+							</a>
+						</li>
+					
+						<li>
+							<a href="#api-lifecyclerestore_reset">
+								.restore(), .reset()
+								
+							</a>
+						</li>
+					
+						<li>
+							<a href="#api-lifecycleresetHistory">
+								.resetHistory()
+								
+							</a>
+						</li>
+					
+				</ul>
+			</section>
+		
+	
+		
+			<section>
+				<h6>Inspection methods</h6>
+				<ul>
+					
+					
+						<li>
+							<a href="#api-inspectionfiltering">
+								Filtering basics
+								
+							</a>
+						</li>
+					
+				</ul>
+			</section>
+		
+	
+		
+			<section>
+				<h6>Troubleshooting</h6>
+				<ul>
+					
+					
+				</ul>
+			</section>
+		
+	
+</div>
+
+
+			<p class="copyright">
+				<a href="https://cloudcannon.com/">
+					Template by CloudCannon
+				</a>
+			</p>
+		</header>
+		<div class="main">
+			
+
+	
+	
+	
+
+	
+	
+	
+	
+	
+		<section class="doc-content">
+			<section class="left-docs">
+				<h3>
+					<a id="aboutintroduction">
+						Introduction
+					</a>
+					
+
+				</h3>
+				
+<div class="types-zone">
+
+
+</div>
+
+				
+
+				
+
+				<p>fetch-mock allows mocking http requests made using <a href="https://fetch.spec.whatwg.org/">fetch</a>, or one of the many libraries imitating its api, such as <a href="https://www.npmjs.com/package/node-fetch">node-fetch</a> or <a href="https://www.npmjs.com/package/fetch-ponyfill">fetch-ponyfill</a>.</p>
+
+<p>It supports most JavaScript environments, including nodejs, web workers and service workers, and any browser that either supports fetch natively or that can have a fetch polyfill installed.</p>
+
+<p>As well as shorthand methods for the simplest use cases, it offers a flexible API for customising all aspects of mocking behaviour.</p>
+
+
+				
+						
+								
+
+
+<div title="Example" class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">fetchMock</span><span class="p">.</span><span class="nx">mock</span><span class="p">(</span><span class="s1">'http://example.com'</span><span class="p">,</span> <span class="mi">200</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">res</span> <span class="o">=</span> <span class="kr">await</span> <span class="nx">fetch</span><span class="p">(</span><span class="s1">'http://example.com'</span><span class="p">);</span>
+<span class="nx">assert</span><span class="p">(</span><span class="nx">res</span><span class="p">.</span><span class="nx">ok</span><span class="p">);</span>
+<span class="nx">fetchMock</span><span class="p">.</span><span class="nx">restore</span><span class="p">();</span>
+</code></pre></div></div>
+
+						
+				
+			</section>
+		</section>
+	
+		<section class="doc-content">
+			<section class="left-docs">
+				<h3>
+					<a id="aboutquickstart">
+						Quickstart
+					</a>
+					
+
+				</h3>
+				
+<div class="types-zone">
+
+
+</div>
+
+				
+
+				
+
+				
+<h4 id="setting-up-your-mock">Setting up your mock</h4>
+
+<ul>
+  <li>The commonest use case is <code class="highlighter-rouge">fetchMock.mock(matcher, response)</code>, where <code class="highlighter-rouge">matcher</code> is an exact url or regex to match, and <code class="highlighter-rouge">response</code> is a status code, string or object literal.</li>
+  <li>You can also use <code class="highlighter-rouge">fetchMock.once()</code> to limit to a single call or <code class="highlighter-rouge">fetchMock.get()</code>, <code class="highlighter-rouge">fetchMock.post()</code> etc. to limit to a method.</li>
+  <li>All these methods are chainable so you can easily define several mocks in a single test.</li>
+</ul>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">fetchMock</span>
+  <span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="s1">'http://good.com/'</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s1">'http://good.com/'</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
+  <span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="sr">/bad</span><span class="se">\.</span><span class="sr">com/</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+</code></pre></div></div>
+<h4 id="analysing-calls-to-your-mock">Analysing calls to your mock</h4>
+
+<ul>
+  <li><code class="highlighter-rouge">fetchMock.called(matcher)</code> reports if any calls matched your mock (or leave <code class="highlighter-rouge">matcher</code> out if you just want to check <code class="highlighter-rouge">fetch</code> was called at all).</li>
+  <li><code class="highlighter-rouge">fetchMock.lastCall()</code>, <code class="highlighter-rouge">fetchMock.lastUrl()</code> or <code class="highlighter-rouge">fetchMock.lastOptions()</code> give you access to the parameters last passed in to <code class="highlighter-rouge">fetch</code>.</li>
+  <li><code class="highlighter-rouge">fetchMock.done()</code> will tell you if <code class="highlighter-rouge">fetch</code> was called the expected number of times.</li>
+</ul>
+
+<h4 id="tearing-down-your-mock">Tearing down your mock</h4>
+
+<ul>
+  <li><code class="highlighter-rouge">fetchMock.resetHistory()</code> resets the call history.</li>
+  <li><code class="highlighter-rouge">fetchMock.reset()</code> or <code class="highlighter-rouge">fetchMock.restore()</code> will also restore <code class="highlighter-rouge">fetch()</code> to its native implementation</li>
+</ul>
+
+<h4 id="example">Example</h4>
+
+<p>Example with node: suppose we have a file <code class="highlighter-rouge">make-request.js</code> with a function that calls <code class="highlighter-rouge">fetch</code>:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">makeRequest</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">fetch</span><span class="p">(</span><span class="s1">'http://httpbin.org/get'</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
+  <span class="p">});</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p>We can use fetch-mock to mock <code class="highlighter-rouge">fetch</code>. In <code class="highlighter-rouge">mocked.js</code>:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">fetchMock</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'fetch-mock'</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">makeRequest</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'./make-request'</span><span class="p">);</span>
+
+<span class="c1">// Mock the fetch() global to always return the same value for GET</span>
+<span class="c1">// requests to all URLs.</span>
+<span class="nx">fetchMock</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="s1">'*'</span><span class="p">,</span> <span class="p">{</span> <span class="na">hello</span><span class="p">:</span> <span class="s1">'world'</span> <span class="p">});</span>
+
+<span class="nx">makeRequest</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'got data'</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="c1">// Unmock.</span>
+<span class="nx">fetchMock</span><span class="p">.</span><span class="nx">reset</span><span class="p">();</span>
+</code></pre></div></div>
+
+<p>Result:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>node mocked.js
+<span class="s1">'got data'</span> <span class="o">{</span> hello: <span class="s1">'world'</span> <span class="o">}</span>
+</code></pre></div></div>
+
+
+				
+			</section>
+		</section>
+	
+
+	
+	
+		<h2>Usage</h2>
+	
+	
+	
+	
+		<section class="doc-content">
+			<section class="left-docs">
+				<h3>
+					<a id="usagerequirements">
+						Requirements
+					</a>
+					
+
+				</h3>
+				
+<div class="types-zone">
+
+
+</div>
+
+				
+
+				
+
+				<p>fetch-mock requires the following to run:</p>
+
+<ul>
+  <li><a href="https://nodejs.org/">Node.js</a> 8+ for full feature operation</li>
+  <li><a href="https://nodejs.org/">Node.js</a> 0.12+ with <a href="http://www.wheresrhys.co.uk/fetch-mock/installation">limitations</a></li>
+  <li><a href="https://www.npmjs.com/package/npm">npm</a> (normally comes with Node.js)</li>
+  <li>Either of the following
+    <ul>
+      <li><a href="https://www.npmjs.com/package/node-fetch">node-fetch</a> when testing in a nodejs</li>
+      <li>A browser that supports the <code class="highlighter-rouge">fetch</code> API either natively or via a <a href="https://ponyfoo.com/articles/polyfills-or-ponyfills">polyfill/ponyfill</a></li>
+    </ul>
+  </li>
+</ul>
+
+<p class="warning">Note that <strong>node-fetch</strong> is not included as a dependency of this package. This is to allow users a choice over which version to use; fetch-mock will use whichever version you have installed</p>
+
+
+				
+			</section>
+		</section>
+	
+		<section class="doc-content">
+			<section class="left-docs">
+				<h3>
+					<a id="usageinstallation">
+						Installation
+					</a>
+					
+
+				</h3>
+				
+<div class="types-zone">
+
+
+</div>
+
+				
+
+				
+
+				
+<p>Install fetch-mock using</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm <span class="nb">install</span> <span class="nt">--save-dev</span> fetch-mock
+</code></pre></div></div>
+
+<p>In most environments use one of the following in your test files</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">fetchMock</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'fetch-mock'</span><span class="p">);</span>
+
+<span class="c1">// Exposes constants that will make tests more readable</span>
+<span class="kd">const</span> <span class="p">{</span> <span class="nx">fetchMock</span><span class="p">,</span> <span class="nx">MATCHED</span><span class="p">,</span> <span class="nx">UNMATCHED</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'fetch-mock'</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>Some exceptions include:</p>
+
+<p class="warning">If your client-side code or tests do not use a loader that respects the <code class="highlighter-rouge">browser</code> field of <code class="highlighter-rouge">package.json</code> use <code class="highlighter-rouge">require('fetch-mock/es5/client')</code>.</p>
+<p class="warning">If you need to use fetch-mock without commonjs, you can include the precompiled <code class="highlighter-rouge">node_modules/fetch-mock/es5/client-bundle.js</code> in a script tag. This loads fetch-mock into the <code class="highlighter-rouge">fetchMock</code> global variable.</p>
+<p class="warning">For server side tests running in nodejs 6 or lower use<br />
+<code class="highlighter-rouge">require('fetch-mock/es5/server')</code></p>
+
+
+				
+			</section>
+		</section>
+	
+		<section class="doc-content">
+			<section class="left-docs">
+				<h3>
+					<a id="usageglobal-non-global">
+						Global or non-global
+					</a>
+					
+
+				</h3>
+				
+<div class="types-zone">
+
+
+</div>
+
+				
+
+				
+
+				<p class="warning"><code class="highlighter-rouge">fetch</code> can be used by your code globally or locally. It’s important to determine which one applies to your codebase as it will impact how you use <code class="highlighter-rouge">fetch-mock</code></p>
+
+<h4 id="global-fetch">Global fetch</h4>
+<p>In the following scenarios <code class="highlighter-rouge">fetch</code> will be a global</p>
+<ul>
+  <li>When using native <code class="highlighter-rouge">fetch</code> (or a polyfill) in the browser</li>
+  <li>When <code class="highlighter-rouge">node-fetch</code> has been assigned to <code class="highlighter-rouge">global</code> in your nodejs process (a pattern sometiems used in isomorphic codebases)</li>
+</ul>
+
+<p>By default fetch-mock assumes <code class="highlighter-rouge">fetch</code> is a global so once you’ve required fetch-mock, refer to the quickstart and api docs.</p>
+
+<h4 id="non-global-fetch-library">Non-global fetch library</h4>
+<p>In the following scenarios <code class="highlighter-rouge">fetch</code> will not be a global</p>
+
+<ul>
+  <li>Using <a href="https://www.npmjs.com/package/node-fetch">node-fetch</a> in nodejs without assigning to <code class="highlighter-rouge">global</code></li>
+  <li>Using <a href="https://www.npmjs.com/package/fetch-ponyfill">fetch-ponyfill</a> in the browser</li>
+  <li>Using libraries which use fetch-ponyfill internally</li>
+  <li>Some build setups result in a non-global <code class="highlighter-rouge">fetch</code>, though it may not always be obvious that this is the case</li>
+</ul>
+
+<p>The <code class="highlighter-rouge">sandbox()</code> method returns a function that can be used as a drop-in replacement for <code class="highlighter-rouge">fetch</code>, and can be passed into your choice of mocking library. The function returned by <code class="highlighter-rouge">sandbox()</code> supports the full fetch-mock api so once generated it can be worked with as if it were the original <code class="highlighter-rouge">fetch-mock</code> object, e.g.</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">fetchMock</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'fetch-mock'</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">myMock</span> <span class="o">=</span> <span class="nx">fetchMock</span><span class="p">.</span><span class="nx">sandbox</span><span class="p">().</span><span class="nx">mock</span><span class="p">(</span><span class="s1">'/home'</span><span class="p">,</span> <span class="mi">200</span><span class="p">);</span>
+<span class="c1">// pass myMock in to your application code, instead of fetch, run it, then...</span>
+<span class="nx">expect</span><span class="p">(</span><span class="nx">myMock</span><span class="p">.</span><span class="nx">called</span><span class="p">(</span><span class="s1">'/home'</span><span class="p">)).</span><span class="nx">to</span><span class="p">.</span><span class="nx">be</span><span class="p">.</span><span class="kc">true</span><span class="p">;</span>
+</code></pre></div></div>
+
+
+				
+			</section>
+		</section>
+	
+		<section class="doc-content">
+			<section class="left-docs">
+				<h3>
+					<a id="usagepolyfilling">
+						Polyfilling fetch
+					</a>
+					
+
+				</h3>
+				
+<div class="types-zone">
+
+
+</div>
+
+				
+
+				
+
+				<p>Many older browsers require polyfilling the <code class="highlighter-rouge">fetch</code> global. The following approaches can be used</p>
+
+<p class="info">Add the following <a href="https://polyfill.io/v2/docs/">polyfill.io</a> script to your test page <br /><code class="highlighter-rouge">&lt;script src="https://polyfill.io/v2/polyfill?features=fetch"&gt;&lt;/script&gt;</code></p>
+<p class="info"><code class="highlighter-rouge">npm install whatwg-fetch</code> and load <code class="highlighter-rouge">./node_modules/whatwg-fetch/fetch.js</code> into the page, either in a script tag or by referencing in your test runner config.</p>
+
+
+				
+			</section>
+		</section>
+	
+		<section class="doc-content">
+			<section class="left-docs">
+				<h3>
+					<a id="usagecustom-classes">
+						Custom subclasses
+					</a>
+					
+
+				</h3>
+				
+<div class="types-zone">
+
+
+</div>
+
+				
+
+				
+
+				<p class="warning">Some fetch-mock internals require access to the <code class="highlighter-rouge">Request</code>, <code class="highlighter-rouge">Response</code> and <code class="highlighter-rouge">Headers</code> constructors provided by your chosen <code class="highlighter-rouge">fetch</code> implementation. These should be set on the <code class="highlighter-rouge">fetchMock.config</code> object</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">ponyfill</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'fetch-ponyfill'</span><span class="p">)();</span>
+<span class="nx">fetchMock</span><span class="p">.</span><span class="nx">config</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">assign</span><span class="p">(</span><span class="nx">fetchMock</span><span class="p">.</span><span class="nx">config</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">Headers</span><span class="p">:</span> <span class="nx">ponyfill</span><span class="p">.</span><span class="nx">Headers</span><span class="p">,</span>
+    <span class="na">Request</span><span class="p">:</span> <span class="nx">ponyfill</span><span class="p">.</span><span class="nx">Request</span><span class="p">,</span>
+    <span class="na">Response</span><span class="p">:</span> <span class="nx">ponyfill</span><span class="p">.</span><span class="nx">Response</span><span class="p">,</span>
+    <span class="na">fetch</span><span class="p">:</span> <span class="nx">ponyfill</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+
+				
+			</section>
+		</section>
+	
+		<section class="doc-content">
+			<section class="left-docs">
+				<h3>
+					<a id="usageconfiguration">
+						Configuration
+					</a>
+					
+
+				</h3>
+				
+<div class="types-zone">
+
+
+</div>
+
+				
+					<p class="description">
+
+						<p>On any <code class="highlighter-rouge">fetchMock</code> instance, config can be set by setting properties on <code class="highlighter-rouge">fetchMock.config</code>.</p>
+
+					</p>
+				
+
+				
+					
+						<h6>Options</h6>
+					
+
+					<dl class="parameters">
+					
+						<dt>
+							sendAsJson<sup>†</sup>
+<div class="types-zone">
+
+	
+		<code>Boolean</code>
+		
+	
+
+
+	<span class="default">[default&nbsp;<code>true</code>]</span>
+
+</div>
+
+						</dt>
+						<dd>
+							<p>Convert objects into JSON before delivering as stub reponses. Can be useful to set to <code class="highlighter-rouge">false</code> globally if e.g. dealing with a lot of array buffers. If <code class="highlighter-rouge">true</code>, will also add <code class="highlighter-rouge">content-type: application/json</code> header.</p>
+
+							
+							
+						</dd>
+					
+						<dt>
+							includeContentLength<sup>†</sup>
+<div class="types-zone">
+
+	
+		<code>Boolean</code>
+		
+	
+
+
+	<span class="default">[default&nbsp;<code>true</code>]</span>
+
+</div>
+
+						</dt>
+						<dd>
+							<p>Automatically sets a <code class="highlighter-rouge">content-length</code> header on each response.</p>
+
+							
+							
+						</dd>
+					
+						<dt>
+							fallbackToNetwork
+<div class="types-zone">
+
+	
+		<code>Boolean</code>
+		|
+	
+		<code>String</code>
+		
+	
+
+
+	<span class="default">[default&nbsp;<code>false</code>]</span>
+
+</div>
+
+						</dt>
+						<dd>
+							<ul>
+  <li><code class="highlighter-rouge">true</code>: Unhandled calls fall through to the network</li>
+  <li><code class="highlighter-rouge">false</code>: Unhandled calls throw an error</li>
+  <li><code class="highlighter-rouge">'always'</code>: All calls fall through to the network, effectively disabling fetch-mock.</li>
+</ul>
+
+							
+							
+						</dd>
+					
+						<dt>
+							overwriteRoutes<sup>†</sup>
+<div class="types-zone">
+
+	
+		<code>Boolean</code>
+		
+	
+
+
+	<span class="default">[default&nbsp;<code>undefined</code>]</span>
+
+</div>
+
+						</dt>
+						<dd>
+							<p>Determines behaviour if a new route has the same name (or inferred name) as an existing one</p>
+<ul>
+  <li><code class="highlighter-rouge">undefined</code>: An error will be throw when routes clash</li>
+  <li><code class="highlighter-rouge">true</code>: Overwrites the existing route</li>
+  <li><code class="highlighter-rouge">false</code>: Appends the new route to the list of routes</li>
+</ul>
+
+							
+							
+						</dd>
+					
+						<dt>
+							warnOnFallback
+<div class="types-zone">
+
+	
+		<code>Boolean</code>
+		
+	
+
+
+	<span class="default">[default&nbsp;<code>true</code>]</span>
+
+</div>
+
+						</dt>
+						<dd>
+							<p>Print a warning if any call is caught by a fallback handler (set using the <code class="highlighter-rouge">fallbackToNetwork</code> option or <code class="highlighter-rouge">catch()</code>)</p>
+
+							
+							
+						</dd>
+					
+						<dt>
+							Promise
+<div class="types-zone">
+
+	
+		<code>Constructor</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>Reference to the <code class="highlighter-rouge">Promise</code> constructor of a custom <code class="highlighter-rouge">Promise</code> implementation</p>
+
+							
+							
+						</dd>
+					
+						<dt>
+							fetch
+<div class="types-zone">
+
+	
+		<code>Function</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>Reference to a custom <code class="highlighter-rouge">fetch</code> implementation</p>
+
+							
+							
+						</dd>
+					
+						<dt>
+							Headers
+<div class="types-zone">
+
+	
+		<code>Constructor</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>Reference to the <code class="highlighter-rouge">Headers</code> constructor of a custom <code class="highlighter-rouge">fetch</code> implementation</p>
+
+							
+							
+						</dd>
+					
+						<dt>
+							Request
+<div class="types-zone">
+
+	
+		<code>Constructor</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>Reference to the <code class="highlighter-rouge">Request</code> constructor of a custom <code class="highlighter-rouge">fetch</code> implementation</p>
+
+							
+							
+						</dd>
+					
+						<dt>
+							Response
+<div class="types-zone">
+
+	
+		<code>Constructor</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>Reference to the <code class="highlighter-rouge">Response</code> constructor of a custom <code class="highlighter-rouge">fetch</code> implementation</p>
+
+							
+							
+						</dd>
+					
+					</dl>
+				
+
+				<p class="info">Options marked with a <code class="highlighter-rouge">†</code> can also be overridden for individual calls to <code class="highlighter-rouge">.mock(matcher, response, options)</code> by setting as properties on the <code class="highlighter-rouge">options</code> parameter</p>
+
+
+				
+			</section>
+		</section>
+	
+
+	
+	
+		<h2>Mocking API</h2>
+	
+	
+	
+	
+		<section class="doc-content">
+			<section class="left-docs">
+				<h3>
+					<a id="api-mockingmock">
+						.mock(matcher, response, options)
+					</a>
+					
+
+				</h3>
+				
+<div class="types-zone">
+
+
+</div>
+
+				
+					<p class="description">
+
+						<p>Replaces <code class="highlighter-rouge">fetch</code> with a stub which records its calls and returns a <code class="highlighter-rouge">Response</code> instance.</p>
+
+					</p>
+				
+
+				
+					
+						<h6>Parameters</h6>
+					
+
+					<dl class="parameters">
+					
+						<dt>
+							matcher
+<div class="types-zone">
+
+	
+		<code>String</code>
+		|
+	
+		<code>Regex</code>
+		|
+	
+		<code>Function</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>Rule for matching calls to <code class="highlighter-rouge">fetch</code></p>
+
+							
+							
+						</dd>
+					
+						<dt>
+							response
+<div class="types-zone">
+
+	
+		<code>String</code>
+		|
+	
+		<code>Object</code>
+		|
+	
+		<code>Function</code>
+		|
+	
+		<code>Promise</code>
+		|
+	
+		<code>Response</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>Response to send matched calls</p>
+
+							
+							
+						</dd>
+					
+						<dt>
+							options
+<div class="types-zone">
+
+	
+		<code>Object</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>More options configuring [mainly] matching behaviour</p>
+
+							
+							
+						</dd>
+					
+					</dl>
+				
+
+				
+<p class="info">Alternatively a single parameter, <code class="highlighter-rouge">options</code>, an Object with <code class="highlighter-rouge">matcher</code>, <code class="highlighter-rouge">response</code> and other options defined, can be passed</p>
+
+
+				
+						
+								
+
+
+<div title="Strings" class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">fetchMock</span>
+  <span class="p">.</span><span class="nx">mock</span><span class="p">(</span><span class="s1">'http://it.at.here/route'</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">mock</span><span class="p">(</span><span class="s1">'begin:http://it'</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">mock</span><span class="p">(</span><span class="s1">'end:here/route'</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">mock</span><span class="p">(</span><span class="s1">'path:/route'</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">mock</span><span class="p">(</span><span class="s1">'*'</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</code></pre></div></div>
+
+						
+								
+
+
+<div title="Complex Matchers" class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">fetchMock</span>
+  <span class="p">.</span><span class="nx">mock</span><span class="p">(</span><span class="sr">/.*</span><span class="se">\.</span><span class="sr">here.*/</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">mock</span><span class="p">((</span><span class="nx">url</span><span class="p">,</span> <span class="nx">opts</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">method</span> <span class="o">===</span> <span class="s1">'patch'</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">mock</span><span class="p">(</span><span class="s1">'express:/:type/:id'</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">params</span><span class="p">:</span> <span class="p">{</span>
+      <span class="na">type</span><span class="p">:</span> <span class="s1">'shoe'</span>
+    <span class="p">}</span>
+  <span class="p">})</span>
+</code></pre></div></div>
+
+						
+								
+
+
+<div title="Responses" class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">fetchMock</span>
+  <span class="p">.</span><span class="nx">mock</span><span class="p">(</span><span class="s1">'*'</span><span class="p">,</span> <span class="s1">'ok'</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">mock</span><span class="p">(</span><span class="s1">'*'</span><span class="p">,</span> <span class="mi">404</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">mock</span><span class="p">(</span><span class="s1">'*'</span><span class="p">,</span> <span class="p">{</span><span class="na">results</span><span class="p">:</span> <span class="p">[]})</span>
+  <span class="p">.</span><span class="nx">mock</span><span class="p">(</span><span class="s1">'*'</span><span class="p">,</span> <span class="p">{</span><span class="na">throw</span><span class="p">:</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">'Bad kitty'</span><span class="p">)))</span>
+  <span class="p">.</span><span class="nx">mock</span><span class="p">(</span><span class="s1">'*'</span><span class="p">,</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">(</span><span class="nx">res</span> <span class="o">=&gt;</span> <span class="nx">setTimeout</span><span class="p">(</span><span class="nx">res</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">404</span><span class="p">)))</span>
+</code></pre></div></div>
+
+						
+								
+
+
+<div title="End to end example" class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">fetchMock</span>
+  <span class="p">.</span><span class="nx">mock</span><span class="p">(</span><span class="s1">'begin:http://it.at.here/api'</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">headers</span><span class="p">:</span> <span class="p">{</span>
+      <span class="na">authorization</span><span class="p">:</span> <span class="s1">'Basic dummy-token'</span>
+    <span class="p">}</span>
+  <span class="p">})</span>
+  <span class="p">.</span><span class="nx">mock</span><span class="p">(</span><span class="s1">'begin:http://it.at.here/api'</span><span class="p">,</span> <span class="mi">403</span><span class="p">)</span>
+
+<span class="nx">callApi</span><span class="p">(</span><span class="s1">'/endpoint'</span><span class="p">,</span> <span class="s1">'dummy-token'</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">res</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">res</span><span class="p">.</span><span class="nx">status</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">equal</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span>
+  <span class="p">})</span>
+</code></pre></div></div>
+
+						
+				
+			</section>
+		</section>
+	
+		<section class="doc-content">
+			<section class="left-docs">
+				<h3>
+					<a id="api-mockingmock_matcher">
+						matcher
+					</a>
+					
+							<span class="endpoint">Parameter for <a href="#api-mockingmock">mock()</a></span>
+						
+
+				</h3>
+				
+<div class="types-zone">
+
+	
+		<code class="name">String</code>
+		|
+	
+		<code class="name">RegExp</code>
+		|
+	
+		<code class="name">Function</code>
+		
+	
+
+
+</div>
+
+				
+					<p class="description">
+
+						<p>Condition for selecting which requests to mock. For matching based on headers, query strings or other <code class="highlighter-rouge">fetch</code> options see the <code class="highlighter-rouge">options</code> parameter documented below</p>
+
+					</p>
+				
+
+				
+					
+						<h6>Argument values</h6>
+					
+
+					<dl class="parameters">
+					
+						<dt>
+							*
+<div class="types-zone">
+
+	
+		<code>String</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>Matches any url</p>
+
+							
+								
+									
+
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s2">"*"</span>
+</code></pre></div></div>
+
+
+								
+							
+							
+						</dd>
+					
+						<dt>
+							url
+<div class="types-zone">
+
+	
+		<code>String</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>Matches an exact url</p>
+
+							
+								
+									
+
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s2">"http://www.site.com/page.html"</span>
+</code></pre></div></div>
+
+
+								
+							
+							
+						</dd>
+					
+						<dt>
+							begin:...
+<div class="types-zone">
+
+	
+		<code>String</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>Matches a url beginning with a string</p>
+
+							
+								
+									
+
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s2">"begin:http://www.site.com"</span>
+</code></pre></div></div>
+
+
+								
+							
+							
+						</dd>
+					
+						<dt>
+							end:...
+<div class="types-zone">
+
+	
+		<code>String</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>Matches a url ending with a string</p>
+
+							
+								
+									
+
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s2">"end:.jpg"</span>
+</code></pre></div></div>
+
+
+								
+							
+							
+						</dd>
+					
+						<dt>
+							path:...
+<div class="types-zone">
+
+	
+		<code>String</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>Matches a url which has a given path</p>
+
+							
+								
+									
+
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s2">"path:/posts/2018/7/3"</span>
+</code></pre></div></div>
+
+
+								
+							
+							
+						</dd>
+					
+						<dt>
+							glob:...
+<div class="types-zone">
+
+	
+		<code>String</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>Matches a url using a glob pattern</p>
+
+							
+								
+									
+
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s2">"glob:http://*.*"</span>
+</code></pre></div></div>
+
+
+								
+							
+							
+						</dd>
+					
+						<dt>
+							express:...
+<div class="types-zone">
+
+	
+		<code>String</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>Matches a [relative] url that matches an <a href="https://www.npmjs.com/package/path-to-regexp">express style path</a></p>
+
+							
+								
+									
+
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s2">"express:/user/:user"</span>
+</code></pre></div></div>
+
+
+								
+							
+							
+						</dd>
+					
+						<dt>
+							
+<div class="types-zone">
+
+	
+		<code class="name">RegExp</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>Matches a url that matches a regular expression</p>
+
+							
+								
+									
+
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">/</span><span class="p">(</span><span class="nx">article</span><span class="o">|</span><span class="nx">post</span><span class="p">)</span><span class="o">/</span><span class="err">\</span><span class="nx">d</span><span class="o">+</span><span class="sr">/</span><span class="err">
+</span></code></pre></div></div>
+
+
+								
+							
+							
+						</dd>
+					
+						<dt>
+							
+<div class="types-zone">
+
+	
+		<code class="name">Function</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>Matches if a function returns something truthy. The function will be passed the arguments <code class="highlighter-rouge">fetch</code> was called with. If <code class="highlighter-rouge">fetch</code> was called with a <code class="highlighter-rouge">Request</code> instance, it will be passed <code class="highlighter-rouge">url</code> and <code class="highlighter-rouge">options</code> inferred from the <code class="highlighter-rouge">Request</code> instance. The original <code class="highlighter-rouge">Request</code> will be passed as a third argument.</p>
+
+							
+								
+									
+
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="p">{</span><span class="nx">headers</span><span class="p">})</span> <span class="o">=&gt;</span> <span class="o">!!</span><span class="nx">headers</span><span class="p">.</span><span class="nx">Authorization</span>
+</code></pre></div></div>
+
+
+								
+									
+
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nx">_</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">request</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="o">!!</span><span class="nx">request</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="s1">'Authorization'</span><span class="p">)</span>
+</code></pre></div></div>
+
+
+								
+							
+							
+						</dd>
+					
+					</dl>
+				
+
+				<p class="warning">Note that if using <code class="highlighter-rouge">end:</code> or an exact url matcher, fetch-mock (<a href="https://url.spec.whatwg.org/#url-equivalence">for good reason</a>) is unable to distinguish whether URLs without a path end in a trailing slash or not i.e. <code class="highlighter-rouge">http://thing</code> is treated the same as <code class="highlighter-rouge">http://thing/</code></p>
+
+
+				
+			</section>
+		</section>
+	
+		<section class="doc-content">
+			<section class="left-docs">
+				<h3>
+					<a id="api-mockingmock_response">
+						response
+					</a>
+					
+							<span class="endpoint">Parameter for <a href="#api-mockingmock">mock()</a></span>
+						
+
+				</h3>
+				
+<div class="types-zone">
+
+	
+		<code class="name">String</code>
+		|
+	
+		<code class="name">Object</code>
+		|
+	
+		<code class="name">Function</code>
+		|
+	
+		<code class="name">Promise</code>
+		|
+	
+		<code class="name">Response</code>
+		
+	
+
+
+</div>
+
+				
+					<p class="description">
+
+						<p>Response to send matched calls.
+Configures the http response returned by the mock. Can take any of the following values (or be a <code class="highlighter-rouge">Promise</code> for any of them, enabling full control when testing race conditions etc.). Unless otherwise stated, all responses have a <code class="highlighter-rouge">200</code> status</p>
+
+					</p>
+				
+
+				
+					
+						<h6>Argument values</h6>
+					
+
+					<dl class="parameters">
+					
+						<dt>
+							
+<div class="types-zone">
+
+	
+		<code class="name">Response</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>A <code class="highlighter-rouge">Response</code> instance - will be used unaltered</p>
+
+							
+								
+									
+
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">new</span> <span class="nx">Response</span><span class="p">(</span><span class="s1">'ok'</span><span class="p">,</span> <span class="p">{</span><span class="na">status</span><span class="p">:</span> <span class="mi">200</span><span class="p">})</span>
+</code></pre></div></div>
+
+
+								
+							
+							
+						</dd>
+					
+						<dt>
+							status code
+<div class="types-zone">
+
+	
+		<code>Integer</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>Creates a response with the given status code. The response’s <code class="highlighter-rouge">statusText</code> will also be set to the <a href="https://fetch.spec.whatwg.org/#dom-response-statustext">default value corresponding to the status</a></p>
+
+							
+								
+									
+
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">200</span><span class="p">,</span> <span class="mi">404</span><span class="p">,</span> <span class="mi">503</span>
+</code></pre></div></div>
+
+
+								
+							
+							
+						</dd>
+					
+						<dt>
+							
+<div class="types-zone">
+
+	
+		<code class="name">String</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>Creates a 200 response with the string as the response body</p>
+
+							
+								
+									
+
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">Server</span> <span class="nx">responded</span> <span class="nx">ok</span>
+</code></pre></div></div>
+
+
+								
+									
+
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">Bad</span> <span class="nx">Response</span>
+</code></pre></div></div>
+
+
+								
+							
+							
+						</dd>
+					
+						<dt>
+							config
+<div class="types-zone">
+
+	
+		<code>Object</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>If an object <em>only</em> contains properties listed below it is used to configure a <code class="highlighter-rouge">Response</code></p>
+
+							
+							
+								<dl class="options info">
+								
+									<dt>
+										body
+<div class="types-zone">
+
+	
+		<code>String</code>
+		|
+	
+		<code>Object</code>
+		
+	
+
+
+</div>
+
+									</dt>
+									<dd>
+										<p>Set the response body. For behaviour for <code class="highlighter-rouge">Object</code>s, see the non-config <code class="highlighter-rouge">Object</code> section of the docs below</p>
+
+										
+											
+												
+
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">Server</span> <span class="nx">responded</span> <span class="nx">ok</span>
+</code></pre></div></div>
+
+
+											
+												
+
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="s2">"token"</span><span class="o">=&gt;</span><span class="s2">"abcdef"</span><span class="p">}</span>
+</code></pre></div></div>
+
+
+											
+										
+									</dd>
+								
+									<dt>
+										status
+<div class="types-zone">
+
+	
+		<code>Integer</code>
+		
+	
+
+
+</div>
+
+									</dt>
+									<dd>
+										<p>Set the response status</p>
+
+										
+											
+												
+
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">200</span><span class="p">,</span> <span class="mi">404</span><span class="p">,</span> <span class="mi">503</span>
+</code></pre></div></div>
+
+
+											
+										
+									</dd>
+								
+									<dt>
+										headers
+<div class="types-zone">
+
+	
+		<code>Object</code>
+		
+	
+
+
+</div>
+
+									</dt>
+									<dd>
+										<p>Set the response headers</p>
+
+										
+											
+												
+
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="s2">"Content-Type"</span><span class="o">=&gt;</span><span class="s2">"text/html"</span><span class="p">}</span>
+</code></pre></div></div>
+
+
+											
+										
+									</dd>
+								
+									<dt>
+										redirectUrl
+<div class="types-zone">
+
+	
+		<code>String</code>
+		
+	
+
+
+</div>
+
+									</dt>
+									<dd>
+										<p>The url the response should claim to originate from (to imitate followed directs). Will also set <code class="highlighter-rouge">redirected: true</code> on the response</p>
+
+										
+									</dd>
+								
+									<dt>
+										throws
+<div class="types-zone">
+
+	
+		<code>Error</code>
+		
+	
+
+
+</div>
+
+									</dt>
+									<dd>
+										<p><code class="highlighter-rouge">fetch</code> will return a <code class="highlighter-rouge">Promise</code> rejected with the value of <code class="highlighter-rouge">throws</code></p>
+
+										
+											
+												
+
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">'Failed to fetch'</span><span class="p">)</span>
+</code></pre></div></div>
+
+
+											
+										
+									</dd>
+								
+								</dl>
+							
+						</dd>
+					
+						<dt>
+							
+<div class="types-zone">
+
+	
+		<code class="name">Object</code>
+		|
+	
+		<code class="name">ArrayBuffer</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>All objects that do not meet the criteria above will be converted to JSON and set as the response <code class="highlighter-rouge">body</code> if the <code class="highlighter-rouge">sendAsJson</code> option is on. Otherwise, they will be set as the response <code class="highlighter-rouge">body</code> (useful for array buffers etc.)</p>
+
+							
+							
+						</dd>
+					
+						<dt>
+							
+<div class="types-zone">
+
+	
+		<code class="name">Promise</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>A <code class="highlighter-rouge">Promise</code> that resolves to any of the options documented above</p>
+
+							
+								
+									
+
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">new</span> <span class="nb">Promise</span><span class="p">(</span><span class="nx">res</span> <span class="o">=&gt;</span> <span class="nx">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="nx">res</span><span class="p">(</span><span class="mi">200</span><span class="p">),</span> <span class="mi">50</span><span class="p">))</span>
+</code></pre></div></div>
+
+
+								
+							
+							
+						</dd>
+					
+						<dt>
+							
+<div class="types-zone">
+
+	
+		<code class="name">Function</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>A function that is passed the arguments <code class="highlighter-rouge">fetch</code> is called with and that returns any of the responses listed above</p>
+
+							
+								
+									
+
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">opts</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">Authorization</span> <span class="p">?</span> <span class="mi">200</span> <span class="p">:</span> <span class="mi">403</span>
+</code></pre></div></div>
+
+
+								
+									
+
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nx">_</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">request</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">request</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="s1">'Authorization'</span><span class="p">)</span> <span class="p">?</span>  <span class="mi">200</span> <span class="p">:</span> <span class="mi">403</span>
+</code></pre></div></div>
+
+
+								
+							
+							
+						</dd>
+					
+					</dl>
+				
+
+				
+
+
+				
+			</section>
+		</section>
+	
+		<section class="doc-content">
+			<section class="left-docs">
+				<h3>
+					<a id="api-mockingmock_options">
+						options
+					</a>
+					
+							<span class="endpoint">Parameter for <a href="#api-mockingmock">mock()</a></span>
+						
+
+				</h3>
+				
+<div class="types-zone">
+
+	
+		<code class="name">Object</code>
+		
+	
+
+
+</div>
+
+				
+					<p class="description">
+
+						<p>A configuration object with properties to define a route to mock</p>
+
+					</p>
+				
+
+				
+					
+						<h6>Options</h6>
+					
+
+					<dl class="parameters">
+					
+						<dt>
+							name
+<div class="types-zone">
+
+	
+		<code>String</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>A unique string naming the route. Used to subsequently retrieve references to the calls, grouped by name. Defaults to <code class="highlighter-rouge">matcher.toString()</code></p>
+
+							
+							
+						</dd>
+					
+						<dt>
+							method
+<div class="types-zone">
+
+	
+		<code>String</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>Http method to match</p>
+
+							
+							
+						</dd>
+					
+						<dt>
+							headers
+<div class="types-zone">
+
+	
+		<code>Object</code>
+		|
+	
+		<code>Headers</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>Key/value map of headers to match</p>
+
+							
+							
+						</dd>
+					
+						<dt>
+							query
+<div class="types-zone">
+
+	
+		<code>Object</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>Key/value map of query strings to match, in any order</p>
+
+							
+							
+						</dd>
+					
+						<dt>
+							params
+<div class="types-zone">
+
+	
+		<code>Object</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>When the <code class="highlighter-rouge">express:</code> keyword is used in a string matcher, a key/value map <code class="highlighter-rouge">params</code> can be passed here, to match the parameters extracted by express path matching</p>
+
+							
+							
+						</dd>
+					
+						<dt>
+							repeat
+<div class="types-zone">
+
+	
+		<code>Integer</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>An integer, <code class="highlighter-rouge">n</code>, limiting the number of times the matcher can be used. If the route has already been called <code class="highlighter-rouge">n</code> times the route will be ignored and the call to <code class="highlighter-rouge">fetch()</code> will fall through to be handled by any other routes defined (which may eventually result in an error if nothing matches it)</p>
+
+							
+							
+						</dd>
+					
+						<dt>
+							overwriteRoutes
+<div class="types-zone">
+
+	
+		<code>Boolean</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>See <a href="#usageconfiguration">global configuration</a></p>
+
+							
+							
+						</dd>
+					
+						<dt>
+							sendAsJson
+<div class="types-zone">
+
+	
+		<code>Boolean</code>
+		
+	
+
+
+	<span class="default">[default&nbsp;<code>true</code>]</span>
+
+</div>
+
+						</dt>
+						<dd>
+							<p>See <a href="#usageconfiguration">global configuration</a></p>
+
+							
+							
+						</dd>
+					
+						<dt>
+							includeContentLength
+<div class="types-zone">
+
+	
+		<code>Boolean</code>
+		
+	
+
+
+	<span class="default">[default&nbsp;<code>true</code>]</span>
+
+</div>
+
+						</dt>
+						<dd>
+							<p>See <a href="#usageconfiguration">global configuration</a></p>
+
+							
+							
+						</dd>
+					
+						<dt>
+							matcher
+<div class="types-zone">
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>When using the single argument variant of <code class="highlighter-rouge">.mock()</code>, any valid matcher as <a href="#usageapimock_matcher">defined above</a> can be assigned to the options object</p>
+
+							
+							
+						</dd>
+					
+						<dt>
+							response
+<div class="types-zone">
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>When using the single argument variant of <code class="highlighter-rouge">.mock()</code>, any valid response as <a href="#usageapimock_response">defined above</a> can be assigned to the options object</p>
+
+							
+							
+						</dd>
+					
+					</dl>
+				
+
+				
+
+
+				
+			</section>
+		</section>
+	
+		<section class="doc-content">
+			<section class="left-docs">
+				<h3>
+					<a id="api-mockingmock_once">
+						.once()
+					</a>
+					
+
+				</h3>
+				
+<div class="types-zone">
+
+
+</div>
+
+				
+					<p class="description">
+
+						<p>Shorthand for <code class="highlighter-rouge">mock()</code> which limits to being called one time only. (see <code class="highlighter-rouge">repeat</code> option above)</p>
+
+					</p>
+				
+
+				
+
+				
+
+
+				
+			</section>
+		</section>
+	
+		<section class="doc-content">
+			<section class="left-docs">
+				<h3>
+					<a id="api-mockingget_post">
+						.get(), .post(), .put(), .delete(), .head(), .patch()
+					</a>
+					
+
+				</h3>
+				
+<div class="types-zone">
+
+
+</div>
+
+				
+					<p class="description">
+
+						<p>Shorthands for <code class="highlighter-rouge">mock()</code> restricted to a particular method.</p>
+
+					</p>
+				
+
+				
+
+				<p class="info">If you use some other method a lot you can easily define your own shorthands e.g.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">fetchMock</span><span class="p">.</span><span class="nx">purge</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">matcher</span><span class="p">,</span> <span class="nx">response</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">mock</span><span class="p">(</span>
+      <span class="nx">matcher</span><span class="p">,</span>
+      <span class="nx">response</span><span class="p">,</span>
+      <span class="nb">Object</span><span class="p">.</span><span class="nx">assign</span><span class="p">({},</span> <span class="nx">options</span><span class="p">,</span> <span class="p">{</span><span class="na">method</span><span class="p">:</span> <span class="s1">'PURGE'</span><span class="p">})</span>
+    <span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+
+				
+			</section>
+		</section>
+	
+		<section class="doc-content">
+			<section class="left-docs">
+				<h3>
+					<a id="api-mockinggetOnce_postOnce">
+						.getOnce(), .postOnce(), .putOnce(), .deleteOnce(), .headOnce(), .patchOnce()
+					</a>
+					
+
+				</h3>
+				
+<div class="types-zone">
+
+
+</div>
+
+				
+					<p class="description">
+
+						<p>Shorthands for <code class="highlighter-rouge">mock()</code> restricted to a particular method and that will only respond once</p>
+
+					</p>
+				
+
+				
+
+				
+
+
+				
+			</section>
+		</section>
+	
+		<section class="doc-content">
+			<section class="left-docs">
+				<h3>
+					<a id="api-mockingcatch">
+						.catch(response)
+					</a>
+					
+
+				</h3>
+				
+<div class="types-zone">
+
+
+</div>
+
+				
+					<p class="description">
+
+						<p>Specifies how to respond to calls to <code class="highlighter-rouge">fetch</code> that don’t match any mocks.</p>
+
+					</p>
+				
+
+				
+
+				<p>It accepts any valid <a href="/#api-mockingmock_response">fetch-mock response</a>, and can also take an arbitrary function to completely customise behaviour. If no argument is passed, then every unmatched call will receive a <code class="highlighter-rouge">200</code> response</p>
+
+
+				
+			</section>
+		</section>
+	
+		<section class="doc-content">
+			<section class="left-docs">
+				<h3>
+					<a id="api-mockingspy">
+						.spy()
+					</a>
+					
+
+				</h3>
+				
+<div class="types-zone">
+
+
+</div>
+
+				
+					<p class="description">
+
+						<p>Records call history while passing each call on to <code class="highlighter-rouge">fetch</code> to be handled by the network</p>
+
+					</p>
+				
+
+				
+
+				<p class="warning">To use <code class="highlighter-rouge">.spy()</code> on a sandboxed <code class="highlighter-rouge">fetchMock</code>, <code class="highlighter-rouge">fetchMock.config.fetch</code> must be set to a reference to the <code class="highlighter-rouge">fetch</code> implementation you use in your code.</p>
+
+
+				
+			</section>
+		</section>
+	
+
+	
+	
+		<h2>Lifecycle methods</h2>
+	
+	
+	
+	
+		<section class="doc-content">
+			<section class="left-docs">
+				<h3>
+					<a id="api-lifecyclesandbox">
+						.sandbox()
+					</a>
+					
+
+				</h3>
+				
+<div class="types-zone">
+
+
+</div>
+
+				
+					<p class="description">
+
+						<p>Returns a drop-in mock for fetch which can be passed to other mocking libraries. It implements the full fetch-mock api and maintains its own state independent of other instances, so tests can be run in parallel.</p>
+
+					</p>
+				
+
+				
+
+				
+
+
+				
+						
+								
+
+
+<div title="Example" class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">fetchMock</span>
+  <span class="p">.</span><span class="nx">sandbox</span><span class="p">()</span>
+  <span class="p">.</span><span class="nx">mock</span><span class="p">(</span><span class="s1">'http://domain.com'</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</code></pre></div></div>
+
+						
+				
+			</section>
+		</section>
+	
+		<section class="doc-content">
+			<section class="left-docs">
+				<h3>
+					<a id="api-lifecycleflush">
+						.flush(waitForBody)
+					</a>
+					
+
+				</h3>
+				
+<div class="types-zone">
+
+
+</div>
+
+				
+					<p class="description">
+
+						<p>Returns a <code class="highlighter-rouge">Promise</code> that resolves once all fetches handled by fetch-mock have resolved</p>
+
+					</p>
+				
+
+				
+
+				<p>Useful for testing code that uses <code class="highlighter-rouge">fetch</code> but doesn’t return a promise.</p>
+
+<p class="info">Pass in <code class="highlighter-rouge">true</code> to wait for all body parsing methods (<code class="highlighter-rouge">res.json()</code>, <code class="highlighter-rouge">res.text()</code>, etc.) to resolve too.</p>
+
+
+				
+			</section>
+		</section>
+	
+		<section class="doc-content">
+			<section class="left-docs">
+				<h3>
+					<a id="api-lifecyclerestore_reset">
+						.restore(), .reset()
+					</a>
+					
+
+				</h3>
+				
+<div class="types-zone">
+
+
+</div>
+
+				
+					<p class="description">
+
+						<p>Restores <code class="highlighter-rouge">fetch()</code> to its unstubbed state and clears all data recorded for its calls. <code class="highlighter-rouge">reset()</code> is an alias for <code class="highlighter-rouge">restore()</code></p>
+
+					</p>
+				
+
+				
+
+				
+
+
+				
+			</section>
+		</section>
+	
+		<section class="doc-content">
+			<section class="left-docs">
+				<h3>
+					<a id="api-lifecycleresetHistory">
+						.resetHistory()
+					</a>
+					
+
+				</h3>
+				
+<div class="types-zone">
+
+
+</div>
+
+				
+					<p class="description">
+
+						<p>Clears all data recorded for <code class="highlighter-rouge">fetch()</code>’s calls. It <em>will not</em> restore fetch to its default implementation</p>
+
+					</p>
+				
+
+				
+
+				
+
+
+				
+			</section>
+		</section>
+	
+
+	
+	
+		<h2>Inspection methods</h2>
+	
+	
+	
+	
+		<section class="doc-content">
+			<section class="left-docs">
+				<h3>
+					<a id="api-inspectionfiltering">
+						Filtering basics
+					</a>
+					
+
+				</h3>
+				
+<div class="types-zone">
+
+
+</div>
+
+				
+					<p class="description">
+
+						<p>Most inspection methods take two arguments — <code class="highlighter-rouge">filter</code> and <code class="highlighter-rouge">options</code> — which allow groups of fetch calls to be extracted and inspected.</p>
+
+					</p>
+				
+
+				
+					
+						<h6>Parameters</h6>
+					
+
+					<dl class="parameters">
+					
+						<dt>
+							filter
+<div class="types-zone">
+
+	
+		<code>String</code>
+		|
+	
+		<code>RegExp</code>
+		|
+	
+		<code>Function</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>Enables filtering fetch calls for the most commonly use cases. The behaviour can be counterintuitive. The following rules, applied in the order they are described, are used to try to retrieve calls. If any rule retrieves no calls the next rule will be tried.</p>
+
+							
+							
+								<dl class="options info">
+								
+									<dt>
+										matcher
+<div class="types-zone">
+
+	
+		<code>String</code>
+		|
+	
+		<code>RegExp</code>
+		|
+	
+		<code>Function</code>
+		
+	
+
+
+</div>
+
+									</dt>
+									<dd>
+										<p>If <code class="highlighter-rouge">options</code> is defined (it can even be an empty object), <code class="highlighter-rouge">filter</code> will be executed using the same execution plan as <a href="#api-mockingmock_matcher">matchers</a>. Any calls matched by it will be returned.</p>
+
+										
+									</dd>
+								
+									<dt>
+										
+<div class="types-zone">
+
+	
+		<code class="name">undefined</code>
+		
+	
+
+
+</div>
+
+									</dt>
+									<dd>
+										<p>Retrieves all calls made to <code class="highlighter-rouge">fetch</code>, whether fetch-mock matched them or not</p>
+
+										
+									</dd>
+								
+									<dt>
+										
+<div class="types-zone">
+
+	
+		<code class="name">true</code>
+		
+	
+
+
+</div>
+
+									</dt>
+									<dd>
+										<p>Retrieves all calls matched by <code class="highlighter-rouge">fetch</code>. <code class="highlighter-rouge">fetchMock.MATCHED</code> is an alias for <code class="highlighter-rouge">true</code> and may be used to make tests more readable</p>
+
+										
+									</dd>
+								
+									<dt>
+										
+<div class="types-zone">
+
+	
+		<code class="name">false</code>
+		
+	
+
+
+</div>
+
+									</dt>
+									<dd>
+										<p>Retrieves all calls not matched by <code class="highlighter-rouge">fetch</code> (i.e. those handled by <code class="highlighter-rouge">catch()</code> or <code class="highlighter-rouge">spy()</code>. <code class="highlighter-rouge">fetchMock.UNMATCHED</code> is an alias for <code class="highlighter-rouge">false</code> and may be used to make tests more readable</p>
+
+										
+									</dd>
+								
+									<dt>
+										route
+<div class="types-zone">
+
+	
+		<code>String</code>
+		
+	
+
+
+</div>
+
+									</dt>
+									<dd>
+										<p>Retrieves calls handled by a named route (see <a href="#api-mockingmock_options">mocking options</a>. Failing that, a route whose matcher, when coerced to a string, is equal to the string provided</p>
+
+										
+									</dd>
+								
+									<dt>
+										asdkash d
+<div class="types-zone">
+
+
+</div>
+
+									</dt>
+									<dd>
+										<p>Do I want to fallback to a matcher again?? Seems confusing as hell</p>
+
+										
+									</dd>
+								
+								</dl>
+							
+						</dd>
+					
+						<dt>
+							options
+<div class="types-zone">
+
+	
+		<code>Object</code>
+		|
+	
+		<code>String</code>
+		
+	
+
+
+</div>
+
+						</dt>
+						<dd>
+							<p>Either an object compatible with the <a href="#api-mockingmock_options">mocking api</a> or a string specifying a http <code class="highlighter-rouge">method</code> to filter by</p>
+
+							
+							
+						</dd>
+					
+					</dl>
+				
+
+				
+
+
+				
+			</section>
+		</section>
+	
+
+	
+	
+		<h2>Troubleshooting</h2>
+	
+	
+	
+	
+
+
+		</div>
+		<script>
+			document.getElementById("open-nav").addEventListener("click", function () {
+				document.body.classList.toggle("nav-open");
+			});
+		</script>
+	</body>
+</html>

@@ -1,7 +1,6 @@
 jQuery(function() {
-	var $sidebar = $('#sidebar'),
-		$nav = $('.nav'),
-		$main = $('.main');
+	var $sidebar = $('nav'),
+		$main = $('main');
 
 	var found = true;
 

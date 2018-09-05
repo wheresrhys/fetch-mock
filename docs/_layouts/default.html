@@ -22,12 +22,13 @@
 		<script src="{{ site.baseurl }}/js/main.js"></script>
 	</head>
 	<body>
+		<div class="navigation">
 		<header>
 			<h1>
 				<button type="button" class="open-nav" id="open-nav"></button>
 				<a href="{{ site.baseurl }}/">fetch-mock</a>
 			</h1>
-
+		</header>
 			{% include sidebar.html %}
 
 			<p class="copyright">
@@ -35,10 +36,10 @@
 					Template by CloudCannon
 				</a>
 			</p>
-		</header>
-		<div class="main">
-			{{ content }}
 		</div>
+		<main>
+			{{ content }}
+		</main>
 		<script>
 			document.getElementById("open-nav").addEventListener("click", function () {
 				document.body.classList.toggle("nav-open");

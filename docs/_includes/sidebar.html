@@ -1,4 +1,4 @@
-<div id="sidebar" class="sidebar">
+<nav>
 	{% assign sorted_collections = site.collections | sort: "position" %}
 	{% for collection in sorted_collections %}
 		{% if collection.label != "posts" %}
@@ -18,4 +18,4 @@
 			</section>
 		{% endif %}
 	{% endfor %}
-</div>
+</nav>

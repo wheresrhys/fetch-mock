@@ -1,0 +1,79 @@
+
+dl.parameters {
+	border-top: 1px solid #eee;
+	border-bottom: 1px solid #eee;
+	padding: 0 0 20px 0;
+	margin: 0 0 20px 0;
+	display: grid;
+	grid-gap: 1rem;
+	grid-template-columns: 25% 1fr;
+}
+
+dl.options {
+	display: grid;
+	grid-gap: 1rem;
+	grid-template-columns: 25% 1fr;
+	border-color: #eee;
+	border-top-width: 1px;
+	border-top-style: solid;
+	padding: 10px;
+	margin-left: -39%;
+	font-size: 0.85em;
+}
+
+dl dt {
+	grid-column-start: 1;
+  grid-column-end: 2;
+	font-weight: bold;
+}
+
+dd {
+	margin-left: 0
+}
+
+dl dd > *:not(dl) {
+	grid-column-start: 2;
+  grid-column-end: 3;
+}
+
+.types-zone {
+	// font-family: monospace;
+	font-size: 0.9em;
+}
+
+dl.options .types-zone {
+	// font-family: monospace;
+	font-size: 1em;
+}
+.default,
+dt code  {
+	font-family: monospace;
+}
+
+.types-zone code {
+	font-family: monospace;
+	font-weight: bold;
+	background: none;
+	color: #aa5500;
+}
+
+.default {
+	color: #888;
+}
+
+dt code,
+dt sup {
+	color: #aa5500;
+}
+
+p > code,
+dt > code.name,
+dd > code,
+li > code {
+	font-size: 1.2em;
+	font-family: monospace;
+	font-weight: bold;
+	background: none;
+	color: #aa5500;
+}
+

@@ -28,12 +28,7 @@ Some exceptions include:
 
 ## Global fetch
 
-<<<<<<< HEAD
-
-=======
-
-> > > > > > > 315bf4bee040aa243eaf3b2a418741d35444bccb
-> > > > > > > By default fetch-mock assumes `fetch` is a global so once you've required fetch-mock refer to the quickstart and api docs.
+By default fetch-mock assumes `fetch` is a global so once you've required fetch-mock refer to the quickstart and api docs.
 
 ### Polyfilling fetch
 

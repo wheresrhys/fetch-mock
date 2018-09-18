@@ -125,7 +125,7 @@ Returns a Boolean indicating whether fetch was called the expected number of tim
 
 #### `calls(filter, method)`
 
-Returns an array of all calls to fetch matchingthe given filters. Each call is returned as an array of length 2, `[url, options]`. If `fetch` was called using a `Request` instance, thsi will be available as a `request` property on this array.
+Returns an array of all calls to fetch matchingthe given filters. Each call is returned as an array of length 2, `[url, options]`. If `fetch` was called using a `Request` instance, this will be available as a `request` property on this array.
 
 #### `lastCall(filter, method)`
 

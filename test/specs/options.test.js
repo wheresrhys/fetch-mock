@@ -145,14 +145,14 @@ module.exports = (fetchMock, theGlobal, fetch) => {
 
 		describe.skip('warnOnFallback', () => {
 			it('warn on fallback response by default', async () => {});
-
 			it("don't warn on fallback response when configured false", async () => {});
 		});
 
 		describe('overwriteRoutes', () => {
 			it('error on duplicate routes by default', async () => {
 				expect(() =>
-					fm.mock('http://it.at.there/', 200).mock('http://it.at.there/', 300)
+					fm.mock('http://it.at.there/', 200)
+						.mock('http://it.at.there/', 300)
 				).to.throw();
 			});
 

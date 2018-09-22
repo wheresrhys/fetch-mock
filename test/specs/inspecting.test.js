@@ -95,7 +95,51 @@ module.exports = fetchMock => {
 		});
 
 		describe('filtering', () => {
-			before(async () => {
+
+			afterEach(() => fm.reset());
+
+			it('can retrieve all calls', async () => {
+				fm.mock('http://it.at.here/', 200)
+					.catch();
+
+				await fm.fetchHandler('http://it.at.here/');
+				await fm.fetchHandler('http://it.at.where/');
+				expect(fm.filterCalls().length).to.equal(2);
+			});
+
+			it('can retrieve only calls matched by any route', async () => {
+				fm.mock('http://it.at.here/', 200)
+					.catch();
+
+				await fm.fetchHandler('http://it.at.here/');
+				await fm.fetchHandler('http://it.at.where/');
+				expect(fm.filterCalls(true).length).to.equal(1);
+				expect(fm.filterCalls(true)[0][0]).to.equal('http://it.at.here/');
+			});
+
+			it('can retrieve only calls not matched by any route', async () => {
+				fm.mock('http://it.at.here/', 200)
+					.catch();
+
+				await fm.fetchHandler('http://it.at.here/');
+				await fm.fetchHandler('http://it.at.where/');
+				expect(fm.filterCalls(false).length).to.equal(1);
+				expect(fm.filterCalls(false)[0][0]).to.equal('http://it.at.where/');
+			});
+
+			it('can retrieve only calls handled by a named route', async () => {
+				fm.mock('http://it.at.here/', 200, { name: 'here' })
+					.mock('http://it.at.there/', 200).nameRoute('there')
+
+				await fm.fetchHandler('http://it.at.here/');
+				await fm.fetchHandler('http://it.at.there');
+				expect(fm.filterCalls('here').length).to.equal(1);
+				expect(fm.filterCalls('here')[0][0]).to.equal('http://it.at.here/');
+				expect(fm.filterCalls('there').length).to.equal(1);
+				expect(fm.filterCalls('there')[0][0]).to.equal('http://it.at.there/');
+			});
+
+			it.skip('can retrieve only calls handled by matcher', async () => {
 				fm.mock('http://it.at.here/', 200, { name: 'fetch-mock' })
 					.mock('path:/path', 200)
 					.mock('http://it.at.thereabouts/', 200)
@@ -105,43 +149,49 @@ module.exports = fetchMock => {
 				await fm.fetchHandler('http://it.at.here/', { method: 'get' });
 				await fm.fetchHandler('http://it.at.there/path', { method: 'get' });
 				await fm.fetchHandler('http://it.at.where/', { method: 'post' });
-			});
-			after(() => fm.restore());
-
-			it('can retrieve all calls', () => {
-				expect(fm.filterCalls().length).to.equal(4);
-			});
-
-			it('can retrieve only calls matched by any route', () => {
-				expect(fm.filterCalls(true).length).to.equal(3);
-			});
-
-			it('can retrieve only calls not matched by no route', () => {
-				expect(fm.filterCalls(false).length).to.equal(1);
-			});
-
-			it('can retrieve only calls handled by a named route', () => {
-				expect(fm.filterCalls('fetch-mock').length).to.equal(2);
-				expect(fm.filterCalls('path:/path').length).to.equal(1);
-			});
-
-			it('can retrieve only calls handled by matcher', () => {
 				expect(fm.filterCalls('end:/path').length).to.equal(1);
 			});
 
-			it('can retrieve only calls retrieved by a matcher with a method filter', () => {
+			it.skip('can retrieve only calls retrieved by a matcher with a method filter', async () => {
+				fm.mock('http://it.at.here/', 200, { name: 'fetch-mock' })
+					.mock('path:/path', 200)
+					.mock('http://it.at.thereabouts/', 200)
+					.catch();
+
+				await fm.fetchHandler('http://it.at.here/', { method: 'get' });
+				await fm.fetchHandler('http://it.at.here/', { method: 'get' });
+				await fm.fetchHandler('http://it.at.there/path', { method: 'get' });
+				await fm.fetchHandler('http://it.at.where/', { method: 'post' });
 				expect(fm.filterCalls(/where/, 'get').length).to.equal(0);
 				expect(fm.filterCalls(/where/, 'post').length).to.equal(1);
 			});
 
-			it('can retrieve only calls retrieved by a matcher with options', () => {
+			it.skip('can retrieve only calls retrieved by a matcher with options', async () => {
+				fm.mock('http://it.at.here/', 200, { name: 'fetch-mock' })
+					.mock('path:/path', 200)
+					.mock('http://it.at.thereabouts/', 200)
+					.catch();
+
+				await fm.fetchHandler('http://it.at.here/', { method: 'get' });
+				await fm.fetchHandler('http://it.at.here/', { method: 'get' });
+				await fm.fetchHandler('http://it.at.there/path', { method: 'get' });
+				await fm.fetchHandler('http://it.at.where/', { method: 'post' });
 				expect(
 					fm.filterCalls(/where/, { query: { egg: 'face' } }).length
 				).to.equal(0);
 				expect(fm.filterCalls(/where/, { method: 'post' }).length).to.equal(1);
 			});
 
-			it('returns [url, options] pairs', () => {
+			it.skip('returns [url, options] pairs', async () => {
+				fm.mock('http://it.at.here/', 200, { name: 'fetch-mock' })
+					.mock('path:/path', 200)
+					.mock('http://it.at.thereabouts/', 200)
+					.catch();
+
+				await fm.fetchHandler('http://it.at.here/', { method: 'get' });
+				await fm.fetchHandler('http://it.at.here/', { method: 'get' });
+				await fm.fetchHandler('http://it.at.there/path', { method: 'get' });
+				await fm.fetchHandler('http://it.at.where/', { method: 'post' });
 				expect(fm.filterCalls()[0]).to.eql([
 					'http://it.at.here/',
 					{ method: 'get' }
@@ -164,7 +214,7 @@ module.exports = fetchMock => {
 			});
 		});
 
-		describe('route name resolution', () => {
+		describe.skip('route name resolution', () => {
 			afterEach(() => fm.restore());
 			it('can filter by named routes', async () => {
 				fm.mock('http://it.at.here2/', 200, {

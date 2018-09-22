@@ -17,7 +17,6 @@ FetchMock.filterCallsWithMatcher = function(matcher, options = {}, calls) {
 FetchMock.filterCalls = function(nameOrMatcher, options) {
 	let calls = this._calls;
 	let matcher = '*';
-
 	if (nameOrMatcher === true) {
 		calls = calls.filter(({ unmatched }) => !unmatched);
 	} else if (nameOrMatcher === false) {
@@ -75,36 +74,39 @@ FetchMock.flush = function(waitForResponseMethods) {
 	});
 };
 
-FetchMock.done = function(name, options) {
-	const names = name && typeof name !== 'boolean' ? [{ name }] : this.routes;
+FetchMock.done = function(name) {
+	// - true or undefined
+	// - name or matcher
+	// - don't support options any more?
+	// - ah, but what about when multiple routes have same matcher
+	// 		- name them
+
+	// const calls = this.filterCalls(name, options);
+	const names = name && typeof name !== 'boolean' ? [{ name, _originalMatcher: name }] : this.routes;
 
 	// Can't use array.every because
 	// a) not widely supported
 	// b) would exit after first failure, which would break the logging
 	return (
 		names
-			.map(({ name, method }) => {
-				// HACK - this is horrible. When the api is eventually updated to update other
-				// filters other than a method string it will break... but for now it's ok-ish
-				method = options || method;
-
-				if (!this.called(name, method)) {
-					console.warn(`Warning: ${name} not called`); // eslint-disable-line
+			.map(({ name, _originalMatcher }) => {
+				if (!this.called(name)) {
+					console.warn(`Warning: ${name || _originalMatcher} not called`); // eslint-disable-line
 					return false;
 				}
 
 				// would use array.find... but again not so widely supported
 				const expectedTimes = (this.routes.filter(
-					r => r.name === name && r.method === method
+					r => r.name === name || r._originalMatcher === _originalMatcher
 				) || [{}])[0].repeat;
 				if (!expectedTimes) {
 					return true;
 				}
 
-				const actualTimes = this.filterCalls(name, method).length;
+				const actualTimes = this.filterCalls(name || _originalMatcher).length;
 				if (expectedTimes > actualTimes) {
 					console.warn(
-						`Warning: ${name} only called ${actualTimes} times, but ${expectedTimes} expected`
+						`Warning: ${name || _originalMatcher} only called ${actualTimes} times, but ${expectedTimes} expected`
 					); // eslint-disable-line
 					return false;
 				} else {

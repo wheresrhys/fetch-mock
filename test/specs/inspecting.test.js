@@ -199,7 +199,7 @@ module.exports = fetchMock => {
 			});
 		});
 
-		describe('call order', () => {
+		describe.skip('call order', () => {
 			it('retrieves calls in correct order', () => {
 				fm.mock('http://it.at.here/', 200)
 					.mock('http://it.at.there/', 200)

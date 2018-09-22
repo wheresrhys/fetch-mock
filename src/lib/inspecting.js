@@ -14,16 +14,19 @@ FetchMock.filterCallsByName = function(name) {
 		return this._allCalls;
 	}
 
-	if (this.routes.some(route => route.name === name)) {
-		return this._calls[name] || [];
-	}
+	return this._allCalls.filter(call => call.name === name);
 };
 
-FetchMock.filterCallsWithRoute = function(name, options = {}) {
+
+FetchMock.filterCallsByMatcher = function(matcher) {
+	return this._allCalls.filter(call => call.matcher === matcher);
+};
+
+FetchMock.filterCallsWithRoute = function(name, options = {}, calls) {
 	const matcher = compileRoute(
 		Object.assign({ matcher: name, response: 'ok' }, options)
 	).matcher;
-	return this._allCalls.filter(([url, opts]) =>
+	return (calls || this._allCalls).filter(([url, opts]) =>
 		// HACK: add dummy response so that we can generate a matcher without
 		// copileRoute's expectation that each route has a response defined
 		matcher(normalizeUrl(url), opts)
@@ -31,18 +34,26 @@ FetchMock.filterCallsWithRoute = function(name, options = {}) {
 };
 
 FetchMock.filterCalls = function(name, options) {
+	let calls;
+
 	if (
 		typeof name === 'boolean' ||
 		typeof name === 'undefined' ||
 		(typeof name === 'string' && /^[\da-z\-]+$/.test(name))) {
-		return this.filterCallsByName(name);
+		calls = this.filterCallsByName(name);
+	} else {
+		calls = this.filterCallsByMatcher(name);
 	}
 
-	if (typeof options === 'string') {
-		options = { method: options };
+
+
+	if (options) {
+		if (typeof options === 'string') {
+			options = { method: options };
+		}
+		calls = this.filterCallsWithRoute(name, options, calls);
 	}
-	console.log('asdasda')
-	return this.filterCallsWithRoute(name, options);
+	return calls
 };
 
 FetchMock.calls = function(name, options) {

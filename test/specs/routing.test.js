@@ -13,7 +13,7 @@ module.exports = fetchMock => {
 		afterEach(() => fm.restore());
 
 		describe('url matching', () => {
-			it('match exact strings', async () => {
+			it.only('match exact strings', async () => {
 				fm.mock('http://it.at.there/path', 200).catch();
 
 				await fm.fetchHandler('http://it.at.there/path');

@@ -62,17 +62,18 @@ module.exports = (fetchMock, theGlobal) => {
 			expect(fetchMock.routes).not.to.equal(sbx.routes);
 
 			const [sandboxed, globally] = await Promise.all([
-				sbx('http://domain.url'),
-				fetch('http://domain2.url')
+				sbx('http://domain.url/'),
+				fetch('http://domain2.url/')
 			]);
 
 			expect(sandboxed.status).to.equal(200);
 			expect(globally.status).to.equal(200);
-			expect(sbx.called('http://domain.url')).to.be.true;
-			expect(sbx.called('http://domain2.url')).to.be.false;
-			expect(fetchMock.called('http://domain2.url')).to.be.true;
-			expect(fetchMock.called('http://domain.url')).to.be.false;
-			expect(sbx.called('http://domain.url')).to.be.true;
+			console.log(sbx._allCalls)
+			expect(sbx.called('http://domain.url/')).to.be.true;
+			expect(sbx.called('http://domain2.url/')).to.be.false;
+			expect(fetchMock.called('http://domain2.url/')).to.be.true;
+			expect(fetchMock.called('http://domain.url/')).to.be.false;
+			expect(sbx.called('http://domain.url/')).to.be.true;
 			fetchMock.restore();
 		});
 
@@ -92,15 +93,15 @@ module.exports = (fetchMock, theGlobal) => {
 			expect(sbx2.routes).not.to.equal(sbx.routes);
 
 			const [res1, res2] = await Promise.all([
-				sbx('http://domain.url'),
-				sbx2('http://domain2.url')
+				sbx('http://domain.url/'),
+				sbx2('http://domain2.url/')
 			]);
 			expect(res1.status).to.equal(200);
 			expect(res2.status).to.equal(200);
-			expect(sbx.called('http://domain.url')).to.be.true;
-			expect(sbx.called('http://domain2.url')).to.be.false;
-			expect(sbx2.called('http://domain2.url')).to.be.true;
-			expect(sbx2.called('http://domain.url')).to.be.false;
+			expect(sbx.called('http://domain.url/')).to.be.true;
+			expect(sbx.called('http://domain2.url/')).to.be.false;
+			expect(sbx2.called('http://domain2.url/')).to.be.true;
+			expect(sbx2.called('http://domain.url/')).to.be.false;
 		});
 
 		it('can be restored', async () => {

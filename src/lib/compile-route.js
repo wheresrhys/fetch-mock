@@ -124,7 +124,6 @@ const sanitizeRoute = route => {
 	if (route.method) {
 		route.method = route.method.toLowerCase();
 	}
-
 	route._originalMatcher = route.matcher;
 
 	return route;

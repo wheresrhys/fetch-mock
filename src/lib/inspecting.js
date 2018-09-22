@@ -19,7 +19,11 @@ FetchMock.filterCallsByName = function(name) {
 
 
 FetchMock.filterCallsByMatcher = function(matcher) {
-	return this._allCalls.filter(call => call.matcher === matcher);
+	const calls = this._allCalls.filter(call => call.matcher === matcher);
+	if (!calls.length) {
+		return
+	}
+	return calls;
 };
 
 FetchMock.filterCallsWithRoute = function(name, options = {}, calls) {
@@ -33,27 +37,26 @@ FetchMock.filterCallsWithRoute = function(name, options = {}, calls) {
 	);
 };
 
-FetchMock.filterCalls = function(name, options) {
+FetchMock.filterCalls = function(nameOrMatcher, options) {
 	let calls;
-
+	let hasName;
 	if (
-		typeof name === 'boolean' ||
-		typeof name === 'undefined' ||
-		(typeof name === 'string' && /^[\da-z\-]+$/.test(name))) {
-		calls = this.filterCallsByName(name);
+		typeof nameOrMatcher === 'boolean' ||
+		typeof nameOrMatcher === 'undefined' ||
+		(typeof nameOrMatcher === 'string' && /^[\da-z\-]+$/.test(nameOrMatcher))) {
+		calls = this.filterCallsByName(nameOrMatcher);
+		hasName = true;
 	} else {
-		calls = this.filterCallsByMatcher(name);
+		calls = this.filterCallsByMatcher(nameOrMatcher);
 	}
-
-
 
 	if (options) {
 		if (typeof options === 'string') {
 			options = { method: options };
 		}
-		calls = this.filterCallsWithRoute(name, options, calls);
+		calls = this.filterCallsWithRoute(hasName ? '*' : nameOrMatcher, options, calls);
 	}
-	return calls
+	return calls || []
 };
 
 FetchMock.calls = function(name, options) {

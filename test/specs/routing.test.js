@@ -13,10 +13,11 @@ module.exports = fetchMock => {
 		afterEach(() => fm.restore());
 
 		describe('url matching', () => {
-			it.only('match exact strings', async () => {
+			it('match exact strings', async () => {
 				fm.mock('http://it.at.there/path', 200).catch();
 
 				await fm.fetchHandler('http://it.at.there/path');
+				console.log(fm._allCalls)
 				expect(fm.calls(true).length).to.equal(1);
 				await fm.fetchHandler('http://it.at.there/path/abouts');
 				await fm.fetchHandler('http://it.at.the');

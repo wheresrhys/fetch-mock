@@ -71,7 +71,7 @@ FetchMock.executeRouter = function(url, options, request) {
 		console.warn(`Unmatched ${(options && options.method) || 'GET'} to ${url}`); // eslint-disable-line
 	}
 
-	this.push(null, { url, options, request });
+	this.push({ url, options, request, unmatched: true });
 
 	if (this.fallbackResponse) {
 		return { response: this.fallbackResponse };
@@ -133,7 +133,7 @@ FetchMock.router = function(url, options, request) {
 	const route = this.routes.find(route => route.matcher(url, options, request));
 
 	if (route) {
-		this.push(route.name, { url, options, request });
+		this.push({ url, options, request, name: route.name });
 		return route;
 	}
 };
@@ -148,16 +148,15 @@ FetchMock.getNativeFetch = function() {
 	return func;
 };
 
-FetchMock.push = function(name, { url, options, request }) {
+FetchMock.push = function({ url, options, request, name = null, unmatched= false }) {
 	const args = [url, options];
 	args.request = request;
+	args.name = name;
+	args.unmatched = unmatched;
+	this._allCalls.push(args);
 	if (name) {
 		this._calls[name] = this._calls[name] || [];
 		this._calls[name].push(args);
-		this._allCalls.push(args);
-	} else {
-		args.unmatched = true;
-		this._allCalls.push(args);
 	}
 };
 

@@ -31,20 +31,18 @@ FetchMock.filterCallsWithRoute = function(name, options = {}) {
 };
 
 FetchMock.filterCalls = function(name, options) {
-	let calls;
-	if (options) {
-		if (typeof options === 'string') {
-			options = { method: options };
-		}
-		calls = this.filterCallsWithRoute(name, options);
-	} else {
-		calls = this.filterCallsByName(name);
-		if (!calls) {
-			calls = this.filterCallsWithRoute(name);
-		}
+	if (
+		typeof name === 'boolean' ||
+		typeof name === 'undefined' ||
+		(typeof name === 'string' && /^[\da-z\-]+$/.test(name))) {
+		return this.filterCallsByName(name);
 	}
 
-	return calls;
+	if (typeof options === 'string') {
+		options = { method: options };
+	}
+	console.log('asdasda')
+	return this.filterCallsWithRoute(name, options);
 };
 
 FetchMock.calls = function(name, options) {

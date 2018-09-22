@@ -278,7 +278,7 @@ module.exports = fetchMock => {
 			});
 		});
 
-		describe('filtering cascade', () => {
+		describe.skip('filtering cascade', () => {
 			before(async () => {
 				fm.once('*', 200, { name: 'path:/asname' })
 					.mock('begin:http://it.at.there', 200)

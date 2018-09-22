@@ -4,7 +4,7 @@ Mock http requests made using [fetch](https://developer.mozilla.org/en-US/docs/W
 
 ---
 
-**Version 7 is in alpha. Please consider trying it out. `npm install fetch-mock@7.0.0-alpha.5`**
+**Version 7 is in alpha. Please consider trying it out. `npm install fetch-mock@7.0.0-alpha.6`**
 
 ---
 

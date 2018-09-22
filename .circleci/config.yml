@@ -129,4 +129,4 @@ workflows:
             branches:
               ignore: /.*/
             tags:
-              only: /^v?\d+\.\d+\.\d+(?:-beta\.\d+)?$/
+              only: /^v?\d+\.\d+\.\d+(?:-(beta|alpha)\.\d+)?$/

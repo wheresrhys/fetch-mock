@@ -124,43 +124,48 @@ module.exports = fetchMock => {
 			});
 
 			it('can retrieve only calls handled by a named route', async () => {
-				fm.mock('http://it.at.here/', 200, { name: 'here' })
-					.mock('http://it.at.there/', 200)
-					.nameRoute('there');
+				fm.mock('http://it.at.here/', 200, { name: 'here' }).catch();
 
 				await fm.fetchHandler('http://it.at.here/');
 				await fm.fetchHandler('http://it.at.there');
 				expect(fm.filterCalls('here').length).to.equal(1);
 				expect(fm.filterCalls('here')[0][0]).to.equal('http://it.at.here/');
-				expect(fm.filterCalls('there').length).to.equal(1);
-				expect(fm.filterCalls('there')[0][0]).to.equal('http://it.at.there/');
 			});
 
-			it.skip('can retrieve only calls handled by matcher', async () => {
-				fm.mock('http://it.at.here/', 200, { name: 'fetch-mock' })
-					.mock('path:/path', 200)
-					.mock('http://it.at.thereabouts/', 200)
-					.catch();
+			it('can retrieve only calls handled by matcher', async () => {
+				fm.mock('path:/path', 200).catch();
 
-				await fm.fetchHandler('http://it.at.here/', { method: 'get' });
-				await fm.fetchHandler('http://it.at.here/', { method: 'get' });
-				await fm.fetchHandler('http://it.at.there/path', { method: 'get' });
-				await fm.fetchHandler('http://it.at.where/', { method: 'post' });
-				expect(fm.filterCalls('end:/path').length).to.equal(1);
+				await fm.fetchHandler('http://it.at.here/');
+				await fm.fetchHandler('http://it.at.there/path');
+				expect(fm.filterCalls('path:/path').length).to.equal(1);
+				expect(fm.filterCalls('path:/path')[0][0]).to.equal(
+					'http://it.at.there/path'
+				);
 			});
 
-			it.skip('can retrieve only calls retrieved by a matcher with a method filter', async () => {
-				fm.mock('http://it.at.here/', 200, { name: 'fetch-mock' })
-					.mock('path:/path', 200)
-					.mock('http://it.at.thereabouts/', 200)
-					.catch();
+			it('can retrieve only calls handled by a non-string matcher', async () => {
+				const rx = /path/;
+				fm.mock(rx, 200).catch();
 
-				await fm.fetchHandler('http://it.at.here/', { method: 'get' });
-				await fm.fetchHandler('http://it.at.here/', { method: 'get' });
-				await fm.fetchHandler('http://it.at.there/path', { method: 'get' });
-				await fm.fetchHandler('http://it.at.where/', { method: 'post' });
-				expect(fm.filterCalls(/where/, 'get').length).to.equal(0);
-				expect(fm.filterCalls(/where/, 'post').length).to.equal(1);
+				await fm.fetchHandler('http://it.at.here/');
+				await fm.fetchHandler('http://it.at.there/path');
+				expect(fm.filterCalls(rx).length).to.equal(1);
+				expect(fm.filterCalls(rx)[0][0]).to.equal('http://it.at.there/path');
+			});
+
+			//TODO, for each of the classes of match, make sure they are filterable by:
+			// -  method
+			// - full options
+
+			it.skip('can retrieve only calls handled by matcher with a method specified', async () => {
+				fm.mock('path:/path', 200).catch();
+
+				await fm.fetchHandler('http://it.at.here/');
+				await fm.fetchHandler('http://it.at.there/path');
+				expect(fm.filterCalls('path:/path').length).to.equal(1);
+				expect(fm.filterCalls('path:/path')[0][0]).to.equal(
+					'http://it.at.there/path'
+				);
 			});
 
 			it.skip('can retrieve only calls retrieved by a matcher with options', async () => {

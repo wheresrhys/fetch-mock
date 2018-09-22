@@ -15,23 +15,27 @@ FetchMock.filterCallsWithMatcher = function(matcher, options = {}, calls) {
 };
 
 FetchMock.filterCalls = function(nameOrMatcher, options) {
-	let calls;
+	let calls = this._calls;
 	let matcher = '*';
 
 	if (nameOrMatcher === true) {
-		calls = this._calls.filter(({ unmatched }) => !unmatched);
+		calls = calls.filter(({ unmatched }) => !unmatched);
 	} else if (nameOrMatcher === false) {
-		calls = this._calls.filter(({ unmatched }) => unmatched);
+		calls = calls.filter(({ unmatched }) => unmatched);
 	} else if (typeof nameOrMatcher === 'undefined') {
-		calls = this._calls;
+		calls = calls;
 	} else if (isName(nameOrMatcher)) {
-		calls = this._calls.filter(({ name }) => name === nameOrMatcher);
+		calls = calls.filter(({ name }) => name === nameOrMatcher);
 	} else {
 		matcher = normalizeUrl(nameOrMatcher);
-		calls = this._calls.filter(call => call.matcher === matcher);
+		if (
+			this.routes.some(({ _originalMatcher }) => _originalMatcher === matcher)
+		) {
+			calls = calls.filter(call => call.matcher === matcher);
+		}
 	}
 
-	if (options && calls.length) {
+	if ((options || matcher !== '*') && calls.length) {
 		if (typeof options === 'string') {
 			options = { method: options };
 		}

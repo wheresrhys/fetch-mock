@@ -18,7 +18,11 @@ const zip = entries =>
 
 module.exports = {
 	normalizeUrl: url => {
-		if (/^(begin|end|glob|express|path)\:/.test(url)) {
+		if (
+			typeof url === 'function' ||
+			url instanceof RegExp ||
+			/^(begin|end|glob|express|path)\:/.test(url)
+		) {
 			return url;
 		}
 		if (absoluteUrlRX.test(url)) {

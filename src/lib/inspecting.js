@@ -2,82 +2,62 @@ const { normalizeUrl } = require('./request-utils');
 const FetchMock = {};
 const compileRoute = require('./compile-route');
 
-FetchMock.filterCallsByName = function(name) {
-	if (name === true) {
-		return this._calls.filter(call => !call.unmatched);
-	}
-	if (name === false) {
-		return this._calls.filter(call => call.unmatched);
-	}
+const isName = nameOrMatcher =>
+	typeof nameOrMatcher === 'string' && /^[\da-z\-]+$/.test(nameOrMatcher);
 
-	if (typeof name === 'undefined') {
-		return this._calls;
-	}
-
-	return this._calls.filter(call => call.name === name);
-};
-
-
-FetchMock.filterCallsByMatcher = function(matcher) {
-	matcher = normalizeUrl(matcher);
-	const calls = this._calls.filter(call => call.matcher === matcher);
-	if (!calls.length) {
-		return
-	}
-	return calls;
-};
-
-FetchMock.filterCallsWithRoute = function(name, options = {}, calls) {
-	const matcher = compileRoute(
-		Object.assign({ matcher: name, response: 'ok' }, options)
-	).matcher;
-	return (calls || this._calls).filter(([url, opts]) =>
+FetchMock.filterCallsWithMatcher = function(matcher, options = {}, calls) {
+	matcher = compileRoute(
 		// HACK: add dummy response so that we can generate a matcher without
 		// copileRoute's expectation that each route has a response defined
-		matcher(normalizeUrl(url), opts)
-	);
+		Object.assign({ matcher, response: 200 }, options)
+	).matcher;
+	return calls.filter(([url, opts]) => matcher(normalizeUrl(url), opts));
 };
 
 FetchMock.filterCalls = function(nameOrMatcher, options) {
 	let calls;
-	let hasName;
-	if (
-		typeof nameOrMatcher === 'boolean' ||
-		typeof nameOrMatcher === 'undefined' ||
-		(typeof nameOrMatcher === 'string' && /^[\da-z\-]+$/.test(nameOrMatcher))) {
-		calls = this.filterCallsByName(nameOrMatcher);
-		hasName = true;
+	let matcher = '*';
+
+	if (nameOrMatcher === true) {
+		calls = this._calls.filter(({ unmatched }) => !unmatched);
+	} else if (nameOrMatcher === false) {
+		calls = this._calls.filter(({ unmatched }) => unmatched);
+	} else if (typeof nameOrMatcher === 'undefined') {
+		calls = this._calls;
+	} else if (isName(nameOrMatcher)) {
+		calls = this._calls.filter(({ name }) => name === nameOrMatcher);
 	} else {
-		calls = this.filterCallsByMatcher(nameOrMatcher);
+		matcher = normalizeUrl(nameOrMatcher);
+		calls = this._calls.filter(call => call.matcher === matcher);
 	}
 
-	if (options) {
+	if (options && calls.length) {
 		if (typeof options === 'string') {
 			options = { method: options };
 		}
-		calls = this.filterCallsWithRoute(hasName ? '*' : nameOrMatcher, options, calls);
+		calls = this.filterCallsWithMatcher(matcher, options, calls);
 	}
-	return calls || []
+	return calls;
 };
 
-FetchMock.calls = function(name, options) {
-	return this.filterCalls(name, options);
+FetchMock.calls = function(nameOrMatcher, options) {
+	return this.filterCalls(nameOrMatcher, options);
 };
 
-FetchMock.lastCall = function(name, options) {
-	return [...this.filterCalls(name, options)].pop();
+FetchMock.lastCall = function(nameOrMatcher, options) {
+	return [...this.filterCalls(nameOrMatcher, options)].pop();
 };
 
-FetchMock.lastUrl = function(name, options) {
-	return (this.lastCall(name, options) || [])[0];
+FetchMock.lastUrl = function(nameOrMatcher, options) {
+	return (this.lastCall(nameOrMatcher, options) || [])[0];
 };
 
-FetchMock.lastOptions = function(name, options) {
-	return (this.lastCall(name, options) || [])[1];
+FetchMock.lastOptions = function(nameOrMatcher, options) {
+	return (this.lastCall(nameOrMatcher, options) || [])[1];
 };
 
-FetchMock.called = function(name, options) {
-	return !!this.filterCalls(name, options).length;
+FetchMock.called = function(nameOrMatcher, options) {
+	return !!this.filterCalls(nameOrMatcher, options).length;
 };
 
 FetchMock.flush = function(waitForResponseMethods) {

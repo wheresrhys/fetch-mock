@@ -9,12 +9,8 @@ const {
 } = require('./request-utils');
 
 const stringMatchers = {
-	begin: targetString => {
-		return url => url.indexOf(targetString) === 0;
-	},
-	end: targetString => {
-		return url => url.substr(-targetString.length) === targetString;
-	},
+	begin: targetString => url => url.indexOf(targetString) === 0,
+	end: targetString => url => url.substr(-targetString.length) === targetString,
 	glob: targetString => {
 		const urlRX = glob(targetString);
 		return url => urlRX.test(url);

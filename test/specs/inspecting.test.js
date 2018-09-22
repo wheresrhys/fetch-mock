@@ -95,12 +95,10 @@ module.exports = fetchMock => {
 		});
 
 		describe('filtering', () => {
-
 			afterEach(() => fm.reset());
 
 			it('can retrieve all calls', async () => {
-				fm.mock('http://it.at.here/', 200)
-					.catch();
+				fm.mock('http://it.at.here/', 200).catch();
 
 				await fm.fetchHandler('http://it.at.here/');
 				await fm.fetchHandler('http://it.at.where/');
@@ -108,8 +106,7 @@ module.exports = fetchMock => {
 			});
 
 			it('can retrieve only calls matched by any route', async () => {
-				fm.mock('http://it.at.here/', 200)
-					.catch();
+				fm.mock('http://it.at.here/', 200).catch();
 
 				await fm.fetchHandler('http://it.at.here/');
 				await fm.fetchHandler('http://it.at.where/');
@@ -118,8 +115,7 @@ module.exports = fetchMock => {
 			});
 
 			it('can retrieve only calls not matched by any route', async () => {
-				fm.mock('http://it.at.here/', 200)
-					.catch();
+				fm.mock('http://it.at.here/', 200).catch();
 
 				await fm.fetchHandler('http://it.at.here/');
 				await fm.fetchHandler('http://it.at.where/');
@@ -129,7 +125,8 @@ module.exports = fetchMock => {
 
 			it('can retrieve only calls handled by a named route', async () => {
 				fm.mock('http://it.at.here/', 200, { name: 'here' })
-					.mock('http://it.at.there/', 200).nameRoute('there')
+					.mock('http://it.at.there/', 200)
+					.nameRoute('there');
 
 				await fm.fetchHandler('http://it.at.here/');
 				await fm.fetchHandler('http://it.at.there');

@@ -133,7 +133,13 @@ FetchMock.router = function(url, options, request) {
 	const route = this.routes.find(route => route.matcher(url, options, request));
 
 	if (route) {
-		this.push({ url, options, request, name: route.name, matcher: route._originalMatcher });
+		this.push({
+			url,
+			options,
+			request,
+			name: route.name,
+			matcher: route._originalMatcher
+		});
 		return route;
 	}
 };
@@ -148,7 +154,14 @@ FetchMock.getNativeFetch = function() {
 	return func;
 };
 
-FetchMock.push = function({ url, options, request, name = null, unmatched= false, matcher = null }) {
+FetchMock.push = function({
+	url,
+	options,
+	request,
+	name = null,
+	unmatched = false,
+	matcher = null
+}) {
 	const args = [url, options];
 	args.request = request;
 	args.name = name;

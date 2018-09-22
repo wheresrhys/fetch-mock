@@ -68,7 +68,7 @@ module.exports = (fetchMock, theGlobal) => {
 
 			expect(sandboxed.status).to.equal(200);
 			expect(globally.status).to.equal(200);
-			console.log(sbx._allCalls)
+			console.log(sbx._allCalls);
 			expect(sbx.called('http://domain.url/')).to.be.true;
 			expect(sbx.called('http://domain2.url/')).to.be.false;
 			expect(fetchMock.called('http://domain2.url/')).to.be.true;

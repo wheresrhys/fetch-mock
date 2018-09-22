@@ -25,14 +25,13 @@ FetchMock.mock = function(matcher, response, options = {}) {
 };
 
 const getMatcher = (route, propName) => route2 =>
-	route[propName] && (route[propName] === route2[propName]);
+	route[propName] && route[propName] === route2[propName];
 
 FetchMock.addRoute = function(uncompiledRoute) {
 	const route = this.compileRoute(uncompiledRoute);
 	const clashes = this.routes
-		.filter(getMatcher(route, 'name')).concat(
-			this.routes.filter(getMatcher(route, '_originalMatcher'))
-		)
+		.filter(getMatcher(route, 'name'))
+		.concat(this.routes.filter(getMatcher(route, '_originalMatcher')));
 
 	const overwriteRoutes =
 		'overwriteRoutes' in route
@@ -98,10 +97,14 @@ FetchMock.once = function(matcher, response, options = {}) {
 	);
 };
 
-FetchMock.nameRoute = function (name) {
-	const targetRoute = this.routes[this.routes.length-1];
+FetchMock.nameRoute = function(name) {
+	const targetRoute = this.routes[this.routes.length - 1];
 	if (targetRoute.name) {
-		throw new Error(`fetch-mock: attempting to give the name '${name}' to a route already named '${targetRoute.name}'`)
+		throw new Error(
+			`fetch-mock: attempting to give the name '${name}' to a route already named '${
+				targetRoute.name
+			}'`
+		);
 	}
 	targetRoute.name = name;
 };

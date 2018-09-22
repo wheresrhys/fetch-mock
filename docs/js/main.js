@@ -1,34 +1,42 @@
 jQuery(function() {
-	var $sidebar = $('nav'),
+	let $sidebar = $('nav'),
 		$main = $('main');
 
-	var found = true;
+	const found = true;
 
-	var $el;
+	let $el;
 
 	$sidebar.find('a').click(function() {
 		$('body').removeClass('nav-open');
 	});
 
-	$("section > div.highlighter-rouge:first-of-type").each(function(i) {
-		var $this = $(this).before("<ul class=\"languages\"></ul>"),
-		$languages = $this.prev(),
-		$notFirst = $this.nextUntil(":not(div.highlighter-rouge)"),
-		$all = $this.add($notFirst);
+	$('section > div.highlighter-rouge:first-of-type').each(function(i) {
+		let $this = $(this).before('<ul class="languages"></ul>'),
+			$languages = $this.prev(),
+			$notFirst = $this.nextUntil(':not(div.highlighter-rouge)'),
+			$all = $this.add($notFirst);
 
-		$all.add($languages).wrapAll("<div class=\"code-viewer\"></div>");
-
+		$all.add($languages).wrapAll('<div class="code-viewer"></div>');
 
 		listLanguages($all, $languages);
 
 		$this.css('display', 'block');
 		$notFirst.css('display', 'none');
 
-		$languages.find('a').first().addClass('active');
+		$languages
+			.find('a')
+			.first()
+			.addClass('active');
 
 		$languages.find('a').click(function() {
 			$all.css('display', 'none');
-			$all.eq($(this).parent().index()).css('display', 'block');
+			$all
+				.eq(
+					$(this)
+						.parent()
+						.index()
+				)
+				.css('display', 'block');
 
 			$languages.find('a').removeClass('active');
 			$(this).addClass('active');
@@ -42,54 +50,55 @@ jQuery(function() {
 
 	function listLanguages($el, $insert) {
 		$el.each(function(i) {
-			var title = $(this).attr('title');
+			const title = $(this).attr('title');
 			if (title) {
-				$insert.append("<li><a href=\"#\">" + title + "</a></li>");
+				$insert.append('<li><a href="#">' + title + '</a></li>');
 			}
 		});
 	}
 
-	var href = $('.sidebar a').first().attr("href");
+	const href = $('.sidebar a')
+		.first()
+		.attr('href');
 
-	if (href !== undefined && href.charAt(0) === "#") {
+	if (href !== undefined && href.charAt(0) === '#') {
 		setActiveSidebarLink();
 
-		$(window).on("scroll", function(evt) {
+		$(window).on('scroll', function(evt) {
 			setActiveSidebarLink();
 		});
 	}
 
 	function setActiveSidebarLink() {
-			$('.sidebar a').removeClass('active');
-				var $closest = getClosestHeader();
-				$closest.addClass('active');
-				document.title = $closest.text();
-
+		$('.sidebar a').removeClass('active');
+		const $closest = getClosestHeader();
+		$closest.addClass('active');
+		document.title = $closest.text();
 	}
 });
 
 function getClosestHeader() {
-	var $links = $('.sidebar a'),
-	top = window.scrollY,
-	$last = $links.first();
+	let $links = $('.sidebar a'),
+		top = window.scrollY,
+		$last = $links.first();
 
 	if (top < 300) {
 		return $last;
 	}
 
-	if (top + window.innerHeight >= $(".main").height()) {
+	if (top + window.innerHeight >= $('.main').height()) {
 		return $links.last();
 	}
 
-	for (var i = 0; i < $links.length; i++) {
-		var $link = $links.eq(i),
-		href = $link.attr("href");
+	for (let i = 0; i < $links.length; i++) {
+		let $link = $links.eq(i),
+			href = $link.attr('href');
 
-		if (href !== undefined && href.charAt(0) === "#" && href.length > 1) {
-			var $anchor = $(href);
+		if (href !== undefined && href.charAt(0) === '#' && href.length > 1) {
+			const $anchor = $(href);
 
 			if ($anchor.length > 0) {
-				var offset = $anchor.offset();
+				const offset = $anchor.offset();
 
 				if (top < offset.top - 300) {
 					return $last;

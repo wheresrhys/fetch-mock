@@ -88,4 +88,3 @@ Most of the methods below accept two parameters, `(filter, options)`
     - If `filter` is equal to `matcher` or `matcher.toString()` for a route, all calls handled by that route are returned
     - `filter` is executed using the same execution plan as matchers used in `.mock()`. Any calls matched by it will be returned. If `options` is also passed this is used in a similar way to the options used by `mock()`. Alternatively, `options` can be a string specifying a `method` to filter by
 
-

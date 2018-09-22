@@ -3,7 +3,7 @@
 	{% for collection in sorted_collections %}
 		{% if collection.label != "posts" %}
 			<section>
-				<h6>{{ collection.title }}</h6>
+				<h1>{{ collection.title }}</h1>
 				<ul>
 					{% assign sorted_docs = collection.docs | sort: "position" %}
 					{% for doc in sorted_docs %}

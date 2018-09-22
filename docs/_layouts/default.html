@@ -23,19 +23,13 @@
 	</head>
 	<body>
 		<div class="navigation">
-		<header>
-			<h1>
-				<button type="button" class="open-nav" id="open-nav"></button>
-				<a href="{{ site.baseurl }}/"><span>fetch</span><span>-</span><span>mock</span></a>
-			</h1>
-		</header>
+			<header>
+				<h1 class="site-title">
+					<button type="button" class="open-nav" id="open-nav"></button>
+					<a href="{{ site.baseurl }}/"><span>fetch</span><span>-</span><span>mock</span></a>
+				</h1>
+			</header>
 			{% include sidebar.html %}
-
-			<p class="copyright">
-				<a href="https://cloudcannon.com/">
-					Template by CloudCannon
-				</a>
-			</p>
 		</div>
 		<main>
 			{{ content }}

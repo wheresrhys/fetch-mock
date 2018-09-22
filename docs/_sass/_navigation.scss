@@ -40,9 +40,7 @@ body.nav-open {
 
 
 
-// nav h6 {
-// 	font-size: 1.4em;
-// }
+
 
 // nav a {
 // 	padding: 10px 0;
@@ -51,29 +49,67 @@ body.nav-open {
 .navigation {
 	background-color: $nav-background-color;
 
-	h1 {
+	.site-title {
 		height: 6rem;
 		position: relative;
 		box-sizing: border-box;
 		background-color: #00994D;
 		text-align: center;
 		line-height: 6rem;
+		margin: 0;
+		font-size: 4.0rem;
+		letter-spacing: -.1rem;
+
+
 		a {
 			color: #fff;
+			text-decoration: none;
 
-			// font-weight: bold;
-			// font-family: sans-serif;
-			// text-shadow: 2px 2px black
-			// span:first-child {
-			// 	color: black;
-			// }
 
-			// span:last-child {
-			// 	color: red;
-			// }
 		}
+	}
 
+	nav {
+		padding: 0 2rem 4rem;
+	}
+	section h1 {
+		font-size: 2.4rem;
+		line-height: 1.35;
+		letter-spacing: -.08rem;
+		margin: 0 0 5px 0;
+		font-weight: 300;
 
+	}
+
+	section {
+		ul {
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+		li {
+			padding-left: 2rem
+		}
+		li.parameter {
+			padding-left: 4rem;
+			font-size: 0.9em;
+		}
+		a {
+	    		color: #777;
+		text-decoration: none;
+		font-size: .90em;
+		display: block;
+		width: 100%;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		padding: 2px 0;
+
+		&.active {
+			color: #2196F3;
+			text-decoration: none;
+		}
+		}
+	}
 
 	// 	height: $nav-header-height;
 	//
@@ -89,7 +125,6 @@ body.nav-open {
 	// 	@include flex-direction(row);
 	// 	@include align-items(center);
 	// 	border-bottom: 1px solid rgba(0, 0, 0, 0.075);
-	}
 	// 	img {
 	// 		height: 26px;
 	// 		margin: 0 18px;

@@ -154,11 +154,7 @@ FetchMock.push = function({ url, options, request, name = null, unmatched= false
 	args.name = name;
 	args.unmatched = unmatched;
 	args.matcher = matcher;
-	this._allCalls.push(args);
-	if (name) {
-		this._calls[name] = this._calls[name] || [];
-		this._calls[name].push(args);
-	}
+	this._calls.push(args);
 };
 
 module.exports = FetchMock;

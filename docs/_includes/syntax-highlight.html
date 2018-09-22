@@ -1,0 +1,8 @@
+{% capture highlight %}
+``` {{ include.block.language }}
+{{ include.block.code_block }}
+```
+{: title="{{ include.block.title }}" }
+{% endcapture %}
+
+{{ highlight | markdownify }}

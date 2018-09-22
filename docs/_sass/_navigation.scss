@@ -1,27 +1,3 @@
-nav {
-	display: none;
-}
-
-nav h6 {
-	font-size: 1.4em;
-}
-
-nav a {
-	padding: 10px 0;
-}
-
-body.nav-open {
-	overflow: hidden;
-	.navigation {
-		bottom: 0;
-	}
-	nav {
-		display: block
-	}
-}
-
-
-
 .navigation {
 	max-height: 100vh;
 	position: fixed;
@@ -30,11 +6,77 @@ body.nav-open {
 	right: 0;
 	overflow-x: hidden;
 	z-index: 1;
-	// background-color: $nav-background-color;
+}
 
-	// h1 {
+nav {
+	display: none;
+}
+
+body.nav-open {
+	overflow: hidden;
+
+	.navigation {
+		bottom: 0;
+	}
+
+	nav {
+		display: block
+	}
+}
+
+@media only screen and (min-width:$mobile-break) {
+	.navigation {
+		position: static;
+		overflow-y: scroll;
+	}
+	nav {
+		display: block
+	}
+
+	.open-nav {
+		display: none;
+	}
+}
+
+
+
+// nav h6 {
+// 	font-size: 1.4em;
+// }
+
+// nav a {
+// 	padding: 10px 0;
+// }
+
+.navigation {
+	background-color: $nav-background-color;
+
+	h1 {
+		height: 6rem;
+		position: relative;
+		box-sizing: border-box;
+		background-color: #00994D;
+		text-align: center;
+		line-height: 6rem;
+		a {
+			color: #fff;
+
+			// font-weight: bold;
+			// font-family: sans-serif;
+			// text-shadow: 2px 2px black
+			// span:first-child {
+			// 	color: black;
+			// }
+
+			// span:last-child {
+			// 	color: red;
+			// }
+		}
+
+
+
 	// 	height: $nav-header-height;
-	// 	box-sizing: border-box;
+	//
 	// 	background-color: $brand-colour;
 	// 	color: #fff;
 	// 	margin: 0;
@@ -47,35 +89,36 @@ body.nav-open {
 	// 	@include flex-direction(row);
 	// 	@include align-items(center);
 	// 	border-bottom: 1px solid rgba(0, 0, 0, 0.075);
-
+	}
 	// 	img {
 	// 		height: 26px;
 	// 		margin: 0 18px;
 	// 	}
 	// }
 
-	// .open-nav {
-	// 	width: 25px;
-	// 	height: 25px;
- // 		margin: 0 0 0 18px;
-	// 	background-image: url($base-url + '/images/menu.svg');
-	// 	background-color: transparent;
-	// 	background-repeat: no-repeat;
-	// 	background-size: 100%;
-	// 	border: 0;
-	// 	position: relative;
-	// 	border-radius: 2px;
-	// 	cursor: pointer;
+	.open-nav {
+		width: 4rem;
+		height: 4rem;
+ 		left: 1rem;
+ 		top: 1rem;
+ 		position: absolute;
+		background-image: url($base-url + '/images/menu.svg');
+		background-color: transparent;
+		background-repeat: no-repeat;
+		background-size: 100%;
+		border: 0;
+		border-radius: 2px;
+		cursor: pointer;
 
-	// 	&:focus {
-	// 		outline: none;
-	// 		background-color: rgba(0, 0, 0, 0.05);
-	// 	}
+		&:focus {
+			outline: none;
+			background-color: rgba(0, 0, 0, 0.05);
+		}
 
-	// 	&:hover {
-	// 		background-color: rgba(0, 0, 0, 0.1);
-	// 	}
-	// }
+		&:hover {
+			background-color: rgba(0, 0, 0, 0.1);
+		}
+	}
 
 	// @media (min-width: $mobile-break) {
 	// 	background-color: transparent;
@@ -87,27 +130,11 @@ body.nav-open {
 	// 		display: block;
 	// 	}
 
-	// 	.open-nav {
-	// 		display: none;
-	// 	}
+
 
 	// 	h1 {
 	// 		box-shadow: inset -10px 0 10px -10px rgba(0, 0, 0, 0.1);
 	// 	}
 	// }
-}
 
-@media only screen and (min-width:45rem) {
-.navigation {
-	position: static;
-	overflow-y: scroll;
-}
-	nav {
-		display: block
-	}
-	// top: 0;
-	// left: 0;
-	// right: 0;
-	// overflow-x: hidden;
-	// z-index: 1;
 }

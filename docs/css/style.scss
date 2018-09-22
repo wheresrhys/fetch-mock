@@ -9,7 +9,7 @@ $nav-header-height: 60px;
 $nav-background-color: #f5f5f5;
 $nav-width: 300px;
 
-$mobile-break: 700px;
+$mobile-break: 45rem;
 
 {% if site.baseurl %}
 	$base-url: {{ site.baseurl }};
@@ -19,7 +19,7 @@ $mobile-break: 700px;
 
 @import "layout";
 @import "docs";
-// @import "mixins";
+@import "tables";
 @import "navigation";
 @import "borland";
 // @import "cloudcannon";

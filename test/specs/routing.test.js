@@ -110,6 +110,7 @@ module.exports = fetchMock => {
 
 					await fm.fetchHandler('http://it.at.there/');
 					await fm.fetchHandler('http://it.at.there');
+					console.log(fm.calls())
 					expect(fm.calls('http://it.at.there').length).to.equal(2);
 					expect(fm.calls('http://it.at.there/').length).to.equal(2);
 					await fm.fetchHandler('http://it.at.here/');
@@ -118,20 +119,6 @@ module.exports = fetchMock => {
 					expect(fm.calls('http://it.at.here/').length).to.equal(2);
 				});
 
-				it('match end: keyword on pathless urls regardless of trailing slash', async () => {
-					fm.mock('end:.there/', 200)
-						.mock('end:.here', 200)
-						.catch();
-
-					await fm.fetchHandler('http://it.at.there/');
-					await fm.fetchHandler('http://it.at.there');
-					expect(fm.calls('http://it.at.there').length).to.equal(2);
-					expect(fm.calls('http://it.at.there/').length).to.equal(2);
-					await fm.fetchHandler('http://it.at.here/');
-					await fm.fetchHandler('http://it.at.here');
-					expect(fm.calls('http://it.at.here').length).to.equal(2);
-					expect(fm.calls('http://it.at.here/').length).to.equal(2);
-				});
 			});
 		});
 

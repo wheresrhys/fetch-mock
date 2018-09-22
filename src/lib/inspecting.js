@@ -19,6 +19,7 @@ FetchMock.filterCallsByName = function(name) {
 
 
 FetchMock.filterCallsByMatcher = function(matcher) {
+	matcher = normalizeUrl(matcher);
 	const calls = this._allCalls.filter(call => call.matcher === matcher);
 	if (!calls.length) {
 		return

@@ -99,6 +99,7 @@ const getUrlMatcher = route => {
 	// of the route to allow for e.g. http://it.at.there being indistinguishable
 	// from http://it.at.there/ once we start generating Request/Url objects
 	const expectedUrl = normalizeUrl(matcher);
+	route._originalMatcher = expectedUrl;
 
 	return url => {
 		if (query && expectedUrl.indexOf('?')) {

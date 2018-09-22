@@ -18,6 +18,9 @@ const zip = entries =>
 
 module.exports = {
 	normalizeUrl: url => {
+		if (/^(begin|end|glob|express|path)\:/.test(url)) {
+			return url;
+		}
 		if (absoluteUrlRX.test(url)) {
 			const u = new URL.URL(url);
 			return u.href;

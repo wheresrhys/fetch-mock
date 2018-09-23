@@ -71,6 +71,7 @@ const getParamsMatcher = ({ params: expectedParams, matcher }) => {
 
 const getUrlMatcher = route => {
 	const { matcher, query } = route;
+
 	if (typeof matcher === 'function') {
 		return matcher;
 	}

@@ -153,13 +153,7 @@ FetchMock.getNativeFetch = function() {
 	return func;
 };
 
-FetchMock.push = function({
-	url,
-	options,
-	request,
-	unmatched,
-	identifier
-}) {
+FetchMock.push = function({ url, options, request, unmatched, identifier }) {
 	const args = [url, options];
 	args.request = request;
 	args.identifier = identifier;

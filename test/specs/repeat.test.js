@@ -112,9 +112,7 @@ module.exports = fetchMock => {
 
 		it('logs unmatched calls', () => {
 			sinon.spy(console, 'warn'); //eslint-disable-line
-			fm
-			.mock('http://it.at.there1/', 200)
-			.mock('http://it.at.there2/', 200, {
+			fm.mock('http://it.at.there1/', 200).mock('http://it.at.there2/', 200, {
 				repeat: 2
 			});
 

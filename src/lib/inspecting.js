@@ -27,9 +27,7 @@ FetchMock.filterCalls = function(nameOrMatcher, options) {
 		calls = calls.filter(({ identifier }) => identifier === nameOrMatcher);
 	} else {
 		matcher = normalizeUrl(nameOrMatcher);
-		if (
-			this.routes.some(({ identifier }) => identifier === matcher)
-		) {
+		if (this.routes.some(({ identifier }) => identifier === matcher)) {
 			calls = calls.filter(call => call.identifier === matcher);
 		}
 	}
@@ -82,38 +80,38 @@ FetchMock.done = function(nameOrMatcher) {
 	// 		- nameOrMatcher them
 
 	// const calls = this.filterCalls(nameOrMatcher, options);
-	const identifiers = nameOrMatcher && typeof nameOrMatcher !== 'boolean' ? [{ identifier: nameOrMatcher }] : this.routes;
+	const identifiers =
+		nameOrMatcher && typeof nameOrMatcher !== 'boolean'
+			? [{ identifier: nameOrMatcher }]
+			: this.routes;
 	// Can't use array.every because
 	// a) not widely supported
 	// b) would exit after first failure, which would break the logging
-	return (
-		identifiers
-			.map(({ identifier }) => {
-
-				if (!this.called(identifier)) {
+	return identifiers
+		.map(({ identifier }) => {
+			if (!this.called(identifier)) {
 					console.warn(`Warning: ${identifier} not called`); // eslint-disable-line
-					return false;
-				}
+				return false;
+			}
 
-				const expectedTimes = (this.routes.find(
-					r => r.identifier === identifier
-				) || {}).repeat;
+			const expectedTimes = (
+				this.routes.find(r => r.identifier === identifier) || {}
+			).repeat;
 
-				if (!expectedTimes) {
-					return true;
-				}
-				const actualTimes = this.filterCalls(identifier).length;
-				if (expectedTimes > actualTimes) {
-					console.warn(
-						`Warning: ${identifier} only called ${actualTimes} times, but ${expectedTimes} expected`
+			if (!expectedTimes) {
+				return true;
+			}
+			const actualTimes = this.filterCalls(identifier).length;
+			if (expectedTimes > actualTimes) {
+				console.warn(
+					`Warning: ${identifier} only called ${actualTimes} times, but ${expectedTimes} expected`
 					); // eslint-disable-line
-					return false;
-				} else {
-					return true;
-				}
-			})
-			.every(bool => bool)
-	);
+				return false;
+			} else {
+				return true;
+			}
+		})
+		.every(bool => bool);
 };
 
 module.exports = FetchMock;

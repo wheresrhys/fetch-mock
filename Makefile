@@ -1,6 +1,6 @@
 export PATH := $(PATH):./node_modules/.bin
 
-.PHONY: test
+.PHONY: test docs
 
 test-dev:
 	karma start --browsers=Chrome
@@ -39,3 +39,6 @@ bundle:
 	--output-library fetchMock \
 	--entry ./es5/client.js \
 	--output-filename ./es5/client-bundle.js
+
+docs:
+	cd docs; jekyll serve build --watch

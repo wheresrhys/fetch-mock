@@ -145,7 +145,6 @@ module.exports = (fetchMock, theGlobal, fetch) => {
 
 		describe.skip('warnOnFallback', () => {
 			it('warn on fallback response by default', async () => {});
-
 			it("don't warn on fallback response when configured false", async () => {});
 		});
 

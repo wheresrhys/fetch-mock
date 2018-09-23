@@ -74,19 +74,6 @@ module.exports = fetchMock => {
 			expect(fm.done('http://it.at.thereabouts/')).to.be.false;
 		});
 
-		it('`done` filters on method', async () => {
-			fm.getOnce('http://it.at.here/', 200)
-				.postOnce('http://it.at.here/', 200)
-				.catch();
-
-			await fm.fetchHandler('http://it.at.here/');
-			expect(fm.done()).to.be.false;
-			expect(fm.done(true, 'get')).to.be.true;
-			expect(fm.done(true, 'post')).to.be.false;
-			expect(fm.done('http://it.at.here/', 'get')).to.be.true;
-			expect(fm.done('http://it.at.here/', 'post')).to.be.false;
-		});
-
 		it("won't mock if route already matched enough times", async () => {
 			fm.mock('http://it.at.there1/', 200, { repeat: 1 });
 
@@ -139,7 +126,7 @@ module.exports = fetchMock => {
 					'Warning: http://it.at.there2/ only called 1 times, but 2 expected'
 				)
 			).to.be.true; //eslint-disable-line
-			console.warn.reset(); //eslint-disable-line
+			console.warn.resetHistory(); //eslint-disable-line
 			fm.done('http://it.at.there1/');
 			expect(
 				console.warn.calledWith('Warning: http://it.at.there1/ not called')

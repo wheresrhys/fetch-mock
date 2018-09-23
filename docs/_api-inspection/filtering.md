@@ -5,24 +5,13 @@ description: |-
   Most inspection methods take two arguments — `filter` and `options` — which allow groups of fetch calls to be extracted and inspected.
 parameters:
   - name: filter
-    types:
-      - String
-      - RegExp
-      - Function
     content: |-
-      Enables filtering fetch calls for the most commonly use cases. The behaviour can be counterintuitive. The following rules, applied in the order they are described, are used to try to retrieve calls. If any rule retrieves no calls the next rule will be tried.
+      Allows filtering of calls to fetch based on various criteria
     options:
-      - name: matcher
-        content: |-
-          If `options` is defined (it can even be an empty object), `filter` will be executed using the same execution plan as [matchers](#api-mockingmock_matcher). Any calls matched by it will be returned.
-        types:
-          - String
-          - RegExp
-          - Function
       - types:
         - undefined
         content: |-
-          Retrieves all calls made to `fetch`, whether fetch-mock matched them or not
+          Retrieves all calls made to `fetch`, whether a specific route matched them or not
       - types:
         - true
         content: |-
@@ -31,17 +20,60 @@ parameters:
         - false
         content: |-
           Retrieves all calls not matched by `fetch` (i.e. those handled by `catch()` or `spy()`. `fetchMock.UNMATCHED` is an alias for `false` and may be used to make tests more readable
-      - name: route
+      - name: routeIdentifier
         types:
-          - String
-        content: Retrieves calls handled by a named route (see [mocking options](#api-mockingmock_options). Failing that, a route whose matcher, when coerced to a string, is equal to the string provided
-      - name: asdkash d
-        content: Do I want to fallback to a matcher again?? Seems confusing as hell
+          - String|RegExp|function
+        content: |-
+          All routes have an identifier:
+          - If it's a named route, the identifier is the route's name
+          - If the route is unnamed, the identifier is the `matcher` passed in to `.mock()`
 
+          All calls that were handled by the route with the given identifier will be retrieved
+      - name: matcher
+        types:
+          - String|RegExp|function
+        content: |-
+          Any matcher compatible with the [mocking api](#api-mockingmock_matcher) can be passed in to filter the calls arbitrarily
   - name: options
     types:
       - Object
       - String
     content: |-
-      Either an object compatible with the [mocking api](#api-mockingmock_options) or a string specifying a http `method` to filter by
+      Either an object compatible with the [mocking api](#api-mockingmock_options) or a string specifying a http `method` to filter by. This will be used to filter the list of calls further
+content_markdown: |-
+
+  If in doubt, [add a name to your route](#api-mockingmock_options), and pass in that name to retrieve exactly the calls you want.
+  {:.info}
+
+  Note that when matching calls handled by a route with a `RegExp` or `function` matcher, use the exact `RegExp`|`function` you used in your mock, e.g.
+  {:.warning}
+
+  ```javascript
+  const matcherRX = /user\/biff/
+  fm.mock(matcherRX, 200)
+  ...
+  fm.called(matcherRX)
+  ```
+
+  not
+
+  ```javascript
+  fm.mock(/user\/biff/, 200)
+  ...
+  fm.called(/user\/biff/)
+  ```
+
+  The second example _will_ retrieve the expected calls in simple test scenarios because if no routes match using the `identifier` the `RegExp` will be executed as a `RegExp` matcher. But in more complex scenarios where e.g. there are several routes handling similar paths, it might retrieve calls that were actually handled by different, similar route e.g.
+
+  ```javascript
+  const matcherRX = /user\/biff/
+  fm
+    .mock('end:user/biff')
+    .mock(matcherRX, 200)
+  ...
+  // this will retrieve calls handled by either route
+  fm.called(/user\/biff/)
+  // this will retrieve only calls handeld by the second route
+  fm.called(/user\/biff/)
+  ```
 ---

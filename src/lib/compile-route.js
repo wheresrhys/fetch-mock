@@ -9,12 +9,8 @@ const {
 } = require('./request-utils');
 
 const stringMatchers = {
-	begin: targetString => {
-		return url => url.indexOf(targetString) === 0;
-	},
-	end: targetString => {
-		return url => url.substr(-targetString.length) === targetString;
-	},
+	begin: targetString => url => url.indexOf(targetString) === 0,
+	end: targetString => url => url.substr(-targetString.length) === targetString,
 	glob: targetString => {
 		const urlRX = glob(targetString);
 		return url => urlRX.test(url);
@@ -99,8 +95,8 @@ const getUrlMatcher = route => {
 	// of the route to allow for e.g. http://it.at.there being indistinguishable
 	// from http://it.at.there/ once we start generating Request/Url objects
 	const expectedUrl = normalizeUrl(matcher);
-	if (route.__unnamed) {
-		route.name = expectedUrl;
+	if (route.identifier === matcher) {
+		route.identifier = expectedUrl;
 	}
 
 	return url => {
@@ -124,14 +120,10 @@ const sanitizeRoute = route => {
 		);
 	}
 
-	if (!route.name) {
-		route.name = route.matcher.toString();
-		route.__unnamed = true;
-	}
-
 	if (route.method) {
 		route.method = route.method.toLowerCase();
 	}
+	route.identifier = route.name || route.matcher;
 
 	return route;
 };

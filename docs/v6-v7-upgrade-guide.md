@@ -2,6 +2,10 @@
 
 # Changes
 
+## New documentation site
+
+Please give me your feedback as github issues/pull requests. It feels like a big improvement to me. Hopefully fetch-mock users think the same. http://www.wheresrhys.co.uk/fetch-mock/
+
 ## Teardown methods names have changed
 To keep the library in line with `sinon`, the most popular mocking libarry in the js ecosystem, a few method names & behaviours have been changed
 - `reset()` now resets both call history _and_ the mocking behaviour of fetch-mock - It's a complete teardown of the mocks that have been set up. `restore()` has been kept as an alias for this method

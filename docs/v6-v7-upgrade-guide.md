@@ -83,7 +83,9 @@ fetchMock.done('post-form')
 
 ## More powerful inspection filtering
 
-Previously, any filter passed in to `calls(filter)` etc... would always be converted to a string and then be used to lookup whether any fetch calls had been handled by a route matcher that also had the same `toString()` value. This is still the case, but if no calls match, then the filter will be converted into an on the fly route matcher, which is then used to filter the list of calls that were handled by fetch. This measn e.g. you can use any regex or glob to filter the calls.
+Previously, any filter passed in to `calls(filter)` etc... would always be converted to a string and then be used to lookup whether any fetch calls had been handled by a route matcher that also had the same `toString()` value. This is still the case, but if no calls match, then the filter will be converted into an on the fly route matcher, which is then used to filter the list of calls that were handled by fetch. This means e.g. you can use any regex or glob to filter the calls.
+
+Read more in the [filtering docs](http://www.wheresrhys.co.uk/fetch-mock/#api-inspectionfiltering)
 
 ### Example
 
@@ -99,15 +101,3 @@ fetchMock.called(/l.+gne/); // true
 fetchMock.called('glob:/*/lasagne', { method: 'post' }); // true
 fetchMock.called((url, options) => options.headers.discount); // true
 ```
-
-And, copied directly from the API docs:
-
-Most of the methods below accept two parameters, `(filter, options)`
-- `filter` Enables filtering fetch calls for the most commonly use cases. The behaviour can be counterintuitive. The following rules, applied in the order they are described, are used to try to retrieve calls. If any rule retrieves no calls the next rule will be tried.
-    - If `filter` is `undefined` all calls, matched _and_ unmatched, are returned
-    - If `filter` is `true` (or `fetchMock.MATCHED`) all calls that matched some route are returned
-    - If `filter` is `false` (or `fetchMock.UNMATCHED`) all calls that did not match any route are returned (when `.spy()`, `catch()` or `config.fallThroughToNetwork` were used to prevent errors being thrown)
-    - If `filter` is the name of a named route, all calls handled by that route are returned
-    - If `filter` is equal to `matcher` or `matcher.toString()` for a route, all calls handled by that route are returned
-    - `filter` is executed using the same execution plan as matchers used in `.mock()`. Any calls matched by it will be returned. If `options` is also passed this is used in a similar way to the options used by `mock()`. Alternatively, `options` can be a string specifying a `method` to filter by
-

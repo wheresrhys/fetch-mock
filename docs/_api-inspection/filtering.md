@@ -33,7 +33,7 @@ parameters:
         types:
           - String|RegExp|function
         content: |-
-          Any matcher compatible with the [mocking api](#api-mockingmock_matcher)] can be passed in to filter the calls arbitrarily
+          Any matcher compatible with the [mocking api](#api-mockingmock_matcher) can be passed in to filter the calls arbitrarily
   - name: options
     types:
       - Object

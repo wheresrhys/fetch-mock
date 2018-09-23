@@ -49,7 +49,7 @@ const resolve = async (response, url, opts) => {
 		}
 	}
 	return response;
-}
+};
 
 FetchMock.fetchHandler = function(url, opts, request) {
 	({ url, opts, request } = normalizeRequest(url, opts, this.config.Request));
@@ -111,7 +111,7 @@ FetchMock.generateResponse = async function(route, url, opts) {
 	// Because of this we can't safely check for function before Promisey-ness,
 	// or vice versa. So to keep it DRY, and flexible, we keep trying until we
 	// have something that looks like neither Promise nor function
-	let response = await resolve(route.response, url, opts);
+	const response = await resolve(route.response, url, opts);
 
 	// If the response says to throw an error, throw it
 	// Type checking is to deal with sinon spies having a throws property :-0

@@ -14,7 +14,7 @@ const testChainableMethod = (getFetchMock, method, args = []) => {
 		expect(getFetchMock()[method].lastCall.thisValue).to.equal(getFetchMock());
 		getFetchMock()[method].restore();
 	});
-}
+};
 
 module.exports = fetchMock => {
 	describe('Set up and tear down', () => {

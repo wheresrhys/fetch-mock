@@ -66,14 +66,15 @@ module.exports = fetchMock => {
 				afterEach(() => {
 					fm.filterCalls.restore();
 				});
-				['called', 'calls', 'lastCall', 'lastUrl', 'lastOptions']
-					.forEach(method => {
+				['called', 'calls', 'lastCall', 'lastUrl', 'lastOptions'].forEach(
+					method => {
 						it(`${method}() uses the internal filtering method`, () => {
 							fm[method]('name', { an: 'option' });
 							expect(fm.filterCalls.calledWith('name', { an: 'option' })).to.be
 								.true;
 						});
-					})
+					}
+				);
 			});
 		});
 

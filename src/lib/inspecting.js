@@ -24,13 +24,13 @@ FetchMock.filterCalls = function(nameOrMatcher, options) {
 	} else if (typeof nameOrMatcher === 'undefined') {
 		calls = calls;
 	} else if (isName(nameOrMatcher)) {
-		calls = calls.filter(({ name }) => name === nameOrMatcher);
+		calls = calls.filter(({ identifier }) => identifier === nameOrMatcher);
 	} else {
 		matcher = normalizeUrl(nameOrMatcher);
 		if (
-			this.routes.some(({ _originalMatcher }) => _originalMatcher === matcher)
+			this.routes.some(({ identifier }) => identifier === matcher)
 		) {
-			calls = calls.filter(call => call.matcher === matcher);
+			calls = calls.filter(call => call.identifier === matcher);
 		}
 	}
 
@@ -82,30 +82,30 @@ FetchMock.done = function(nameOrMatcher) {
 	// 		- nameOrMatcher them
 
 	// const calls = this.filterCalls(nameOrMatcher, options);
-	const names = nameOrMatcher && typeof nameOrMatcher !== 'boolean' ? [{ name: nameOrMatcher, _originalMatcher: nameOrMatcher }] : this.routes;
+	const identifiers = nameOrMatcher && typeof nameOrMatcher !== 'boolean' ? [{ identifier: nameOrMatcher }] : this.routes;
 	// Can't use array.every because
 	// a) not widely supported
 	// b) would exit after first failure, which would break the logging
 	return (
-		names
-			.map(({ name, _originalMatcher }) => {
+		identifiers
+			.map(({ identifier }) => {
 
-				if (!this.called(name || _originalMatcher)) {
-					console.warn(`Warning: ${name || _originalMatcher} not called`); // eslint-disable-line
+				if (!this.called(identifier)) {
+					console.warn(`Warning: ${identifier} not called`); // eslint-disable-line
 					return false;
 				}
 
 				const expectedTimes = (this.routes.find(
-					r => (r.name && (r.name === name ))||( r._originalMatcher === _originalMatcher)
+					r => r.identifier === identifier
 				) || {}).repeat;
 
 				if (!expectedTimes) {
 					return true;
 				}
-				const actualTimes = this.filterCalls(name || _originalMatcher).length;
+				const actualTimes = this.filterCalls(identifier).length;
 				if (expectedTimes > actualTimes) {
 					console.warn(
-						`Warning: ${name || _originalMatcher} only called ${actualTimes} times, but ${expectedTimes} expected`
+						`Warning: ${identifier} only called ${actualTimes} times, but ${expectedTimes} expected`
 					); // eslint-disable-line
 					return false;
 				} else {

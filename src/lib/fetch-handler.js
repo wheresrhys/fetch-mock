@@ -137,8 +137,7 @@ FetchMock.router = function(url, options, request) {
 			url,
 			options,
 			request,
-			name: route.name,
-			matcher: route._originalMatcher
+			identifier: route.identifier
 		});
 		return route;
 	}
@@ -158,15 +157,13 @@ FetchMock.push = function({
 	url,
 	options,
 	request,
-	name = null,
-	unmatched = false,
-	matcher = null
+	unmatched,
+	identifier
 }) {
 	const args = [url, options];
 	args.request = request;
-	args.name = name;
+	args.identifier = identifier;
 	args.unmatched = unmatched;
-	args.matcher = matcher;
 	this._calls.push(args);
 };
 

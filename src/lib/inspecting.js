@@ -74,35 +74,34 @@ FetchMock.flush = function(waitForResponseMethods) {
 	});
 };
 
-FetchMock.done = function(name) {
+FetchMock.done = function(nameOrMatcher) {
 	// - true or undefined
-	// - name or matcher
+	// - nameOrMatcher or matcher
 	// - don't support options any more?
 	// - ah, but what about when multiple routes have same matcher
-	// 		- name them
+	// 		- nameOrMatcher them
 
-	// const calls = this.filterCalls(name, options);
-	const names = name && typeof name !== 'boolean' ? [{ name, _originalMatcher: name }] : this.routes;
-
+	// const calls = this.filterCalls(nameOrMatcher, options);
+	const names = nameOrMatcher && typeof nameOrMatcher !== 'boolean' ? [{ name: nameOrMatcher, _originalMatcher: nameOrMatcher }] : this.routes;
 	// Can't use array.every because
 	// a) not widely supported
 	// b) would exit after first failure, which would break the logging
 	return (
 		names
 			.map(({ name, _originalMatcher }) => {
-				if (!this.called(name)) {
+
+				if (!this.called(name || _originalMatcher)) {
 					console.warn(`Warning: ${name || _originalMatcher} not called`); // eslint-disable-line
 					return false;
 				}
 
-				// would use array.find... but again not so widely supported
-				const expectedTimes = (this.routes.filter(
-					r => r.name === name || r._originalMatcher === _originalMatcher
-				) || [{}])[0].repeat;
+				const expectedTimes = (this.routes.find(
+					r => (r.name && (r.name === name ))||( r._originalMatcher === _originalMatcher)
+				) || {}).repeat;
+
 				if (!expectedTimes) {
 					return true;
 				}
-
 				const actualTimes = this.filterCalls(name || _originalMatcher).length;
 				if (expectedTimes > actualTimes) {
 					console.warn(
@@ -113,7 +112,7 @@ FetchMock.done = function(name) {
 					return true;
 				}
 			})
-			.filter(bool => !bool).length === 0
+			.every(bool => bool)
 	);
 };
 

@@ -110,9 +110,11 @@ module.exports = fetchMock => {
 			expect(fm.done('http://it.at.there1/')).to.be.true;
 		});
 
-		it.only('logs unmatched calls', () => {
+		it('logs unmatched calls', () => {
 			sinon.spy(console, 'warn'); //eslint-disable-line
-			fm.mock('http://it.at.there1/', 200).mock('http://it.at.there2/', 200, {
+			fm
+			.mock('http://it.at.there1/', 200)
+			.mock('http://it.at.there2/', 200, {
 				repeat: 2
 			});
 
@@ -126,7 +128,7 @@ module.exports = fetchMock => {
 					'Warning: http://it.at.there2/ only called 1 times, but 2 expected'
 				)
 			).to.be.true; //eslint-disable-line
-			console.warn.reset(); //eslint-disable-line
+			console.warn.resetHistory(); //eslint-disable-line
 			fm.done('http://it.at.there1/');
 			expect(
 				console.warn.calledWith('Warning: http://it.at.there1/ not called')

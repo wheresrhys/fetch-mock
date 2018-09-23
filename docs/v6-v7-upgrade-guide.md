@@ -58,6 +58,29 @@ fetchMock.called(MATCHED);
 
 `fetchMock.mock('path:/apples/pears')` Will match any url whose `path` part is `/apples/pears`
 
+## done(filter) no longer filterable by method
+This added a lot of complexity to the source code. Users who were using this feature are encouraged to give names to routes handling different methods and filter using those names
+
+e.g. before
+
+```javascript
+fetchMock
+	.getOnce('http://route/form', 200)
+	.postOnce('http://route/form', 201)
+
+fetchMock.done('http://route/form', 'post')
+```
+
+after
+
+```javascript
+fetchMock
+	.getOnce('http://route/form', 200, {name: 'get-form'})
+	.postOnce('http://route/form', 201, {name: 'post-form'})
+
+fetchMock.done('post-form')
+```
+
 ## More powerful inspection filtering
 
 Previously, any filter passed in to `calls(filter)` etc... would always be converted to a string and then be used to lookup whether any fetch calls had been handled by a route matcher that also had the same `toString()` value. This is still the case, but if no calls match, then the filter will be converted into an on the fly route matcher, which is then used to filter the list of calls that were handled by fetch. This measn e.g. you can use any regex or glob to filter the calls.

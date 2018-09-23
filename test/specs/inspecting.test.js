@@ -66,31 +66,15 @@ module.exports = fetchMock => {
 				afterEach(() => {
 					fm.filterCalls.restore();
 				});
-				it('called() uses the internal filtering method', () => {
-					fm.called('name', { an: 'option' });
-					expect(fm.filterCalls.calledWith('name', { an: 'option' })).to.be
-						.true;
-				});
-				it('calls() uses the internal filtering method', () => {
-					fm.calls('name', { an: 'option' });
-					expect(fm.filterCalls.calledWith('name', { an: 'option' })).to.be
-						.true;
-				});
-				it('lastCall() uses the internal filtering method', () => {
-					fm.lastCall('name', { an: 'option' });
-					expect(fm.filterCalls.calledWith('name', { an: 'option' })).to.be
-						.true;
-				});
-				it('lastUrl() uses the internal filtering method', () => {
-					fm.lastUrl('name', { an: 'option' });
-					expect(fm.filterCalls.calledWith('name', { an: 'option' })).to.be
-						.true;
-				});
-				it('lastOptions() uses the internal filtering method', () => {
-					fm.lastOptions('name', { an: 'option' });
-					expect(fm.filterCalls.calledWith('name', { an: 'option' })).to.be
-						.true;
-				});
+				['called', 'calls', 'lastCall', 'lastUrl', 'lastOptions'].forEach(
+					method => {
+						it(`${method}() uses the internal filtering method`, () => {
+							fm[method]('name', { an: 'option' });
+							expect(fm.filterCalls.calledWith('name', { an: 'option' })).to.be
+								.true;
+						});
+					}
+				);
 			});
 		});
 

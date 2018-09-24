@@ -44,8 +44,7 @@ const resolve = async (response, url, opts) => {
 		if (typeof response === 'function') {
 			response = response(url, opts);
 		} else {
-			// Strange .then is to cope with non ES Promises... god knows why it works
-			response = await response.then(it => it);
+			response = await response;
 		}
 	}
 	return response;

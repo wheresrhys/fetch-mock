@@ -2,12 +2,6 @@
 
 Mock http requests made using [fetch](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch)
 
----
-
-**Version 7 is in beta. Please consider trying it out. `npm install -D fetch-mock@v7.0.0-beta.1`**
-
----
-
 ![node version](https://img.shields.io/node/v/fetch-mock.svg?style=flat-square)
 [![licence](https://img.shields.io/npm/l/fetch-mock.svg?style=flat-square)](https://github.com/wheresrhys/fetch-mock/blob/master/LICENSE)
 ![npm downloads](https://img.shields.io/npm/dm/fetch-mock.svg?style=flat-square)

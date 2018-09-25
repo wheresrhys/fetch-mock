@@ -634,6 +634,13 @@ module.exports = fetchMock => {
 				);
 				expect(fm.calls(true).length).to.equal(1);
 			});
+
+			it('allow routes only differing in query strings', async () => {
+				expect(() => {
+					fm.get(`/xyz/abc?id=486726&id=486727`, 200);
+					fm.get(`/xyz/abc?id=486727`, 200);
+				}).not.to.throw();
+			});
 		});
 	});
 };

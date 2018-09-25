@@ -30,7 +30,7 @@ module.exports = {
 			return u.href;
 		} else {
 			const u = new URL.URL(url, 'http://dummy');
-			return u.pathname;
+			return u.pathname + u.search;
 		}
 	},
 	getPath: url => {

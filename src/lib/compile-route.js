@@ -17,7 +17,7 @@ const stringMatchers = {
 	},
 	express: targetString => {
 		const urlRX = pathToRegexp(targetString);
-		return url => urlRX.test(url);
+		return url => urlRX.test(getPath(url));
 	},
 	path: targetString => url => getPath(url) === targetString
 };

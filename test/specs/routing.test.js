@@ -641,6 +641,13 @@ module.exports = fetchMock => {
 					fm.get(`/xyz/abc?id=486727`, 200);
 				}).not.to.throw();
 			});
+
+			it('express match full url', async () => {
+				fm.mock('express:/apps/:id', 200).catch();
+
+				await fm.fetchHandler('https://api.example.com/apps/abc');
+				expect(fm.calls(true).length).to.equal(1);
+			});
 		});
 	});
 };

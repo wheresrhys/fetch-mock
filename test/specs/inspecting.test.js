@@ -213,11 +213,16 @@ module.exports = fetchMock => {
 
 				it('can retrieve only calls handled by a named route', async () => {
 					fm.mock('http://it.at.here/', 200, { name: 'here' }).catch();
+					fm.mock('http://caps.it.at.here/', 200, {
+						name: 'hereWithCaps'
+					}).catch();
 
 					await fm.fetchHandler('http://it.at.here/', { method: 'post' });
 					await fm.fetchHandler('http://it.at.here/');
+					await fm.fetchHandler('http://caps.it.at.here/');
 					expect(fm.filterCalls('here', 'post').length).to.equal(1);
 					expect(fm.filterCalls('here', 'POST').length).to.equal(1);
+					expect(fm.filterCalls('hereWithCaps').length).to.equal(1);
 					expect(fm.filterCalls('here', 'POST')[0]).to.eql([
 						'http://it.at.here/',
 						{ method: 'post' }

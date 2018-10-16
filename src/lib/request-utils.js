@@ -39,6 +39,13 @@ module.exports = {
 			: new URL.URL(url, 'http://dummy');
 		return u.pathname;
 	},
+
+	getQuery: url => {
+		const u = absoluteUrlRX.test(url)
+			? new URL.URL(url)
+			: new URL.URL(url, 'http://dummy');
+		return u.search ? u.search.substr(1) : '';
+	},
 	headers: {
 		normalize: headers => zip(toArray(headers)),
 		toArray,

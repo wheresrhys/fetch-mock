@@ -25,7 +25,8 @@ FetchMock.mock = function(matcher, response, options = {}) {
 };
 
 const getMatcher = (route, propName) => route2 =>
-	route[propName] && route[propName] === route2[propName];
+	(!route[propName] && !route2[propName]) ||
+	route[propName] === route2[propName];
 
 FetchMock.addRoute = function(uncompiledRoute) {
 	const route = this.compileRoute(uncompiledRoute);

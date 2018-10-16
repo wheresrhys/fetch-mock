@@ -24,6 +24,13 @@ module.exports = fetchMock => {
 				expect(fm.calls(true).length).to.equal(1);
 			});
 
+			it('match exact strings with relative url', async () => {
+				fm.mock('/my-relative-path', 200).catch();
+
+				await fm.fetchHandler('/my-relative-path');
+				expect(fm.calls(true).length).to.equal(1);
+			});
+
 			it('match exact string against URL object', async () => {
 				fm.mock('http://it.at.there/path', 200).catch();
 				const url = new URL.URL('http://it.at.there/path');
@@ -353,6 +360,28 @@ module.exports = fetchMock => {
 					expect(fm.calls(true).length).to.equal(1);
 				});
 
+				it('match a query string against relative path', async () => {
+					fm.mock('/path', 200, {
+						query: { a: 'b' }
+					}).catch();
+					const url = '/path?a=b';
+					await fm.fetchHandler(url);
+					expect(fm.calls(true).length).to.equal(1);
+				});
+
+				it('match a query string against multiple similar relative path', async () => {
+					expect(() =>
+						fm
+							.mock('/it-at-there', 200, { query: { a: 'b', c: 'e' } })
+							.mock('/it-at-there', 300, {
+								overwriteRoutes: false,
+								query: { a: 'b', c: 'd' }
+							})
+					).not.to.throw();
+					const res = await fm.fetchHandler('/it-at-there?a=b&c=d');
+					expect(res.status).to.equal(300);
+				});
+
 				it('can match multiple query strings', async () => {
 					fm.mock('http://it.at.there/', 200, {
 						query: { a: 'b', c: 'd' }
@@ -553,6 +582,17 @@ module.exports = fetchMock => {
 
 					const res = await fm.fetchHandler('http://it.at.there/');
 					expect(res.status).to.equal(300);
+				});
+
+				it('overwrite correct route', async () => {
+					expect(() =>
+						fm
+							.mock('http://bar.co/', 200)
+							.mock('http://foo.co/', 400)
+							.mock('http://bar.co/', 300, { overwriteRoutes: true })
+					).not.to.throw();
+					const res = await fm.fetchHandler('http://foo.co/');
+					expect(res.status).to.equal(400);
 				});
 
 				it('allow adding additional route with same matcher', async () => {

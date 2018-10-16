@@ -1,10 +1,10 @@
 const glob = require('glob-to-regexp');
-const URL = require('whatwg-url');
 const pathToRegexp = require('path-to-regexp');
 const querystring = require('querystring');
 const {
 	headers: headerUtils,
 	getPath,
+	getQuery,
 	normalizeUrl
 } = require('./request-utils');
 
@@ -43,7 +43,7 @@ const getMethodMatcher = ({ method: expectedMethod }) => {
 const getQueryStringMatcher = ({ query: expectedQuery }) => {
 	const keys = Object.keys(expectedQuery);
 	return url => {
-		const query = querystring.parse(URL.parseURL(url).query);
+		const query = querystring.parse(getQuery(url));
 		return keys.every(key => query[key] === expectedQuery[key]);
 	};
 };

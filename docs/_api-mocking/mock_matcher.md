@@ -65,7 +65,7 @@ parameters:
       - |-
         "express:/user/:user"
     content: |-
-      Matches a [relative] url that matches an [express style path](https://www.npmjs.com/package/path-to-regexp)
+      Matches a url that matches an [express style path](https://www.npmjs.com/package/path-to-regexp)
   - types:
       - RegExp
     examples:

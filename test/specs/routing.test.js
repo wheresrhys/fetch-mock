@@ -581,14 +581,13 @@ module.exports = fetchMock => {
 					expect(res.status).to.equal(300);
 				});
 
-				it('allow overwriting existing route #2', async () => {
+				it('overwrite correct route', async () => {
 					expect(() =>
 						fm
 							.mock('http://bar.co/', 200)
 							.mock('http://foo.co/', 400)
 							.mock('http://bar.co/', 300, { overwriteRoutes: true })
 					).not.to.throw();
-
 					const res = await fm.fetchHandler('http://foo.co/');
 					expect(res.status).to.equal(400);
 				});

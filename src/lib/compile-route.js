@@ -1,5 +1,4 @@
 const glob = require('glob-to-regexp');
-const URL = require('whatwg-url');
 const pathToRegexp = require('path-to-regexp');
 const querystring = require('querystring');
 const {

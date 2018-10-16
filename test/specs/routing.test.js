@@ -373,7 +373,10 @@ module.exports = fetchMock => {
 					expect(() =>
 						fm
 							.mock('/it-at-there', 200, { query: { a: 'b', c: 'e' } })
-							.mock('/it-at-there', 300, { overwriteRoutes: false, query: { a: 'b', c: 'd' } })
+							.mock('/it-at-there', 300, {
+								overwriteRoutes: false,
+								query: { a: 'b', c: 'd' }
+							})
 					).not.to.throw();
 					const res = await fm.fetchHandler('/it-at-there?a=b&c=d');
 					expect(res.status).to.equal(300);

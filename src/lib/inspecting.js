@@ -3,7 +3,7 @@ const FetchMock = {};
 const compileRoute = require('./compile-route');
 
 const isName = nameOrMatcher =>
-	typeof nameOrMatcher === 'string' && /^[\da-z\-]+$/.test(nameOrMatcher);
+	typeof nameOrMatcher === 'string' && /^[\da-zA-Z\-]+$/.test(nameOrMatcher);
 
 FetchMock.filterCallsWithMatcher = function(matcher, options = {}, calls) {
 	matcher = compileRoute(

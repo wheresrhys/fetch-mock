@@ -29,8 +29,7 @@ const getMatcher = (route, propName) => route2 =>
 
 FetchMock.addRoute = function(uncompiledRoute) {
 	const route = this.compileRoute(uncompiledRoute);
-	const identifierMatcher = getMatcher(route, 'identifier');
-	const clashes = this.routes.filter(identifierMatcher);
+	const clashes = this.routes.filter(getMatcher(route, 'identifier'));
 
 	const overwriteRoutes =
 		'overwriteRoutes' in route
@@ -45,13 +44,12 @@ FetchMock.addRoute = function(uncompiledRoute) {
 	const methodsMatch = getMatcher(route, 'method');
 
 	if (overwriteRoutes === true) {
-		const index = this.routes.indexOf(clashes.find(identifierMatcher));
+		const index = this.routes.indexOf(clashes.find(methodsMatch));
 		this._uncompiledRoutes.splice(index, 1, uncompiledRoute);
 		return this.routes.splice(index, 1, route);
 	}
 
 	if (
-		// TODO: identifierMatcher should be used as well ?
 		clashes.some(existingRoute => !route.method || methodsMatch(existingRoute))
 	) {
 		throw new Error(

@@ -40,10 +40,34 @@ const getMethodMatcher = ({ method: expectedMethod }) => {
 		expectedMethod === (method ? method.toLowerCase() : 'get');
 };
 
-const getQueryStringMatcher = ({ query: expectedQuery }) => {
+const parseQuery = url => {
+	let parsedUrl = URL.parseURL(url);
+	if (!parsedUrl) {
+		// relative urls are not parsed according to whatwg specs
+		// (https://github.com/whatwg/url/issues/136)
+		parsedUrl = URL.parseURL(url, { baseURL: 'http://wheresrhys.co.uk' });
+	}
+
+	return querystring.parse(parsedUrl.query);
+};
+
+const getQueryStringMatcher = route => {
+	let expectedQuery = route.query;
+	if (typeof route.matcher === 'string') {
+		const urlQuery = parseQuery(route.matcher);
+		if (urlQuery) {
+			Object.keys(urlQuery).forEach(k => {
+				expectedQuery[k] = urlQuery[k];
+			});
+		}
+	}
+
 	const keys = Object.keys(expectedQuery);
 	return url => {
-		const query = querystring.parse(URL.parseURL(url).query);
+		const query = parseQuery(url);
+
+		if (Object.keys(query).length !== keys.length) return false;
+
 		return keys.every(key => query[key] === expectedQuery[key]);
 	};
 };
@@ -124,7 +148,15 @@ const sanitizeRoute = route => {
 	if (route.method) {
 		route.method = route.method.toLowerCase();
 	}
-	route.identifier = route.name || route.matcher;
+
+	let identifier;
+	if (route.name) identifier = route.name;
+	else {
+		identifier = route.matcher;
+		if (route.query) identifier += `?${querystring.stringify(route.query)}`;
+	}
+
+	route.identifier = identifier;
 
 	return route;
 };

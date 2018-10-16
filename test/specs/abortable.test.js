@@ -6,7 +6,7 @@ module.exports = fetchMock => {
 		return;
 	}
 
-	describe('cancellable fetch', () => {
+	describe('abortable fetch', () => {
 		let fm;
 		beforeEach(() => {
 			fm = fetchMock.createInstance();

@@ -372,10 +372,9 @@ module.exports = fetchMock => {
 				it('match a query string against multiple similar relative path', async () => {
 					expect(() =>
 						fm
-							.mock('/it-at-there', 200, { query: { a: 'b' } })
-							.mock('/it-at-there', 300, { query: { a: 'b', c: 'd' } })
+							.mock('/it-at-there', 200, { query: { a: 'b', c: 'e' } })
+							.mock('/it-at-there', 300, { overwriteRoutes: false, query: { a: 'b', c: 'd' } })
 					).not.to.throw();
-
 					const res = await fm.fetchHandler('/it-at-there?a=b&c=d');
 					expect(res.status).to.equal(300);
 				});

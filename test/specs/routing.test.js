@@ -450,6 +450,18 @@ module.exports = fetchMock => {
 					await fm.fetchHandler('/cat/b');
 					expect(fm.calls(true).length).to.equal(1);
 				});
+
+				it('can match a path parameter on a full url', async () => {
+					fm.mock('express:/type/:instance', 200, {
+						params: { instance: 'b' }
+					}).catch();
+					await fm.fetchHandler('http://site.com/');
+					expect(fm.calls(true).length).to.equal(0);
+					await fm.fetchHandler('http://site.com/type/a');
+					expect(fm.calls(true).length).to.equal(0);
+					await fm.fetchHandler('http://site.com/type/b');
+					expect(fm.calls(true).length).to.equal(1);
+				});
 			});
 
 			describe('methods', () => {

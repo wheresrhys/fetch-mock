@@ -58,7 +58,7 @@ const getParamsMatcher = ({ params: expectedParams, matcher }) => {
 	const keys = [];
 	const re = pathToRegexp(matcher.replace(/^express:/, ''), keys);
 	return url => {
-		const vals = re.exec(url) || [];
+		const vals = re.exec(getPath(url)) || [];
 		vals.shift();
 		const params = keys.reduce(
 			(map, { name }, i) =>

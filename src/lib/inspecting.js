@@ -8,7 +8,7 @@ const isName = nameOrMatcher =>
 FetchMock.filterCallsWithMatcher = function(matcher, options = {}, calls) {
 	matcher = compileRoute(
 		// HACK: add dummy response so that we can generate a matcher without
-		// copileRoute's expectation that each route has a response defined
+		// compileRoute's expectation that each route has a response defined
 		Object.assign({ matcher, response: 200 }, options)
 	).matcher;
 	return calls.filter(([url, opts]) => matcher(normalizeUrl(url), opts));
@@ -17,6 +17,7 @@ FetchMock.filterCallsWithMatcher = function(matcher, options = {}, calls) {
 FetchMock.filterCalls = function(nameOrMatcher, options) {
 	let calls = this._calls;
 	let matcher = '*';
+
 	if (nameOrMatcher === true) {
 		calls = calls.filter(({ unmatched }) => !unmatched);
 	} else if (nameOrMatcher === false) {
@@ -73,24 +74,18 @@ FetchMock.flush = function(waitForResponseMethods) {
 };
 
 FetchMock.done = function(nameOrMatcher) {
-	// - true or undefined
-	// - nameOrMatcher or matcher
-	// - don't support options any more?
-	// - ah, but what about when multiple routes have same matcher
-	// 		- nameOrMatcher them
 
-	// const calls = this.filterCalls(nameOrMatcher, options);
-	const identifiers =
+	const routesToCheck =
 		nameOrMatcher && typeof nameOrMatcher !== 'boolean'
 			? [{ identifier: nameOrMatcher }]
 			: this.routes;
-	// Can't use array.every because
-	// a) not widely supported
-	// b) would exit after first failure, which would break the logging
-	return identifiers
+
+	// Can't use array.every because would exit after first failure, which would
+	// break the logging
+	return routesToCheck
 		.map(({ identifier }) => {
 			if (!this.called(identifier)) {
-					console.warn(`Warning: ${identifier} not called`); // eslint-disable-line
+				console.warn(`Warning: ${identifier} not called`); // eslint-disable-line
 				return false;
 			}
 
@@ -105,13 +100,13 @@ FetchMock.done = function(nameOrMatcher) {
 			if (expectedTimes > actualTimes) {
 				console.warn(
 					`Warning: ${identifier} only called ${actualTimes} times, but ${expectedTimes} expected`
-					); // eslint-disable-line
+				); // eslint-disable-line
 				return false;
 			} else {
 				return true;
 			}
 		})
-		.every(bool => bool);
+		.every(isDone => isDone);
 };
 
 module.exports = FetchMock;

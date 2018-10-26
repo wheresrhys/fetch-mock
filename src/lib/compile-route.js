@@ -111,7 +111,7 @@ const getUrlMatcher = route => {
 const sanitizeRoute = route => {
 	route = Object.assign({}, route);
 
-	if (typeof route.response === 'undefined') {
+	if (!('response' in route)) {
 		throw new Error('fetch-mock: Each route must define a response');
 	}
 
@@ -169,3 +169,5 @@ module.exports = function(route) {
 
 	return route;
 };
+
+module.exports.generateMatcher = generateMatcher

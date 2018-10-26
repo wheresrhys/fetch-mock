@@ -28,10 +28,10 @@ content_markdown: |-
   - For server side tests running in nodejs 0.12 or lower use `require('fetch-mock/es5/server')`
 
   ### Matching `Request` objects in node fails
-
-  In node, if using npm at a version less than 2 the `Request` constructor used by `fetch-mock` won't necessarily be the same as the one used by `node-fetch`. To fix this either:
-
-  - upgrade to npm@3
+  In node, if your `Request` object is not an instance of the `Request`
+  constructor used by fetch-mock, you need to set a reference to your custom
+  request class. This needs to be done if you are mocking the `Request` object
+  for a test or you are running npm with a version below 3.
   - use `fetchMock.config.Request = myRequest`, where `myRequest` is a reference to the Request constructor used in your application code.
 
 

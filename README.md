@@ -32,7 +32,7 @@ fetchMock.restore();
 fetch-mock requires the following to run:
 
 - [Node.js](https://nodejs.org/) 8+ for full feature operation
-- [Node.js](https://nodejs.org/) 0.12+ with [limitations](http://www.wheresrhys.co.uk/fetch-mock/installation)
+- [Node.js](https://nodejs.org/) 0.12+ with [limitations](http://www.wheresrhys.co.uk/fetch-mock/#usageinstallation)
 - [npm](https://www.npmjs.com/package/npm) (normally comes with Node.js)
 - Either of the following
   - [node-fetch](https://www.npmjs.com/package/node-fetch) when testing in a nodejs

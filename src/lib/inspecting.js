@@ -1,16 +1,12 @@
 const { normalizeUrl } = require('./request-utils');
 const FetchMock = {};
-const compileRoute = require('./compile-route');
-
+const { sanitizeRoute } = require('./compile-route');
+const generateMatcher = require('./generate-matcher');
 const isName = nameOrMatcher =>
 	typeof nameOrMatcher === 'string' && /^[\da-zA-Z\-]+$/.test(nameOrMatcher);
 
-FetchMock.filterCallsWithMatcher = function(matcher, options = {}, calls) {
-	matcher = compileRoute(
-		// HACK: add dummy response so that we can generate a matcher without
-		// compileRoute's expectation that each route has a response defined
-		Object.assign({ matcher, response: 200 }, options)
-	).matcher;
+const filterCallsWithMatcher = (matcher, options = {}, calls) => {
+	matcher = generateMatcher(sanitizeRoute(Object.assign({ matcher }, options)));
 	return calls.filter(([url, opts]) => matcher(normalizeUrl(url), opts));
 };
 
@@ -19,9 +15,9 @@ FetchMock.filterCalls = function(nameOrMatcher, options) {
 	let matcher = '*';
 
 	if (nameOrMatcher === true) {
-		calls = calls.filter(({ unmatched }) => !unmatched);
+		calls = calls.filter(({ isUnmatched }) => !isUnmatched);
 	} else if (nameOrMatcher === false) {
-		calls = calls.filter(({ unmatched }) => unmatched);
+		calls = calls.filter(({ isUnmatched }) => isUnmatched);
 	} else if (typeof nameOrMatcher === 'undefined') {
 		calls = calls;
 	} else if (isName(nameOrMatcher)) {
@@ -37,7 +33,7 @@ FetchMock.filterCalls = function(nameOrMatcher, options) {
 		if (typeof options === 'string') {
 			options = { method: options };
 		}
-		calls = this.filterCallsWithMatcher(matcher, options, calls);
+		calls = filterCallsWithMatcher(matcher, options, calls);
 	}
 	return calls;
 };
@@ -74,7 +70,6 @@ FetchMock.flush = function(waitForResponseMethods) {
 };
 
 FetchMock.done = function(nameOrMatcher) {
-
 	const routesToCheck =
 		nameOrMatcher && typeof nameOrMatcher !== 'boolean'
 			? [{ identifier: nameOrMatcher }]

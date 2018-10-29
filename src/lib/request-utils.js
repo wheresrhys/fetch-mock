@@ -2,7 +2,7 @@ const URL = require('whatwg-url');
 // https://stackoverflow.com/a/19709846/308237
 const absoluteUrlRX = new RegExp('^(?:[a-z]+:)?//', 'i');
 
-const toArray = headers => {
+const headersToArray = headers => {
 	// node-fetch 1 Headers
 	if (typeof headers.raw === 'function') {
 		return Object.entries(headers.raw());
@@ -13,26 +13,61 @@ const toArray = headers => {
 	}
 };
 
-const zip = entries =>
+const zipObject = entries =>
 	entries.reduce((obj, [key, val]) => Object.assign(obj, { [key]: val }), {});
 
+const normalizeUrl = url => {
+	if (
+		typeof url === 'function' ||
+		url instanceof RegExp ||
+		/^(begin|end|glob|express|path)\:/.test(url)
+	) {
+		return url;
+	}
+	if (absoluteUrlRX.test(url)) {
+		const u = new URL.URL(url);
+		return u.href;
+	} else {
+		const u = new URL.URL(url, 'http://dummy');
+		return u.pathname + u.search;
+	}
+};
+
 module.exports = {
-	normalizeUrl: url => {
-		if (
-			typeof url === 'function' ||
-			url instanceof RegExp ||
-			/^(begin|end|glob|express|path)\:/.test(url)
+	normalizeRequest: (url, options, Request) => {
+		if (Request.prototype.isPrototypeOf(url)) {
+			const obj = {
+				url: normalizeUrl(url.url),
+				opts: {
+					method: url.method
+				},
+				request: url
+			};
+
+			const headers = headersToArray(url.headers);
+
+			if (headers.length) {
+				obj.opts.headers = zipObject(headers);
+			}
+			return obj;
+		} else if (
+			typeof url === 'string' ||
+			// horrible URL object duck-typing
+			(typeof url === 'object' && 'href' in url)
 		) {
-			return url;
-		}
-		if (absoluteUrlRX.test(url)) {
-			const u = new URL.URL(url);
-			return u.href;
+			return {
+				url: normalizeUrl(url),
+				opts: options
+			};
+		} else if (typeof url === 'object') {
+			throw new TypeError(
+				'fetch-mock: Unrecognised Request object. Read the Config and Installation sections of the docs'
+			);
 		} else {
-			const u = new URL.URL(url, 'http://dummy');
-			return u.pathname + u.search;
+			throw new TypeError('fetch-mock: Invalid arguments passed to fetch');
 		}
 	},
+	normalizeUrl,
 	getPath: url => {
 		const u = absoluteUrlRX.test(url)
 			? new URL.URL(url)
@@ -47,9 +82,7 @@ module.exports = {
 		return u.search ? u.search.substr(1) : '';
 	},
 	headers: {
-		normalize: headers => zip(toArray(headers)),
-		toArray,
-		zip,
+		normalize: headers => zipObject(headersToArray(headers)),
 		toLowerCase: headers =>
 			Object.keys(headers).reduce((obj, k) => {
 				obj[k.toLowerCase()] = headers[k];

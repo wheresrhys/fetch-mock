@@ -23,7 +23,7 @@ fetchMock.restore();
 - [License](#license)
 - [Housekeeping](#housekeping)
 
-**I devote a lot of time to maintaining fetch-mock for free. I don't ask for payment, but am raising money for a refugee charity - <a href="https://www.justgiving.com/fundraising/rhys-evans-walk">please consider donating</a>**
+**I devote a lot of time to maintaining fetch-mock for free. I don't ask for payment, but am raising money for a refugee charity - <a href="https://www.justgiving.com/refugee-support-europe">please consider donating</a>**
 
 ---
 

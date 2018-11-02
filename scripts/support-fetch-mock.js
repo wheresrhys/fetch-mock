@@ -7,11 +7,11 @@ const reset = '\u001b[0m';
 
 const output =
 	green +
-	'Have some ❤️  for fetch-mock? Why not donate to my charity of choice:' +
+	'Have some ❤️ for fetch-mock? Why not donate to my charity of choice:' +
 	white +
 	'\n > ' +
 	boldCyan +
-	'https://www.justgiving.com/fundraising/rhys-evans-walk\n' +
+	'https://www.justgiving.com/refugee-support-europe\n' +
 	reset;
 
 console.log(output);

@@ -18,8 +18,8 @@ title: API Docs
 						{{ doc.title }}
 					</a>
 					{% if doc.parentMethod %}
-							<span class="endpoint">Parameter for <a href="#api-{{doc.parentMethodGroup}}{{doc.parentMethod}}">{{doc.parentMethod}}()</a></span>
-						{% endif %}
+						<span class="endpoint">Parameter for <a href="#api-{{doc.parentMethodGroup}}{{doc.parentMethod}}">{{doc.parentMethod}}()</a></span>
+					{% endif %}
 
 				</h3>
 				{% include types.html block=doc %}

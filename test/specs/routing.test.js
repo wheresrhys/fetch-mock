@@ -171,8 +171,14 @@ module.exports = fetchMock => {
 				);
 				expect(fm.calls(true).length).to.equal(1);
 			});
-			const itInDev = process.env.CIRCLECI ? it.skip : it;
-			// Works in latest chrome but ont in v62 in CI
+
+			// Following test works in latest chrome but not in v62 in CI
+			let itInDev = it;
+
+			try {
+				/Chrome\/62/.test(window.navigator.appVersion) && (itInDev = it.skip);
+			} catch (err) {}
+
 			itInDev(
 				'match using custom function with Request with unusual options',
 				async () => {

@@ -16,5 +16,6 @@ module.exports = (fetchMock, theGlobal, fetch) => {
 		require('./specs/repeat.test')(fetchMock);
 		require('./specs/custom-implementations.test')(fetchMock);
 		require('./specs/options.test')(fetchMock, theGlobal, fetch);
+		require('./specs/abortable.test')(fetchMock, fetch);
 	});
 };

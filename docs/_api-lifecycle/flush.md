@@ -1,0 +1,12 @@
+---
+title: .flush(waitForBody)
+navTitle: ".flush()"
+position: 2
+description: |-
+  Returns a `Promise` that resolves once all fetches handled by fetch-mock have resolved
+content_markdown: |-
+  Useful for testing code that uses `fetch` but doesn't return a promise.
+
+  Pass in `true` to wait for all body parsing methods (`res.json()`, `res.text()`, etc.) to resolve too.
+  {: .info}
+---

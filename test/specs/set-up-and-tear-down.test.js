@@ -3,6 +3,19 @@ chai.use(require('sinon-chai'));
 const expect = chai.expect;
 const sinon = require('sinon');
 
+const testChainableMethod = (getFetchMock, method, args = []) => {
+	it('is chainable', () => {
+		expect(getFetchMock()[method](...args)).to.equal(getFetchMock());
+	});
+
+	it("has 'this'", () => {
+		sinon.spy(getFetchMock(), method);
+		getFetchMock()[method](...args);
+		expect(getFetchMock()[method].lastCall.thisValue).to.equal(getFetchMock());
+		getFetchMock()[method].restore();
+	});
+};
+
 module.exports = fetchMock => {
 	describe('Set up and tear down', () => {
 		let fm;
@@ -13,16 +26,7 @@ module.exports = fetchMock => {
 		afterEach(() => fm.restore());
 
 		describe('mock', () => {
-			it('is chainable', () => {
-				expect(fm.mock(/a/, 200)).to.equal(fm);
-			});
-
-			it("has 'this'", () => {
-				sinon.spy(fm, 'mock');
-				fm.mock(/a/, 200);
-				expect(fm.mock.lastCall.thisValue).to.equal(fm);
-				fm.mock.restore();
-			});
+			testChainableMethod(() => fm, 'mock', [/a/, 200]);
 
 			it('can be called multiple times', () => {
 				expect(() => {
@@ -97,6 +101,8 @@ module.exports = fetchMock => {
 
 		describe('method shorthands', () => {
 			'get,post,put,delete,head,patch'.split(',').forEach(method => {
+				testChainableMethod(() => fm, method, [/a/, 200]);
+
 				it(`has shorthand for ${method.toUpperCase()}`, () => {
 					sinon.stub(fm, 'mock');
 					fm[method]('a', 'b');
@@ -112,25 +118,29 @@ module.exports = fetchMock => {
 					fm.restore();
 				});
 
-				it(`shorthand for ${method.toUpperCase()} is chainable`, () => {
-					const result = fm[method]('a', 'b');
-					expect(result).to.equal(fm);
+				testChainableMethod(() => fm, `${method}Once`, [/a/, 200]);
+
+				it(`has shorthand for ${method.toUpperCase()} called once`, () => {
+					sinon.stub(fm, 'mock');
+					fm[`${method}Once`]('a', 'b');
+					fm[`${method}Once`]('a', 'b', { opt: 'c' });
+					expect(fm.mock).calledWith('a', 'b', {
+						method: method.toUpperCase(),
+						repeat: 1
+					});
+					expect(fm.mock).calledWith('a', 'b', {
+						opt: 'c',
+						method: method.toUpperCase(),
+						repeat: 1
+					});
+					fm.mock.restore();
 					fm.restore();
 				});
 			});
 		});
 
 		describe('reset', () => {
-			it('is chainable', () => {
-				expect(fm.restore()).to.equal(fm);
-			});
-
-			it("has 'this'", () => {
-				sinon.spy(fm, 'restore');
-				fm.restore();
-				expect(fm.restore.lastCall.thisValue).to.equal(fm);
-				fm.restore.restore();
-			});
+			testChainableMethod(() => fm, 'reset');
 
 			it('can be called even if no mocks set', () => {
 				expect(() => fm.restore()).not.to.throw();
@@ -161,16 +171,7 @@ module.exports = fetchMock => {
 		});
 
 		describe('resetBehavior', () => {
-			it('is chainable', () => {
-				expect(fm.resetBehavior()).to.equal(fm);
-			});
-
-			it("has 'this'", () => {
-				sinon.spy(fm, 'resetBehavior');
-				fm.resetBehavior();
-				expect(fm.resetBehavior.lastCall.thisValue).to.equal(fm);
-				fm.resetBehavior.restore();
-			});
+			testChainableMethod(() => fm, 'resetBehavior');
 
 			it('can be called even if no mocks set', () => {
 				expect(() => fm.resetBehavior()).not.to.throw();
@@ -190,16 +191,7 @@ module.exports = fetchMock => {
 		});
 
 		describe('resetHistory', () => {
-			it('is chainable', () => {
-				expect(fm.resetHistory()).to.equal(fm);
-			});
-
-			it("has 'this'", () => {
-				sinon.spy(fm, 'resetHistory');
-				fm.resetHistory();
-				expect(fm.resetHistory.lastCall.thisValue).to.equal(fm);
-				fm.resetHistory.restore();
-			});
+			testChainableMethod(() => fm, 'resetHistory');
 
 			it('can be called even if no mocks set', () => {
 				expect(() => fm.resetHistory()).not.to.throw();
@@ -222,16 +214,7 @@ module.exports = fetchMock => {
 		});
 
 		describe('spy', () => {
-			it('is chainable', () => {
-				expect(fm.spy()).to.equal(fm);
-			});
-
-			it("has 'this'", () => {
-				sinon.spy(fm, 'spy');
-				fm.spy();
-				expect(fm.spy.lastCall.thisValue).to.equal(fm);
-				fm.spy.restore();
-			});
+			testChainableMethod(() => fm, 'spy');
 
 			it('calls catch()', () => {
 				sinon.spy(fm, 'catch');
@@ -242,16 +225,7 @@ module.exports = fetchMock => {
 		});
 
 		describe('catch', () => {
-			it('is chainable', () => {
-				expect(fm.catch(200)).to.equal(fm);
-			});
-
-			it("has 'this'", () => {
-				sinon.spy(fm, 'catch');
-				fm.catch(200);
-				expect(fm.catch.lastCall.thisValue).to.equal(fm);
-				fm.catch.restore();
-			});
+			testChainableMethod(() => fm, 'catch');
 		});
 	});
 };

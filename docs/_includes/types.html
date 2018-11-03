@@ -1,0 +1,12 @@
+{{ include.block.name }}
+<div class="types-zone">
+{% if include.block.types %}
+	{% for type in include.block.types %}
+		<code{% unless include.block.name %} class="name"{% endunless %}>{{type}}</code>
+		{% if forloop.last != true %}|{% endif %}
+	{% endfor %}
+{% endif %}
+{%if include.block.default %}
+	<span class="default">[default&nbsp;<code>{{ include.block.default}}</code>]</span>
+{% endif %}
+</div>

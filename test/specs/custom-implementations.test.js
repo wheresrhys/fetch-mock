@@ -27,8 +27,10 @@ module.exports = fetchMock => {
 
 			it('should allow non-native Promises as responses', async () => {
 				fm.config.Promise = BluebirdPromise;
-				const stub = sinon.spy(() =>
-					BluebirdPromise.resolve(new fm.config.Response('', { status: 203 }))
+				const stub = sinon.spy(fn =>
+					fn(
+						BluebirdPromise.resolve(new fm.config.Response('', { status: 203 }))
+					)
 				);
 				fm.mock(/.*/, {
 					then: stub

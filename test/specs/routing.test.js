@@ -17,9 +17,17 @@ module.exports = fetchMock => {
 				fm.mock('http://it.at.there/path', 200).catch();
 
 				await fm.fetchHandler('http://it.at.there/path');
+				console.log(fm._allCalls);
 				expect(fm.calls(true).length).to.equal(1);
 				await fm.fetchHandler('http://it.at.there/path/abouts');
 				await fm.fetchHandler('http://it.at.the');
+				expect(fm.calls(true).length).to.equal(1);
+			});
+
+			it('match exact strings with relative url', async () => {
+				fm.mock('/my-relative-path', 200).catch();
+
+				await fm.fetchHandler('/my-relative-path');
 				expect(fm.calls(true).length).to.equal(1);
 			});
 
@@ -109,27 +117,10 @@ module.exports = fetchMock => {
 
 					await fm.fetchHandler('http://it.at.there/');
 					await fm.fetchHandler('http://it.at.there');
-					expect(fm.calls('http://it.at.there').length).to.equal(2);
-					expect(fm.calls('http://it.at.there/').length).to.equal(2);
+					expect(fm.calls(true).length).to.equal(2);
 					await fm.fetchHandler('http://it.at.here/');
 					await fm.fetchHandler('http://it.at.here');
-					expect(fm.calls('http://it.at.here').length).to.equal(2);
-					expect(fm.calls('http://it.at.here/').length).to.equal(2);
-				});
-
-				it('match end: keyword on pathless urls regardless of trailing slash', async () => {
-					fm.mock('end:.there/', 200)
-						.mock('end:.here', 200)
-						.catch();
-
-					await fm.fetchHandler('http://it.at.there/');
-					await fm.fetchHandler('http://it.at.there');
-					expect(fm.calls('http://it.at.there').length).to.equal(2);
-					expect(fm.calls('http://it.at.there/').length).to.equal(2);
-					await fm.fetchHandler('http://it.at.here/');
-					await fm.fetchHandler('http://it.at.here');
-					expect(fm.calls('http://it.at.here').length).to.equal(2);
-					expect(fm.calls('http://it.at.here/').length).to.equal(2);
+					expect(fm.calls(true).length).to.equal(4);
 				});
 			});
 		});
@@ -181,33 +172,42 @@ module.exports = fetchMock => {
 				expect(fm.calls(true).length).to.equal(1);
 			});
 
-			// Works in latest chrome but ont in v62 in CI
-			it.skip('match using custom function with Request with unusual options', async () => {
-				// as node-fetch does not try to emulate all the WHATWG standards, we can't check for the
-				// same properties in the browser and nodejs
-				const propertyToCheck = new fm.config.Request('http://example.com')
-					.cache
-					? 'credentials'
-					: 'timeout';
-				const valueToSet =
-					propertyToCheck === 'credentials' ? 'same-origin' : 2000;
+			// Following test works in latest chrome but not in v62 in CI
+			let itInDev = it;
 
-				fm.mock(
-					(url, options, request) => request[propertyToCheck] === valueToSet,
-					200
-				).catch();
+			try {
+				/Chrome\/62/.test(window.navigator.appVersion) && (itInDev = it.skip);
+			} catch (err) {}
 
-				await fm.fetchHandler(
-					new fm.config.Request('http://it.at.there/logged-in')
-				);
-				expect(fm.calls(true).length).to.equal(0);
-				await fm.fetchHandler(
-					new fm.config.Request('http://it.at.there/logged-in', {
-						[propertyToCheck]: valueToSet
-					})
-				);
-				expect(fm.calls(true).length).to.equal(1);
-			});
+			itInDev(
+				'match using custom function with Request with unusual options',
+				async () => {
+					// as node-fetch does not try to emulate all the WHATWG standards, we can't check for the
+					// same properties in the browser and nodejs
+					const propertyToCheck = new fm.config.Request('http://example.com')
+						.cache
+						? 'credentials'
+						: 'timeout';
+					const valueToSet =
+						propertyToCheck === 'credentials' ? 'same-origin' : 2000;
+
+					fm.mock(
+						(url, options, request) => request[propertyToCheck] === valueToSet,
+						200
+					).catch();
+
+					await fm.fetchHandler(
+						new fm.config.Request('http://it.at.there/logged-in')
+					);
+					expect(fm.calls(true).length).to.equal(0);
+					await fm.fetchHandler(
+						new fm.config.Request('http://it.at.there/logged-in', {
+							[propertyToCheck]: valueToSet
+						})
+					);
+					expect(fm.calls(true).length).to.equal(1);
+				}
+			);
 
 			describe('headers', () => {
 				it('not match when headers not present', async () => {
@@ -369,6 +369,28 @@ module.exports = fetchMock => {
 					expect(fm.calls(true).length).to.equal(1);
 				});
 
+				it('match a query string against relative path', async () => {
+					fm.mock('/path', 200, {
+						query: { a: 'b' }
+					}).catch();
+					const url = '/path?a=b';
+					await fm.fetchHandler(url);
+					expect(fm.calls(true).length).to.equal(1);
+				});
+
+				it('match a query string against multiple similar relative path', async () => {
+					expect(() =>
+						fm
+							.mock('/it-at-there', 200, { query: { a: 'b', c: 'e' } })
+							.mock('/it-at-there', 300, {
+								overwriteRoutes: false,
+								query: { a: 'b', c: 'd' }
+							})
+					).not.to.throw();
+					const res = await fm.fetchHandler('/it-at-there?a=b&c=d');
+					expect(res.status).to.equal(300);
+				});
+
 				it('can match multiple query strings', async () => {
 					fm.mock('http://it.at.there/', 200, {
 						query: { a: 'b', c: 'd' }
@@ -435,6 +457,18 @@ module.exports = fetchMock => {
 					await fm.fetchHandler('/dog/b');
 					expect(fm.calls(true).length).to.equal(0);
 					await fm.fetchHandler('/cat/b');
+					expect(fm.calls(true).length).to.equal(1);
+				});
+
+				it('can match a path parameter on a full url', async () => {
+					fm.mock('express:/type/:instance', 200, {
+						params: { instance: 'b' }
+					}).catch();
+					await fm.fetchHandler('http://site.com/');
+					expect(fm.calls(true).length).to.equal(0);
+					await fm.fetchHandler('http://site.com/type/a');
+					expect(fm.calls(true).length).to.equal(0);
+					await fm.fetchHandler('http://site.com/type/b');
 					expect(fm.calls(true).length).to.equal(1);
 				});
 			});
@@ -571,6 +605,17 @@ module.exports = fetchMock => {
 					expect(res.status).to.equal(300);
 				});
 
+				it('overwrite correct route', async () => {
+					expect(() =>
+						fm
+							.mock('http://bar.co/', 200)
+							.mock('http://foo.co/', 400)
+							.mock('http://bar.co/', 300, { overwriteRoutes: true })
+					).not.to.throw();
+					const res = await fm.fetchHandler('http://foo.co/');
+					expect(res.status).to.equal(400);
+				});
+
 				it('allow adding additional route with same matcher', async () => {
 					expect(() =>
 						fm
@@ -648,6 +693,20 @@ module.exports = fetchMock => {
 				await fm.fetchHandler(
 					new fm.config.Request('http://it.at.there/', { method: 'POST' })
 				);
+				expect(fm.calls(true).length).to.equal(1);
+			});
+
+			it('allow routes only differing in query strings', async () => {
+				expect(() => {
+					fm.get(`/xyz/abc?id=486726&id=486727`, 200);
+					fm.get(`/xyz/abc?id=486727`, 200);
+				}).not.to.throw();
+			});
+
+			it('express match full url', async () => {
+				fm.mock('express:/apps/:id', 200).catch();
+
+				await fm.fetchHandler('https://api.example.com/apps/abc');
 				expect(fm.calls(true).length).to.equal(1);
 			});
 		});

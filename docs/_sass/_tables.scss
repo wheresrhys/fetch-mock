@@ -1,0 +1,37 @@
+dl {
+	display: grid;
+	grid-gap: 1rem;
+	grid-template-columns: 25% 1fr;
+}
+
+dl.parameters {
+	border-top: 1px solid #eee;
+	border-bottom: 1px solid #eee;
+	padding: 0 0 20px 0;
+	margin: 0 0 20px 0;
+}
+
+dl.options {
+	border-color: #eee;
+	border-top-width: 1px;
+	border-top-style: solid;
+	border-left-width: 5px;
+	border-left-style: solid;
+	padding-left: 2rem;
+  padding-top: 1rem;
+	margin-left: -40%;
+	font-size: 0.9em;
+}
+
+dt {
+	grid-column-start: 1;
+  grid-column-end: 2;
+	font-weight: bold;
+}
+
+dd {
+	grid-column-start: 2;
+  grid-column-end: 3;
+}
+
+

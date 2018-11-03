@@ -2,12 +2,6 @@
 
 Mock http requests made using [fetch](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch)
 
----
-
-**Version 7 is in alpha. Please consider trying it out. `npm install fetch-mock@7.0.0-alpha.5`**
-
----
-
 ![node version](https://img.shields.io/node/v/fetch-mock.svg?style=flat-square)
 [![licence](https://img.shields.io/npm/l/fetch-mock.svg?style=flat-square)](https://github.com/wheresrhys/fetch-mock/blob/master/LICENSE)
 ![npm downloads](https://img.shields.io/npm/dm/fetch-mock.svg?style=flat-square)
@@ -29,7 +23,7 @@ fetchMock.restore();
 - [License](#license)
 - [Housekeeping](#housekeping)
 
-**I devote a lot of time to maintaining fetch-mock for free. I don't ask for payment, but am raising money for a refugee charity - <a href="https://www.justgiving.com/fundraising/rhys-evans-walk">please consider donating</a>**
+**I devote a lot of time to maintaining fetch-mock for free. I don't ask for payment, but am raising money for a refugee charity - <a href="https://www.justgiving.com/refugee-support-europe">please consider donating</a>**
 
 ---
 
@@ -38,7 +32,7 @@ fetchMock.restore();
 fetch-mock requires the following to run:
 
 - [Node.js](https://nodejs.org/) 8+ for full feature operation
-- [Node.js](https://nodejs.org/) 0.12+ with [limitations](http://www.wheresrhys.co.uk/fetch-mock/installation)
+- [Node.js](https://nodejs.org/) 0.12+ with [limitations](http://www.wheresrhys.co.uk/fetch-mock/#usageinstallation)
 - [npm](https://www.npmjs.com/package/npm) (normally comes with Node.js)
 - Either of the following
   - [node-fetch](https://www.npmjs.com/package/node-fetch) when testing in a nodejs

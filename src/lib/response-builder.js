@@ -6,7 +6,7 @@ const responseConfigProps = [
 	'redirectUrl'
 ];
 
-module.exports = class ResponseBuilder {
+class ResponseBuilder {
 	constructor(options) {
 		Object.assign(this, options);
 	}
@@ -165,4 +165,6 @@ e.g. {"body": {"status: "registered"}}`);
 			}
 		});
 	}
-};
+}
+
+module.exports = options => new ResponseBuilder(options).exec();

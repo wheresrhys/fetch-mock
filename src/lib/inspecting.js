@@ -7,7 +7,7 @@ const isName = nameOrMatcher =>
 
 const filterCallsWithMatcher = (matcher, options = {}, calls) => {
 	matcher = generateMatcher(sanitizeRoute(Object.assign({ matcher }, options)));
-	return calls.filter(([url, opts]) => matcher(normalizeUrl(url), opts));
+	return calls.filter(([url, options]) => matcher(normalizeUrl(url), options));
 };
 
 FetchMock.filterCalls = function(nameOrMatcher, options) {

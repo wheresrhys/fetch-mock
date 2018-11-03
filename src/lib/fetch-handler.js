@@ -2,7 +2,7 @@ const responseBuilder = require('./response-builder');
 const requestUtils = require('./request-utils');
 const FetchMock = {};
 
-const resolve = async (response, url, opts, request) => {
+const resolve = async (response, url, options, request) => {
 	// We want to allow things like
 	// - function returning a Promise for a response
 	// - delaying (using a timeout Promise) a function's execution to generate
@@ -15,7 +15,7 @@ const resolve = async (response, url, opts, request) => {
 		typeof response.then === 'function'
 	) {
 		if (typeof response === 'function') {
-			response = response(url, opts, request);
+			response = response(url, options, request);
 		} else {
 			response = await response;
 		}
@@ -23,14 +23,14 @@ const resolve = async (response, url, opts, request) => {
 	return response;
 };
 
-FetchMock.fetchHandler = function(url, opts, request) {
-	({ url, opts, request } = requestUtils.normalizeRequest(
+FetchMock.fetchHandler = function(url, options, request) {
+	({ url, options, request } = requestUtils.normalizeRequest(
 		url,
-		opts,
+		options,
 		this.config.Request
 	));
 
-	const route = this.executeRouter(url, opts, request);
+	const route = this.executeRouter(url, options, request);
 
 	// this is used to power the .flush() method
 	let done;
@@ -39,14 +39,14 @@ FetchMock.fetchHandler = function(url, opts, request) {
 	// wrapped in this promise to make sure we respect custom Promise
 	// constructors defined by the user
 	return new this.config.Promise((res, rej) => {
-		if (opts && opts.signal) {
-			opts.signal.addEventListener('abort', () => {
+		if (options && options.signal) {
+			options.signal.addEventListener('abort', () => {
 				rej(new Error(`URL '${url}' aborted.`));
 				done();
 			});
 		}
 
-		this.generateResponse(route, url, opts, request)
+		this.generateResponse(route, url, options, request)
 			.then(res, rej)
 			.then(done, done);
 	});
@@ -86,8 +86,8 @@ FetchMock.executeRouter = function(url, options, request) {
 	return { response: this.getNativeFetch() };
 };
 
-FetchMock.generateResponse = async function(route, url, opts, request) {
-	const response = await resolve(route.response, url, opts, request);
+FetchMock.generateResponse = async function(route, url, options, request) {
+	const response = await resolve(route.response, url, options, request);
 
 	// If the response says to throw an error, throw it
 	// Type checking is to deal with sinon spies having a throws property :-0
@@ -103,7 +103,7 @@ FetchMock.generateResponse = async function(route, url, opts, request) {
 	// finally, if we need to convert config into a response, we do it
 	return responseBuilder({
 		url,
-		shorthandResponse: response,
+		responseConfig: response,
 		fetchMock: this,
 		route
 	});

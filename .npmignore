@@ -3,7 +3,14 @@
 .eslintrc
 ISSUE_TEMPLATE
 karma.conf.js
-LICENSE
 Makefile
 README.md
 /docs/
+/.nyc_output/
+/coverage/
+.eslint*
+.gitignore
+Gemfile
+Gemfile.lock
+.prettierrc
+.codeclimate.yml

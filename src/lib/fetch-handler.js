@@ -1,42 +1,15 @@
-const ResponseBuilder = require('./response-builder');
+const responseBuilder = require('./response-builder');
 const requestUtils = require('./request-utils');
 const FetchMock = {};
 
-const normalizeRequest = (url, options, Request) => {
-	if (Request.prototype.isPrototypeOf(url)) {
-		const obj = {
-			url: requestUtils.normalizeUrl(url.url),
-			opts: {
-				method: url.method
-			},
-			request: url
-		};
-
-		const headers = requestUtils.headers.toArray(url.headers);
-
-		if (headers.length) {
-			obj.opts.headers = requestUtils.headers.zip(headers);
-		}
-		return obj;
-	} else if (
-		typeof url === 'string' ||
-		// horrible URL object duck-typing
-		(typeof url === 'object' && 'href' in url)
-	) {
-		return {
-			url: requestUtils.normalizeUrl(url),
-			opts: options
-		};
-	} else if (typeof url === 'object') {
-		throw new TypeError(
-			'fetch-mock: Unrecognised Request object. Read the Config and Installation sections of the docs'
-		);
-	} else {
-		throw new TypeError('fetch-mock: Invalid arguments passed to fetch');
-	}
-};
-
 const resolve = async (response, url, opts) => {
+	// We want to allow things like
+	// - function returning a Promise for a response
+	// - delaying (using a timeout Promise) a function's execution to generate
+	//   a response
+	// Because of this we can't safely check for function before Promisey-ness,
+	// or vice versa. So to keep it DRY, and flexible, we keep trying until we
+	// have something that looks like neither Promise nor function
 	while (
 		typeof response === 'function' ||
 		typeof response.then === 'function'
@@ -51,7 +24,11 @@ const resolve = async (response, url, opts) => {
 };
 
 FetchMock.fetchHandler = function(url, opts, request) {
-	({ url, opts, request } = normalizeRequest(url, opts, this.config.Request));
+	({ url, opts, request } = requestUtils.normalizeRequest(
+		url,
+		opts,
+		this.config.Request
+	));
 
 	const route = this.executeRouter(url, opts, request);
 
@@ -92,7 +69,7 @@ FetchMock.executeRouter = function(url, options, request) {
 		console.warn(`Unmatched ${(options && options.method) || 'GET'} to ${url}`); // eslint-disable-line
 	}
 
-	this.push({ url, options, request, unmatched: true });
+	this.push({ url, options, request, isUnmatched: true });
 
 	if (this.fallbackResponse) {
 		return { response: this.fallbackResponse };
@@ -110,13 +87,6 @@ FetchMock.executeRouter = function(url, options, request) {
 };
 
 FetchMock.generateResponse = async function(route, url, opts) {
-	// We want to allow things like
-	// - function returning a Promise for a response
-	// - delaying (using a timeout Promise) a function's execution to generate
-	//   a response
-	// Because of this we can't safely check for function before Promisey-ness,
-	// or vice versa. So to keep it DRY, and flexible, we keep trying until we
-	// have something that looks like neither Promise nor function
 	const response = await resolve(route.response, url, opts);
 
 	// If the response says to throw an error, throw it
@@ -131,12 +101,12 @@ FetchMock.generateResponse = async function(route, url, opts) {
 	}
 
 	// finally, if we need to convert config into a response, we do it
-	return new ResponseBuilder({
+	return responseBuilder({
 		url,
 		shorthandResponse: response,
 		fetchMock: this,
 		route
-	}).exec();
+	});
 };
 
 FetchMock.router = function(url, options, request) {
@@ -163,11 +133,11 @@ FetchMock.getNativeFetch = function() {
 	return func;
 };
 
-FetchMock.push = function({ url, options, request, unmatched, identifier }) {
+FetchMock.push = function({ url, options, request, isUnmatched, identifier }) {
 	const args = [url, options];
 	args.request = request;
 	args.identifier = identifier;
-	args.unmatched = unmatched;
+	args.isUnmatched = isUnmatched;
 	this._calls.push(args);
 };
 

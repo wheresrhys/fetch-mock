@@ -1,26 +1,23 @@
 const { normalizeUrl } = require('./request-utils');
 const FetchMock = {};
-const compileRoute = require('./compile-route');
-
+const { sanitizeRoute } = require('./compile-route');
+const generateMatcher = require('./generate-matcher');
 const isName = nameOrMatcher =>
 	typeof nameOrMatcher === 'string' && /^[\da-zA-Z\-]+$/.test(nameOrMatcher);
 
-FetchMock.filterCallsWithMatcher = function(matcher, options = {}, calls) {
-	matcher = compileRoute(
-		// HACK: add dummy response so that we can generate a matcher without
-		// copileRoute's expectation that each route has a response defined
-		Object.assign({ matcher, response: 200 }, options)
-	).matcher;
+const filterCallsWithMatcher = (matcher, options = {}, calls) => {
+	matcher = generateMatcher(sanitizeRoute(Object.assign({ matcher }, options)));
 	return calls.filter(([url, opts]) => matcher(normalizeUrl(url), opts));
 };
 
 FetchMock.filterCalls = function(nameOrMatcher, options) {
 	let calls = this._calls;
 	let matcher = '*';
+
 	if (nameOrMatcher === true) {
-		calls = calls.filter(({ unmatched }) => !unmatched);
+		calls = calls.filter(({ isUnmatched }) => !isUnmatched);
 	} else if (nameOrMatcher === false) {
-		calls = calls.filter(({ unmatched }) => unmatched);
+		calls = calls.filter(({ isUnmatched }) => isUnmatched);
 	} else if (typeof nameOrMatcher === 'undefined') {
 		calls = calls;
 	} else if (isName(nameOrMatcher)) {
@@ -36,7 +33,7 @@ FetchMock.filterCalls = function(nameOrMatcher, options) {
 		if (typeof options === 'string') {
 			options = { method: options };
 		}
-		calls = this.filterCallsWithMatcher(matcher, options, calls);
+		calls = filterCallsWithMatcher(matcher, options, calls);
 	}
 	return calls;
 };
@@ -73,24 +70,17 @@ FetchMock.flush = function(waitForResponseMethods) {
 };
 
 FetchMock.done = function(nameOrMatcher) {
-	// - true or undefined
-	// - nameOrMatcher or matcher
-	// - don't support options any more?
-	// - ah, but what about when multiple routes have same matcher
-	// 		- nameOrMatcher them
-
-	// const calls = this.filterCalls(nameOrMatcher, options);
-	const identifiers =
+	const routesToCheck =
 		nameOrMatcher && typeof nameOrMatcher !== 'boolean'
 			? [{ identifier: nameOrMatcher }]
 			: this.routes;
-	// Can't use array.every because
-	// a) not widely supported
-	// b) would exit after first failure, which would break the logging
-	return identifiers
+
+	// Can't use array.every because would exit after first failure, which would
+	// break the logging
+	return routesToCheck
 		.map(({ identifier }) => {
 			if (!this.called(identifier)) {
-					console.warn(`Warning: ${identifier} not called`); // eslint-disable-line
+				console.warn(`Warning: ${identifier} not called`); // eslint-disable-line
 				return false;
 			}
 
@@ -105,13 +95,13 @@ FetchMock.done = function(nameOrMatcher) {
 			if (expectedTimes > actualTimes) {
 				console.warn(
 					`Warning: ${identifier} only called ${actualTimes} times, but ${expectedTimes} expected`
-					); // eslint-disable-line
+				); // eslint-disable-line
 				return false;
 			} else {
 				return true;
 			}
 		})
-		.every(bool => bool);
+		.every(isDone => isDone);
 };
 
 module.exports = FetchMock;

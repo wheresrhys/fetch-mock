@@ -1,7 +1,7 @@
 ---
 title: Custom subclasses
 position: 6
-parentMethod: installation
+parentItem: installation
 content_markdown: |-
   Some fetch-mock internals require access to the `Request`, `Response` and `Headers` constructors provided by your chosen `fetch` implementation. These should be set on the `fetchMock.config` object
   {: .warning}

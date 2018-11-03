@@ -1,7 +1,7 @@
 ---
 title: Polyfilling fetch
 position: 5
-parentMethod: installation
+parentItem: installation
 content_markdown: |-
   Many older browsers require polyfilling the `fetch` global. The following approaches can be used
 

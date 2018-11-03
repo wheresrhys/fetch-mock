@@ -7,7 +7,7 @@
 				<ul>
 					{% assign sorted_docs = collection.docs | sort: "position" %}
 					{% for doc in sorted_docs %}
-						<li{% if doc.parentMethod %} class="parameter"{% endif %}>
+						<li{% if doc.parentMethod or doc.parentItem %} class="parameter"{% endif %}>
 							<a href="{% if page.url != '/' %}/{% endif %}#{{ doc.id | replace: '/', '' | replace: '.', '' }}">
 								{% if doc.navTitle %}{{doc.navTitle}}{%else%}{{ doc.title }}{%endif%}
 								{% if doc.type %}<span class="endpoint {{ doc.type }}"></span>{% endif %}

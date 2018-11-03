@@ -165,6 +165,20 @@ module.exports = fetchMock => {
 				expect(await res.text()).to.equal('http://it.at.there/val');
 			});
 
+			it('construct a response based on a Request instance', async () => {
+				fm.mock('http://it.at.there/path', (url, opts, request) =>
+					request.json().then(({ greeting }) => greeting)
+				);
+				const res = await fm.fetchHandler(
+					new fm.config.Request('http://it.at.there/path', {
+						body: JSON.stringify({ greeting: 'hi' }),
+						method: 'post'
+					})
+				);
+				expect(res.status).to.equal(200);
+				expect(await res.text()).to.equal('hi');
+			});
+
 			describe('content-length', () => {
 				it('should work on body of type string', async () => {
 					fm.mock('http://it.at.there/', 'Fetch-Mock rocks');

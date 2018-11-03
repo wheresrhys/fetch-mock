@@ -171,34 +171,37 @@ module.exports = fetchMock => {
 				);
 				expect(fm.calls(true).length).to.equal(1);
 			});
-
+			const itInDev = process.env.CIRCLECI ? it.skip : it;
 			// Works in latest chrome but ont in v62 in CI
-			it.skip('match using custom function with Request with unusual options', async () => {
-				// as node-fetch does not try to emulate all the WHATWG standards, we can't check for the
-				// same properties in the browser and nodejs
-				const propertyToCheck = new fm.config.Request('http://example.com')
-					.cache
-					? 'credentials'
-					: 'timeout';
-				const valueToSet =
-					propertyToCheck === 'credentials' ? 'same-origin' : 2000;
+			itInDev(
+				'match using custom function with Request with unusual options',
+				async () => {
+					// as node-fetch does not try to emulate all the WHATWG standards, we can't check for the
+					// same properties in the browser and nodejs
+					const propertyToCheck = new fm.config.Request('http://example.com')
+						.cache
+						? 'credentials'
+						: 'timeout';
+					const valueToSet =
+						propertyToCheck === 'credentials' ? 'same-origin' : 2000;
 
-				fm.mock(
-					(url, options, request) => request[propertyToCheck] === valueToSet,
-					200
-				).catch();
+					fm.mock(
+						(url, options, request) => request[propertyToCheck] === valueToSet,
+						200
+					).catch();
 
-				await fm.fetchHandler(
-					new fm.config.Request('http://it.at.there/logged-in')
-				);
-				expect(fm.calls(true).length).to.equal(0);
-				await fm.fetchHandler(
-					new fm.config.Request('http://it.at.there/logged-in', {
-						[propertyToCheck]: valueToSet
-					})
-				);
-				expect(fm.calls(true).length).to.equal(1);
-			});
+					await fm.fetchHandler(
+						new fm.config.Request('http://it.at.there/logged-in')
+					);
+					expect(fm.calls(true).length).to.equal(0);
+					await fm.fetchHandler(
+						new fm.config.Request('http://it.at.there/logged-in', {
+							[propertyToCheck]: valueToSet
+						})
+					);
+					expect(fm.calls(true).length).to.equal(1);
+				}
+			);
 
 			describe('headers', () => {
 				it('not match when headers not present', async () => {

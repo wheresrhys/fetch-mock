@@ -16,7 +16,7 @@ class ResponseBuilder {
 		this.constructFetchOpts();
 		this.constructResponseBody();
 		return this.buildObservableResponse(
-			new this.fetchMock.config.Response(this.body, this.opts)
+			new this.fetchMock.config.Response(this.body, this.options)
 		);
 	}
 
@@ -71,14 +71,16 @@ e.g. {"body": {"status: "registered"}}`);
 	}
 
 	constructFetchOpts() {
-		this.opts = this.responseConfig.opts || {};
-		this.opts.url = this.responseConfig.redirectUrl || this.url;
-		this.opts.status = this.validateStatus(this.responseConfig.status);
-		this.opts.statusText = this.fetchMock.statusTextMap['' + this.opts.status];
+		this.options = this.responseConfig.options || {};
+		this.options.url = this.responseConfig.redirectUrl || this.url;
+		this.options.status = this.validateStatus(this.responseConfig.status);
+		this.options.statusText = this.fetchMock.statusTextMap[
+			'' + this.options.status
+		];
 		// Set up response headers. The empty object is to cope with
 		// new Headers(undefined) throwing in Chrome
 		// https://code.google.com/p/chromium/issues/detail?id=335871
-		this.opts.headers = new this.fetchMock.config.Headers(
+		this.options.headers = new this.fetchMock.config.Headers(
 			this.responseConfig.headers || {}
 		);
 	}
@@ -95,8 +97,8 @@ e.g. {"body": {"status: "registered"}}`);
 			typeof this.body === 'object'
 		) {
 			this.body = JSON.stringify(this.body);
-			if (!this.opts.headers.has('Content-Type')) {
-				this.opts.headers.set('Content-Type', 'application/json');
+			if (!this.options.headers.has('Content-Type')) {
+				this.options.headers.set('Content-Type', 'application/json');
 			}
 		}
 	}
@@ -106,9 +108,9 @@ e.g. {"body": {"status: "registered"}}`);
 		if (
 			this.getOption('includeContentLength') &&
 			typeof this.body === 'string' &&
-			!this.opts.headers.has('Content-Length')
+			!this.options.headers.has('Content-Length')
 		) {
-			this.opts.headers.set('Content-Length', this.body.length.toString());
+			this.options.headers.set('Content-Length', this.body.length.toString());
 		}
 	}
 

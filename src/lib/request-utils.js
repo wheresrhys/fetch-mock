@@ -38,7 +38,7 @@ module.exports = {
 		if (Request.prototype.isPrototypeOf(url)) {
 			const obj = {
 				url: normalizeUrl(url.url),
-				opts: {
+				options: {
 					method: url.method
 				},
 				request: url
@@ -47,7 +47,7 @@ module.exports = {
 			const headers = headersToArray(url.headers);
 
 			if (headers.length) {
-				obj.opts.headers = zipObject(headers);
+				obj.options.headers = zipObject(headers);
 			}
 			return obj;
 		} else if (
@@ -57,7 +57,7 @@ module.exports = {
 		) {
 			return {
 				url: normalizeUrl(url),
-				opts: options
+				options: options
 			};
 		} else if (typeof url === 'object') {
 			throw new TypeError(

@@ -14,8 +14,17 @@
 							</a>
 						</li>
 					{% endfor %}
+					{%if collection.title == "About" %}
+						<li>
+							<a class="github-link" href="https://github.com/wheresrhys/fetch-mock"">
+								Github project
+							</a>
+						</li>
+					{%endif%}
 				</ul>
 			</section>
 		{% endif %}
 	{% endfor %}
 </nav>
+
+

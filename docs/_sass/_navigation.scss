@@ -110,26 +110,15 @@ body.nav-open {
 		}
 		}
 	}
-
-	// 	height: $nav-header-height;
-	//
-	// 	background-color: $brand-colour;
-	// 	color: #fff;
-	// 	margin: 0;
-	// 	font-size: 1.7rem;
-	// 	line-height: 0.8;
-	// 	letter-spacing: 0;
-	// 	font-weight: 600;
-	// 	text-indent: 0;
-	// 	@include display-flex();
-	// 	@include flex-direction(row);
-	// 	@include align-items(center);
-	// 	border-bottom: 1px solid rgba(0, 0, 0, 0.075);
-	// 	img {
-	// 		height: 26px;
-	// 		margin: 0 18px;
-	// 	}
-	// }
+	.github-link::before {
+		background: url($base-url + '/images/github-logo.png');
+		content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    vertical-align: text-top;
+    background-size: contain;
+	}
 
 	.open-nav {
 		width: 4rem;

@@ -114,6 +114,34 @@ module.exports = fetchMock => {
 				expect(fm.filterCalls(true)[0][0]).to.equal('http://it.at.here/');
 			});
 
+			it('can retrieve calls with correct request options', async () => {
+				fm.mock('http://it.at.here/', 200).catch();
+
+				const options = {
+					method: 'GET',
+					headers: { foo: 'bar' }
+				};
+				const request = new Request('http://it.at.here/', options);
+				await fm.fetchHandler(request);
+				await fm.fetchHandler('http://it.at.where/');
+				const fetchOptions = fm.filterCalls(true)[0][1];
+				expect(fetchOptions).to.eql(options);
+			});
+
+			it('can retrieve calls with correct request options including header instance', async () => {
+				fm.mock('http://it.at.here/', 200).catch();
+				const options = {
+					method: 'GET',
+					headers: new Headers({ foo: 'bar' })
+				};
+				const request = new Request('http://it.at.here/', options);
+				await fm.fetchHandler(request);
+				await fm.fetchHandler('http://it.at.where/');
+				const { method, headers } = fm.filterCalls(true)[0][1];
+				expect(method).to.equal(options.method);
+				expect(headers.foo).to.equal('bar');
+			});
+
 			it('can retrieve only calls not matched by any route', async () => {
 				fm.mock('http://it.at.here/', 200).catch();
 

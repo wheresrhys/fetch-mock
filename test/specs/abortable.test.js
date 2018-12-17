@@ -33,6 +33,21 @@ module.exports = fetchMock => {
 			}
 		});
 
+		it('error when signal already aborted', async () => {
+			const controller = new AbortController();
+			controller.abort();
+
+			fm.mock('http://it.at.there/', 200);
+
+			try {
+				await fm.fetchHandler('http://it.at.there/', {
+					signal: controller.signal
+				});
+			} catch (error) {
+				expect(error.message).to.equal("URL 'http://it.at.there/' aborted.");
+			}
+		});
+
 		it('go into `done` state even when aborted', async () => {
 			fm.once('http://it.at.there/', () => {
 				return new Promise(resolve => {
@@ -69,5 +84,6 @@ module.exports = fetchMock => {
 			await fm.flush();
 			expect(fm.done()).to.be.true;
 		});
+
 	});
 };

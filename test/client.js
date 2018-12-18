@@ -67,8 +67,8 @@ describe('service worker', () => {
 					expect(true).to.be.true;
 					return navigator.serviceWorker
 						.getRegistration()
-						.then(
-							registration => (registration ? registration.unregister() : false)
+						.then(registration =>
+							registration ? registration.unregister() : false
 						);
 				});
 			})

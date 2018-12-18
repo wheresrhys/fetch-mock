@@ -84,6 +84,5 @@ module.exports = fetchMock => {
 			await fm.flush();
 			expect(fm.done()).to.be.true;
 		});
-
 	});
 };

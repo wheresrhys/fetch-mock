@@ -36,6 +36,11 @@ parameters:
       - Object
     content: |-
       When the `express:` keyword is used in a string matcher, a key/value map `params` can be passed here, to match the parameters extracted by express path matching
+  - name: functionMatcher
+    types:
+      - Object
+    content: |-
+      For matching requests against arbitrary criteria. See the documentation on [`Function` matchers](#api-mockingmock_matcher)
   - name: repeat
     types:
       - Integer

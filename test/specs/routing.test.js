@@ -209,6 +209,25 @@ module.exports = fetchMock => {
 				}
 			);
 
+			it('match using custom function alongside other matchers', async () => {
+				fm.mock('end:profile', 200, {
+					functionMatcher: (url, opts) => {
+						return opts && opts.headers && opts.headers.authorized === true;
+					}
+				}).catch();
+
+				await fm.fetchHandler('http://it.at.there/profile');
+				expect(fm.calls(true).length).to.equal(0);
+				await fm.fetchHandler('http://it.at.there/not', {
+					headers: { authorized: true }
+				});
+				expect(fm.calls(true).length).to.equal(0);
+				await fm.fetchHandler('http://it.at.there/profile', {
+					headers: { authorized: true }
+				});
+				expect(fm.calls(true).length).to.equal(1);
+			});
+
 			describe('headers', () => {
 				it('not match when headers not present', async () => {
 					fm.mock('http://it.at.there/', 200, {

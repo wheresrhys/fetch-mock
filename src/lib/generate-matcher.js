@@ -69,11 +69,15 @@ const getParamsMatcher = ({ params: expectedParams, matcher }) => {
 	};
 };
 
-const getFunctionMatcher = ({ matcher }) =>
-	typeof matcher === 'function' && matcher;
+const getFunctionMatcher = ({ matcher, functionMatcher = () => true }) =>
+	typeof matcher === 'function' ? matcher : functionMatcher;
 
 const getUrlMatcher = route => {
 	const { matcher, query } = route;
+
+	if (typeof matcher === 'function') {
+		return () => true;
+	}
 
 	if (matcher instanceof RegExp) {
 		return url => matcher.test(url);
@@ -113,7 +117,8 @@ module.exports = route => {
 		route.method && getMethodMatcher(route),
 		route.headers && getHeaderMatcher(route),
 		route.params && getParamsMatcher(route),
-		getFunctionMatcher(route) || getUrlMatcher(route)
+		getFunctionMatcher(route),
+		getUrlMatcher(route)
 	].filter(matcher => !!matcher);
 
 	return (url, options = {}, request) =>

@@ -74,9 +74,11 @@ const getFunctionMatcher = ({ matcher, functionMatcher = () => true }) =>
 
 const getUrlMatcher = route => {
 	const { matcher, query } = route;
+
 	if (typeof matcher === 'function') {
 		return () => true;
 	}
+
 	if (matcher instanceof RegExp) {
 		return url => matcher.test(url);
 	}

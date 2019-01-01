@@ -79,7 +79,10 @@ parameters:
         (url, {headers}) => !!headers.Authorization
       - |-
         (_, _, request) => !!request.headers.get('Authorization')
-    content: Matches if a function returns something truthy. The function will be passed the arguments `fetch` was called with. If `fetch` was called with a `Request` instance, it will be passed `url` and `options` inferred from the `Request` instance. The original `Request` will be passed as a third argument.
+    content: |
+      Matches if a function returns something truthy. The function will be passed the arguments `fetch` was called with. If `fetch` was called with a `Request` instance, it will be passed `url` and `options` inferred from the `Request` instance. The original `Request` will be passed as a third argument.
+
+      This can also be set as a `functionMatcher` in the [options parameter](#api-mockingmock_options), and in this way powerful arbitrary matching criteria can be combined with the ease of the declarative matching rules above.
 
 
 content_markdown: |-

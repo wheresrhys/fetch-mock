@@ -45,7 +45,7 @@ See the [project website](http://www.wheresrhys.co.uk/fetch-mock/)
 ## License
 
 fetch-mock is licensed under the [MIT](https://github.com/wheresrhys/fetch-mock/blob/master/LICENSE) license.
-Copyright © 2018, Rhys Evans
+Copyright © 2019, Rhys Evans
 
 ## Housekeeping
 

@@ -3,6 +3,6 @@ title: ".getOnce(), .postOnce(), .putOnce(), .deleteOnce(), .headOnce(), .patchO
 navTitle: .getOnce(), .postOnce() ...
 position: 4
 description: |-
-  Shorthands for `mock()` restricted to a particular method and that will only respond once
+  Shorthands for `mock()` that create routes that only respond to requests using a particular http method, and that can only mock a single request.
 parentMethodGroup: mocking
 ---

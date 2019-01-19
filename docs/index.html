@@ -18,7 +18,7 @@ title: API Docs
 						{{ doc.title }}
 					</a>
 					{% if doc.parentMethod %}
-						<span class="endpoint">Parameter for <a href="#api-{{doc.parentMethodGroup}}{{doc.parentMethod}}">{{doc.parentMethod}}()</a></span>
+						&nbsp;<span class="endpoint">parameter for <a href="#api-{{doc.parentMethodGroup}}{{doc.parentMethod}}">{{doc.parentMethod}}()</a></span>
 					{% endif %}
 
 				</h3>
@@ -74,9 +74,11 @@ title: API Docs
 				{{ doc.content_markdown | markdownify | replace: "<dl>", "<h6>Parameters</h6><dl>" }}
 
 				{% if doc.left_code_blocks and doc.left_code_blocks[0].code_block %}
+						<div class="code-blocks">
 						{% for block in doc.left_code_blocks %}
 								{% include syntax-highlight.html block=block %}
 						{% endfor %}
+					</div>
 				{% endif %}
 			</section>
 

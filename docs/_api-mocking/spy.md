@@ -7,5 +7,5 @@ description: |-
 parentMethodGroup: mocking
 content_markdown: |-
    To use `.spy()` on a sandboxed `fetchMock`, `fetchMock.config.fetch` must be set to a reference to the `fetch` implementation you use in your code.
-   {: .warning}
+   
 ---

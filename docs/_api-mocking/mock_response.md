@@ -2,8 +2,7 @@
 title: "response"
 position: 1.2
 description: |-
-  Response to send matched calls.
-  Configures the http response returned by the mock. Can take any of the following values (or be a `Promise` for any of them, enabling full control when testing race conditions etc.). Unless otherwise stated, all responses have a `200` status
+  Configures the http response returned by the mock. Accepts any of the following values or a `Promise` for any of them (useful when testing race conditions etc.). Unless otherwise stated, all responses have a `200` status
 types:
   - String
   - Object
@@ -19,62 +18,67 @@ parameters:
       - Response
     examples:
       - "new Response('ok', {status: 200})"
-    content: A `Response` instance - will be used unaltered
+    content: |
+      A [`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response/Response) instance to return unaltered.
+
+      Note that it must use the same constructor as that used in the `fetch` implementation your application uses. [See how to configure this](#usagecustom-classes)
+
   - name: status code
     types:
       - Integer
     examples:
       - 200, 404, 503
-    content: Creates a response with the given status code. The response's `statusText` will also be set to the [default value corresponding to the status](https://fetch.spec.whatwg.org/#dom-response-statustext)
+    content: Return a `Response` with the given status code. The response's `statusText` will also be set to the [default value corresponding to the status](https://fetch.spec.whatwg.org/#dom-response-statustext)
   - types:
       - String
-    content: Creates a 200 response with the string as the response body
+    content: Return a 200 `Response` with the string as the response body
     examples:
       - Server responded ok
       - Bad Response
   - name: config
     types:
       - Object
-    content: If an object _only_ contains properties listed below it is used to configure a `Response`
+    content: If an object *only* contains properties from among those listed below it is used to configure a `Response` to return
     options:
       - name: body
         types:
           - String
           - Object
         content: |-
-          Set the response body. For behaviour for `Object`s, see the non-config `Object` section of the docs below
+          Set the `Response` body. See the non-config `Object` section of the docs below for behaviour when passed an `Object`
         examples:
           - Server responded ok
-          - { token: 'abcdef' }
+          - "{ token: 'abcdef' }"
       - name: status
         types:
           - Integer
-        content: Set the response status
+        content: Set the `Response` status
         examples:
           - 200, 404, 503
       - name: headers
         types:
           - Object
-        content: Set the response headers
+        content: Set the `Response` headers
         examples:
-          - {'Content-Type': 'text/html'}
+          - "{'Content-Type': 'text/html'}"
       - name: redirectUrl
         types:
           - String
         content: |-
-          The url the response should claim to originate from (to imitate followed directs). Will also set `redirected: true` on the response
+          The url from which the `Response` should claim to originate from (to imitate followed directs). Will also set `redirected: true` on the response
       - name: throws
         types:
           - Error
         content: |-
-          `fetch` will return a `Promise` rejected with the value of `throws`
+          Forrce `fetch` to return a `Promise` rejected with the value of `throws`
         examples:
           - "new TypeError('Failed to fetch')"
   - types:
     - Object
     - ArrayBuffer
+    - ...
     content: |-
-      All objects that do not meet the criteria above will be converted to JSON and set as the response `body` if the `sendAsJson` option is on. Otherwise, they will be set as the response `body` (useful for array buffers etc.)
+      If the `sendAsJson` option is set to `true`, any object that does not meet the criteria above will be converted to a `JSON` string and set as the response `body`. Otherwise, the object will be set as the response `body` (useful for `ArrayBuffer`s etc.)
   - types:
     - Promise
     content: |-
@@ -84,7 +88,7 @@ parameters:
   - types:
     - Function
     content: |-
-      A function that is passed the arguments `fetch` is called with and that returns any of the responses listed above
+      A function that returns any of the options documented above. The function will be passed the `url` and `options` `fetch` was called with. If `fetch` was called with a `Request` instance, it will be passed `url` and `options` inferred from the `Request` instance, with the original `Request` will be passed as a third argument.
     examples:
       - "(url, opts) => opts.headers.Authorization ? 200 : 403"
       - "(_, _, request) => request.headers.get('Authorization') ?  200 : 403"

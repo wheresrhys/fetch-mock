@@ -2,7 +2,7 @@
 title: "options"
 position: 1.3
 description: |-
-  A configuration object with properties to define a route to mock
+  An object containing further options for configuring mocking behaviour
 types:
   - Object
 type: parameter
@@ -14,28 +14,39 @@ parameters:
     types:
       - String
     content: |-
-      A unique string naming the route. Used to subsequently retrieve references to the calls, grouped by name. Defaults to `matcher.toString()`
+      A unique string naming the route. Used to subsequently retrieve references to the calls handled by it
   - name: method
     types:
       - String
     content: |-
-      Http method to match
+      Match only requests using this http method. Not case-sensitive
+    examples:
+      - get, POST
   - name: headers
     types:
       - Object
       - Headers
     content: |-
-      Key/value map of headers to match
+      Match only requests that have these headers set
+    examples: 
+      - |-
+        {"Accepts": "text/html"}
   - name: query
     types:
       - Object
     content: |-
-      Key/value map of query strings to match, in any order
+      Match only requests that have these query parameters set (in any order)
+    examples: 
+      - |-
+        {"q": "cute+kittenz", "format": "gif"}
   - name: params
     types:
       - Object
     content: |-
-      When the `express:` keyword is used in a string matcher, a key/value map `params` can be passed here, to match the parameters extracted by express path matching
+      When the `express:` keyword is used in a string matcher, match only requests with these express parameters
+    examples: 
+      - |-
+        {"section": "feed", "user": "geoff"}
   - name: functionMatcher
     types:
       - Object
@@ -45,7 +56,7 @@ parameters:
     types:
       - Integer
     content: |-
-      An integer, `n`, limiting the number of times the matcher can be used. If the route has already been called `n` times the route will be ignored and the call to `fetch()` will fall through to be handled by any other routes defined (which may eventually result in an error if nothing matches it)
+      Limits the number of times the route can be used. If the route has already been called `repeat` times, the call to `fetch()` will fall through to be handled by any other routes defined (which may eventually result in an error if nothing matches it)
   - name: overwriteRoutes
     types:
       - Boolean
@@ -61,7 +72,7 @@ parameters:
       - Boolean
     content: See [global configuration](#usageconfiguration)
   - name: matcher
-    content: When using the single argument variant of `.mock()`, any valid matcher as [defined above](#usageapimock_matcher) can be assigned to the options object
+    content: When using the single argument variant of `.mock()`, any valid matcher as [documented above](#usageapimock_matcher) can be assigned to the options object
   - name: response
-    content: When using the single argument variant of `.mock()`, any valid response as [defined above](#usageapimock_response) can be assigned to the options object
+    content: When using the single argument variant of `.mock()`, any valid response as [documented above](#usageapimock_response) can be assigned to the options object
 ---

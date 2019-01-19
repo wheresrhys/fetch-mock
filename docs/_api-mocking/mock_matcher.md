@@ -2,7 +2,7 @@
 title: "matcher"
 position: 1.1
 description: |-
-  Condition for selecting which requests to mock. For matching based on headers, query strings or other `fetch` options see the `options` parameter documented below
+  Condition for deciding which requests to mock. For matching headers, query strings or other `fetch` options see the [`options` parameter](#api-mockingmock_options)
 types:
   - String
   - RegExp
@@ -15,7 +15,7 @@ parameters:
   - name: "*"
     types:
       - String
-    content: Matches any url
+    content: Match any url
     examples:
       - '"*"'
   - name: url
@@ -24,7 +24,7 @@ parameters:
     examples:
       - |-
         "http://www.site.com/page.html"
-    content: Matches an exact url
+    content: Match an exact url
   - name: |-
       begin:...
     types:
@@ -32,7 +32,7 @@ parameters:
     examples:
       - |-
         "begin:http://www.site.com"
-    content: Matches a url beginning with a string
+    content: Match a url beginning with a string
   - name: |-
       end:...
     types:
@@ -40,7 +40,7 @@ parameters:
     examples:
       - |-
         "end:.jpg"
-    content: Matches a url ending with a string
+    content: Match a url ending with a string
   - name: |-
       path:...
     types:
@@ -48,7 +48,7 @@ parameters:
     examples:
       - |-
         "path:/posts/2018/7/3"
-    content: Matches a url which has a given path
+    content: Match a url which has a given path
   - name: |-
       glob:...
     types:
@@ -56,7 +56,7 @@ parameters:
     examples:
       - |-
         "glob:http://*.*"
-    content: Matches a url using a glob pattern
+    content: Match a url using a glob pattern
   - name: |-
       express:...
     types:
@@ -65,13 +65,13 @@ parameters:
       - |-
         "express:/user/:user"
     content: |-
-      Matches a url that matches an [express style path](https://www.npmjs.com/package/path-to-regexp)
+      Match a url that satisfies an [express style path](https://www.npmjs.com/package/path-to-regexp)
   - types:
       - RegExp
     examples:
       - |-
         /(article|post)/\d+/
-    content: Matches a url that matches a regular expression
+    content: Match a url that satisfies a regular expression
   - types:
       - Function
     examples:
@@ -80,7 +80,7 @@ parameters:
       - |-
         (_, _, request) => !!request.headers.get('Authorization')
     content: |
-      Matches if a function returns something truthy. The function will be passed the arguments `fetch` was called with. If `fetch` was called with a `Request` instance, it will be passed `url` and `options` inferred from the `Request` instance. The original `Request` will be passed as a third argument.
+      Match if a function returns something truthy. The function will be passed the `url` and `options` `fetch` was called with. If `fetch` was called with a `Request` instance, it will be passed `url` and `options` inferred from the `Request` instance, with the original `Request` will be passed as a third argument.
 
       This can also be set as a `functionMatcher` in the [options parameter](#api-mockingmock_options), and in this way powerful arbitrary matching criteria can be combined with the ease of the declarative matching rules above.
 

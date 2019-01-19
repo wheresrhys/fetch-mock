@@ -2,7 +2,11 @@
 title: Configuration
 position: 7
 description: |-
-  On any `fetchMock` instance, config can be set by setting properties on `fetchMock.config`.
+  On any `fetch-mock` instance, set configuration options directly on the `fetchMock.config` object. e.g.
+  ```js
+  const fetchMock = require('fetch-mock');
+  fetchMock.config.sendAsJson = false;
+  ```
 parametersBlockTitle: Options
 parameters:
   - name: sendAsJson<sup>†</sup>
@@ -10,12 +14,12 @@ parameters:
     types:
       - Boolean
     content: |-
-      Convert objects into JSON before delivering as stub reponses. Can be useful to set to `false` globally if e.g. dealing with a lot of array buffers. If `true`, will also add `content-type: application/json` header.
+      Always convert objects passed to `.mock()` to JSON strings before building reponses. Can be useful to set to `false` globally if e.g. dealing with a lot of `ArrayBuffer`s. When `true` the `Content-Type: application/json` header will also be set on each response.
   - name: includeContentLength<sup>†</sup>
     default: true
     types:
       - Boolean
-    content: Automatically sets a `content-length` header on each response.
+    content: Sets a `Content-Length` header on each response.
   - name: fallbackToNetwork
     default: "false"
     types:
@@ -30,8 +34,8 @@ parameters:
     types:
       - Boolean
     content: |-
-      Determines behaviour if a new route has the same name (or inferred name) as an existing one
-      - `undefined`: An error will be throw when routes clash
+      Configures behaviour when attempting to add a new route with the same name (or inferred name) as an existing one
+      - `undefined`: An error will be thrown
       - `true`: Overwrites the existing route
       - `false`: Appends the new route to the list of routes
   - name: warnOnFallback
@@ -39,30 +43,30 @@ parameters:
     types:
       - Boolean
     content: |-
-      Print a warning if any call is caught by a fallback handler (set using the `fallbackToNetwork` option or `catch()`)
+      Print a warning if any call is caught by a fallback handler (set using `catch()`, `spy()` or the `fallbackToNetwork` option)
   - name: Promise
     types:
       - Constructor
-    content: Reference to the `Promise` constructor of a custom `Promise` implementation
+    content: A custom `Promise` constructor, if your application uses one
   - name: fetch
     types:
       - Function
-    content: Reference to a custom `fetch` implementation
+    content: A custom `fetch` implementation, if your application uses one
   - name: Headers
     types:
       - Constructor
-    content: Reference to the `Headers` constructor of a custom `fetch` implementation
+    content: The `Headers` constructor of a custom `fetch` implementation, if your application uses one
   - name: Request
     types:
       - Constructor
-    content: Reference to the `Request` constructor of a custom `fetch` implementation
+    content: The `Request` constructor of a custom `fetch` implementation, if your application uses one
   - name: Response
     types:
       - Constructor
-    content: Reference to the `Response` constructor of a custom `fetch` implementation
+    content: The `Response` constructor of a custom `fetch` implementation, if your application uses one
 
 content_markdown: |-
   Options marked with a `†` can also be overridden for individual calls to `.mock(matcher, response, options)` by setting as properties on the `options` parameter
-  {: .info}
+  
 
 ---

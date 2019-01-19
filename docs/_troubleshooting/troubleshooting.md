@@ -7,7 +7,7 @@ content_markdown: |-
   First of all, consider whether you could just use `fetch` as a global. Here are 3 reasons why this is a good idea:
 
   - The `fetch` standard defines it as a global (and in some cases it won't work unless bound to `window`), so to write isomorphic code it's probably best to stick to this pattern
-  - [`isomorphic-fetch`](https://www.npmjs.com/package/isomorphic-fetch) takes care of installing it as a global in nodejs or the browser, so there's no effort on your part to do so.
+  - [`isomorphic-fetch`](https://www.npmjs.com/package/isomorphic-fetch) takes care of installing it as a global in Node.js or the browser, so there's no effort on your part to do so.
   - `fetch-mock` is primarily designed to work with `fetch` as a global and your experience of using it will be far more straightforward if you follow this pattern
 
   Still not convinced?
@@ -25,7 +25,7 @@ content_markdown: |-
 
   - If your client-side code or tests do not use a loader that respects the browser field of package.json use `require('fetch-mock/es5/client')`.
   - If you need to use fetch-mock without commonjs, you can include the precompiled `node_modules/fetch-mock/es5/client-browserified.js` in a script tag. This loads fetch-mock into the `fetchMock` global variable.
-  - For server side tests running in nodejs 0.12 or lower use `require('fetch-mock/es5/server')`
+  - For server side tests running in Node.js 0.12 or lower use `require('fetch-mock/es5/server')`
 
   ### Matching `Request` objects in node fails
   In node, if your `Request` object is not an instance of the `Request`

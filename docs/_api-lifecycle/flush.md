@@ -7,6 +7,5 @@ description: |-
 content_markdown: |-
   Useful for testing code that uses `fetch` but doesn't return a promise.
 
-  Pass in `true` to wait for all body parsing methods (`res.json()`, `res.text()`, etc.) to resolve too.
-  {: .info}
+  If `waitForBody` is `true`, the promise will wait for all body parsing methods (`res.json()`, `res.text()`, etc.) to resolve too.
 ---

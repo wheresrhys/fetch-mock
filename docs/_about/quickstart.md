@@ -29,7 +29,7 @@ content_markdown: |-
 
   #### Example
 
-  Example with node: suppose we have a file `make-request.js` with a function that calls `fetch`:
+  Example with Node.js: suppose we have a file `make-request.js` with a function that calls `fetch`:
 
   ```js
   module.exports = function makeRequest() {

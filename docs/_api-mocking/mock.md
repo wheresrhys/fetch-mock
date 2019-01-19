@@ -2,14 +2,14 @@
 title: ".mock(matcher, response, options)"
 navTitle: .mock()
 position: 1.0
-description: "Replaces `fetch` with a stub which records its calls and returns a `Response` instance."
+description: Initialises or extends a stub implementation of fetch, applying a `route` that matches `matcher`, delivers a `Response` configured using `response`, and that respects the additional `options`. The stub will record its calls so they can be inspected later. If `.mock()` is called on the top level `fetch-mock` instance, this stub function will also replace `fetch` globally. 
 parameters:
   - name: matcher
     types:
       - String
       - Regex
       - Function
-    content: Rule for matching calls to `fetch`
+    content: Rule for which calls to `fetch` should match this route
   - name: response
     types:
       - String
@@ -17,15 +17,16 @@ parameters:
       - Function
       - Promise
       - Response
-    content: Response to send matched calls
+    content: Response to send when a call is matched
   - name: options
     types:
       - Object
-    content: More options configuring [mainly] matching behaviour
+    content: More options to configure matching and responding behaviour
 content_markdown: |-
-
   Alternatively a single parameter, `options`, an Object with `matcher`, `response` and other options defined, can be passed
-  {: .info}
+
+  In the documentation "route" is often used to refer to the combination of matching and responding behaviour set up using a single call to `mock()`
+  
 
 left_code_blocks:
   - code_block: |-

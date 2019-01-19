@@ -12,7 +12,7 @@ parameters:
         - undefined
         - true
         content: |-
-          Runs over all calls matched by `fetch`
+          Returns true if all routes have been called the expected number of times
       - name: routeIdentifier
         types:
           - String|RegExp|function
@@ -21,8 +21,8 @@ parameters:
           - If it's a named route, the identifier is the route's name
           - If the route is unnamed, the identifier is the `matcher` passed in to `.mock()`
 
-          All calls that were handled by the route with the given identifier will be retrieved
+          Returns true if the routes specified by the identifier has been called the expected number of times
 content_markdown: |-
-  If several routes have the same matcher/url, but use [mocking options](#apimockingmock_options), the recommended way to handle this is to name each route and filter using those names
-  {: .info}
+  If several routes have the same matcher/url, but use [mocking options](#apimockingmock_options), the recommended way to handle this is to [name each route](#api-mockingmock_options) and filter using those names
+  
 ---

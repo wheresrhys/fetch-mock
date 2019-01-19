@@ -3,8 +3,7 @@ title: Custom subclasses
 position: 6
 parentItem: installation
 content_markdown: |-
-  Some fetch-mock internals require access to the `Request`, `Response` and `Headers` constructors provided by your chosen `fetch` implementation. These should be set on the `fetchMock.config` object
-  {: .warning}
+  `fetch-mock` uses `Request`, `Response` and `Headers` constructors internally, and obtains these from `node-fetch` in Node.js, or `window` in the browser. If you are using an alternative implementation of `fetch` you will need to configure `fetch-mock` to use its implementations of these constructors instead. These should be set on the `fetchMock.config` object, e.g.
 
   ```javascript
   const ponyfill = require('fetch-ponyfill')();

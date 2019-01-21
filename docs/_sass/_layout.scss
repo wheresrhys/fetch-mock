@@ -42,7 +42,7 @@ main {
 	display: grid;
 	padding-top: 2rem;
 	grid-gap: 2rem;
-  grid-template-columns: 1fr 55rem 1fr;
+  grid-template-columns: 1fr minmax(0, 55rem) 1fr;
 }
 
 .docs:last-of-type {
@@ -57,6 +57,10 @@ section, h2 {
 
 section {
 	padding-top: 2rem
+}
+
+section dd {
+	margin-left: 0
 }
 
 @media only screen and (min-width:$mobile-break) {

@@ -18,12 +18,25 @@ content_markdown: |-
   module.exports = fetchMock;
   ```
   
+  Then, in your test files, when you `require('node-fetch')`, it will return the sandboxed `fetch-mock` instance from the manual mock, so you can use all the `fetch-mock` methods directly on it.
+  
   When using a webpack based compilation step, something like the following may be necessary instead
   
   ```javascript
   const fetchMock = require('fetch-mock').sandbox();
   const nodeFetch = require('node-fetch');
   nodeFetch.default = fetchMock;
+  ```
+  
+  If your tests include integration tests that need access to the network, set the `fallbackToNetwork: true` config option within the describe block of those tests:
+  
+  ```javascript
+  const fetch = require('node-fetch');
+  describe('integration', () => {
+    beforeAll(() => fetchMock.config.fallbackToNetwork = true);
+    afterAll(() => fetchMock.config.fallbackToNetwork = false);
+  });
+
   ```
 ---
 

@@ -2,6 +2,16 @@ const responseBuilder = require('./response-builder');
 const requestUtils = require('./request-utils');
 const FetchMock = {};
 
+class AbortError extends Error {
+	constructor() {
+		super(...arguments);
+		this.name = 'AbortError';
+
+		// Do not include this class in the stacktrace
+		Error.captureStackTrace(this, this.constructor);
+	}
+}
+
 const resolve = async (response, url, options, request) => {
 	// We want to allow things like
 	// - function returning a Promise for a response
@@ -41,7 +51,7 @@ FetchMock.fetchHandler = function(url, options, request) {
 	return new this.config.Promise((res, rej) => {
 		if (options && options.signal) {
 			const abort = () => {
-				rej(new Error(`URL '${url}' aborted.`));
+				rej(new AbortError(`URL '${url}' aborted.`));
 				done();
 			};
 			if (options.signal.aborted) {

@@ -29,6 +29,7 @@ module.exports = fetchMock => {
 					signal: controller.signal
 				});
 			} catch (error) {
+				expect(error.name).to.equal('AbortError');
 				expect(error.message).to.equal("URL 'http://it.at.there/' aborted.");
 			}
 		});
@@ -44,6 +45,7 @@ module.exports = fetchMock => {
 					signal: controller.signal
 				});
 			} catch (error) {
+				expect(error.name).to.equal('AbortError');
 				expect(error.message).to.equal("URL 'http://it.at.there/' aborted.");
 			}
 		});

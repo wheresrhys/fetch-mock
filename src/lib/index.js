@@ -20,7 +20,6 @@ FetchMock.createInstance = function(isLibrary) {
 	);
 	instance.fallbackResponse = this.fallbackResponse || undefined;
 	instance.config = Object.assign({}, this.config || FetchMock.config);
-	instance._calls = {};
 	instance._calls = [];
 	instance._holdingPromises = [];
 	instance.bindMethods();

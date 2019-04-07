@@ -120,7 +120,6 @@ FetchMock.resetBehavior = function() {
 };
 
 FetchMock.resetHistory = function() {
-	this._calls = {};
 	this._calls = [];
 	this._holdingPromises = [];
 	this.routes.forEach(route => route.reset && route.reset());

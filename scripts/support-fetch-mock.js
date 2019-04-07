@@ -1,11 +1,11 @@
 /* eslint-disable no-console */
 function isTrue(value) {
-	return !!value && value !== "0" && value !== "false"
+	return !!value && value !== '0' && value !== 'false';
 }
 
-var envDisable = isTrue(process.env.CI);
-var logLevel = process.env.npm_config_loglevel;
-var logLevelDisplay = ['silent', 'error', 'warn'].indexOf(logLevel) > -1;
+const envDisable = isTrue(process.env.CI);
+const logLevel = process.env.npm_config_loglevel;
+const logLevelDisplay = ['silent', 'error', 'warn'].indexOf(logLevel) > -1;
 
 if (!envDisable && !logLevelDisplay) {
 	const green = '\u001b[32m';

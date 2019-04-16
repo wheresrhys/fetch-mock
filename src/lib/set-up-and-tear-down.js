@@ -46,8 +46,10 @@ FetchMock.addRoute = function(uncompiledRoute) {
 
 	if (overwriteRoutes === true) {
 		const index = this.routes.indexOf(clashes.find(methodsMatch));
-		this._uncompiledRoutes.splice(index, 1, uncompiledRoute);
-		return this.routes.splice(index, 1, route);
+		if (index > -1) {
+			this._uncompiledRoutes.splice(index, 1, uncompiledRoute);
+			return this.routes.splice(index, 1, route);
+		}
 	}
 
 	if (

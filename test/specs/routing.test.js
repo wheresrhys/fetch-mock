@@ -511,6 +511,36 @@ module.exports = fetchMock => {
 					expect(fm.calls(true).length).to.equal(1);
 				});
 
+				it('overwriting similar routes with different methods', async () => {
+					const localFm = fetchMock.createInstance();
+					localFm.config.overwriteRoutes = true;
+
+					localFm
+						.mock('http://it.at.there/', 200, { method: 'POST' })
+						.mock('http://another/', 200)
+						.mock('http://it.at.there/', 200, { method: 'GET' })
+						.catch();
+
+					await localFm.fetchHandler('http://another/', { method: 'GET' });
+					expect(localFm.calls(true).length).to.equal(1);
+				});
+
+				it('overwriting similar routes with different methods #2', async () => {
+					const localFm = fetchMock.createInstance();
+					localFm.config.overwriteRoutes = true;
+
+					localFm
+						.mock('http://it.at.there/', 200, { method: 'POST' })
+						.mock('http://it.at.there/', 200, { method: 'GET' })
+						.catch();
+
+					await localFm.fetchHandler('http://it.at.there/', { method: 'POST' });
+					expect(localFm.calls(true).length).to.equal(1);
+
+					await localFm.fetchHandler('http://it.at.there/', { method: 'GET' });
+					expect(localFm.calls(true).length).to.equal(2);
+				});
+
 				it('match implicit GET', async () => {
 					fm.mock('http://it.at.there/', 200, { method: 'GET' }).catch();
 

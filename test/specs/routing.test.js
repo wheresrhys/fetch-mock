@@ -654,15 +654,17 @@ module.exports = fetchMock => {
 						.catch();
 				});
 
-				it("overwrite multiple routes", async () => {
+				it('overwrite multiple routes', async () => {
 					fm.mock('http://it.at.there/', 200, { method: 'POST' })
 						.mock('http://it.at.there/', 200, { method: 'GET' })
 						.mock('http://it.at.there/', 300, { overwriteRoutes: true })
 						.catch();
 					const res1 = await fm.fetchHandler('http://it.at.there/');
 					expect(res1.status).to.equal(300);
-					const res2 = await fm.fetchHandler('http://it.at.there/', {method: 'post'});
-					expect(res1.status).to.equal(300);
+					const res2 = await fm.fetchHandler('http://it.at.there/', {
+						method: 'post'
+					});
+					expect(res2.status).to.equal(300);
 				});
 			});
 		});

@@ -1,10 +1,8 @@
 const compileRoute = require('./compile-route');
 const FetchMock = {};
 
-const compareValues = (val1, val2) => !val1 || !val2 || val1 === val2;
-
-const getPropertyComparer = (route, propName) => route2 =>
-	compareValues(route[propName], route2[propName]);
+const compareToMethod = method => route =>
+	!method || !route.method || method === route.method;
 
 FetchMock.mock = function(matcher, response, options = {}) {
 	let route;
@@ -31,26 +29,31 @@ FetchMock.mock = function(matcher, response, options = {}) {
 
 FetchMock.addRoute = function(uncompiledRoute) {
 	const route = this.compileRoute(uncompiledRoute);
-	const clash = this.routes
-		.filter(getPropertyComparer(route, 'identifier'))
-		.find(getPropertyComparer(route, 'method'));
+	const clashes = this.routes
+		.filter(({ identifier }) => identifier === route.identifier)
+		.filter(compareToMethod(route.method));
+
 	const overwriteRoutes =
 		'overwriteRoutes' in route
 			? route.overwriteRoutes
 			: this.config.overwriteRoutes;
 
-	if (overwriteRoutes === false || !clash) {
+	if (overwriteRoutes === false || !clashes.length) {
 		this._uncompiledRoutes.push(uncompiledRoute);
 		return this.routes.push(route);
 	}
 
 	if (overwriteRoutes === true) {
-		const index = this.routes.indexOf(clash);
-		this._uncompiledRoutes.splice(index, 1, uncompiledRoute);
-		return this.routes.splice(index, 1, route);
+		clashes.forEach(clash => {
+			const index = this.routes.indexOf(clash);
+			this._uncompiledRoutes.splice(index, 1, uncompiledRoute);
+			this.routes.splice(index, 1, route);
+		});
+
+		return this.routes;
 	}
 
-	if (clash) {
+	if (clashes.length) {
 		throw new Error(
 			'fetch-mock: Adding route with same name or matcher as existing route. See `overwriteRoutes` option.'
 		);

@@ -1,9 +1,6 @@
 const compileRoute = require('./compile-route');
 const FetchMock = {};
 
-const compareToMethod = method => route =>
-	!method || !route.method || method === route.method;
-
 FetchMock.mock = function(matcher, response, options = {}) {
 	let route;
 
@@ -29,9 +26,11 @@ FetchMock.mock = function(matcher, response, options = {}) {
 
 FetchMock.addRoute = function(uncompiledRoute) {
 	const route = this.compileRoute(uncompiledRoute);
-	const clashes = this.routes
-		.filter(({ identifier }) => identifier === route.identifier)
-		.filter(compareToMethod(route.method));
+	const clashes = this.routes.filter(
+		({ identifier, method }) =>
+			identifier === route.identifier &&
+			(!method || !route.method || method === route.method)
+	);
 
 	const overwriteRoutes =
 		'overwriteRoutes' in route

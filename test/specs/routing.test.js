@@ -647,6 +647,12 @@ module.exports = fetchMock => {
 					const res2 = await fm.fetchHandler('http://it.at.there/');
 					expect(res2.status).to.equal(300);
 				});
+
+				it("don't require overwrite route when only difference is method", () => {
+					fm.mock('http://it.at.there/', 200, { method: 'POST' })
+						.mock('http://it.at.there/', 200, { method: 'GET' })
+						.catch();
+				});
 			});
 		});
 

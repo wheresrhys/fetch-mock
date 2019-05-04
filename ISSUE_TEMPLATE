@@ -1,11 +1,10 @@
-** Note that issues not adhering to these rules, and not responding to requests to 
-rectify this will normally be closed within a few days. If you want your issue fixed, 
-please stick to the rules **
+ISSUES NOT ADHERING TO THESE RULES WILL BE CLOSED
+If you want your issue addressed, please stick to the rules
 
-Please read the docs before raising an issue
-    - [Configuration](http://www.wheresrhys.co.uk/fetch-mock/#usageconfiguration)
-    - [API](http://www.wheresrhys.co.uk/fetch-mock/#api-mockingmock)
-    - [Troubleshooting](http://www.wheresrhys.co.uk/fetch-mock/#troubleshootingtroubleshooting)
+Please read the documentation before raising an issue
+- [Configuration](http://www.wheresrhys.co.uk/fetch-mock/#usageconfiguration)
+- [API](http://www.wheresrhys.co.uk/fetch-mock/#api-mockingmock)
+- [Troubleshooting](http://www.wheresrhys.co.uk/fetch-mock/#troubleshootingtroubleshooting)
 
     
 Be clear and precise about what the issue is. Take the time to include details of
@@ -16,10 +15,10 @@ it's running in.
   during compilation'
 
 Provide code that recreates the issue you're having. Ideally either
-    - recreate the problem with a failing test and submit a PR
-    - recreate the problem in a code sharing platform, e.g. [repl.it](https://repl.it/languages/nodejs)
-    - create a repo with a minimal test case using your build/test setup, and 
-      link to this in the issue
+- recreate the problem with a failing test and submit a PR
+- recreate the problem in a code sharing platform, e.g. [repl.it](https://repl.it/languages/nodejs)
+- create a repo with a minimal test case using your build/test setup, and 
+  link to this in the issue
 
 The above may seem like a lot of work, but the easier you make it for me to 
 recreate the bug, the sooner it'll get fixed.

@@ -2,7 +2,9 @@
 // transpiling all the tests, which muddies the waters a bit
 // So instead just making sure there are no syntax errors or issues with
 // missing globals or methods
-require('babel-polyfill');
+require('babel-core').transform('code', {
+  plugins: ['transform-runtime']
+});
 const fetchMock = require('../es5/server');
 
 fetchMock.mock('http://it.at.there/', 200);

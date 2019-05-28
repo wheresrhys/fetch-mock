@@ -34,13 +34,16 @@ const normalizeUrl = url => {
 };
 
 module.exports = {
-	normalizeRequest: (url, options, Request) => {
+	normalizeRequest: (url, options={}, Request) => {
 		if (Request.prototype.isPrototypeOf(url)) {
 			const obj = {
 				url: normalizeUrl(url.url),
-				options: {
-					method: url.method
-				},
+				options: Object.assign(
+					{
+						method: url.method
+					},
+					options
+				),
 				request: url
 			};
 

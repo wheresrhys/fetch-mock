@@ -26,7 +26,10 @@ module.exports = fetchMock => {
 			describe('signatures', () => {
 				before(() => {
 					fm.mock('http://it.at.here/', 200).mock('http://it.at.there/', 200);
-					return fm.fetchHandler('http://it.at.here/', { method: 'post', arbitraryOption: true });
+					return fm.fetchHandler('http://it.at.here/', {
+						method: 'post',
+						arbitraryOption: true
+					});
 				});
 				after(() => fm.restore());
 				it('called() returns boolean', () => {
@@ -54,7 +57,8 @@ module.exports = fetchMock => {
 				});
 				it('lastOptions() returns object', () => {
 					expect(fm.lastOptions('http://it.at.here/')).to.eql({
-						method: 'post', arbitraryOption: true
+						method: 'post',
+						arbitraryOption: true
 					});
 					expect(fm.lastOptions('http://it.at.there/')).to.be.undefined;
 				});
@@ -490,6 +494,20 @@ module.exports = fetchMock => {
 				]);
 				expect(fm.lastUrl()).to.equal('http://it.at.here/');
 				expect(fm.lastOptions()).to.eql({ method: 'POST' });
+				expect(fm.lastCall().request).to.equal(req);
+			});
+
+			it('when called with Request instance and arbitrary option', () => {
+				const req = new fm.config.Request('http://it.at.here/', {
+					method: 'POST'
+				});
+				fm.fetchHandler(req, { arbitraryOption: true });
+				expect(fm.lastCall()).to.eql([
+					'http://it.at.here/',
+					{ method: 'POST', arbitraryOption: true }
+				]);
+				expect(fm.lastUrl()).to.equal('http://it.at.here/');
+				expect(fm.lastOptions()).to.eql({ method: 'POST', arbitraryOption: true });
 				expect(fm.lastCall().request).to.equal(req);
 			});
 		});

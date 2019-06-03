@@ -34,7 +34,7 @@ const normalizeUrl = url => {
 };
 
 module.exports = {
-	normalizeRequest: (url, options={}, Request) => {
+	normalizeRequest: (url, options, Request) => {
 		if (Request.prototype.isPrototypeOf(url)) {
 			const obj = {
 				url: normalizeUrl(url.url),

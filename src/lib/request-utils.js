@@ -38,9 +38,12 @@ module.exports = {
 		if (Request.prototype.isPrototypeOf(url)) {
 			const obj = {
 				url: normalizeUrl(url.url),
-				options: {
-					method: url.method
-				},
+				options: Object.assign(
+					{
+						method: url.method
+					},
+					options
+				),
 				request: url
 			};
 

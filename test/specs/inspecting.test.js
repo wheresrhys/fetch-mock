@@ -507,7 +507,10 @@ module.exports = fetchMock => {
 					{ method: 'POST', arbitraryOption: true }
 				]);
 				expect(fm.lastUrl()).to.equal('http://it.at.here/');
-				expect(fm.lastOptions()).to.eql({ method: 'POST', arbitraryOption: true });
+				expect(fm.lastOptions()).to.eql({
+					method: 'POST',
+					arbitraryOption: true
+				});
 				expect(fm.lastCall().request).to.equal(req);
 			});
 		});

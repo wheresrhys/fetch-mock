@@ -2,7 +2,7 @@ const responseBuilder = require('./response-builder');
 const requestUtils = require('./request-utils');
 const FetchMock = {};
 
-const resolve = async (response, url, options, request) => {
+const resolve = async ({response, responseIsFetch = false}, url, options, request) => {
 	// We want to allow things like
 	// - function returning a Promise for a response
 	// - delaying (using a timeout Promise) a function's execution to generate
@@ -15,7 +15,9 @@ const resolve = async (response, url, options, request) => {
 		typeof response.then === 'function'
 	) {
 		if (typeof response === 'function') {
-			response = response(url, options, request);
+			// in the case of falling back to the network we need to make sure we're using
+			// the opriginal Request instance, not our normalised url + options
+			response = (request && responseIsFetch) ? response(request) : response(url, options, request);
 		} else {
 			response = await response;
 		}
@@ -60,7 +62,7 @@ FetchMock.fetchHandler.isMock = true;
 
 FetchMock.executeRouter = function(url, options, request) {
 	if (this.config.fallbackToNetwork === 'always') {
-		return { response: this.getNativeFetch() };
+		return { response: this.getNativeFetch(), responseIsFetch: true };
 	}
 
 	const match = this.router(url, options, request);
@@ -87,11 +89,11 @@ FetchMock.executeRouter = function(url, options, request) {
 		);
 	}
 
-	return { response: this.getNativeFetch() };
+	return { response: this.getNativeFetch(), responseIsFetch: true };
 };
 
 FetchMock.generateResponse = async function(route, url, options, request) {
-	const response = await resolve(route.response, url, options, request);
+	const response = await resolve(route, url, options, request);
 
 	// If the response says to throw an error, throw it
 	// Type checking is to deal with sinon spies having a throws property :-0

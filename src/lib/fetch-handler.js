@@ -15,22 +15,20 @@ const resolve = async (
 	// Because of this we can't safely check for function before Promisey-ness,
 	// or vice versa. So to keep it DRY, and flexible, we keep trying until we
 	// have something that looks like neither Promise nor function
-	while (
-		typeof response === 'function' ||
-		typeof response.then === 'function'
-	) {
+	while (true) {
 		if (typeof response === 'function') {
 			// in the case of falling back to the network we need to make sure we're using
-			// the opriginal Request instance, not our normalised url + options
+			// the original Request instance, not our normalised url + options
 			response =
 				request && responseIsFetch
 					? response(request)
 					: response(url, options, request);
-		} else {
+		} else if (typeof response.then === 'function') {
 			response = await response;
+		} else {
+			return response;
 		}
 	}
-	return response;
 };
 
 FetchMock.fetchHandler = function(url, options, request) {

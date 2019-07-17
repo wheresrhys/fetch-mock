@@ -59,9 +59,9 @@ module.exports = (fetchMock, theGlobal, fetch) => {
 				sbx.config.fetch = fakeRealFetch;
 				sbx.config.fallbackToNetwork = true;
 				sbx.mock('http://it.at.there/', 204);
-				const req = new sbx.config.Request('http://it.at.where/')
-				const res = await sbx(req);
-				expect(fakeRealFetch.lastCall().request).to.equal(req)
+				const req = new sbx.config.Request('http://it.at.where/');
+				await sbx(req);
+				expect(fakeRealFetch.lastCall().request).to.equal(req);
 			});
 
 			describe('always', () => {

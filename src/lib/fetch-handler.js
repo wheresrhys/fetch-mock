@@ -2,7 +2,12 @@ const responseBuilder = require('./response-builder');
 const requestUtils = require('./request-utils');
 const FetchMock = {};
 
-const resolve = async ({response, responseIsFetch = false}, url, options, request) => {
+const resolve = async (
+	{ response, responseIsFetch = false },
+	url,
+	options,
+	request
+) => {
 	// We want to allow things like
 	// - function returning a Promise for a response
 	// - delaying (using a timeout Promise) a function's execution to generate
@@ -17,7 +22,10 @@ const resolve = async ({response, responseIsFetch = false}, url, options, reques
 		if (typeof response === 'function') {
 			// in the case of falling back to the network we need to make sure we're using
 			// the opriginal Request instance, not our normalised url + options
-			response = (request && responseIsFetch) ? response(request) : response(url, options, request);
+			response =
+				request && responseIsFetch
+					? response(request)
+					: response(url, options, request);
 		} else {
 			response = await response;
 		}

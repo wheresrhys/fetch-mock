@@ -1,12 +1,9 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-module.exports = fetchMock => {
-	if (typeof AbortController === 'undefined') {
-		return;
-	}
+module.exports = (fetchMock, AbortController) => {
 
-	describe('abortable fetch', () => {
+	(AbortController ? describe : describe.skip)('abortable fetch', () => {
 		let fm;
 		beforeEach(() => {
 			fm = fetchMock.createInstance();
@@ -29,7 +26,8 @@ module.exports = fetchMock => {
 					signal: controller.signal
 				});
 			} catch (error) {
-				expect(error.message).to.equal("URL 'http://it.at.there/' aborted.");
+				expect(error.name).to.equal('AbortError');
+				expect(error.message).to.equal('The operation was aborted.');
 			}
 		});
 
@@ -44,7 +42,8 @@ module.exports = fetchMock => {
 					signal: controller.signal
 				});
 			} catch (error) {
-				expect(error.message).to.equal("URL 'http://it.at.there/' aborted.");
+				expect(error.name).to.equal('AbortError');
+				expect(error.message).to.equal('The operation was aborted.');
 			}
 		});
 

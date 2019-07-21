@@ -2,7 +2,6 @@ const chai = require('chai');
 const expect = chai.expect;
 
 module.exports = (fetchMock, AbortController) => {
-
 	(AbortController ? describe : describe.skip)('abortable fetch', () => {
 		let fm;
 		beforeEach(() => {

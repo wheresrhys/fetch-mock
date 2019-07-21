@@ -3,7 +3,7 @@ const requestUtils = require('./request-utils');
 const FetchMock = {};
 
 // see https://heycam.github.io/webidl/#aborterror for the standardised interface
-// Not that this differs skightly from node-fetch
+// Note that this differs slightly from node-fetch
 class AbortError extends Error {
 	constructor() {
 		super(...arguments);

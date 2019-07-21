@@ -57,6 +57,7 @@
     "node": ">=4.0.0"
   },
   "devDependencies": {
+    "abort-controller": "^3.0.0",
     "babel-cli": "^6.1.2",
     "babel-loader": "^7.1.2",
     "babel-plugin-transform-runtime": "^6.23.0",

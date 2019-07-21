@@ -2,6 +2,19 @@ const responseBuilder = require('./response-builder');
 const requestUtils = require('./request-utils');
 const FetchMock = {};
 
+// see https://heycam.github.io/webidl/#aborterror for the standardised interface
+// Note that this differs slightly from node-fetch
+class AbortError extends Error {
+	constructor() {
+		super(...arguments);
+		this.name = 'AbortError';
+		this.message = 'The operation was aborted.';
+
+		// Do not include this class in the stacktrace
+		Error.captureStackTrace(this, this.constructor);
+	}
+}
+
 const resolve = async (
 	{ response, responseIsFetch = false },
 	url,
@@ -49,7 +62,7 @@ FetchMock.fetchHandler = function(url, options, request) {
 	return new this.config.Promise((res, rej) => {
 		if (options && options.signal) {
 			const abort = () => {
-				rej(new Error(`URL '${url}' aborted.`));
+				rej(new AbortError());
 				done();
 			};
 			if (options.signal.aborted) {

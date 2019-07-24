@@ -7,7 +7,7 @@ content_markdown: |-
 
   ```javascript
   const ponyfill = require('fetch-ponyfill')();
-  fetchMock.config = Object.assign(fetchMock.config, {
+  Object.assign(fetchMock.config, {
       Headers: ponyfill.Headers,
       Request: ponyfill.Request,
       Response: ponyfill.Response,

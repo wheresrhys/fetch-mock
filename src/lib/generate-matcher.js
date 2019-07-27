@@ -25,6 +25,9 @@ const stringMatchers = {
 };
 
 const getHeaderMatcher = ({ headers: expectedHeaders }) => {
+	if (!expectedHeaders) {
+		return
+	}
 	const expectation = headerUtils.toLowerCase(expectedHeaders);
 	return (url, { headers = {} }) => {
 		const lowerCaseHeaders = headerUtils.toLowerCase(
@@ -38,11 +41,17 @@ const getHeaderMatcher = ({ headers: expectedHeaders }) => {
 };
 
 const getMethodMatcher = ({ method: expectedMethod }) => {
+	if (!expectedMethod) {
+		return
+	}
 	return (url, { method }) =>
 		expectedMethod === (method ? method.toLowerCase() : 'get');
 };
 
 const getQueryStringMatcher = ({ query: expectedQuery }) => {
+	if (!expectedQuery) {
+		return
+	}
 	const keys = Object.keys(expectedQuery);
 	return url => {
 		const query = querystring.parse(getQuery(url));
@@ -50,15 +59,18 @@ const getQueryStringMatcher = ({ query: expectedQuery }) => {
 	};
 };
 
-const getParamsMatcher = ({ params: expectedParams, url: matcheUrl }) => {
-	if (!/express:/.test(matcheUrl)) {
+const getParamsMatcher = ({ params: expectedParams, url: matcherUrl }) => {
+	if (!expectedParams) {
+		return
+	}
+	if (!/express:/.test(matcherUrl)) {
 		throw new Error(
 			'fetch-mock: matching on params is only possible when using an express: matcher'
 		);
 	}
 	const expectedKeys = Object.keys(expectedParams);
 	const keys = [];
-	const re = pathToRegexp(matcheUrl.replace(/^express:/, ''), keys);
+	const re = pathToRegexp(matcherUrl.replace(/^express:/, ''), keys);
 	return url => {
 		const vals = re.exec(getPath(url)) || [];
 		vals.shift();
@@ -106,6 +118,7 @@ const getFullUrlMatcher = (route, matcherUrl, query) => {
 	};
 };
 
+<<<<<<< HEAD
 const getFunctionMatcher = ({ functionMatcher }) => functionMatcher;
 
 const getUrlMatcher = route => {
@@ -143,6 +156,17 @@ module.exports = route => {
 		route.body && getBodyMatcher(route),
 		route.functionMatcher && getFunctionMatcher(route),
 		route.url && getUrlMatcher(route)
+=======
+module.exports = (route, useDebugger = true) => {
+	useDebugger && debug('Compiling matcher for route')
+	const matchers = [
+		getQueryStringMatcher(route),
+		getMethodMatcher(route),
+		getHeaderMatcher(route),
+		getParamsMatcher(route),
+		getFunctionMatcher(route),
+		getUrlMatcher(route)
+>>>>>>> minor refactor to make debug logging easier in matcher building
 	].filter(matcher => !!matcher);
 
 	return (url, options = {}, request) =>

@@ -1,3 +1,4 @@
+const debug = require('debug')('fetch-mock');
 const glob = require('glob-to-regexp');
 const pathToRegexp = require('path-to-regexp');
 const querystring = require('querystring');
@@ -133,6 +134,7 @@ const getUrlMatcher = route => {
 };
 
 module.exports = route => {
+	debug('Generating matcher for route')
 	const matchers = [
 		route.query && getQueryStringMatcher(route),
 		route.method && getMethodMatcher(route),

@@ -1,4 +1,4 @@
-const debug = require('debug')('fetch-mock')
+const debug = require('debug')('fetch-mock');
 const responseBuilder = require('./response-builder');
 const requestUtils = require('./request-utils');
 const FetchMock = {};
@@ -24,7 +24,7 @@ const resolve = async (
 	options,
 	request
 ) => {
-	debug('Recursively resolving function and promise responses')
+	debug('Recursively resolving function and promise responses');
 	// We want to allow things like
 	// - function returning a Promise for a response
 	// - delaying (using a timeout Promise) a function's execution to generate
@@ -34,27 +34,27 @@ const resolve = async (
 	// have something that looks like neither Promise nor function
 	while (true) {
 		if (typeof response === 'function') {
-			debug('  Response is a function')
+			debug('  Response is a function');
 			// in the case of falling back to the network we need to make sure we're using
 			// the original Request instance, not our normalised url + options
 			if (responseIsFetch) {
 				if (request) {
-					debug('  > Calling fetch with Request instance')
-					return response(request)
+					debug('  > Calling fetch with Request instance');
+					return response(request);
 				}
-				debug('  > Calling fetch with url and options')
+				debug('  > Calling fetch with url and options');
 				return response(url, options);
 			} else {
-				debug('  > Calling custom matcher function')
+				debug('  > Calling custom matcher function');
 				return response(url, options, request);
 			}
 		} else if (typeof response.then === 'function') {
-			debug('  Response is a promise')
-			debug('  > Resolving promise')
+			debug('  Response is a promise');
+			debug('  > Resolving promise');
 			response = await response;
 		} else {
-			debug('  Response is not a function or a promise')
-			debug('  > Returning response for conversion into Response instance')
+			debug('  Response is not a function or a promise');
+			debug('  > Returning response for conversion into Response instance');
 			return response;
 		}
 	}
@@ -109,16 +109,18 @@ FetchMock.fetchHandler = function(url, options, request) {
 FetchMock.fetchHandler.isMock = true;
 
 FetchMock.executeRouter = function(url, options, request) {
-	debug('Attempting to match request to defined routes')
+	debug('Attempting to match request to defined routes');
 	if (this.config.fallbackToNetwork === 'always') {
-		debug('  Configured with fallbackToNetwork=always - passing through to fetch')
+		debug(
+			'  Configured with fallbackToNetwork=always - passing through to fetch'
+		);
 		return { response: this.getNativeFetch(), responseIsFetch: true };
 	}
 
 	const match = this.router(url, options, request);
 
 	if (match) {
-		debug('  Matching route found')
+		debug('  Matching route found');
 		return match;
 	}
 
@@ -129,7 +131,7 @@ FetchMock.executeRouter = function(url, options, request) {
 	this.push({ url, options, request, isUnmatched: true });
 
 	if (this.fallbackResponse) {
-		debug('  No matching route found - using fallbackResponse')
+		debug('  No matching route found - using fallbackResponse');
 		return { response: this.fallbackResponse };
 	}
 
@@ -141,7 +143,7 @@ FetchMock.executeRouter = function(url, options, request) {
 		);
 	}
 
-	debug('  Configured to fallbackToNetwork - passing through to fetch')
+	debug('  Configured to fallbackToNetwork - passing through to fetch');
 	return { response: this.getNativeFetch(), responseIsFetch: true };
 };
 
@@ -151,13 +153,13 @@ FetchMock.generateResponse = async function(route, url, options, request) {
 	// If the response says to throw an error, throw it
 	// Type checking is to deal with sinon spies having a throws property :-0
 	if (response.throws && typeof response !== 'function') {
-		debug('response.throws is defined - throwing an error')
+		debug('response.throws is defined - throwing an error');
 		throw response.throws;
 	}
 
 	// If the response is a pre-made Response, respond with it
 	if (this.config.Response.prototype.isPrototypeOf(response)) {
-		debug('response is already a Response instance - returning it')
+		debug('response is already a Response instance - returning it');
 		return response;
 	}
 

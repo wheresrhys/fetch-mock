@@ -10,30 +10,42 @@ const {
 } = require('./request-utils');
 const isEqual = require('lodash.isequal');
 
+const debuggableUrlFunc = func => url => {
+	debug('Actual url:', url);
+	return func(url);
+};
+
 const stringMatchers = {
-	begin: targetString => url => url.indexOf(targetString) === 0,
-	end: targetString => url => url.substr(-targetString.length) === targetString,
+	begin: targetString =>
+		debuggableUrlFunc(url => url.indexOf(targetString) === 0),
+	end: targetString =>
+		debuggableUrlFunc(url => url.substr(-targetString.length) === targetString),
 	glob: targetString => {
 		const urlRX = glob(targetString);
-		return url => urlRX.test(url);
+		return debuggableUrlFunc(url => urlRX.test(url));
 	},
 	express: targetString => {
 		const urlRX = pathToRegexp(targetString);
-		return url => urlRX.test(getPath(url));
+		return debuggableUrlFunc(url => urlRX.test(getPath(url)));
 	},
-	path: targetString => url => getPath(url) === targetString
+	path: targetString => debuggableUrlFunc(url => getPath(url) === targetString)
 };
 
 const getHeaderMatcher = ({ headers: expectedHeaders }) => {
+	debug('Generating header matcher');
 	if (!expectedHeaders) {
-		return
+		debug('  No header expectations defined - skipping');
+		return;
 	}
 	const expectation = headerUtils.toLowerCase(expectedHeaders);
+	debug('  Expected headers:', expectation);
 	return (url, { headers = {} }) => {
+		debug('Attempting to match headers');
 		const lowerCaseHeaders = headerUtils.toLowerCase(
 			headerUtils.normalize(headers)
 		);
-
+		debug('  Expected headers:', expectation);
+		debug('  Actual headers:', lowerCaseHeaders);
 		return Object.keys(expectation).every(headerName =>
 			headerUtils.equal(lowerCaseHeaders[headerName], expectation[headerName])
 		);
@@ -41,37 +53,55 @@ const getHeaderMatcher = ({ headers: expectedHeaders }) => {
 };
 
 const getMethodMatcher = ({ method: expectedMethod }) => {
+	debug('Generating method matcher');
 	if (!expectedMethod) {
-		return
+		debug('  No method expectations defined - skipping');
+		return;
 	}
-	return (url, { method }) =>
-		expectedMethod === (method ? method.toLowerCase() : 'get');
+	debug('  Expected method:', expectedMethod);
+	return (url, { method }) => {
+		debug('Attempting to match method');
+		const actualMethod = method ? method.toLowerCase() : 'get';
+		debug('  Expected method:', expectedMethod);
+		debug('  Actual method:', actualMethod);
+		return expectedMethod === actualMethod;
+	};
 };
 
 const getQueryStringMatcher = ({ query: expectedQuery }) => {
+	debug('Generating query parameters matcher');
 	if (!expectedQuery) {
-		return
+		debug('  No query parameters expectations defined - skipping');
+		return;
 	}
+	debug('  Expected query parameters:', expectedQuery);
 	const keys = Object.keys(expectedQuery);
 	return url => {
+		debug('Attempting to match query parameters');
 		const query = querystring.parse(getQuery(url));
+		debug('  Expected query parameters:', expectedQuery);
+		debug('  Actual query parameters:', query);
 		return keys.every(key => query[key] === expectedQuery[key]);
 	};
 };
 
 const getParamsMatcher = ({ params: expectedParams, url: matcherUrl }) => {
+	debug('Generating path parameters matcher');
 	if (!expectedParams) {
-		return
+		debug('  No path parameters expectations defined - skipping');
+		return;
 	}
 	if (!/express:/.test(matcherUrl)) {
 		throw new Error(
 			'fetch-mock: matching on params is only possible when using an express: matcher'
 		);
 	}
+	debug('  Expected path parameters:', expectedParams);
 	const expectedKeys = Object.keys(expectedParams);
 	const keys = [];
 	const re = pathToRegexp(matcherUrl.replace(/^express:/, ''), keys);
 	return url => {
+		debug('Attempting to match path parameters');
 		const vals = re.exec(getPath(url)) || [];
 		vals.shift();
 		const params = keys.reduce(
@@ -79,13 +109,18 @@ const getParamsMatcher = ({ params: expectedParams, url: matcherUrl }) => {
 				vals[i] ? Object.assign(map, { [name]: vals[i] }) : map,
 			{}
 		);
+		debug('  Expected path parameters:', expectedParams);
+		debug('  Actual path parameters:', params);
 		return expectedKeys.every(key => params[key] === expectedParams[key]);
 	};
 };
 
 const getBodyMatcher = ({ body: expectedBody }) => {
+	debug('Generating body matcher');
 	return (url, { body, method = 'get' }) => {
+		debug('Attempting to match body');
 		if (method.toLowerCase() === 'get') {
+			debug('  GET request - skip matching body');
 			// GET requests don’t send a body so the body matcher should be ignored for them
 			return true;
 		}
@@ -93,8 +128,13 @@ const getBodyMatcher = ({ body: expectedBody }) => {
 		let sentBody;
 
 		try {
+			debug('  Parsing request body as JSON');
 			sentBody = JSON.parse(body);
-		} catch (_) {}
+		} catch (err) {
+			debug('  Failed to parse request body as JSON', err);
+		}
+		debug('Expected body:', expectedBody);
+		debug('Actual body:', sentBody);
 
 		return sentBody && isEqual(sentBody, expectedBody);
 	};
@@ -105,39 +145,66 @@ const getFullUrlMatcher = (route, matcherUrl, query) => {
 	// but we have to be careful to normalize the url we check and the name
 	// of the route to allow for e.g. http://it.at.there being indistinguishable
 	// from http://it.at.there/ once we start generating Request/Url objects
+	debug('  Matching using full url', matcherUrl);
 	const expectedUrl = normalizeUrl(matcherUrl);
+	debug('  Normalised url to:', matcherUrl);
 	if (route.identifier === matcherUrl) {
+		debug('  Updating route identifier to match normalized url:', matcherUrl);
 		route.identifier = expectedUrl;
 	}
 
 	return matcherUrl => {
+		debug('Expected url:', expectedUrl);
+		debug('Actual url:', matcherUrl);
 		if (query && expectedUrl.indexOf('?')) {
+			debug('Ignoring query string when matching url');
 			return matcherUrl.indexOf(expectedUrl) === 0;
 		}
 		return normalizeUrl(matcherUrl) === expectedUrl;
 	};
 };
 
-<<<<<<< HEAD
-const getFunctionMatcher = ({ functionMatcher }) => functionMatcher;
+const getFunctionMatcher = ({ matcher, functionMatcher }) => {
+	if (functionMatcher) {
+		debug('Using user defined function as matcher alongside other matchers');
+		return functionMatcher;
+	}
+	if (typeof matcher === 'function') {
+		debug('Using user defined function as matcher');
+		return matcher;
+	}
+};
+
+const getFunctionMatcher = ({ functionMatcher }) => {
+	debug('Detected user defined function matcher', functionMatcher);
+	return (...args) => {
+		debug('Calling function matcher with arguments', args)
+		return functionMatcher(...args);
+	}
+}
 
 const getUrlMatcher = route => {
+	debug('Generating url matcher');
 	const { url: matcherUrl, query } = route;
 
 	if (matcherUrl === '*') {
+		debug('  Using universal * rule to match any url');
 		return () => true;
 	}
 
 	if (matcherUrl instanceof RegExp) {
+		debug('  Using regular expression to match url:', matcherUrl);
 		return url => matcherUrl.test(url);
 	}
 
 	if (matcherUrl.href) {
+		debug(`  Using URL object to match url`, matcherUrl);
 		return getFullUrlMatcher(route, matcherUrl.href, query);
 	}
 
 	for (const shorthand in stringMatchers) {
 		if (matcherUrl.indexOf(shorthand + ':') === 0) {
+			debug(`  Using ${shorthand}: pattern to match url`, matcherUrl);
 			const urlFragment = matcherUrl.replace(new RegExp(`^${shorthand}:`), '');
 			return stringMatchers[shorthand](urlFragment);
 		}
@@ -146,8 +213,8 @@ const getUrlMatcher = route => {
 	return getFullUrlMatcher(route, matcherUrl, query);
 };
 
-module.exports = route => {
-	debug('Generating matcher for route')
+module.exports = (route, useDebugger = true) => {
+	useDebugger && debug('Compiling matcher for route');
 	const matchers = [
 		route.query && getQueryStringMatcher(route),
 		route.method && getMethodMatcher(route),
@@ -156,17 +223,6 @@ module.exports = route => {
 		route.body && getBodyMatcher(route),
 		route.functionMatcher && getFunctionMatcher(route),
 		route.url && getUrlMatcher(route)
-=======
-module.exports = (route, useDebugger = true) => {
-	useDebugger && debug('Compiling matcher for route')
-	const matchers = [
-		getQueryStringMatcher(route),
-		getMethodMatcher(route),
-		getHeaderMatcher(route),
-		getParamsMatcher(route),
-		getFunctionMatcher(route),
-		getUrlMatcher(route)
->>>>>>> minor refactor to make debug logging easier in matcher building
 	].filter(matcher => !!matcher);
 
 	return (url, options = {}, request) =>

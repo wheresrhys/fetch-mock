@@ -1,4 +1,4 @@
-const debug = require('debug')('fetch-mock')
+const debug = require('debug')('fetch-mock');
 const generateMatcher = require('./generate-matcher');
 
 const matcherProperties = [
@@ -74,11 +74,11 @@ const validateRoute = route => {
 const limitMatcher = route => {
 	debug('Limiting number of requests to handle by route');
 	if (!route.repeat) {
-		debug('No `repeat` value set on route. Will match any number of requests')
+		debug('No `repeat` value set on route. Will match any number of requests');
 		return;
 	}
 
-	debug(`Route set to repeat ${route.repeat} times`)
+	debug(`Route set to repeat ${route.repeat} times`);
 	const matcher = route.matcher;
 	let timesLeft = route.repeat;
 	route.matcher = (url, options) => {

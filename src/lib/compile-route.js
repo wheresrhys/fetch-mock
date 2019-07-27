@@ -52,10 +52,10 @@ const sanitizeRoute = (route, useDebugger = true) => {
 	route.functionMatcher = route.matcher || route.functionMatcher;
 
 	useDebugger && debug('Setting route.identifier...')
-	useDebugger && debug(`- route.name is ${route.name}`)
-	useDebugger && debug(`- route.matcher is ${route.matcher}`)
+	useDebugger && debug(`  route.name is ${route.name}`)
+	useDebugger && debug(`  route.matcher is ${route.matcher}`)
 	route.identifier = route.name || route.url || route.functionMatcher;
-	useDebugger && debug(`=> route.identifier set to ${route.identifier}`);
+	useDebugger && debug(`  > route.identifier set to ${route.identifier}`);
 	return route;
 };
 

@@ -1,4 +1,3 @@
-require('babel-polyfill');
 const FetchMock = require('./lib/index');
 const statusTextMap = require('./lib/status-text');
 const theGlobal = typeof window !== 'undefined' ? window : self;

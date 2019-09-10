@@ -553,29 +553,55 @@ module.exports = fetchMock => {
 			});
 
 			describe('body matching', () => {
-				it('should match against a JSON body', async () => {
+				it('should not match if no body provided in request', async () => {
 					fm.mock('http://it.at.there/', 200, { body: { foo: 'bar' } }).catch();
 
 					await fm.fetchHandler('http://it.at.there/', {
 						method: 'POST'
 					});
 					expect(fm.calls(true).length).to.equal(0);
-					await fm.fetchHandler('http://it.at.there/', {
-						method: 'POST',
-						body: JSON.stringify({ baz: 'blah' })
-					});
-					expect(fm.calls(true).length).to.equal(0);
+				});
+
+				it('should not match if the content type in request isn’t application/json', async () => {
+					fm.mock('http://it.at.there/', 200, { body: { foo: 'bar' } }).catch();
+
 					await fm.fetchHandler('http://it.at.there/', {
 						method: 'POST',
 						body: JSON.stringify({ foo: 'bar' })
 					});
 					expect(fm.calls(true).length).to.equal(0);
+				});
+
+				it('should not match if no body provided in request', async () => {
+					fm.mock('http://it.at.there/', 200, { body: { foo: 'bar' } }).catch();
+
+					await fm.fetchHandler('http://it.at.there/', {
+						method: 'POST',
+						body: JSON.stringify({ foo: 'bar' })
+					});
+					expect(fm.calls(true).length).to.equal(0);
+				});
+
+				it('should match if body sent matches expected body', async () => {
+					fm.mock('http://it.at.there/', 200, { body: { foo: 'bar' } }).catch();
+
 					await fm.fetchHandler('http://it.at.there/', {
 						method: 'POST',
 						body: JSON.stringify({ foo: 'bar' }),
 						headers: { 'Content-Type': 'application/json' }
 					});
 					expect(fm.calls(true).length).to.equal(1);
+				});
+
+				it('should not match if body sent doesn’t match expected body', async () => {
+					fm.mock('http://it.at.there/', 200, { body: { foo: 'bar' } }).catch();
+
+					await fm.fetchHandler('http://it.at.there/', {
+						method: 'POST',
+						body: JSON.stringify({ foo: 'woah!!!' }),
+						headers: { 'Content-Type': 'application/json' }
+					});
+					expect(fm.calls(true).length).to.equal(0);
 				});
 
 				it('should ignore the order of the keys in the body', async () => {

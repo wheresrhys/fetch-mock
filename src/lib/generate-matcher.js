@@ -7,6 +7,7 @@ const {
 	getQuery,
 	normalizeUrl
 } = require('./request-utils');
+const isEqual = require('lodash.isequal');
 
 const stringMatchers = {
 	begin: targetString => url => url.indexOf(targetString) === 0,
@@ -79,7 +80,7 @@ const getBodyMatcher = ({ body: expectedBody }) => {
 		);
 
 		return lowerCaseHeaders['content-type'] === 'application/json' && body
-			? body === JSON.stringify(expectedBody)
+			? isEqual(JSON.parse(body), expectedBody)
 			: false;
 	};
 };

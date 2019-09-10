@@ -577,6 +577,25 @@ module.exports = fetchMock => {
 					});
 					expect(fm.calls(true).length).to.equal(1);
 				});
+
+				it('should ignore the order of the keys in the body', async () => {
+					fm.mock('http://it.at.there/', 200, {
+						body: {
+							foo: 'bar',
+							baz: 'qux'
+						}
+					}).catch();
+
+					await fm.fetchHandler('http://it.at.there/', {
+						method: 'POST',
+						body: JSON.stringify({
+							baz: 'qux',
+							foo: 'bar'
+						}),
+						headers: { 'Content-Type': 'application/json' }
+					});
+					expect(fm.calls(true).length).to.equal(1);
+				});
 			});
 		});
 

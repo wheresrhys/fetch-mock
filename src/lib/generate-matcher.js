@@ -74,7 +74,12 @@ const getFunctionMatcher = ({ matcher, functionMatcher = () => true }) =>
 	typeof matcher === 'function' ? matcher : functionMatcher;
 
 const getBodyMatcher = ({ body: expectedBody }) => {
-	return (url, { headers = {}, body }) => {
+	return (url, { headers = {}, body, method = 'get' }) => {
+		if (method.toLowerCase() === 'get') {
+			// GET requests don’t send a body so the body matcher should be ignored for them
+			return true;
+		}
+
 		const lowerCaseHeaders = headerUtils.toLowerCase(
 			headerUtils.normalize(headers)
 		);

@@ -622,6 +622,18 @@ module.exports = fetchMock => {
 					});
 					expect(fm.calls(true).length).to.equal(1);
 				});
+
+				it('should ignore the body option matcher if request was GET', async () => {
+					fm.mock('http://it.at.there/', 200, {
+						body: {
+							foo: 'bar',
+							baz: 'qux'
+						}
+					}).catch();
+
+					await fm.fetchHandler('http://it.at.there/');
+					expect(fm.calls(true).length).to.equal(1);
+				});
 			});
 		});
 

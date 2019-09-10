@@ -1,5 +1,5 @@
 ---
-title: "options"
+title: 'options'
 position: 1.3
 description: |-
   An object containing further options for configuring mocking behaviour
@@ -28,15 +28,24 @@ parameters:
       - Headers
     content: |-
       Match only requests that have these headers set
-    examples: 
+    examples:
       - |-
         {"Accepts": "text/html"}
+  - name: body
+    types:
+      - Object
+      - Headers
+    content: |-
+      Match only requests that have this body (requires a `Content-Type` request header to be set to `application/json`)
+    examples:
+      - |-
+        {"JSON": "body"}
   - name: query
     types:
       - Object
     content: |-
       Match only requests that have these query parameters set (in any order)
-    examples: 
+    examples:
       - |-
         {"q": "cute+kittenz", "format": "gif"}
   - name: params
@@ -44,7 +53,7 @@ parameters:
       - Object
     content: |-
       When the `express:` keyword is used in a string matcher, match only requests with these express parameters
-    examples: 
+    examples:
       - |-
         {"section": "feed", "user": "geoff"}
   - name: functionMatcher

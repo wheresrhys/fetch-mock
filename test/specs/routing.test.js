@@ -551,6 +551,33 @@ module.exports = fetchMock => {
 					});
 				});
 			});
+
+			describe('body matching', () => {
+				it('should match against a JSON body', async () => {
+					fm.mock('http://it.at.there/', 200, { body: { foo: 'bar' } }).catch();
+
+					await fm.fetchHandler('http://it.at.there/', {
+						method: 'POST'
+					});
+					expect(fm.calls(true).length).to.equal(0);
+					await fm.fetchHandler('http://it.at.there/', {
+						method: 'POST',
+						body: JSON.stringify({ baz: 'blah' })
+					});
+					expect(fm.calls(true).length).to.equal(0);
+					await fm.fetchHandler('http://it.at.there/', {
+						method: 'POST',
+						body: JSON.stringify({ foo: 'bar' })
+					});
+					expect(fm.calls(true).length).to.equal(0);
+					await fm.fetchHandler('http://it.at.there/', {
+						method: 'POST',
+						body: JSON.stringify({ foo: 'bar' }),
+						headers: { 'Content-Type': 'application/json' }
+					});
+					expect(fm.calls(true).length).to.equal(1);
+				});
+			});
 		});
 
 		describe('multiple routes', () => {

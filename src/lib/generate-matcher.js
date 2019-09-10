@@ -72,6 +72,18 @@ const getParamsMatcher = ({ params: expectedParams, matcher }) => {
 const getFunctionMatcher = ({ matcher, functionMatcher = () => true }) =>
 	typeof matcher === 'function' ? matcher : functionMatcher;
 
+const getBodyMatcher = ({ body: expectedBody }) => {
+	return (url, { headers = {}, body }) => {
+		const lowerCaseHeaders = headerUtils.toLowerCase(
+			headerUtils.normalize(headers)
+		);
+
+		return lowerCaseHeaders['content-type'] === 'application/json' && body
+			? body === JSON.stringify(expectedBody)
+			: false;
+	};
+};
+
 const getUrlMatcher = route => {
 	const { matcher, query } = route;
 
@@ -117,6 +129,7 @@ module.exports = route => {
 		route.method && getMethodMatcher(route),
 		route.headers && getHeaderMatcher(route),
 		route.params && getParamsMatcher(route),
+		route.body && getBodyMatcher(route),
 		getFunctionMatcher(route),
 		getUrlMatcher(route)
 	].filter(matcher => !!matcher);

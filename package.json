@@ -53,6 +53,9 @@
     "path-to-regexp": "^2.2.1",
     "whatwg-url": "^6.5.0"
   },
+  "peerDependencies": {
+    "node-fetch": "*"
+  },
   "engines": {
     "node": ">=4.0.0"
   },

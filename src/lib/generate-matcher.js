@@ -74,19 +74,13 @@ const getFunctionMatcher = ({ matcher, functionMatcher = () => true }) =>
 	typeof matcher === 'function' ? matcher : functionMatcher;
 
 const getBodyMatcher = ({ body: expectedBody }) => {
-	return (url, { headers = {}, body, method = 'get' }) => {
+	return (url, { body, method = 'get' }) => {
 		if (method.toLowerCase() === 'get') {
 			// GET requests don’t send a body so the body matcher should be ignored for them
 			return true;
 		}
 
-		const lowerCaseHeaders = headerUtils.toLowerCase(
-			headerUtils.normalize(headers)
-		);
-
-		return lowerCaseHeaders['content-type'] === 'application/json' && body
-			? isEqual(JSON.parse(body), expectedBody)
-			: false;
+		return body && isEqual(JSON.parse(body), expectedBody);
 	};
 };
 

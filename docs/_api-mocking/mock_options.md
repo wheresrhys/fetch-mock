@@ -35,7 +35,7 @@ parameters:
     types:
       - Object
     content: |-
-      Match only requests that send a JSON body with the exact structure and properties as the one provided here (also requires that the request has a `Content-Type` request header set to `application/json`)
+      Match only requests that send a JSON body with the exact structure and properties as the one provided here.
     examples:
       - |-
         { "key1": "value1", "key2": "value2" }

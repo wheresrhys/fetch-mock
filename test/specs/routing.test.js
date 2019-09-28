@@ -562,14 +562,14 @@ module.exports = fetchMock => {
 					expect(fm.calls(true).length).to.equal(0);
 				});
 
-				it('should not match if the content type in request isn’t application/json', async () => {
+				it('should match if no content type is specified', async () => {
 					fm.mock('http://it.at.there/', 200, { body: { foo: 'bar' } }).catch();
 
 					await fm.fetchHandler('http://it.at.there/', {
 						method: 'POST',
 						body: JSON.stringify({ foo: 'bar' })
 					});
-					expect(fm.calls(true).length).to.equal(0);
+					expect(fm.calls(true).length).to.equal(1);
 				});
 
 				it('should match if body sent matches expected body', async () => {

@@ -80,7 +80,13 @@ const getBodyMatcher = ({ body: expectedBody }) => {
 			return true;
 		}
 
-		return body && isEqual(JSON.parse(body), expectedBody);
+		let sentBody;
+
+		try {
+			sentBody = JSON.parse(body);
+		} catch (_) {}
+
+		return sentBody && isEqual(sentBody, expectedBody);
 	};
 };
 

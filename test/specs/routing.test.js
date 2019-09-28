@@ -594,6 +594,17 @@ module.exports = fetchMock => {
 					expect(fm.calls(true).length).to.equal(0);
 				});
 
+				it('should not match if body sent isn’t JSON', async () => {
+					fm.mock('http://it.at.there/', 200, { body: { foo: 'bar' } }).catch();
+
+					await fm.fetchHandler('http://it.at.there/', {
+						method: 'POST',
+						body: new ArrayBuffer(8),
+						headers: { 'Content-Type': 'application/json' }
+					});
+					expect(fm.calls(true).length).to.equal(0);
+				});
+
 				it('should ignore the order of the keys in the body', async () => {
 					fm.mock('http://it.at.there/', 200, {
 						body: {

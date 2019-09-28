@@ -34,12 +34,11 @@ parameters:
   - name: body
     types:
       - Object
-      - Headers
     content: |-
-      Match only requests that have this body (requires a `Content-Type` request header to be set to `application/json`)
+      Match only requests that send a JSON body with the exact structure and properties as the one provided here (also requires that the request has a `Content-Type` request header set to `application/json`)
     examples:
       - |-
-        {"JSON": "body"}
+        { "key1": "value1", "key2": "value2" }
   - name: query
     types:
       - Object

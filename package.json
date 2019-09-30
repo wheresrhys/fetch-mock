@@ -56,6 +56,11 @@
   "peerDependencies": {
     "node-fetch": "*"
   },
+  "peerDependenciesMeta": {
+    "node-fetch": {
+      "optional": true
+    }
+  },
   "engines": {
     "node": ">=4.0.0"
   },

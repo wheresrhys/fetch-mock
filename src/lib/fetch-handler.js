@@ -11,7 +11,9 @@ class AbortError extends Error {
 		this.message = 'The operation was aborted.';
 
 		// Do not include this class in the stacktrace
-		Error.captureStackTrace(this, this.constructor);
+		if (Error.captureStackTrace) {
+			Error.captureStackTrace(this, this.constructor);
+		}
 	}
 }
 

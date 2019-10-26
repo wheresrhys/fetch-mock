@@ -8,3 +8,5 @@ coverage/
 .eslintcache
 /docs/_site/
 /docs/.sass-cache/
+/esm
+/cjs

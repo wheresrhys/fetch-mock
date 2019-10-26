@@ -34,11 +34,10 @@ local-coverage:
 transpile:
 	babel src --out-dir es5
 
-bundle:
-	webpack --mode development \
-	--output-library fetchMock \
-	--entry ./es5/client.js \
-	--output-filename ./es5/client-bundle.js
+build: transpile
+	rollup -c rollup.config.js
+	if [ ! -d "cjs" ]; then mkdir cjs fi
+	cp -r src cjs
 
 docs:
 	cd docs; jekyll serve build --watch

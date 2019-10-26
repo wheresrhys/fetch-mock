@@ -1,12 +1,14 @@
 {
   "name": "fetch-mock",
+  "type": "module",
   "version": "0.0.0",
   "description": "Mock http requests made using fetch (or isomorphic-fetch)",
-  "main": "src/server.js",
-  "browser": "es5/client.js",
+  "main": "./cjs/server.js",
+  "browser": "./es5/client.js",
+  "module": "./esm/server.js",
   "scripts": {
     "test": "make lint test",
-    "prepublishOnly": "make transpile bundle",
+    "prepublishOnly": "make build",
     "postinstall": "node scripts/support-fetch-mock.js"
   },
   "babel": {
@@ -77,9 +79,13 @@
     "node-fetch": "^2.0.0",
     "nyc": "^11.7.3",
     "prettier": "^1.13.7",
+    "rollup": "^1.25.2",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-json": "^4.0.0",
+    "rollup-plugin-node-builtins": "^2.1.2",
+    "rollup-plugin-node-globals": "^1.4.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
     "sinon": "^4.5.0",
-    "sinon-chai": "^2.14.0",
-    "webpack": "^4.0.0",
-    "webpack-cli": "^3.0.0"
+    "sinon-chai": "^2.14.0"
   }
 }

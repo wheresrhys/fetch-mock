@@ -35,9 +35,9 @@ transpile:
 	babel src --out-dir es5
 
 build: transpile
-	rollup -c rollup.config.js
-	if [ ! -d "cjs" ]; then mkdir cjs fi
+	if [ ! -d "cjs" ]; then mkdir cjs; fi
 	cp -r src cjs
+	rollup -c rollup.config.js
 
 docs:
 	cd docs; jekyll serve build --watch

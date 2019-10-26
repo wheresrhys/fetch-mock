@@ -5,7 +5,7 @@
   "description": "Mock http requests made using fetch (or isomorphic-fetch)",
   "main": "./cjs/server.js",
   "browser": "./esm/client.mjs",
-  "module": "./esm/server.js",
+  "module": "./esm/server.mjs",
   "scripts": {
     "test": "make lint test",
     "prepublishOnly": "make build",

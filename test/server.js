@@ -18,7 +18,12 @@ describe('nodejs tests', () => {
 		server.close();
 	});
 
-	require('./runner')(fetchMock, global, require('node-fetch'));
+	require('./runner')(
+		fetchMock,
+		global,
+		require('node-fetch'),
+		require('abort-controller')
+	);
 
 	describe('support for nodejs body types', () => {
 		afterEach(() => fetchMock.reset());

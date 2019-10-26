@@ -21,7 +21,7 @@ fetchMock.restore();
 - [Requirements](#requirements)
 - [Documentation and Usage](http://www.wheresrhys.co.uk/fetch-mock/)
 - [License](#license)
-- [Housekeeping](#housekeping)
+- [Housekeeping](#housekeeping)
 
 **I devote a lot of time to maintaining fetch-mock for free. I don't ask for payment, but am raising money for a refugee charity - <a href="https://www.justgiving.com/refugee-support-europe">please consider donating</a>**
 

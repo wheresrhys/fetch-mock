@@ -45,11 +45,23 @@ module.exports = (fetchMock, theGlobal, fetch) => {
 
 			it('actually falls back to network when configured in a sandbox properly', async () => {
 				const sbx = fm.sandbox();
-				sbx.config.fetch = fetch;
+				const fakeRealFetch = fm.sandbox().catch();
+				sbx.config.fetch = fakeRealFetch;
 				sbx.config.fallbackToNetwork = true;
-				sbx.mock('http://it.at.where/', 204);
-				const res = await sbx('http://localhost:9876/dummy-file.txt');
+				sbx.mock('http://it.at.there/', 204);
+				const res = await sbx('http://it.at.where/');
 				expect(res.status).to.equal(200);
+			});
+
+			it('calls fetch with original Request object', async () => {
+				const sbx = fm.sandbox();
+				const fakeRealFetch = fm.sandbox().catch();
+				sbx.config.fetch = fakeRealFetch;
+				sbx.config.fallbackToNetwork = true;
+				sbx.mock('http://it.at.there/', 204);
+				const req = new sbx.config.Request('http://it.at.where/');
+				await sbx(req);
+				expect(fakeRealFetch.lastCall().request).to.equal(req);
 			});
 
 			describe('always', () => {

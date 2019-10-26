@@ -2,7 +2,27 @@ const responseBuilder = require('./response-builder');
 const requestUtils = require('./request-utils');
 const FetchMock = {};
 
-const resolve = async (response, url, options, request) => {
+// see https://heycam.github.io/webidl/#aborterror for the standardised interface
+// Note that this differs slightly from node-fetch
+class AbortError extends Error {
+	constructor() {
+		super(...arguments);
+		this.name = 'AbortError';
+		this.message = 'The operation was aborted.';
+
+		// Do not include this class in the stacktrace
+		if (Error.captureStackTrace) {
+			Error.captureStackTrace(this, this.constructor);
+		}
+	}
+}
+
+const resolve = async (
+	{ response, responseIsFetch = false },
+	url,
+	options,
+	request
+) => {
 	// We want to allow things like
 	// - function returning a Promise for a response
 	// - delaying (using a timeout Promise) a function's execution to generate
@@ -10,17 +30,20 @@ const resolve = async (response, url, options, request) => {
 	// Because of this we can't safely check for function before Promisey-ness,
 	// or vice versa. So to keep it DRY, and flexible, we keep trying until we
 	// have something that looks like neither Promise nor function
-	while (
-		typeof response === 'function' ||
-		typeof response.then === 'function'
-	) {
+	while (true) {
 		if (typeof response === 'function') {
-			response = response(url, options, request);
-		} else {
+			// in the case of falling back to the network we need to make sure we're using
+			// the original Request instance, not our normalised url + options
+			response =
+				request && responseIsFetch
+					? response(request)
+					: response(url, options, request);
+		} else if (typeof response.then === 'function') {
 			response = await response;
+		} else {
+			return response;
 		}
 	}
-	return response;
 };
 
 FetchMock.fetchHandler = function(url, options, request) {
@@ -41,7 +64,7 @@ FetchMock.fetchHandler = function(url, options, request) {
 	return new this.config.Promise((res, rej) => {
 		if (options && options.signal) {
 			const abort = () => {
-				rej(new Error(`URL '${url}' aborted.`));
+				rej(new AbortError());
 				done();
 			};
 			if (options.signal.aborted) {
@@ -60,7 +83,7 @@ FetchMock.fetchHandler.isMock = true;
 
 FetchMock.executeRouter = function(url, options, request) {
 	if (this.config.fallbackToNetwork === 'always') {
-		return { response: this.getNativeFetch() };
+		return { response: this.getNativeFetch(), responseIsFetch: true };
 	}
 
 	const match = this.router(url, options, request);
@@ -87,11 +110,11 @@ FetchMock.executeRouter = function(url, options, request) {
 		);
 	}
 
-	return { response: this.getNativeFetch() };
+	return { response: this.getNativeFetch(), responseIsFetch: true };
 };
 
 FetchMock.generateResponse = async function(route, url, options, request) {
-	const response = await resolve(route.response, url, options, request);
+	const response = await resolve(route, url, options, request);
 
 	// If the response says to throw an error, throw it
 	// Type checking is to deal with sinon spies having a throws property :-0

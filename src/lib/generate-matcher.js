@@ -7,6 +7,7 @@ const {
 	getQuery,
 	normalizeUrl
 } = require('./request-utils');
+const isEqual = require('lodash.isequal');
 
 const stringMatchers = {
 	begin: targetString => url => url.indexOf(targetString) === 0,
@@ -72,6 +73,23 @@ const getParamsMatcher = ({ params: expectedParams, matcher }) => {
 const getFunctionMatcher = ({ matcher, functionMatcher = () => true }) =>
 	typeof matcher === 'function' ? matcher : functionMatcher;
 
+const getBodyMatcher = ({ body: expectedBody }) => {
+	return (url, { body, method = 'get' }) => {
+		if (method.toLowerCase() === 'get') {
+			// GET requests don’t send a body so the body matcher should be ignored for them
+			return true;
+		}
+
+		let sentBody;
+
+		try {
+			sentBody = JSON.parse(body);
+		} catch (_) {}
+
+		return sentBody && isEqual(sentBody, expectedBody);
+	};
+};
+
 const getUrlMatcher = route => {
 	const { matcher, query } = route;
 
@@ -117,6 +135,7 @@ module.exports = route => {
 		route.method && getMethodMatcher(route),
 		route.headers && getHeaderMatcher(route),
 		route.params && getParamsMatcher(route),
+		route.body && getBodyMatcher(route),
 		getFunctionMatcher(route),
 		getUrlMatcher(route)
 	].filter(matcher => !!matcher);

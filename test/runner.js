@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-module.exports = (fetchMock, theGlobal, fetch) => {
+module.exports = (fetchMock, theGlobal, fetch, AbortController) => {
 	describe('fetch-mock', () => {
 		it('exports itself as a property', () => {
 			expect(fetchMock.fetchMock).to.equal(fetchMock);
@@ -16,6 +16,6 @@ module.exports = (fetchMock, theGlobal, fetch) => {
 		require('./specs/repeat.test')(fetchMock);
 		require('./specs/custom-implementations.test')(fetchMock);
 		require('./specs/options.test')(fetchMock, theGlobal, fetch);
-		require('./specs/abortable.test')(fetchMock, fetch);
+		require('./specs/abortable.test')(fetchMock, AbortController);
 	});
 };

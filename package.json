@@ -50,14 +50,25 @@
   "homepage": "http://www.wheresrhys.co.uk/fetch-mock",
   "dependencies": {
     "babel-runtime": "^6.26.0",
+    "core-js": "^3.0.0",
     "glob-to-regexp": "^0.4.0",
+    "lodash.isequal": "^4.5.0",
     "path-to-regexp": "^2.2.1",
     "whatwg-url": "^6.5.0"
+  },
+  "peerDependencies": {
+    "node-fetch": "*"
+  },
+  "peerDependenciesMeta": {
+    "node-fetch": {
+      "optional": true
+    }
   },
   "engines": {
     "node": ">=4.0.0"
   },
   "devDependencies": {
+    "abort-controller": "^3.0.0",
     "babel-cli": "^6.1.2",
     "babel-loader": "^7.1.2",
     "babel-plugin-transform-runtime": "^6.23.0",

@@ -551,6 +551,91 @@ module.exports = fetchMock => {
 					});
 				});
 			});
+
+			describe('body matching', () => {
+				it('should not match if no body provided in request', async () => {
+					fm.mock('http://it.at.there/', 200, { body: { foo: 'bar' } }).catch();
+
+					await fm.fetchHandler('http://it.at.there/', {
+						method: 'POST'
+					});
+					expect(fm.calls(true).length).to.equal(0);
+				});
+
+				it('should match if no content type is specified', async () => {
+					fm.mock('http://it.at.there/', 200, { body: { foo: 'bar' } }).catch();
+
+					await fm.fetchHandler('http://it.at.there/', {
+						method: 'POST',
+						body: JSON.stringify({ foo: 'bar' })
+					});
+					expect(fm.calls(true).length).to.equal(1);
+				});
+
+				it('should match if body sent matches expected body', async () => {
+					fm.mock('http://it.at.there/', 200, { body: { foo: 'bar' } }).catch();
+
+					await fm.fetchHandler('http://it.at.there/', {
+						method: 'POST',
+						body: JSON.stringify({ foo: 'bar' }),
+						headers: { 'Content-Type': 'application/json' }
+					});
+					expect(fm.calls(true).length).to.equal(1);
+				});
+
+				it('should not match if body sent doesn’t match expected body', async () => {
+					fm.mock('http://it.at.there/', 200, { body: { foo: 'bar' } }).catch();
+
+					await fm.fetchHandler('http://it.at.there/', {
+						method: 'POST',
+						body: JSON.stringify({ foo: 'woah!!!' }),
+						headers: { 'Content-Type': 'application/json' }
+					});
+					expect(fm.calls(true).length).to.equal(0);
+				});
+
+				it('should not match if body sent isn’t JSON', async () => {
+					fm.mock('http://it.at.there/', 200, { body: { foo: 'bar' } }).catch();
+
+					await fm.fetchHandler('http://it.at.there/', {
+						method: 'POST',
+						body: new ArrayBuffer(8),
+						headers: { 'Content-Type': 'application/json' }
+					});
+					expect(fm.calls(true).length).to.equal(0);
+				});
+
+				it('should ignore the order of the keys in the body', async () => {
+					fm.mock('http://it.at.there/', 200, {
+						body: {
+							foo: 'bar',
+							baz: 'qux'
+						}
+					}).catch();
+
+					await fm.fetchHandler('http://it.at.there/', {
+						method: 'POST',
+						body: JSON.stringify({
+							baz: 'qux',
+							foo: 'bar'
+						}),
+						headers: { 'Content-Type': 'application/json' }
+					});
+					expect(fm.calls(true).length).to.equal(1);
+				});
+
+				it('should ignore the body option matcher if request was GET', async () => {
+					fm.mock('http://it.at.there/', 200, {
+						body: {
+							foo: 'bar',
+							baz: 'qux'
+						}
+					}).catch();
+
+					await fm.fetchHandler('http://it.at.there/');
+					expect(fm.calls(true).length).to.equal(1);
+				});
+			});
 		});
 
 		describe('multiple routes', () => {

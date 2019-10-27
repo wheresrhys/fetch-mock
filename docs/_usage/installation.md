@@ -13,16 +13,12 @@ content_markdown: |-
 
   ## ES modules
   ```js
-  // MATCHED and UNMATCHED are constants that will make tests more readable
-  import fetchMock, {MATCHED, UNMATCHED} from 'fetch-mock';
+  import fetchMock from 'fetch-mock';
   ```
 
   ## Commonjs
   ```js
   const fetchMock = require('fetch-mock');
-
-  // MATCHED and UNMATCHED are constants that will make tests more readable
-  const { fetchMock, MATCHED, UNMATCHED } = require('fetch-mock');
   ```
 ---
 

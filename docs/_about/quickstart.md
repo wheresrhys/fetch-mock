@@ -32,23 +32,31 @@ content_markdown: |-
   Example with Node.js: suppose we have a file `make-request.js` with a function that calls `fetch`:
 
   ```js
+  require('isomorphic-fetch');
   module.exports = function makeRequest() {
-    return fetch('http://httpbin.org/get').then(function(response) {
+    return fetch('http://httpbin.org/my-url', {
+      headers: {
+        user: 'me'
+      }
+    }).then(function(response) {
       return response.json();
     });
   };
   ```
 
-
   We can use fetch-mock to mock `fetch`. In `mocked.js`:
 
   ```js
-  var fetchMock = require('fetch-mock');
   var makeRequest = require('./make-request');
+  var fetchMock = require('fetch-mock');
 
-  // Mock the fetch() global to always return the same value for GET
-  // requests to all URLs.
-  fetchMock.get('*', { hello: 'world' });
+  // Mock the fetch() global to return a response 
+  fetchMock.get('http://httpbin.org/my-url', { hello: 'world' }, {
+    delay: 1000, // fake a slow network
+    headers: {
+      user: 'me' // only match requests with certain headers
+    }
+  });
 
   makeRequest().then(function(data) {
     console.log('got data', data);

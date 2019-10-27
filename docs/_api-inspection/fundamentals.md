@@ -14,8 +14,9 @@ parameters:
           Retrieve all calls made to `fetch`
       - types:
         - true
+        - '"matched"'
         content: |-
-          Retrieve all calls to `fetch` matched by some route defined by `fetch-mock`. `fetchMock.MATCHED` is an alias for `true` and may be used to make tests more readable
+          Retrieve all calls to `fetch` matched by some route defined by `fetch-mock`. The string `'matched'` can be used instead of `true` to make tests more readable
         examples:
           - |-
             const {MATCHED, fetchMock} = require('fetch-mock');
@@ -23,8 +24,9 @@ parameters:
             fetchMock.calls(MATCHED)
       - types:
         - false
+        - '"unmatched"'
         content: |-
-          Retrieves all calls to `fetch` not matched by a route (i.e. those handled by `catch()`, `spy()` or the `fallbackToNetwork` option). `fetchMock.UNMATCHED` is an alias for `false` and may be used to make tests more readable
+          Retrieve all calls to `fetch` not matched by some route defined by `fetch-mock`. The string `'unmatched'` can be used instead of `false` to make tests more readable
         examples:
           - |-
             const {UNMATCHED, fetchMock} = require('fetch-mock');
@@ -32,7 +34,9 @@ parameters:
             fetchMock.calls(UNMATCHED)
       - name: routeIdentifier
         types:
-          - String|RegExp|function
+          - String
+          - RegExp
+          - function
         content: |-
           All routes have an identifier:
           - If it's a [named route](#api-mockingmock_options), the identifier is the route's `name`
@@ -41,7 +45,9 @@ parameters:
           All calls that were handled by the route with the given identifier will be retrieved
       - name: matcher
         types:
-          - String|RegExp|function
+          - String
+          - RegExp
+          - function
         content: |-
           Any matcher compatible with the [mocking api](#api-mockingmock_matcher) can be passed in to filter the calls arbitrarily. The matcher will be executed using exactly the same rules as the mocking api
   - name: options
@@ -82,7 +88,7 @@ content_markdown: |-
   ...
   // this will retrieve calls handled by either route
   fm.called(/user\/biff/)
-  // this will retrieve only calls handeld by the second route
-  fm.called(/user\/biff/)
+  // this will retrieve only calls handled by the second route
+  fm.called(matcherRX)
   ```
 ---

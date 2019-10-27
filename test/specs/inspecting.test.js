@@ -13,15 +13,6 @@ module.exports = fetchMock => {
 			fm.config.warnOnUnmatched = false;
 		});
 
-		describe('constants', () => {
-			it('has a MATCHED constant equal to true', () => {
-				expect(fetchMock.MATCHED).to.equal(true);
-			});
-			it('has a UNMATCHED constant equal to false', () => {
-				expect(fetchMock.UNMATCHED).to.equal(false);
-			});
-		});
-
 		describe('api', () => {
 			describe('signatures', () => {
 				before(() => {
@@ -116,6 +107,8 @@ module.exports = fetchMock => {
 				await fm.fetchHandler('http://it.at.where/');
 				expect(fm.filterCalls(true).length).to.equal(1);
 				expect(fm.filterCalls(true)[0][0]).to.equal('http://it.at.here/');
+				expect(fm.filterCalls('matched').length).to.equal(1);
+				expect(fm.filterCalls('matched')[0][0]).to.equal('http://it.at.here/');
 			});
 
 			it('can retrieve only calls not matched by any route', async () => {
@@ -125,6 +118,10 @@ module.exports = fetchMock => {
 				await fm.fetchHandler('http://it.at.where/');
 				expect(fm.filterCalls(false).length).to.equal(1);
 				expect(fm.filterCalls(false)[0][0]).to.equal('http://it.at.where/');
+				expect(fm.filterCalls('unmatched').length).to.equal(1);
+				expect(fm.filterCalls('unmatched')[0][0]).to.equal(
+					'http://it.at.where/'
+				);
 			});
 
 			it('can retrieve only calls handled by a named route', async () => {

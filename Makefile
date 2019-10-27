@@ -36,7 +36,7 @@ transpile:
 
 build: transpile
 	if [ ! -d "cjs" ]; then mkdir cjs; fi
-	cp -r src/ cjs/
+	cp -r src/* cjs
 	rollup -c rollup.config.js
 
 docs:

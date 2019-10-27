@@ -60,7 +60,7 @@ module.exports = fetchMock => {
 					};
 					expect(() => fm.mock(config)).not.to.throw();
 					expect(fm.compileRoute).calledWith(config);
-					expect(fm._mock).called
+					expect(fm._mock).called;
 				});
 
 				it('accepts matcher, route pairs', () => {
@@ -69,7 +69,7 @@ module.exports = fetchMock => {
 						matcher: 'http://it.at.there/',
 						response: 200
 					});
-					expect(fm._mock).called
+					expect(fm._mock).called;
 				});
 
 				it('accepts matcher, response, config triples', () => {
@@ -85,7 +85,7 @@ module.exports = fetchMock => {
 						method: 'PUT',
 						some: 'prop'
 					});
-					expect(fm._mock).called
+					expect(fm._mock).called;
 				});
 
 				it('expects a matcher', () => {
@@ -97,10 +97,10 @@ module.exports = fetchMock => {
 				});
 
 				it('can be called with no parameters', () => {
-					expect(() => fm.mock('http://it.at.there/')).not.to.throw();
+					expect(() => fm.mock()).not.to.throw();
 					expect(fm.compileRoute).not.called;
-					expect(fm._mock).called
-				})
+					expect(fm._mock).called;
+				});
 
 				it('REGRESSION: should accept object respones when passing options', () => {
 					expect(() =>

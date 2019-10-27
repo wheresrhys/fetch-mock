@@ -117,6 +117,9 @@ declare namespace fetchMock {
      */
     type MockResponseFunction = (url: string, opts: MockRequest) => MockResponse;
 
+
+    type Json = string | number | boolean | null | Json[] | { [key: string]: Json };
+
     /**
      * Mock options object
      */
@@ -151,6 +154,11 @@ declare namespace fetchMock {
          * key/value map of express style path params to match
          */
         params?: { [key: string]: string };
+
+        /**
+         * JSON serialisable object literal
+         */
+        body?: Json;
 
         /**
          * A function for arbitrary matching

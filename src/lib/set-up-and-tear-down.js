@@ -1,25 +1,28 @@
 const compileRoute = require('./compile-route');
 const FetchMock = {};
 
-FetchMock.mock = function(matcher, response, options = {}) {
-	let route;
+FetchMock.mock = function(...args) {
+	if (args.length) {
+		const [matcher, response, options = {}] = args;
+		let route;
 
-	// Handle the variety of parameters accepted by mock (see README)
-	if (matcher && response) {
-		route = Object.assign(
-			{
-				matcher,
-				response
-			},
-			options
-		);
-	} else if (matcher && matcher.matcher) {
-		route = matcher;
-	} else {
-		throw new Error('fetch-mock: Invalid parameters passed to fetch-mock');
+		// Handle the variety of parameters accepted by mock (see README)
+		if (matcher && response) {
+			route = Object.assign(
+				{
+					matcher,
+					response
+				},
+				options
+			);
+		} else if (matcher && matcher.matcher) {
+			route = matcher;
+		} else {
+			throw new Error('fetch-mock: Invalid parameters passed to fetch-mock');
+		}
+
+		this.addRoute(route);
 	}
-
-	this.addRoute(route);
 
 	return this._mock();
 };

@@ -6,6 +6,15 @@ fetchMock.mock("http://test.com", 200, {
         test: "header"
     }
 });
+fetchMock.mock("http://test.com", 200, {
+    body: {
+        test: [{
+            string: "value",
+            number: 1.34,
+            bool: true,
+        }]
+    }
+});
 fetchMock.mock("http//test.com", 200, {
     query: {
         searchValue: "apples"

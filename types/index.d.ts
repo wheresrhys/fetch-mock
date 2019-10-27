@@ -117,6 +117,7 @@ declare namespace fetchMock {
      */
     type MockResponseFunction = (url: string, opts: MockRequest) => MockResponse;
 
+
     /**
      * Mock options object
      */
@@ -151,6 +152,12 @@ declare namespace fetchMock {
          * key/value map of express style path params to match
          */
         params?: { [key: string]: string };
+
+        /**
+         * JSON serialisable object literal. Allowing any object for now
+         * But in typescript 3.7 will change to JSON
+         */
+        body?: object;
 
         /**
          * A function for arbitrary matching

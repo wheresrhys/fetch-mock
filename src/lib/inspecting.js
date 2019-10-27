@@ -14,9 +14,9 @@ FetchMock.filterCalls = function(nameOrMatcher, options) {
 	let calls = this._calls;
 	let matcher = '*';
 
-	if (nameOrMatcher === true) {
+	if ([true, 'matched'].includes(nameOrMatcher)) {
 		calls = calls.filter(({ isUnmatched }) => !isUnmatched);
-	} else if (nameOrMatcher === false) {
+	} else if ([false, 'unmatched'].includes(nameOrMatcher)) {
 		calls = calls.filter(({ isUnmatched }) => isUnmatched);
 	} else if (typeof nameOrMatcher === 'undefined') {
 		calls = calls;

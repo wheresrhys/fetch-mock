@@ -40,20 +40,20 @@ const limitMatcher = route => {
 	route.reset = () => (timesLeft = route.repeat);
 };
 
-const delayResponse = (route) => {
-	const {delay} = route;
+const delayResponse = route => {
+	const { delay } = route;
 	if (delay) {
 		const response = route.response;
-		route.response = new Promise(res => setTimeout(() => res(response), delay))
+		route.response = new Promise(res => setTimeout(() => res(response), delay));
 	}
-}
+};
 
 module.exports = route => {
 	validateRoute(route);
 	route = sanitizeRoute(route);
 	route.matcher = generateMatcher(route);
 	limitMatcher(route);
-	delayResponse(route)
+	delayResponse(route);
 	return route;
 };
 

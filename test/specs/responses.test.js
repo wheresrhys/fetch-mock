@@ -221,7 +221,6 @@ module.exports = fetchMock => {
 		});
 
 		describe('response negotiation', () => {
-
 			it('function', async () => {
 				fm.mock('http://it.at.there/', url => url);
 				const res = await fm.fetchHandler('http://it.at.there/');
@@ -250,31 +249,35 @@ module.exports = fetchMock => {
 			});
 
 			it('delay', async () => {
-				fm.mock('http://it.at.there/', 200, {delay: 20});
+				fm.mock('http://it.at.there/', 200, { delay: 20 });
 				const req = fm.fetchHandler('http://it.at.there/');
 				let resolved = false;
-				req.then(() => resolved = true)
-				await new Promise(res => setTimeout(res, 10))
+				req.then(() => (resolved = true));
+				await new Promise(res => setTimeout(res, 10));
 				expect(resolved).to.be.false;
-				await new Promise(res => setTimeout(res, 11))
+				await new Promise(res => setTimeout(res, 11));
 				expect(resolved).to.be.true;
 				const res = await req;
 				expect(res.status).to.equal(200);
 			});
 
-			it('delay a function response\'s execution', async () => {
+			it("delay a function response's execution", async () => {
 				const startTimestamp = new Date().getTime();
-				fm.mock('http://it.at.there/', () => ({timestamp: new Date().getTime()}), {delay: 20});
+				fm.mock(
+					'http://it.at.there/',
+					() => ({ timestamp: new Date().getTime() }),
+					{ delay: 20 }
+				);
 				const req = fm.fetchHandler('http://it.at.there/');
 				let resolved = false;
-				req.then(() => resolved = true)
-				await new Promise(res => setTimeout(res, 10))
+				req.then(() => (resolved = true));
+				await new Promise(res => setTimeout(res, 10));
 				expect(resolved).to.be.false;
-				await new Promise(res => setTimeout(res, 11))
+				await new Promise(res => setTimeout(res, 11));
 				expect(resolved).to.be.true;
 				const res = await req;
 				expect(res.status).to.equal(200);
-				const responseTimestamp = (await res.json()).timestamp
+				const responseTimestamp = (await res.json()).timestamp;
 				expect(responseTimestamp - startTimestamp).to.be.within(20, 25);
 			});
 

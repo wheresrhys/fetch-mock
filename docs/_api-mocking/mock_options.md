@@ -2,7 +2,9 @@
 title: 'options'
 position: 1.3
 description: |-
-  An object containing further options for configuring mocking behaviour
+  An object containing further options for configuring mocking behaviour.
+
+  **IMPORTANT NOTE:** *To set multiple mocks which use the same `matcher` but use some of the options below to match on different criteria e.g. different headers, you will also need to set `overwriteRoutes: false` in this options object*
 types:
   - Object
 type: parameter

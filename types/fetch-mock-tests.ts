@@ -34,6 +34,9 @@ fetchMock.mock("http://test.com", 200, {
 fetchMock.mock("http://test.com", 200, {
     repeat: 2
 });
+fetchMock.mock("http://test.com", 200, {
+    delay: 10
+});
 fetchMock.mock(/test\.com/, 200);
 fetchMock.mock(() => true, 200);
 fetchMock.mock((url, opts) => true, 200);

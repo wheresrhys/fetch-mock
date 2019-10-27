@@ -191,6 +191,12 @@ declare namespace fetchMock {
         repeat?: number;
 
         /**
+         * integer, n, delays responding for the number of milliseconds
+         * specified.
+         */
+        delay?: number;
+
+        /**
          * Convert objects into JSON before delivering as stub responses. Can
          * be useful to set to false globally if e.g. dealing with a lot of
          * array buffers. If true, will also add content-type: application/json

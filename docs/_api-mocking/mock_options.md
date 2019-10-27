@@ -67,6 +67,11 @@ parameters:
       - Integer
     content: |-
       Limits the number of times the route can be used. If the route has already been called `repeat` times, the call to `fetch()` will fall through to be handled by any other routes defined (which may eventually result in an error if nothing matches it)
+  - name: delay
+    types:
+      - Integer
+    content: |-
+      Delays responding for the number of milliseconds specified.
   - name: overwriteRoutes
     types:
       - Boolean

@@ -1,5 +1,6 @@
 import fetchMock = require('..');
 
+fetchMock.mock();
 fetchMock.mock("http://test.com", 200);
 fetchMock.mock("http://test.com", 200, {
     headers: {

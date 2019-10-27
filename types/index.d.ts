@@ -257,6 +257,14 @@ declare namespace fetchMock {
         mock(options: MockOptions): this;
 
         /**
+         * Replaces fetch() with a stub which records its calls, grouped by
+         * route, and optionally returns a mocked Response object or passes the
+         *  call through to fetch(). Calls to .mock() can be chained.
+         * @param options The route to mock
+         */
+        mock(): this;
+
+        /**
          * Returns a drop-in mock for fetch which can be passed to other mocking
          * libraries. It implements the full fetch-mock api and maintains its
          * own state independent of other instances, so tests can be run in

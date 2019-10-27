@@ -235,17 +235,50 @@ module.exports = fetchMock => {
 			});
 
 			it('function that returns a Promise', async () => {
-				fm.mock('http://it.at.there/', url => Promise.resolve(url));
+				fm.mock('http://it.at.there/', url => Promise.resolve('test: ' + url));
 				const res = await fm.fetchHandler('http://it.at.there/');
 				expect(res.status).to.equal(200);
-				expect(await res.text()).to.equal('http://it.at.there/');
+				expect(await res.text()).to.equal('test: http://it.at.there/');
 			});
 
 			it('Promise for a function that returns a response', async () => {
-				fm.mock('http://it.at.there/', Promise.resolve(url => url));
+				fm.mock('http://it.at.there/', Promise.resolve(url => 'test: ' + url));
 				const res = await fm.fetchHandler('http://it.at.there/');
 				expect(res.status).to.equal(200);
-				expect(await res.text()).to.equal('http://it.at.there/');
+				expect(await res.text()).to.equal('test: http://it.at.there/');
+			});
+
+			it('delay', async () => {
+				fm.mock('http://it.at.there/', 200, { delay: 20 });
+				const req = fm.fetchHandler('http://it.at.there/');
+				let resolved = false;
+				req.then(() => (resolved = true));
+				await new Promise(res => setTimeout(res, 10));
+				expect(resolved).to.be.false;
+				await new Promise(res => setTimeout(res, 11));
+				expect(resolved).to.be.true;
+				const res = await req;
+				expect(res.status).to.equal(200);
+			});
+
+			it("delay a function response's execution", async () => {
+				const startTimestamp = new Date().getTime();
+				fm.mock(
+					'http://it.at.there/',
+					() => ({ timestamp: new Date().getTime() }),
+					{ delay: 20 }
+				);
+				const req = fm.fetchHandler('http://it.at.there/');
+				let resolved = false;
+				req.then(() => (resolved = true));
+				await new Promise(res => setTimeout(res, 10));
+				expect(resolved).to.be.false;
+				await new Promise(res => setTimeout(res, 11));
+				expect(resolved).to.be.true;
+				const res = await req;
+				expect(res.status).to.equal(200);
+				const responseTimestamp = (await res.json()).timestamp;
+				expect(responseTimestamp - startTimestamp).to.be.within(20, 25);
 			});
 
 			it('Response', async () => {

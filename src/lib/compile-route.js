@@ -44,7 +44,7 @@ const delayResponse = route => {
 	const { delay } = route;
 	if (delay) {
 		const response = route.response;
-		route.response = new Promise(res => setTimeout(() => res(response), delay));
+		route.response = () => new Promise(res => setTimeout(() => res(response), delay));
 	}
 };
 

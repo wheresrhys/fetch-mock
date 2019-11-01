@@ -281,6 +281,42 @@ module.exports = fetchMock => {
 				expect(responseTimestamp - startTimestamp).to.be.within(20, 25);
 			});
 
+			it('pass values to delayed function', async () => {
+				const startTimestamp = new Date().getTime();
+				fm.mock(
+					'http://it.at.there/',
+					(url) => `delayed: ${url}`,
+					{ delay: 10 }
+				);
+				const req = fm.fetchHandler('http://it.at.there/');
+				await new Promise(res => setTimeout(res, 11));
+				const res = await req;
+				expect(res.status).to.equal(200);
+				expect(await res.text()).to.equal('delayed: http://it.at.there/')
+			});
+
+			it('call delayed response multiple times, each with the same delay', async () => {
+				fm.mock('http://it.at.there/', 200, { delay: 20 });
+				const req1 = fm.fetchHandler('http://it.at.there/');
+				let resolved = false;
+				req1.then(() => (resolved = true));
+				await new Promise(res => setTimeout(res, 10));
+				expect(resolved).to.be.false;
+				await new Promise(res => setTimeout(res, 11));
+				expect(resolved).to.be.true;
+				const res1 = await req1;
+				expect(res1.status).to.equal(200);
+				const req2 = fm.fetchHandler('http://it.at.there/');
+				resolved = false;
+				req2.then(() => (resolved = true));
+				await new Promise(res => setTimeout(res, 10));
+				expect(resolved).to.be.false;
+				await new Promise(res => setTimeout(res, 11));
+				expect(resolved).to.be.true;
+				const res2 = await req2;
+				expect(res2.status).to.equal(200);
+			});
+
 			it('Response', async () => {
 				fm.mock(
 					'http://it.at.there/',

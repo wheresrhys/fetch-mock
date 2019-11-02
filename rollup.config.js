@@ -28,7 +28,7 @@ export default [
 			format: 'umd',
 			name: 'fetchMock'
 		},
-		plugins: [json(), resolve({preferBuiltins: false}), commonjs(), builtins(), globals()]
+		plugins: [json(), resolve(), commonjs(), builtins(), globals()]
 	},
 	{
 		input: 'es5/client.js',

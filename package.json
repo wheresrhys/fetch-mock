@@ -78,7 +78,7 @@
     "bluebird": "^3.4.6",
     "chai": "^4.1.2",
     "coveralls": "^3.0.0",
-    "dtslint": "^0.9.9",
+    "dtslint": "^1.0.2",
     "eslint": "^4.14.0",
     "eslint-config-origami-component": "^1.0.0",
     "eslint-config-prettier": "^2.9.0",

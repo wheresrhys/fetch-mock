@@ -8,16 +8,16 @@ export default [
 	{
 		input: 'src/client.js',
 		output: {
-			file: 'esm/client.mjs',
-			format: 'esm'
+			file: 'cjs/client.js',
+			format: 'cjs'
 		},
 		plugins: [resolve({preferBuiltins: false}), commonjs()]
 	},
 	{
 		input: 'src/server.js',
 		output: {
-			file: 'esm/server.mjs',
-			format: 'esm'
+			file: 'cjs/server.js',
+			format: 'cjs'
 		},
 		plugins: [resolve({preferBuiltins: true}), commonjs(), builtins(), globals()]
 	},

@@ -1,4 +1,4 @@
-import fetchMock from '../src/client.js';
+import fetchMock from '../src/client';
 import {expect} from 'chai';
 import runner from './runner'
 

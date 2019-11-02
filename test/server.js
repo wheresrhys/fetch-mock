@@ -1,4 +1,4 @@
-import fetchMock from '../src/server.js';
+import fetchMock from '../src/server';
 import {expect} from 'chai';
 import http from 'http';
 import sinon from 'sinon';

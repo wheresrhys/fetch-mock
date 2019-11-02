@@ -3,5 +3,5 @@ import babel from 'babel-core'
 babel.transform('code', {
 	plugins: ['transform-runtime']
 });
-
-export default from './client';
+import fetchMock from './client'
+export default fetchMock;

@@ -41,11 +41,11 @@ transpile:
 	babel src --out-dir es5
 
 build: transpile
-	if [ ! -d "cjs" ]; then mkdir cjs; fi
-	cp -r src/* cjs
+	if [ ! -d "esm" ]; then mkdir esm; fi
+	cp -r src/* esm
+	rollup -c rollup.config.js
 	touch cjs/package.json
 	echo '{"type": "commonjs"}' > cjs/package.json
-	rollup -c rollup.config.js
 
 docs:
 	cd docs; jekyll serve build --watch

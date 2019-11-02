@@ -282,17 +282,12 @@ module.exports = fetchMock => {
 			});
 
 			it('pass values to delayed function', async () => {
-				const startTimestamp = new Date().getTime();
-				fm.mock(
-					'http://it.at.there/',
-					(url) => `delayed: ${url}`,
-					{ delay: 10 }
-				);
+				fm.mock('http://it.at.there/', url => `delayed: ${url}`, { delay: 10 });
 				const req = fm.fetchHandler('http://it.at.there/');
 				await new Promise(res => setTimeout(res, 11));
 				const res = await req;
 				expect(res.status).to.equal(200);
-				expect(await res.text()).to.equal('delayed: http://it.at.there/')
+				expect(await res.text()).to.equal('delayed: http://it.at.there/');
 			});
 
 			it('call delayed response multiple times, each with the same delay', async () => {

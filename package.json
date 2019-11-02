@@ -54,6 +54,7 @@
     "glob-to-regexp": "^0.4.0",
     "lodash.isequal": "^4.5.0",
     "path-to-regexp": "^2.2.1",
+    "querystring": "^0.2.0",
     "whatwg-url": "^6.5.0"
   },
   "peerDependencies": {

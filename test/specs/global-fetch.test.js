@@ -1,9 +1,9 @@
-const chai = require('chai');
+import chai from 'chai';
 chai.use(require('sinon-chai'));
 const expect = chai.expect;
-const sinon = require('sinon');
+import sinon from 'sinon';
 
-module.exports = (fetchMock, theGlobal) => {
+export default (fetchMock, theGlobal) => {
 	describe('use with global fetch', () => {
 		let originalFetch;
 		before(() => {

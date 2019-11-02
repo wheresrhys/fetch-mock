@@ -1,7 +1,7 @@
-const chai = require('chai');
+import chai from 'chai';
 const expect = chai.expect;
 
-module.exports = (fetchMock, AbortController) => {
+export default (fetchMock, AbortController) => {
 	(AbortController ? describe : describe.skip)('abortable fetch', () => {
 		let fm;
 		beforeEach(() => {

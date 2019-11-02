@@ -1,7 +1,7 @@
-const chai = require('chai');
+import chai from 'chai';
 const expect = chai.expect;
 
-module.exports = (fetchMock, theGlobal, fetch) => {
+export default (fetchMock, theGlobal, fetch) => {
 	describe('options', () => {
 		let fm;
 		beforeEach(() => {

@@ -1,7 +1,7 @@
-const { normalizeUrl } = require('./request-utils');
+import {  normalizeUrl  } from './request-utils';
 const FetchMock = {};
-const { sanitizeRoute } = require('./compile-route');
-const generateMatcher = require('./generate-matcher');
+import {  sanitizeRoute  } from './compile-route';
+import generateMatcher from './generate-matcher';
 const isName = nameOrMatcher =>
 	typeof nameOrMatcher === 'string' && /^[\da-zA-Z\-]+$/.test(nameOrMatcher);
 
@@ -104,4 +104,4 @@ FetchMock.done = function(nameOrMatcher) {
 		.every(isDone => isDone);
 };
 
-module.exports = FetchMock;
+export default FetchMock;

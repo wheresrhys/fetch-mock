@@ -14,6 +14,9 @@ test-firefox:
 test-unit:
 	mocha test/server.js
 
+test-esm:
+	node --experimental-modules -r esm node_modules/mocha/bin/_mocha test/server.js
+
 test-node6: transpile
 	node test/node6.js
 
@@ -40,6 +43,8 @@ transpile:
 build: transpile
 	if [ ! -d "cjs" ]; then mkdir cjs; fi
 	cp -r src/* cjs
+	touch cjs/package.json
+	echo '{"type": "commonjs"}' > cjs/package.json
 	rollup -c rollup.config.js
 
 docs:

@@ -16,7 +16,7 @@ const headersToArray = headers => {
 const zipObject = entries =>
 	entries.reduce((obj, [key, val]) => Object.assign(obj, { [key]: val }), {});
 
-const normalizeUrl = url => {
+export const normalizeUrl = url => {
 	if (
 		typeof url === 'function' ||
 		url instanceof RegExp ||
@@ -33,11 +33,11 @@ const normalizeUrl = url => {
 	}
 };
 
-module.exports = {
-	setUrlImplementation: it => {
+export const setUrlImplementation = it => {
 		URL = it;
-	},
-	normalizeRequest: (url, options, Request) => {
+	}
+
+export const normalizeRequest = (url, options, Request) => {
 		if (Request.prototype.isPrototypeOf(url)) {
 			const obj = {
 				url: normalizeUrl(url.url),
@@ -72,22 +72,26 @@ module.exports = {
 		} else {
 			throw new TypeError('fetch-mock: Invalid arguments passed to fetch');
 		}
-	},
-	normalizeUrl,
-	getPath: url => {
+	}
+
+
+
+
+	export const getPath = url => {
 		const u = absoluteUrlRX.test(url)
 			? new URL(url)
 			: new URL(url, 'http://dummy');
 		return u.pathname;
-	},
+	}
 
-	getQuery: url => {
+	export const getQuery = url => {
 		const u = absoluteUrlRX.test(url)
 			? new URL(url)
 			: new URL(url, 'http://dummy');
 		return u.search ? u.search.substr(1) : '';
-	},
-	headers: {
+	}
+
+	export const headers = {
 		normalize: headers => zipObject(headersToArray(headers)),
 		toLowerCase: headers =>
 			Object.keys(headers).reduce((obj, k) => {
@@ -109,4 +113,3 @@ module.exports = {
 			return actualHeader.every((val, i) => val === expectedHeader[i]);
 		}
 	}
-};

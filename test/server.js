@@ -1,8 +1,10 @@
-const fetchMock = require('../src/server.js');
-const expect = require('chai').expect;
-const http = require('http');
-const sinon = require('sinon');
-const { promisify } = require('util');
+import fetchMock from '../src/server.js';
+import {expect} from 'chai';
+import http from 'http';
+import sinon from 'sinon';
+import {  promisify  } from 'util';
+import {  Readable, Writable  } from 'stream';
+import runner from './runner'
 
 describe('nodejs tests', () => {
 	let server;
@@ -18,7 +20,7 @@ describe('nodejs tests', () => {
 		server.close();
 	});
 
-	require('./runner')(
+	runner(
 		fetchMock,
 		global,
 		require('node-fetch'),
@@ -38,7 +40,7 @@ describe('nodejs tests', () => {
 		});
 
 		it('can respond with a readable stream', done => {
-			const { Readable, Writable } = require('stream');
+
 			const readable = new Readable();
 			const write = sinon.stub().callsFake((chunk, enc, cb) => {
 				cb();

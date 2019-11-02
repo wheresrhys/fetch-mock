@@ -1,13 +1,13 @@
-const glob = require('glob-to-regexp');
-const pathToRegexp = require('path-to-regexp');
-const querystring = require('querystring');
-const {
-	headers: headerUtils,
+import glob from 'glob-to-regexp';
+import pathToRegexp from 'path-to-regexp';
+import querystring from 'querystring';
+import {
+	headers as headerUtils,
 	getPath,
 	getQuery,
 	normalizeUrl
-} = require('./request-utils');
-const isEqual = require('lodash.isequal');
+ } from './request-utils';
+import isEqual from 'lodash.isequal';
 
 const stringMatchers = {
 	begin: targetString => url => url.indexOf(targetString) === 0,
@@ -129,7 +129,7 @@ const getUrlMatcher = route => {
 	};
 };
 
-module.exports = route => {
+export default route => {
 	const matchers = [
 		route.query && getQueryStringMatcher(route),
 		route.method && getMethodMatcher(route),

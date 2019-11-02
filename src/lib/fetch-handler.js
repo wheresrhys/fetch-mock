@@ -1,5 +1,5 @@
-const responseBuilder = require('./response-builder');
-const requestUtils = require('./request-utils');
+import responseBuilder from './response-builder';
+import * as requestUtils from './request-utils';
 const FetchMock = {};
 
 // see https://heycam.github.io/webidl/#aborterror for the standardised interface
@@ -168,4 +168,4 @@ FetchMock.push = function({ url, options, request, isUnmatched, identifier }) {
 	this._calls.push(args);
 };
 
-module.exports = FetchMock;
+export default FetchMock;

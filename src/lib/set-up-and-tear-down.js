@@ -1,4 +1,4 @@
-const compileRoute = require('./compile-route');
+import compileRoute from './compile-route';
 const FetchMock = {};
 
 FetchMock.mock = function(...args) {
@@ -135,4 +135,4 @@ FetchMock.restore = FetchMock.reset = function() {
 	return this;
 };
 
-module.exports = FetchMock;
+export default FetchMock;

@@ -1,5 +1,6 @@
-const fetchMock = require('../src/client.js');
-const expect = require('chai').expect;
+import fetchMock from '../src/client.js';
+import {expect} from 'chai';
+import runner from './runner'
 
 describe('native fetch behaviour', function() {
 	it('should not throw when passing unmatched calls through to native fetch', function() {
@@ -26,7 +27,7 @@ describe('request types that only work in the browser', function() {
 	});
 });
 
-require('./runner')(fetchMock, window, window.fetch, window.AbortController);
+runner(fetchMock, window, window.fetch, window.AbortController);
 
 describe('no real fetch', function() {
 	it('should cope when there is no global fetch defined', function() {

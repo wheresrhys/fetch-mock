@@ -1,5 +1,7 @@
-require('babel-core').transform('code', {
+import babel from 'babel-core'
+
+babel.transform('code', {
 	plugins: ['transform-runtime']
 });
 
-module.exports = require('./client');
+export default from './client';

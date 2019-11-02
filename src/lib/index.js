@@ -1,6 +1,6 @@
-const setUpAndTearDown = require('./set-up-and-tear-down');
-const fetchHandler = require('./fetch-handler');
-const inspecting = require('./inspecting');
+import setUpAndTearDown from './set-up-and-tear-down';
+import fetchHandler from './fetch-handler';
+import inspecting from './inspecting';
 
 const FetchMock = Object.assign({}, fetchHandler, setUpAndTearDown, inspecting);
 
@@ -50,4 +50,4 @@ FetchMock.sandbox = function() {
 	return sandbox;
 };
 
-module.exports = FetchMock;
+export default FetchMock;

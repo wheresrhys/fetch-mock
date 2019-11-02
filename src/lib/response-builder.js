@@ -169,4 +169,4 @@ e.g. {"body": {"status: "registered"}}`);
 	}
 }
 
-module.exports = options => new ResponseBuilder(options).exec();
+export default options => new ResponseBuilder(options).exec();

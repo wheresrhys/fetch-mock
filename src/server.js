@@ -1,12 +1,13 @@
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
 const Request = fetch.Request;
 const Response = fetch.Response;
 const Headers = fetch.Headers;
-const Stream = require('stream');
-const FetchMock = require('./lib/index');
-const http = require('http');
-const { setUrlImplementation } = require('./lib/request-utils');
-setUrlImplementation(require('whatwg-url').URL);
+import Stream from 'stream';
+import FetchMock from './lib/index';
+import http from 'http';
+import {  setUrlImplementation  } from './lib/request-utils';
+import {URL} from 'whatwg-url'
+setUrlImplementation(URL);
 
 FetchMock.global = global;
 FetchMock.statusTextMap = http.STATUS_CODES;
@@ -19,4 +20,4 @@ FetchMock.config = Object.assign(FetchMock.config, {
 	Headers: Headers
 });
 
-module.exports = FetchMock.createInstance();
+export default FetchMock.createInstance();

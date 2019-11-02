@@ -63,4 +63,4 @@ const statusTextMap = {
 	'511': 'Network Authentication Required'
 };
 
-module.exports = statusTextMap;
+export default statusTextMap;

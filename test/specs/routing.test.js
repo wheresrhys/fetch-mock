@@ -1,8 +1,8 @@
-const chai = require('chai');
-const URL = require('whatwg-url');
+import chai from 'chai';
+import URL from 'whatwg-url';
 const expect = chai.expect;
 
-module.exports = fetchMock => {
+export default fetchMock => {
 	describe('routing', () => {
 		let fm;
 		before(() => {

@@ -1,6 +1,6 @@
-const generateMatcher = require('./generate-matcher');
+import generateMatcher from './generate-matcher';
 
-const sanitizeRoute = route => {
+export const sanitizeRoute = route => {
 	route = Object.assign({}, route);
 
 	if (route.method) {
@@ -49,7 +49,7 @@ const delayResponse = route => {
 	}
 };
 
-module.exports = route => {
+export default route => {
 	validateRoute(route);
 	route = sanitizeRoute(route);
 	route.matcher = generateMatcher(route);
@@ -57,5 +57,3 @@ module.exports = route => {
 	delayResponse(route);
 	return route;
 };
-
-module.exports.sanitizeRoute = sanitizeRoute;

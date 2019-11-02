@@ -1,11 +1,11 @@
-const chai = require('chai');
+import chai from 'chai';
 chai.use(require('sinon-chai'));
 const expect = chai.expect;
-const sinon = require('sinon');
-const BluebirdPromise = require('bluebird');
+import sinon from 'sinon';
+import BluebirdPromise from 'bluebird';
 const NativePromise = Promise;
 
-module.exports = fetchMock => {
+export default fetchMock => {
 	describe('custom implementations', () => {
 		let fm;
 		before(() => {

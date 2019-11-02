@@ -1,7 +1,7 @@
-const FetchMock = require('./lib/index');
-const statusTextMap = require('./lib/status-text');
+import FetchMock from './lib/index';
+import statusTextMap from './lib/status-text';
 const theGlobal = typeof window !== 'undefined' ? window : self;
-const { setUrlImplementation } = require('./lib/request-utils');
+import {  setUrlImplementation  } from './lib/request-utils';
 setUrlImplementation(theGlobal.URL);
 
 FetchMock.global = theGlobal;
@@ -14,4 +14,4 @@ FetchMock.config = Object.assign(FetchMock.config, {
 	Headers: theGlobal.Headers
 });
 
-module.exports = FetchMock.createInstance();
+export default FetchMock.createInstance();

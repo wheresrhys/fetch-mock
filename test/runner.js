@@ -1,14 +1,26 @@
-module.exports = (fetchMock, theGlobal, fetch, AbortController) => {
+import setUpAndTearDown from './specs/set-up-and-tear-down.test';
+import globalFetch from './specs/global-fetch.test';
+import sandbox from './specs/sandbox.test';
+import routing from './specs/routing.test';
+import responses from './specs/responses.test';
+import inspecting from './specs/inspecting.test';
+import repeat from './specs/repeat.test';
+import customImplementations from './specs/custom-implementations.test';
+import options from './specs/options.test';
+import abortable from './specs/abortable.test';
+
+
+export default (fetchMock, theGlobal, fetch, AbortController) => {
 	describe('fetch-mock', () => {
-		require('./specs/set-up-and-tear-down.test')(fetchMock);
-		require('./specs/global-fetch.test')(fetchMock, theGlobal);
-		require('./specs/sandbox.test')(fetchMock, theGlobal);
-		require('./specs/routing.test')(fetchMock);
-		require('./specs/responses.test')(fetchMock);
-		require('./specs/inspecting.test')(fetchMock);
-		require('./specs/repeat.test')(fetchMock);
-		require('./specs/custom-implementations.test')(fetchMock);
-		require('./specs/options.test')(fetchMock, theGlobal, fetch);
-		require('./specs/abortable.test')(fetchMock, AbortController);
+		setUpAndTearDown(fetchMock);
+		globalFetch(fetchMock, theGlobal);
+		sandbox(fetchMock, theGlobal);
+		routing(fetchMock);
+		responses(fetchMock);
+		inspecting(fetchMock);
+		repeat(fetchMock);
+		customImplementations(fetchMock);
+		options(fetchMock, theGlobal, fetch);
+		abortable(fetchMock, AbortController);
 	});
 };

@@ -1,7 +1,7 @@
-const chai = require('chai');
+import chai from 'chai';
 chai.use(require('sinon-chai'));
 const expect = chai.expect;
-const sinon = require('sinon');
+import sinon from 'sinon';
 
 const testChainableMethod = (getFetchMock, method, args = []) => {
 	it('is chainable', () => {
@@ -16,7 +16,7 @@ const testChainableMethod = (getFetchMock, method, args = []) => {
 	});
 };
 
-module.exports = fetchMock => {
+export default fetchMock => {
 	describe('Set up and tear down', () => {
 		let fm;
 		before(() => {

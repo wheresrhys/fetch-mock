@@ -1,9 +1,9 @@
-const chai = require('chai');
+import chai from 'chai';
 chai.use(require('sinon-chai'));
 const expect = chai.expect;
-const sinon = require('sinon');
+import sinon from 'sinon';
 
-module.exports = fetchMock => {
+export default fetchMock => {
 	describe('repeat and done()', () => {
 		let fm;
 		before(() => {

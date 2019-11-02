@@ -2,10 +2,13 @@
 // transpiling all the tests, which muddies the waters a bit
 // So instead just making sure there are no syntax errors or issues with
 // missing globals or methods
-require('babel-core').transform('code', {
+import babel from 'babel-core'
+
+babel.transform('code', {
 	plugins: ['transform-runtime']
 });
-const fetchMock = require('../es5/server');
+
+import fetchMock from '../es5/server';
 
 fetchMock.mock('http://it.at.there/', 200);
 fetchMock.fetchHandler('http://it.at.there/').catch(() => process.exit(2));

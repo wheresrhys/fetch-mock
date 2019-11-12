@@ -5,6 +5,8 @@ const Headers = fetch.Headers;
 const Stream = require('stream');
 const FetchMock = require('./lib/index');
 const http = require('http');
+const { setUrlImplementation } = require('./lib/request-utils');
+setUrlImplementation(require('whatwg-url').URL);
 
 FetchMock.global = global;
 FetchMock.statusTextMap = http.STATUS_CODES;
@@ -17,4 +19,4 @@ FetchMock.config = Object.assign(FetchMock.config, {
 	Headers: Headers
 });
 
-module.exports = FetchMock.createInstance(true);
+module.exports = FetchMock.createInstance();

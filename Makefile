@@ -19,10 +19,13 @@ test-node6: transpile
 
 lint-ci:
 	eslint --ignore-pattern test/fixtures/* src test
+	prettier *.md
+	dtslint --expectOnly types
 
 lint:
 	eslint --cache --fix .
 	prettier --write *.md
+	dtslint --expectOnly types
 
 coverage-report:
 	nyc --reporter=lcovonly --reporter=text mocha test/server.js
@@ -34,11 +37,10 @@ local-coverage:
 transpile:
 	babel src --out-dir es5
 
-bundle:
-	webpack --mode development \
-	--output-library fetchMock \
-	--entry ./es5/client.js \
-	--output-filename ./es5/client-bundle.js
+build: transpile
+	if [ ! -d "cjs" ]; then mkdir cjs; fi
+	cp -r src/* cjs
+	rollup -c rollup.config.js
 
 docs:
 	cd docs; jekyll serve build --watch

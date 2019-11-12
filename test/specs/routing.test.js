@@ -189,7 +189,7 @@ module.exports = fetchMock => {
 						? 'credentials'
 						: 'timeout';
 					const valueToSet =
-						propertyToCheck === 'credentials' ? 'same-origin' : 2000;
+						propertyToCheck === 'credentials' ? 'include' : 2000;
 
 					fm.mock(
 						(url, options, request) => request[propertyToCheck] === valueToSet,

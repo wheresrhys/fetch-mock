@@ -1,4 +1,4 @@
-const URL = require('whatwg-url');
+let URL;
 // https://stackoverflow.com/a/19709846/308237
 const absoluteUrlRX = new RegExp('^(?:[a-z]+:)?//', 'i');
 
@@ -25,15 +25,18 @@ const normalizeUrl = url => {
 		return url;
 	}
 	if (absoluteUrlRX.test(url)) {
-		const u = new URL.URL(url);
+		const u = new URL(url);
 		return u.href;
 	} else {
-		const u = new URL.URL(url, 'http://dummy');
+		const u = new URL(url, 'http://dummy');
 		return u.pathname + u.search;
 	}
 };
 
 module.exports = {
+	setUrlImplementation: it => {
+		URL = it;
+	},
 	normalizeRequest: (url, options, Request) => {
 		if (Request.prototype.isPrototypeOf(url)) {
 			const obj = {
@@ -73,15 +76,15 @@ module.exports = {
 	normalizeUrl,
 	getPath: url => {
 		const u = absoluteUrlRX.test(url)
-			? new URL.URL(url)
-			: new URL.URL(url, 'http://dummy');
+			? new URL(url)
+			: new URL(url, 'http://dummy');
 		return u.pathname;
 	},
 
 	getQuery: url => {
 		const u = absoluteUrlRX.test(url)
-			? new URL.URL(url)
-			: new URL.URL(url, 'http://dummy');
+			? new URL(url)
+			: new URL(url, 'http://dummy');
 		return u.search ? u.search.substr(1) : '';
 	},
 	headers: {

@@ -118,6 +118,7 @@ workflows:
           requires:
             - checkout_code
       - deploy:
+          context: wheresrhys-npm-publish
           requires:
             - nodefetch1
             - nodefetch2

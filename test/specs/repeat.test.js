@@ -35,11 +35,9 @@ module.exports = fetchMock => {
 		});
 
 		it('can expect multiple routes to have been called', async () => {
-			fm.mock('http://it.at.there1/', 200, { repeat: 2 }).mock(
-				'http://it.at.there2/',
-				200,
-				{ repeat: 2 }
-			);
+			fm.mock('http://it.at.there1/', 200, {
+				repeat: 2
+			}).mock('http://it.at.there2/', 200, { repeat: 2 });
 
 			fm.fetchHandler('http://it.at.there1/');
 			expect(fm.done()).to.be.false;
@@ -85,11 +83,9 @@ module.exports = fetchMock => {
 		});
 
 		it('falls back to second route if first route already done', async () => {
-			fm.mock('http://it.at.there1/', 404, { repeat: 1 }).mock(
-				'http://it.at.there1/',
-				200,
-				{ overwriteRoutes: false }
-			);
+			fm.mock('http://it.at.there1/', 404, {
+				repeat: 1
+			}).mock('http://it.at.there1/', 200, { overwriteRoutes: false });
 
 			const res = await fm.fetchHandler('http://it.at.there1/');
 			expect(res.status).to.equal(404);

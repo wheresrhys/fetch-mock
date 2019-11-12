@@ -242,7 +242,10 @@ module.exports = fetchMock => {
 			});
 
 			it('Promise for a function that returns a response', async () => {
-				fm.mock('http://it.at.there/', Promise.resolve(url => 'test: ' + url));
+				fm.mock(
+					'http://it.at.there/',
+					Promise.resolve(url => 'test: ' + url)
+				);
 				const res = await fm.fetchHandler('http://it.at.there/');
 				expect(res.status).to.equal(200);
 				expect(await res.text()).to.equal('test: http://it.at.there/');

@@ -11,7 +11,7 @@ export default [
 			file: 'esm/client.mjs',
 			format: 'esm'
 		},
-		plugins: [resolve({preferBuiltins: false}), commonjs()]
+		plugins: [resolve({ preferBuiltins: false }), commonjs()]
 	},
 	{
 		input: 'src/server.js',
@@ -19,7 +19,12 @@ export default [
 			file: 'esm/server.mjs',
 			format: 'esm'
 		},
-		plugins: [resolve({preferBuiltins: true}), commonjs(), builtins(), globals()]
+		plugins: [
+			resolve({ preferBuiltins: true }),
+			commonjs(),
+			builtins(),
+			globals()
+		]
 	},
 	{
 		input: 'es5/client-legacy.js',
@@ -37,6 +42,12 @@ export default [
 			format: 'umd',
 			name: 'fetchMock'
 		},
-		plugins: [json(), resolve({preferBuiltins: false}), commonjs(), builtins(), globals()]
+		plugins: [
+			json(),
+			resolve({ preferBuiltins: false }),
+			commonjs(),
+			builtins(),
+			globals()
+		]
 	}
 ];

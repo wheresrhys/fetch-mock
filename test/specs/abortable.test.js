@@ -1,9 +1,23 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-module.exports = (fetchMock, AbortController) => {
+module.exports = (fetchMock, AbortController, theGlobal, fetch) => {
 	(AbortController ? describe : describe.skip)('abortable fetch', () => {
 		let fm;
+		let noNativeRequest = false;
+		before(() => {
+			noNativeRequest = !theGlobal.Request;
+			if (noNativeRequest) {
+				theGlobal.Request = fetch.Request;
+			}
+		});
+
+		after(() => {
+			if (noNativeRequest) {
+				delete theGlobal.Request;
+			}
+		});
+
 		beforeEach(() => {
 			fm = fetchMock.createInstance();
 		});
@@ -25,6 +39,27 @@ module.exports = (fetchMock, AbortController) => {
 					signal: controller.signal
 				});
 			} catch (error) {
+				expect(error.name).to.equal('AbortError');
+				expect(error.message).to.equal('The operation was aborted.');
+			}
+		});
+
+		it('error on signal abort for request object', async () => {
+			fm.mock('http://it.at.there/', () => {
+				return new Promise(resolve => {
+					setTimeout(() => {
+						resolve({});
+					}, 500);
+				});
+			});
+
+			const controller = new AbortController();
+			setTimeout(() => controller.abort(), 300);
+
+			try {
+				await fm.fetchHandler('http://it.at.there/', {}, new Request('http://it.at.there/', { signal: controller.signal }));
+			} catch (error) {
+				console.error(error);
 				expect(error.name).to.equal('AbortError');
 				expect(error.message).to.equal('The operation was aborted.');
 			}

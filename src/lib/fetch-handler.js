@@ -62,7 +62,7 @@ FetchMock.fetchHandler = function(url, options, request) {
 	// wrapped in this promise to make sure we respect custom Promise
 	// constructors defined by the user
 	return new this.config.Promise((res, rej) => {
-		const signal = (options && options.signal) || (request && request.signal);
+		const signal = options && options.signal;
 		if (signal) {
 			const abort = () => {
 				rej(new AbortError());

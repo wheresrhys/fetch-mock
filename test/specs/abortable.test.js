@@ -1,23 +1,9 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-module.exports = (fetchMock, AbortController, theGlobal, fetch) => {
+module.exports = (fetchMock, AbortController) => {
 	(AbortController ? describe : describe.skip)('abortable fetch', () => {
 		let fm;
-		let noNativeRequest = false;
-		before(() => {
-			noNativeRequest = !theGlobal.Request;
-			if (noNativeRequest) {
-				theGlobal.Request = fetch.Request;
-			}
-		});
-
-		after(() => {
-			if (noNativeRequest) {
-				delete theGlobal.Request;
-			}
-		});
-
 		beforeEach(() => {
 			fm = fetchMock.createInstance();
 		});
@@ -57,7 +43,7 @@ module.exports = (fetchMock, AbortController, theGlobal, fetch) => {
 			setTimeout(() => controller.abort(), 300);
 
 			try {
-				await fm.fetchHandler('http://it.at.there/', {}, new Request('http://it.at.there/', { signal: controller.signal }));
+				await fm.fetchHandler(new fm.config.Request('http://it.at.there/', { signal: controller.signal }));
 			} catch (error) {
 				console.error(error);
 				expect(error.name).to.equal('AbortError');

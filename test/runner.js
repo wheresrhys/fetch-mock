@@ -5,10 +5,10 @@ module.exports = (fetchMock, theGlobal, fetch, AbortController) => {
 		require('./specs/sandbox.test')(fetchMock, theGlobal);
 		require('./specs/routing.test')(fetchMock);
 		require('./specs/responses.test')(fetchMock);
-		require('./specs/inspecting.test')(fetchMock);
+		require('./specs/inspecting.test')(fetchMock, theGlobal);
 		require('./specs/repeat.test')(fetchMock);
 		require('./specs/custom-implementations.test')(fetchMock);
 		require('./specs/options.test')(fetchMock, theGlobal, fetch);
-		require('./specs/abortable.test')(fetchMock, AbortController, theGlobal, fetch);
+		require('./specs/abortable.test')(fetchMock, AbortController);
 	});
 };

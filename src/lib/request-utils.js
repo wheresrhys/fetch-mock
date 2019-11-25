@@ -43,7 +43,8 @@ module.exports = {
 				url: normalizeUrl(url.url),
 				options: Object.assign(
 					{
-						method: url.method
+						method: url.method,
+						signal: url.signal
 					},
 					options
 				),

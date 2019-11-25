@@ -5,12 +5,14 @@ const chai = require('chai');
 const expect = chai.expect;
 const sinon = require('sinon');
 
-module.exports = fetchMock => {
+module.exports = (fetchMock, theGlobal) => {
 	describe('inspecting', () => {
 		let fm;
+		let noNativeAbortSignal = false;
 		before(() => {
 			fm = fetchMock.createInstance();
 			fm.config.warnOnUnmatched = false;
+			noNativeAbortSignal = !theGlobal.AbortSignal;
 		});
 
 		describe('api', () => {
@@ -485,12 +487,24 @@ module.exports = fetchMock => {
 					method: 'POST'
 				});
 				fm.fetchHandler(req);
-				expect(fm.lastCall()).to.eql([
+				let [url, callOptions] = fm.lastCall();
+				callOptions = Object.assign({}, callOptions);
+				const signal = callOptions.signal;
+				if (noNativeAbortSignal) {
+					expect(signal).to.equal(null);
+				} else {
+					expect(signal).to.instanceOf(AbortSignal);
+				}
+				delete callOptions.signal;
+				expect([url, callOptions]).to.eql([
 					'http://it.at.here/',
 					{ method: 'POST' }
 				]);
 				expect(fm.lastUrl()).to.equal('http://it.at.here/');
-				expect(fm.lastOptions()).to.eql({ method: 'POST' });
+				const options = fm.lastOptions();
+				expect(options.signal).to.equal(signal);
+				delete options.signal;
+				expect(options).to.eql({ method: 'POST' });
 				expect(fm.lastCall().request).to.equal(req);
 			});
 
@@ -499,12 +513,24 @@ module.exports = fetchMock => {
 					method: 'POST'
 				});
 				fm.fetchHandler(req, { arbitraryOption: true });
-				expect(fm.lastCall()).to.eql([
+				let [url, callOptions] = fm.lastCall();
+				callOptions = Object.assign({}, callOptions);
+				const signal = callOptions.signal;
+				if (noNativeAbortSignal) {
+					expect(signal).to.equal(null);
+				} else {
+					expect(signal).to.instanceOf(AbortSignal);
+				}
+				delete callOptions.signal;
+				expect([url, callOptions]).to.eql([
 					'http://it.at.here/',
 					{ method: 'POST', arbitraryOption: true }
 				]);
 				expect(fm.lastUrl()).to.equal('http://it.at.here/');
-				expect(fm.lastOptions()).to.eql({
+				const options = fm.lastOptions();
+				expect(options.signal).to.equal(signal);
+				delete options.signal;
+				expect(options).to.eql({
 					method: 'POST',
 					arbitraryOption: true
 				});

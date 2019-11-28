@@ -1,4 +1,4 @@
-# Upgrading from V6 to V7
+# Upgrading from V6 to V7 or v8
 
 # Changes
 

@@ -5,7 +5,7 @@ const chai = require('chai');
 const expect = chai.expect;
 const sinon = require('sinon');
 
-module.exports = (fetchMock, theGlobal, AbortController) => {
+module.exports = fetchMock => {
 	describe('inspecting', () => {
 		let fm;
 		before(() => {
@@ -516,27 +516,9 @@ module.exports = (fetchMock, theGlobal, AbortController) => {
 				expect(fm.lastCall().request).to.equal(req);
 			});
 
-			it('Make signal available in options when called with Request instance using signal', () => {
-				const controller = new AbortController();
-				const req = new fm.config.Request('http://it.at.here/', {
-					method: 'POST',
-					signal: controller.signal
-				});
-				fm.fetchHandler(req);
-				const [, callOptions] = fm.lastCall();
-
-				expect(callOptions).to.eql({
-					method: 'POST',
-					signal: controller.signal
-				});
-				const options = fm.lastOptions();
-				expect(options).to.eql({ method: 'POST', signal: controller.signal });
-				expect(fm.lastCall().request).to.equal(req);
-			});
-
 			it('Not make default signal available in options when called with Request instance using signal', () => {
 				const req = new fm.config.Request('http://it.at.here/', {
-					method: 'POST',
+					method: 'POST'
 				});
 				fm.fetchHandler(req);
 				const [, callOptions] = fm.lastCall();

@@ -42,13 +42,11 @@ module.exports = {
 			const derivedOptions = {
 				method: url.method
 			};
-			if (url.signal) {
-				derivedOptions.signal = url.signal;
-			}
 			const normalizedRequestObject = {
 				url: normalizeUrl(url.url),
 				options: Object.assign(derivedOptions, options),
-				request: url
+				request: url,
+				signal: (options && options.signal) || url.signal
 			};
 
 			const headers = headersToArray(url.headers);
@@ -64,7 +62,8 @@ module.exports = {
 		) {
 			return {
 				url: normalizeUrl(url),
-				options: options
+				options: options,
+				signal: options && options.signal
 			};
 		} else if (typeof url === 'object') {
 			throw new TypeError(

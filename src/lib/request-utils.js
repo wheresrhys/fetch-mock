@@ -39,24 +39,24 @@ module.exports = {
 	},
 	normalizeRequest: (url, options, Request) => {
 		if (Request.prototype.isPrototypeOf(url)) {
-			const obj = {
+			const derivedOptions = {
+				method: url.method
+			};
+			if (url.signal) {
+				derivedOptions.signal = url.signal;
+			}
+			const normalizedRequestObject = {
 				url: normalizeUrl(url.url),
-				options: Object.assign(
-					{
-						method: url.method,
-						signal: url.signal
-					},
-					options
-				),
+				options: Object.assign(derivedOptions, options),
 				request: url
 			};
 
 			const headers = headersToArray(url.headers);
 
 			if (headers.length) {
-				obj.options.headers = zipObject(headers);
+				normalizedRequestObject.options.headers = zipObject(headers);
 			}
-			return obj;
+			return normalizedRequestObject;
 		} else if (
 			typeof url === 'string' ||
 			// horrible URL object duck-typing

@@ -43,7 +43,11 @@ module.exports = (fetchMock, AbortController) => {
 			setTimeout(() => controller.abort(), 300);
 
 			try {
-				await fm.fetchHandler(new fm.config.Request('http://it.at.there/', { signal: controller.signal }));
+				await fm.fetchHandler(
+					new fm.config.Request('http://it.at.there/', {
+						signal: controller.signal
+					})
+				);
 			} catch (error) {
 				console.error(error);
 				expect(error.name).to.equal('AbortError');

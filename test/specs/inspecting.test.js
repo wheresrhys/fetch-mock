@@ -5,14 +5,12 @@ const chai = require('chai');
 const expect = chai.expect;
 const sinon = require('sinon');
 
-module.exports = (fetchMock, theGlobal) => {
+module.exports = (fetchMock, theGlobal, AbortController) => {
 	describe('inspecting', () => {
 		let fm;
-		let noNativeAbortSignal = false;
 		before(() => {
 			fm = fetchMock.createInstance();
 			fm.config.warnOnUnmatched = false;
-			noNativeAbortSignal = !theGlobal.AbortSignal;
 		});
 
 		describe('api', () => {
@@ -487,23 +485,12 @@ module.exports = (fetchMock, theGlobal) => {
 					method: 'POST'
 				});
 				fm.fetchHandler(req);
-				let [url, callOptions] = fm.lastCall();
-				callOptions = Object.assign({}, callOptions);
-				const signal = callOptions.signal;
-				if (noNativeAbortSignal) {
-					expect(signal).to.equal(null);
-				} else {
-					expect(signal).to.instanceOf(AbortSignal);
-				}
-				delete callOptions.signal;
-				expect([url, callOptions]).to.eql([
-					'http://it.at.here/',
-					{ method: 'POST' }
-				]);
+				const [url, callOptions] = fm.lastCall();
+
+				expect(url).to.equal('http://it.at.here/');
+				expect(callOptions).to.include({ method: 'POST' });
 				expect(fm.lastUrl()).to.equal('http://it.at.here/');
 				const options = fm.lastOptions();
-				expect(options.signal).to.equal(signal);
-				delete options.signal;
 				expect(options).to.eql({ method: 'POST' });
 				expect(fm.lastCall().request).to.equal(req);
 			});
@@ -513,27 +500,37 @@ module.exports = (fetchMock, theGlobal) => {
 					method: 'POST'
 				});
 				fm.fetchHandler(req, { arbitraryOption: true });
-				let [url, callOptions] = fm.lastCall();
-				callOptions = Object.assign({}, callOptions);
-				const signal = callOptions.signal;
-				if (noNativeAbortSignal) {
-					expect(signal).to.equal(null);
-				} else {
-					expect(signal).to.instanceOf(AbortSignal);
-				}
-				delete callOptions.signal;
-				expect([url, callOptions]).to.eql([
-					'http://it.at.here/',
-					{ method: 'POST', arbitraryOption: true }
-				]);
+				const [url, callOptions] = fm.lastCall();
+				expect(url).to.equal('http://it.at.here/');
+				expect(callOptions).to.include({
+					method: 'POST',
+					arbitraryOption: true
+				});
 				expect(fm.lastUrl()).to.equal('http://it.at.here/');
 				const options = fm.lastOptions();
-				expect(options.signal).to.equal(signal);
-				delete options.signal;
+
 				expect(options).to.eql({
 					method: 'POST',
 					arbitraryOption: true
 				});
+				expect(fm.lastCall().request).to.equal(req);
+			});
+
+			it('Make signal available in options when called with Request instance using signal', () => {
+				const controller = new AbortController();
+				const req = new fm.config.Request('http://it.at.here/', {
+					method: 'POST',
+					signal: controller.signal
+				});
+				fm.fetchHandler(req);
+				const [, callOptions] = fm.lastCall();
+
+				expect(callOptions).to.eql({
+					method: 'POST',
+					signal: controller.signal
+				});
+				const options = fm.lastOptions();
+				expect(options).to.eql({ method: 'POST', signal: controller.signal });
 				expect(fm.lastCall().request).to.equal(req);
 			});
 		});

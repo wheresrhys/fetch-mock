@@ -485,12 +485,13 @@ module.exports = fetchMock => {
 					method: 'POST'
 				});
 				fm.fetchHandler(req);
-				expect(fm.lastCall()).to.eql([
-					'http://it.at.here/',
-					{ method: 'POST' }
-				]);
+				const [url, callOptions] = fm.lastCall();
+
+				expect(url).to.equal('http://it.at.here/');
+				expect(callOptions).to.include({ method: 'POST' });
 				expect(fm.lastUrl()).to.equal('http://it.at.here/');
-				expect(fm.lastOptions()).to.eql({ method: 'POST' });
+				const options = fm.lastOptions();
+				expect(options).to.eql({ method: 'POST' });
 				expect(fm.lastCall().request).to.equal(req);
 			});
 
@@ -499,16 +500,32 @@ module.exports = fetchMock => {
 					method: 'POST'
 				});
 				fm.fetchHandler(req, { arbitraryOption: true });
-				expect(fm.lastCall()).to.eql([
-					'http://it.at.here/',
-					{ method: 'POST', arbitraryOption: true }
-				]);
+				const [url, callOptions] = fm.lastCall();
+				expect(url).to.equal('http://it.at.here/');
+				expect(callOptions).to.include({
+					method: 'POST',
+					arbitraryOption: true
+				});
 				expect(fm.lastUrl()).to.equal('http://it.at.here/');
-				expect(fm.lastOptions()).to.eql({
+				const options = fm.lastOptions();
+
+				expect(options).to.eql({
 					method: 'POST',
 					arbitraryOption: true
 				});
 				expect(fm.lastCall().request).to.equal(req);
+			});
+
+			it('Not make default signal available in options when called with Request instance using signal', () => {
+				const req = new fm.config.Request('http://it.at.here/', {
+					method: 'POST'
+				});
+				fm.fetchHandler(req);
+				const [, callOptions] = fm.lastCall();
+
+				expect(callOptions.signal).to.be.undefined;
+				const options = fm.lastOptions();
+				expect(options.signal).to.be.undefined;
 			});
 		});
 

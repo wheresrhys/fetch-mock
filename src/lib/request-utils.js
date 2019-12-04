@@ -39,23 +39,22 @@ module.exports = {
 	},
 	normalizeRequest: (url, options, Request) => {
 		if (Request.prototype.isPrototypeOf(url)) {
-			const obj = {
+			const derivedOptions = {
+				method: url.method
+			};
+			const normalizedRequestObject = {
 				url: normalizeUrl(url.url),
-				options: Object.assign(
-					{
-						method: url.method
-					},
-					options
-				),
-				request: url
+				options: Object.assign(derivedOptions, options),
+				request: url,
+				signal: (options && options.signal) || url.signal
 			};
 
 			const headers = headersToArray(url.headers);
 
 			if (headers.length) {
-				obj.options.headers = zipObject(headers);
+				normalizedRequestObject.options.headers = zipObject(headers);
 			}
-			return obj;
+			return normalizedRequestObject;
 		} else if (
 			typeof url === 'string' ||
 			// horrible URL object duck-typing
@@ -63,7 +62,8 @@ module.exports = {
 		) {
 			return {
 				url: normalizeUrl(url),
-				options: options
+				options: options,
+				signal: options && options.signal
 			};
 		} else if (typeof url === 'object') {
 			throw new TypeError(

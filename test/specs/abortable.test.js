@@ -30,6 +30,31 @@ module.exports = (fetchMock, AbortController) => {
 			}
 		});
 
+		it('error on signal abort for request object', async () => {
+			fm.mock('http://it.at.there/', () => {
+				return new Promise(resolve => {
+					setTimeout(() => {
+						resolve({});
+					}, 500);
+				});
+			});
+
+			const controller = new AbortController();
+			setTimeout(() => controller.abort(), 300);
+
+			try {
+				await fm.fetchHandler(
+					new fm.config.Request('http://it.at.there/', {
+						signal: controller.signal
+					})
+				);
+			} catch (error) {
+				console.error(error);
+				expect(error.name).to.equal('AbortError');
+				expect(error.message).to.equal('The operation was aborted.');
+			}
+		});
+
 		it('error when signal already aborted', async () => {
 			const controller = new AbortController();
 			controller.abort();

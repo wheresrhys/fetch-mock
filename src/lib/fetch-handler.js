@@ -47,11 +47,15 @@ const resolve = async (
 };
 
 FetchMock.fetchHandler = function(url, options, request) {
-	({ url, options, request } = requestUtils.normalizeRequest(
+	const normalizedRequest = requestUtils.normalizeRequest(
 		url,
 		options,
 		this.config.Request
-	));
+	);
+
+	({ url, options, request } = normalizedRequest);
+
+	const { signal } = normalizedRequest;
 
 	const route = this.executeRouter(url, options, request);
 
@@ -62,15 +66,15 @@ FetchMock.fetchHandler = function(url, options, request) {
 	// wrapped in this promise to make sure we respect custom Promise
 	// constructors defined by the user
 	return new this.config.Promise((res, rej) => {
-		if (options && options.signal) {
+		if (signal) {
 			const abort = () => {
 				rej(new AbortError());
 				done();
 			};
-			if (options.signal.aborted) {
+			if (signal.aborted) {
 				abort();
 			}
-			options.signal.addEventListener('abort', abort);
+			signal.addEventListener('abort', abort);
 		}
 
 		this.generateResponse(route, url, options, request)

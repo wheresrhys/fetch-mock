@@ -75,11 +75,6 @@ multiParameters:
           - Integer
         content: |-
           Limits the number of times the route can be used. If the route has already been called `repeat` times, the call to `fetch()` will fall through to be handled by any other routes defined (which may eventually result in an error if nothing matches it)
-      - name: repeat
-        types:
-          - Integer
-        content: |-
-          Limits the number of times the route can be used. If the route has already been called `repeat` times, the call to `fetch()` will fall through to be handled by any other routes defined (which may eventually result in an error if nothing matches it)
   - parametersBlockTitle: Response options
     parameters:
       - name: delay

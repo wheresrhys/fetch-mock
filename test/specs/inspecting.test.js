@@ -533,6 +533,18 @@ module.exports = (fetchMock, theGlobal, AbortController) => {
 				expect(options).to.eql({ method: 'POST', signal: controller.signal });
 				expect(fm.lastCall().request).to.equal(req);
 			});
+
+			it('Not make default signal available in options when called with Request instance using signal', () => {
+				const req = new fm.config.Request('http://it.at.here/', {
+					method: 'POST',
+				});
+				fm.fetchHandler(req);
+				const [, callOptions] = fm.lastCall();
+
+				expect(callOptions.signal).to.be.undefined;
+				const options = fm.lastOptions();
+				expect(options.signal).to.be.undefined;
+			});
 		});
 
 		describe('flushing pending calls', () => {

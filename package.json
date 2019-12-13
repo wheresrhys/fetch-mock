@@ -9,8 +9,11 @@
   "types": "./types/index.d.ts",
   "scripts": {
     "test": "make lint test",
-    "prepublishOnly": "make build",
-    "postinstall": "node scripts/support-fetch-mock.js"
+    "prepublishOnly": "make build"
+  },
+  "funding": {
+    "type": "charity",
+    "url": "https://www.justgiving.com/refugee-support-europe"
   },
   "babel": {
     "presets": [

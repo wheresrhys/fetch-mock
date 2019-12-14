@@ -832,6 +832,25 @@ module.exports = fetchMock => {
 				await fm.fetchHandler('https://api.example.com/apps/abc');
 				expect(fm.calls(true).length).to.equal(1);
 			});
+			it('setup routes correctly when using object definitions', async () => {
+				fm.get({
+					matcher: `express:/:var`,
+					response: 200
+				}).put({
+					matcher: `express:/:var`,
+					response: 201,
+					overwriteRoutes: false
+				});
+
+				const { status } = await fm.fetchHandler(
+					'https://api.example.com/lala',
+					{ method: 'put' }
+				);
+				// before fixing this test it was returning 200 for the put request
+				// because both teh .get() and .put() calls were failing to correctly
+				// add the choice of method to the route config
+				expect(status).to.equal(201);
+			});
 		});
 	});
 };

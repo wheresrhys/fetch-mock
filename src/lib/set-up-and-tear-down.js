@@ -91,20 +91,18 @@ FetchMock.spy = function() {
 
 FetchMock.compileRoute = compileRoute;
 
-const applyShorthand = (args, shorthandOptions) =>
-	Object.assign(argsToRoute(args), shorthandOptions);
-
-FetchMock.once = function(...args) {
-	return this.mock(applyShorthand(args, { repeat: 1 }));
+const defineShorthand = (methodName, underlyingMethod, shorthandOptions) => {
+	FetchMock[methodName] = function(...args) {
+		return this[underlyingMethod](
+			Object.assign(argsToRoute(args), shorthandOptions)
+		);
+	};
 };
+defineShorthand('once', 'mock', { repeat: 1 });
 
 ['get', 'post', 'put', 'delete', 'head', 'patch'].forEach(method => {
-	FetchMock[method] = function(...args) {
-		return this.mock(applyShorthand(args, { method }));
-	};
-	FetchMock[`${method}Once`] = function(...args) {
-		return this.once(applyShorthand(args, { method }));
-	};
+	defineShorthand(method, 'mock', { method });
+	defineShorthand(`${method}Once`, 'once', { method });
 });
 
 FetchMock.resetBehavior = function() {

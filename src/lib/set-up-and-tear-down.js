@@ -1,27 +1,27 @@
 const compileRoute = require('./compile-route');
 const FetchMock = {};
 
+const argsToRoute = args => {
+	const [matcher, response, options = {}] = args;
+	// Handle the variety of parameters accepted by mock (see README)
+	if (matcher && response) {
+		return Object.assign(
+			{
+				matcher,
+				response
+			},
+			options
+		);
+	} else if (matcher && matcher.matcher) {
+		return matcher;
+	} else {
+		throw new Error('fetch-mock: Invalid parameters passed to fetch-mock');
+	}
+}
+
 FetchMock.mock = function(...args) {
 	if (args.length) {
-		const [matcher, response, options = {}] = args;
-		let route;
-
-		// Handle the variety of parameters accepted by mock (see README)
-		if (matcher && response) {
-			route = Object.assign(
-				{
-					matcher,
-					response
-				},
-				options
-			);
-		} else if (matcher && matcher.matcher) {
-			route = matcher;
-		} else {
-			throw new Error('fetch-mock: Invalid parameters passed to fetch-mock');
-		}
-
-		this.addRoute(route);
+		this.addRoute(argsToRoute(args));
 	}
 
 	return this._mock();
@@ -91,23 +91,21 @@ FetchMock.spy = function() {
 
 FetchMock.compileRoute = compileRoute;
 
-FetchMock.once = function(matcher, response, options = {}) {
+FetchMock.once = function(...args) {
 	return this.mock(
-		matcher,
-		response,
-		Object.assign({}, options, { repeat: 1 })
+		Object.assign(argsToRoute(args), { repeat: 1 })
 	);
 };
 
 ['get', 'post', 'put', 'delete', 'head', 'patch'].forEach(method => {
-	const extendOptions = options =>
-		Object.assign({}, options, { method: method.toUpperCase() });
+	const extendRoute = route =>
+		Object.assign(route, { method: method.toUpperCase() });
 
-	FetchMock[method] = function(matcher, response, options = {}) {
-		return this.mock(matcher, response, extendOptions(options));
+	FetchMock[method] = function(...args) {
+		return this.mock(extendRoute(argsToRoute(args)));
 	};
-	FetchMock[`${method}Once`] = function(matcher, response, options = {}) {
-		return this.once(matcher, response, extendOptions(options));
+	FetchMock[`${method}Once`] = function(...args) {
+		return this.once(extendRoute(argsToRoute(args)));
 	};
 });
 

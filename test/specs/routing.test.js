@@ -832,6 +832,22 @@ module.exports = fetchMock => {
 				await fm.fetchHandler('https://api.example.com/apps/abc');
 				expect(fm.calls(true).length).to.equal(1);
 			});
+			it('overwrite routes correctly when using object definitios of routes', async () => {
+				fm
+				  .get({
+				    matcher: `express:/:var`,
+				    response: 200,
+				  })
+				  .put({
+				    matcher: `express:/:var`,
+				    response: 201,
+				    overwriteRoutes: false
+				  })
+
+				 const {status} = await fm.fetchHandler('https://api.example.com/lala', {method: 'put'});
+				 expect(status).to.equal(201)
+			})
+
 		});
 	});
 };

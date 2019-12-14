@@ -118,12 +118,16 @@ module.exports = fetchMock => {
 					sinon.stub(fm, 'mock');
 					fm[method]('a', 'b');
 					fm[method]('a', 'b', { opt: 'c' });
-					expect(fm.mock).calledWith({matcher: 'a', response: 'b',
-						method: method.toUpperCase()
+					expect(fm.mock).calledWith({
+						matcher: 'a',
+						response: 'b',
+						method: method
 					});
-					expect(fm.mock).calledWith({matcher: 'a', response: 'b',
+					expect(fm.mock).calledWith({
+						matcher: 'a',
+						response: 'b',
 						opt: 'c',
-						method: method.toUpperCase()
+						method: method
 					});
 					fm.mock.restore();
 					fm.restore();
@@ -135,13 +139,17 @@ module.exports = fetchMock => {
 					sinon.stub(fm, 'mock');
 					fm[`${method}Once`]('a', 'b');
 					fm[`${method}Once`]('a', 'b', { opt: 'c' });
-					expect(fm.mock).calledWith({matcher: 'a', response: 'b',
-						method: method.toUpperCase(),
+					expect(fm.mock).calledWith({
+						matcher: 'a',
+						response: 'b',
+						method: method,
 						repeat: 1
 					});
-					expect(fm.mock).calledWith({matcher: 'a', response: 'b',
+					expect(fm.mock).calledWith({
+						matcher: 'a',
+						response: 'b',
 						opt: 'c',
-						method: method.toUpperCase(),
+						method: method,
 						repeat: 1
 					});
 					fm.mock.restore();

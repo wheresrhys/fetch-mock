@@ -198,9 +198,16 @@ module.exports = fetchMock => {
 				sinon.stub(fm, 'mock');
 				fm['once']('a', 'b');
 				fm['once']('a', 'b', { opt: 'c' });
-				expect(fm.mock.calledWith({matcher:'a', response: 'b',  repeat: 1 })).to.be.true;
-				expect(fm.mock.calledWith({matcher:'a', response: 'b',  opt: 'c', repeat: 1 })).to.be
-					.true;
+				expect(fm.mock.calledWith({ matcher: 'a', response: 'b', repeat: 1 }))
+					.to.be.true;
+				expect(
+					fm.mock.calledWith({
+						matcher: 'a',
+						response: 'b',
+						opt: 'c',
+						repeat: 1
+					})
+				).to.be.true;
 				fm.mock.restore();
 			});
 
@@ -210,15 +217,19 @@ module.exports = fetchMock => {
 					fm[method + 'Once']('a', 'b');
 					fm[method + 'Once']('a', 'b', { opt: 'c' });
 					expect(
-						fm.mock.calledWith({matcher:'a', response: 'b',
-							method: method.toUpperCase(),
+						fm.mock.calledWith({
+							matcher: 'a',
+							response: 'b',
+							method: method,
 							repeat: 1
 						})
 					).to.be.true;
 					expect(
-						fm.mock.calledWith({matcher:'a', response: 'b',
+						fm.mock.calledWith({
+							matcher: 'a',
+							response: 'b',
 							opt: 'c',
-							method: method.toUpperCase(),
+							method: method,
 							repeat: 1
 						})
 					).to.be.true;

@@ -17,7 +17,7 @@ const argsToRoute = args => {
 	} else {
 		throw new Error('fetch-mock: Invalid parameters passed to fetch-mock');
 	}
-}
+};
 
 FetchMock.mock = function(...args) {
 	if (args.length) {
@@ -91,21 +91,19 @@ FetchMock.spy = function() {
 
 FetchMock.compileRoute = compileRoute;
 
+const applyShorthand = (args, shorthandOptions) =>
+	Object.assign(argsToRoute(args), shorthandOptions);
+
 FetchMock.once = function(...args) {
-	return this.mock(
-		Object.assign(argsToRoute(args), { repeat: 1 })
-	);
+	return this.mock(applyShorthand(args, { repeat: 1 }));
 };
 
 ['get', 'post', 'put', 'delete', 'head', 'patch'].forEach(method => {
-	const extendRoute = route =>
-		Object.assign(route, { method: method.toUpperCase() });
-
 	FetchMock[method] = function(...args) {
-		return this.mock(extendRoute(argsToRoute(args)));
+		return this.mock(applyShorthand(args, { method }));
 	};
 	FetchMock[`${method}Once`] = function(...args) {
-		return this.once(extendRoute(argsToRoute(args)));
+		return this.once(applyShorthand(args, { method }));
 	};
 });
 

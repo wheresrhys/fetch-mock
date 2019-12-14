@@ -38,6 +38,14 @@ module.exports = fetchMock => {
 				expect(fm.calls(true).length).to.equal(1);
 			});
 
+			it('match using URL object as matcher', async () => {
+				const url = new URL.URL('http://it.at.there/path');
+				fm.mock(url, 200).catch();
+
+				await fm.fetchHandler('http://it.at.there/path');
+				expect(fm.calls(true).length).to.equal(1);
+			});
+
 			it('match begin: keyword', async () => {
 				fm.mock('begin:http://it.at.there/path', 200).catch();
 

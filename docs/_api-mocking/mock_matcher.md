@@ -7,6 +7,7 @@ types:
   - String
   - RegExp
   - Function
+  - URL
 type: parameter
 parametersBlockTitle: Argument values
 parentMethod: mock
@@ -21,10 +22,11 @@ parameters:
   - name: url
     types:
       - String
+      - URL
     examples:
       - |-
         "http://www.site.com/page.html"
-    content: Match an exact url
+    content: Match an exact url. Can be defined using a string or a `URL` instance
   - name: |-
       begin:...
     types:

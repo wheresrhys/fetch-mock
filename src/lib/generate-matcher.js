@@ -90,28 +90,7 @@ const getBodyMatcher = ({ body: expectedBody }) => {
 	};
 };
 
-const getUrlMatcher = route => {
-	const { matcher, query } = route;
-
-	if (typeof matcher === 'function') {
-		return () => true;
-	}
-
-	if (matcher instanceof RegExp) {
-		return url => matcher.test(url);
-	}
-
-	if (matcher === '*') {
-		return () => true;
-	}
-
-	for (const shorthand in stringMatchers) {
-		if (matcher.indexOf(shorthand + ':') === 0) {
-			const url = matcher.replace(new RegExp(`^${shorthand}:`), '');
-			return stringMatchers[shorthand](url);
-		}
-	}
-
+const getFullUrlMatcher = (route, matcher, query) => {
 	// if none of the special syntaxes apply, it's just a simple string match
 	// but we have to be careful to normalize the url we check and the name
 	// of the route to allow for e.g. http://it.at.there being indistinguishable
@@ -127,6 +106,35 @@ const getUrlMatcher = route => {
 		}
 		return normalizeUrl(url) === expectedUrl;
 	};
+};
+
+const getUrlMatcher = route => {
+	const { matcher, query } = route;
+
+	if (typeof matcher === 'function') {
+		return () => true;
+	}
+
+	if (matcher instanceof RegExp) {
+		return url => matcher.test(url);
+	}
+
+	if (matcher === '*') {
+		return () => true;
+	}
+
+	if (matcher.href) {
+		return getFullUrlMatcher(route, matcher.href, query);
+	}
+
+	for (const shorthand in stringMatchers) {
+		if (matcher.indexOf(shorthand + ':') === 0) {
+			const url = matcher.replace(new RegExp(`^${shorthand}:`), '');
+			return stringMatchers[shorthand](url);
+		}
+	}
+
+	return getFullUrlMatcher(route, matcher, query);
 };
 
 module.exports = route => {

@@ -25,6 +25,9 @@ module.exports = (fetchMock, AbortController) => {
 					signal: controller.signal
 				});
 			} catch (error) {
+				if (typeof DOMException !== 'undefined') {
+					expect(error instanceof DOMException).to.equal(true);
+				}
 				expect(error.name).to.equal('AbortError');
 				expect(error.message).to.equal('The operation was aborted.');
 			}
@@ -49,6 +52,9 @@ module.exports = (fetchMock, AbortController) => {
 					})
 				);
 			} catch (error) {
+				if (typeof DOMException !== 'undefined') {
+					expect(error instanceof DOMException).to.equal(true);
+				}
 				console.error(error);
 				expect(error.name).to.equal('AbortError');
 				expect(error.message).to.equal('The operation was aborted.');
@@ -66,6 +72,9 @@ module.exports = (fetchMock, AbortController) => {
 					signal: controller.signal
 				});
 			} catch (error) {
+				if (typeof DOMException !== 'undefined') {
+					expect(error instanceof DOMException).to.equal(true);
+				}
 				expect(error.name).to.equal('AbortError');
 				expect(error.message).to.equal('The operation was aborted.');
 			}
@@ -87,6 +96,9 @@ module.exports = (fetchMock, AbortController) => {
 					signal: controller.signal
 				});
 			} catch (error) {
+				if (typeof DOMException !== 'undefined') {
+					expect(error instanceof DOMException).to.equal(true);
+				}
 				expect(fm.done()).to.be.true;
 			}
 		});

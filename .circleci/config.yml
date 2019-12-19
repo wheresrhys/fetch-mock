@@ -88,7 +88,7 @@ jobs:
       - run: npm version --no-git-tag-version ${CIRCLE_TAG}
       - run: |
           if [ $CIRCLE_TAG ?? '-'];
-          then npm publish --access public --tag=beta;
+          then npm publish --access public --tag beta;
           else npm publish --access public;
           fi
 

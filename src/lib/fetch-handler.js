@@ -68,7 +68,8 @@ FetchMock.fetchHandler = function(url, options, request) {
 	return new this.config.Promise((res, rej) => {
 		if (signal) {
 			const abort = () => {
-				rej(new AbortError());
+				// note that DOMException is not available in node.js; even node-fetch uses a custom error class: https://github.com/bitinn/node-fetch/blob/master/src/abort-error.js
+				rej(typeof DOMException !== 'undefined' ? new DOMException('The operation was aborted.', 'AbortError') : new AbortError());
 				done();
 			};
 			if (signal.aborted) {

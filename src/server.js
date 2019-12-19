@@ -1,5 +1,7 @@
 // avoid circular dependency when using jest.mock()
-const fetch = global.jest ? jest.requireActual('node-fetch') : require('node-fetch');
+const fetch = global.jest
+	? global.jest.requireActual('node-fetch')
+	: require('node-fetch');
 const Request = fetch.Request;
 const Response = fetch.Response;
 const Headers = fetch.Headers;

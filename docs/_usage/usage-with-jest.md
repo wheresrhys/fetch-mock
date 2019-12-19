@@ -3,22 +3,32 @@ title: Usage with Jest
 position: 6
 parentItem: installation
 content_markdown: |-
-  Jest has rapidly become a very popular, full-featured testing library. Usage of fetch-mock with Jest is sufficiently different to previous libraries that it deserve some examples of its own:
+  Jest has rapidly become a very popular, full-featured testing library. Usage of fetch-mock with Jest is sufficiently different to previous libraries that it deserves some examples of its own:
   
   If using global `fetch`, then no special treatment is required.
   
-  If assigning `node-fetch` to a variable in your source code, the following should provide a good manual mock for `node-fetch`, saved as `./__mocks__/node-fetch.js` in your project.
+  For non-global uses of `node-fetch` use something like:
+
+  ```js
+  jest.mock('node-fetch', () => require('fetch-mock').sandbox())
+  ```
+
+  if you need to fallback to the network (or have some other use case for giving `fetch-mock` [access to `node-fetch` internals](#usagecustom-classes) you will need to use `jest.requireActual('node-fetch')`, e.g.
   
   ```javascript
-  const nodeFetch = jest.requireActual('node-fetch');
-  const fetchMock = require('fetch-mock').sandbox();
-  Object.assign(fetchMock.config, nodeFetch, {
-    fetch: nodeFetch
-  });
-  module.exports = fetchMock;
+  jest.mock('node-fetch', () => {
+    const nodeFetch = jest.requireActual('node-fetch');
+    const fetchMock = require('fetch-mock').sandbox();
+    Object.assign(fetchMock.config, {
+      fetch: nodeFetch
+    });
+    return fetchMock;
+  })
   ```
-  
-  Then, in your test files, when you `require('node-fetch')`, it will return the sandboxed `fetch-mock` instance from the manual mock, so you can use all the `fetch-mock` methods directly on it.
+
+  The content of the above function (exporting `fetchMock`) can also be used in a [manual mock](https://jestjs.io/docs/en/manual-mocks). 
+
+  Once mocked, you should require `node-fetch`, _not_ `fetch-mock`, in your test files - all the `fetch-mock` methods will be available on it.
   
   When using a webpack based compilation step, something like the following may be necessary instead
   
@@ -26,17 +36,6 @@ content_markdown: |-
   const fetchMock = require('fetch-mock').sandbox();
   const nodeFetch = require('node-fetch');
   nodeFetch.default = fetchMock;
-  ```
-  
-  If your tests include integration tests that need access to the network, set the `fallbackToNetwork: true` config option within the describe block of those tests:
-  
-  ```javascript
-  const fetch = require('node-fetch');
-  describe('integration', () => {
-    beforeAll(() => fetchMock.config.fallbackToNetwork = true);
-    afterAll(() => fetchMock.config.fallbackToNetwork = false);
-  });
-
   ```
 ---
 

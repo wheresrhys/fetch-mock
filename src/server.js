@@ -1,4 +1,13 @@
-const fetch = require('node-fetch');
+// avoid circular dependency when using jest.mock()
+let fetch;
+try {
+	// note that jest is not a global, but is injected somehow into
+	// the environment. So we can't be safe and check for global.jest
+	// Hence the try/catch
+	fetch = jest.requireActual('node-fetch'); //eslint-disable-line no-undef
+} catch (e) {
+	fetch = require('node-fetch');
+}
 const Request = fetch.Request;
 const Response = fetch.Response;
 const Headers = fetch.Headers;

@@ -86,7 +86,12 @@ jobs:
           key: npm-cache-{{ checksum "package-lock.json" }}
       - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ${HOME}/.npmrc'
       - run: npm version --no-git-tag-version ${CIRCLE_TAG}
-      - run: npm publish --access public
+      - run: |
+          if [ $CIRCLE_TAG ?? '-'];
+          then npm publish --access public --tag=beta;
+          else npm publish --access public;
+          fi
+
 
 workflows:
   version: 2

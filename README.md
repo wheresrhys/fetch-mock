@@ -42,6 +42,8 @@ fetch-mock requires the following to run:
 
 See the [project website](http://www.wheresrhys.co.uk/fetch-mock/)
 
+If you're using jest as your test runner, consider using [fetch-mock-jest](https://www.npmjs.com/package/fetch-mock-jest), a lightweight, jest-friendly wrapper around fetch-mock.
+
 ## License
 
 fetch-mock is licensed under the [MIT](https://github.com/wheresrhys/fetch-mock/blob/master/LICENSE) license.

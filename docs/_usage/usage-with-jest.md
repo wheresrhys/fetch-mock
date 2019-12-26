@@ -4,7 +4,8 @@ position: 6
 parentItem: installation
 content_markdown: |-
 
-  > Please try out my new jest-friendly wrapper for fetch-mock, [fetch-mock-jest](https://github.com/wheresrhys/fetch-mock-jest), and [fedback](https://github.com/wheresrhys/fetch-mock-jest/issues)
+  Please try out my new jest-friendly wrapper for fetch-mock, [fetch-mock-jest](https://github.com/wheresrhys/fetch-mock-jest), and [feedback](https://github.com/wheresrhys/fetch-mock-jest/issues)
+  {: .warning}
 
   Jest has rapidly become a very popular, full-featured testing library. Usage of fetch-mock with Jest is sufficiently different to previous libraries that it deserves some examples of its own:
   

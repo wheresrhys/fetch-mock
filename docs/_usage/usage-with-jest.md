@@ -3,7 +3,6 @@ title: Usage with Jest
 position: 6
 parentItem: installation
 content_markdown: |-
-
   Please try out my new jest-friendly wrapper for fetch-mock, [fetch-mock-jest](https://github.com/wheresrhys/fetch-mock-jest), and [feedback](https://github.com/wheresrhys/fetch-mock-jest/issues)
   {: .warning}
 

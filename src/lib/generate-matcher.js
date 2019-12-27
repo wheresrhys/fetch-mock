@@ -134,7 +134,6 @@ const getUrlMatcher = route => {
 };
 
 module.exports = route => {
-	console.log(route)
 	const matchers = [
 		route.query && getQueryStringMatcher(route),
 		route.method && getMethodMatcher(route),

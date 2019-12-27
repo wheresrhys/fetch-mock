@@ -21,7 +21,6 @@ const sanitizeRoute = route => {
 const matcherTypes = ['query', 'method', 'headers', 'params', 'body', 'functionMatcher', 'url']
 
 const validateRoute = route => {
-	console.log(route)
 	if (!('response' in route)) {
 		throw new Error('fetch-mock: Each route must define a response');
 	}

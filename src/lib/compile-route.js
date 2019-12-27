@@ -1,22 +1,32 @@
 const generateMatcher = require('./generate-matcher');
 
+
+const isUrlMatcher = matcher => matcher instanceof RegExp || typeof matcher === 'string' || (typeof matcher === 'object' && 'href' in matcher)
+
 const sanitizeRoute = route => {
 	route = Object.assign({}, route);
 
 	if (route.method) {
 		route.method = route.method.toLowerCase();
 	}
-	route.identifier = route.name || route.matcher;
-
+	if (isUrlMatcher(route.matcher)) {
+		route.url = route.matcher
+		delete route.matcher;
+	}
+	route.identifier = route.name || route.url;
+	route.functionMatcher = route.matcher || route.functionMatcher;
 	return route;
 };
 
+const matcherTypes = ['query', 'method', 'headers', 'params', 'body', 'functionMatcher', 'url']
+
 const validateRoute = route => {
+	console.log(route)
 	if (!('response' in route)) {
 		throw new Error('fetch-mock: Each route must define a response');
 	}
 
-	if (!route.matcher) {
+	if (!matcherTypes.some(matcherType => matcherType in route)) {
 		throw new Error(
 			'fetch-mock: Each route must specify a string, regex or function to match calls to fetch'
 		);
@@ -50,8 +60,8 @@ const delayResponse = route => {
 };
 
 module.exports = route => {
-	validateRoute(route);
 	route = sanitizeRoute(route);
+	validateRoute(route);
 	route.matcher = generateMatcher(route);
 	limitMatcher(route);
 	delayResponse(route);

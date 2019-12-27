@@ -49,15 +49,15 @@ const getQueryStringMatcher = ({ query: expectedQuery }) => {
 	};
 };
 
-const getParamsMatcher = ({ params: expectedParams, matcher }) => {
-	if (!/express:/.test(matcher)) {
+const getParamsMatcher = ({ params: expectedParams, url: matcheUrl }) => {
+	if (!/express:/.test(matcheUrl)) {
 		throw new Error(
 			'fetch-mock: matching on params is only possible when using an express: matcher'
 		);
 	}
 	const expectedKeys = Object.keys(expectedParams);
 	const keys = [];
-	const re = pathToRegexp(matcher.replace(/^express:/, ''), keys);
+	const re = pathToRegexp(matcheUrl.replace(/^express:/, ''), keys);
 	return url => {
 		const vals = re.exec(getPath(url)) || [];
 		vals.shift();
@@ -69,9 +69,6 @@ const getParamsMatcher = ({ params: expectedParams, matcher }) => {
 		return expectedKeys.every(key => params[key] === expectedParams[key]);
 	};
 };
-
-const getFunctionMatcher = ({ matcher, functionMatcher = () => true }) =>
-	typeof matcher === 'function' ? matcher : functionMatcher;
 
 const getBodyMatcher = ({ body: expectedBody }) => {
 	return (url, { body, method = 'get' }) => {
@@ -90,62 +87,62 @@ const getBodyMatcher = ({ body: expectedBody }) => {
 	};
 };
 
-const getFullUrlMatcher = (route, matcher, query) => {
+const getFullUrlMatcher = (route, matcherUrl, query) => {
 	// if none of the special syntaxes apply, it's just a simple string match
 	// but we have to be careful to normalize the url we check and the name
 	// of the route to allow for e.g. http://it.at.there being indistinguishable
 	// from http://it.at.there/ once we start generating Request/Url objects
-	const expectedUrl = normalizeUrl(matcher);
-	if (route.identifier === matcher) {
+	const expectedUrl = normalizeUrl(matcherUrl);
+	if (route.identifier === matcherUrl) {
 		route.identifier = expectedUrl;
 	}
 
-	return url => {
+	return matcherUrl => {
 		if (query && expectedUrl.indexOf('?')) {
-			return url.indexOf(expectedUrl) === 0;
+			return matcherUrl.indexOf(expectedUrl) === 0;
 		}
-		return normalizeUrl(url) === expectedUrl;
+		return normalizeUrl(matcherUrl) === expectedUrl;
 	};
 };
 
+
+const getFunctionMatcher = ({functionMatcher}) => functionMatcher;
+
 const getUrlMatcher = route => {
-	const { matcher, query } = route;
+	const { url: matcherUrl, query } = route;
 
-	if (typeof matcher === 'function') {
+	if (matcherUrl === '*') {
 		return () => true;
 	}
 
-	if (matcher instanceof RegExp) {
-		return url => matcher.test(url);
+	if (matcherUrl instanceof RegExp) {
+		return url => matcherUrl.test(url);
 	}
 
-	if (matcher === '*') {
-		return () => true;
-	}
-
-	if (matcher.href) {
-		return getFullUrlMatcher(route, matcher.href, query);
+	if (matcherUrl.href) {
+		return getFullUrlMatcher(route, matcherUrl.href, query);
 	}
 
 	for (const shorthand in stringMatchers) {
-		if (matcher.indexOf(shorthand + ':') === 0) {
-			const url = matcher.replace(new RegExp(`^${shorthand}:`), '');
-			return stringMatchers[shorthand](url);
+		if (matcherUrl.indexOf(shorthand + ':') === 0) {
+			const urlFragment = matcherUrl.replace(new RegExp(`^${shorthand}:`), '');
+			return stringMatchers[shorthand](urlFragment);
 		}
 	}
 
-	return getFullUrlMatcher(route, matcher, query);
+	return getFullUrlMatcher(route, matcherUrl, query);
 };
 
 module.exports = route => {
+	console.log(route)
 	const matchers = [
 		route.query && getQueryStringMatcher(route),
 		route.method && getMethodMatcher(route),
 		route.headers && getHeaderMatcher(route),
 		route.params && getParamsMatcher(route),
 		route.body && getBodyMatcher(route),
-		getFunctionMatcher(route),
-		getUrlMatcher(route)
+		route.functionMatcher && getFunctionMatcher(route),
+		route.url && getUrlMatcher(route)
 	].filter(matcher => !!matcher);
 
 	return (url, options = {}, request) =>

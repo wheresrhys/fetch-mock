@@ -1,16 +1,18 @@
 const compileRoute = require('./compile-route');
 const FetchMock = {};
 
-const isUrlMatcher = matcher => matcher instanceof RegExp || typeof matcher === 'string' || (typeof matcher === 'object' && 'href' in matcher)
-const isFunctionMatcher = matcher => typeof matcher === 'function'
+const isUrlMatcher = matcher =>
+	matcher instanceof RegExp ||
+	typeof matcher === 'string' ||
+	(typeof matcher === 'object' && 'href' in matcher);
 
 const argsToRoute = args => {
 	const [matcher, response, options = {}] = args;
 
-	const routeConfig = {}
+	const routeConfig = {};
 
 	if (isUrlMatcher(matcher) || typeof matcher === 'function') {
-		routeConfig.matcher = matcher
+		routeConfig.matcher = matcher;
 	} else {
 		Object.assign(routeConfig, matcher);
 	}
@@ -19,7 +21,7 @@ const argsToRoute = args => {
 		routeConfig.response = response;
 	}
 
-	Object.assign(routeConfig, options)
+	Object.assign(routeConfig, options);
 
 	return routeConfig;
 };

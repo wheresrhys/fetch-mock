@@ -105,8 +105,7 @@ const getFullUrlMatcher = (route, matcherUrl, query) => {
 	};
 };
 
-
-const getFunctionMatcher = ({functionMatcher}) => functionMatcher;
+const getFunctionMatcher = ({ functionMatcher }) => functionMatcher;
 
 const getUrlMatcher = route => {
 	const { url: matcherUrl, query } = route;

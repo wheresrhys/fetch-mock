@@ -1,7 +1,9 @@
 const generateMatcher = require('./generate-matcher');
 
-
-const isUrlMatcher = matcher => matcher instanceof RegExp || typeof matcher === 'string' || (typeof matcher === 'object' && 'href' in matcher)
+const isUrlMatcher = matcher =>
+	matcher instanceof RegExp ||
+	typeof matcher === 'string' ||
+	(typeof matcher === 'object' && 'href' in matcher);
 
 const sanitizeRoute = route => {
 	route = Object.assign({}, route);
@@ -10,7 +12,7 @@ const sanitizeRoute = route => {
 		route.method = route.method.toLowerCase();
 	}
 	if (isUrlMatcher(route.matcher)) {
-		route.url = route.matcher
+		route.url = route.matcher;
 		delete route.matcher;
 	}
 	route.identifier = route.name || route.url;
@@ -18,7 +20,15 @@ const sanitizeRoute = route => {
 	return route;
 };
 
-const matcherTypes = ['query', 'method', 'headers', 'params', 'body', 'functionMatcher', 'url']
+const matcherTypes = [
+	'query',
+	'method',
+	'headers',
+	'params',
+	'body',
+	'functionMatcher',
+	'url'
+];
 
 const validateRoute = route => {
 	if (!('response' in route)) {

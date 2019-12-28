@@ -44,7 +44,7 @@ module.exports = fetchMock => {
 
 			describe('parameters', () => {
 				beforeEach(() => {
-					sinon.stub(fm, 'compileRoute').returns({});
+					sinon.spy(fm, 'compileRoute');
 					sinon.stub(fm, '_mock').returns(fm);
 				});
 

@@ -17,15 +17,16 @@ test-unit:
 test-node6: transpile
 	node test/node6.js
 
-lint-ci:
-	eslint --ignore-pattern test/fixtures/* src test
-	prettier *.md
+typecheck:
 	dtslint --expectOnly types
 
-lint:
+lint-ci: typecheck
+	eslint --ignore-pattern test/fixtures/* src test
+	prettier *.md
+
+lint: typecheck
 	eslint --cache --fix .
 	prettier --write *.md
-	dtslint --expectOnly types
 
 coverage-report:
 	nyc --reporter=lcovonly --reporter=text mocha test/server.js

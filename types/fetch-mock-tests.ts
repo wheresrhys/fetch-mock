@@ -53,6 +53,22 @@ fetchMock.mock(/test/, {
     }
 });
 
+fetchMock.mock({
+    url: "http://test.com",
+    response: 200,
+    headers: {},
+    query: {},
+    params: {},
+    body: {},
+    repeat: 1,
+    delay: 500,
+    functionMatcher: () => true
+});
+
+fetchMock.mock({
+   url: "http://test.com",
+}, 200);
+
 fetchMock.restore().reset().resetHistory().resetBehavior();
 
 let calls: fetchMock.MockCall[] = fetchMock.calls(/https?:\/\/test.com/, {

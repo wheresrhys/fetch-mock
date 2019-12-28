@@ -1,27 +1,9 @@
-const compileRoute = require('./compile-route');
+const { compileRoute } = require('./compile-route');
 const FetchMock = {};
-
-const argsToRoute = args => {
-	const [matcher, response, options = {}] = args;
-	// Handle the variety of parameters accepted by mock (see README)
-	if (matcher && response) {
-		return Object.assign(
-			{
-				matcher,
-				response
-			},
-			options
-		);
-	} else if (matcher && matcher.matcher) {
-		return matcher;
-	} else {
-		throw new Error('fetch-mock: Invalid parameters passed to fetch-mock');
-	}
-};
 
 FetchMock.mock = function(...args) {
 	if (args.length) {
-		this.addRoute(argsToRoute(args));
+		this.addRoute(args);
 	}
 
 	return this._mock();
@@ -92,9 +74,11 @@ FetchMock.spy = function() {
 FetchMock.compileRoute = compileRoute;
 
 const defineShorthand = (methodName, underlyingMethod, shorthandOptions) => {
-	FetchMock[methodName] = function(...args) {
+	FetchMock[methodName] = function(matcher, response, options) {
 		return this[underlyingMethod](
-			Object.assign(argsToRoute(args), shorthandOptions)
+			matcher,
+			response,
+			Object.assign(options || {}, shorthandOptions)
 		);
 	};
 };

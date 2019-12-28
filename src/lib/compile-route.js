@@ -1,13 +1,52 @@
 const generateMatcher = require('./generate-matcher');
 
+const matcherProperties = [
+	'query',
+	'method',
+	'headers',
+	'params',
+	'body',
+	'functionMatcher',
+	'url'
+];
+
+const isUrlMatcher = matcher =>
+	matcher instanceof RegExp ||
+	typeof matcher === 'string' ||
+	(typeof matcher === 'object' && 'href' in matcher);
+const isFunctionMatcher = matcher => typeof matcher === 'function';
+
+const argsToRoute = args => {
+	const [matcher, response, options = {}] = args;
+
+	const routeConfig = {};
+
+	if (isUrlMatcher(matcher) || isFunctionMatcher(matcher)) {
+		routeConfig.matcher = matcher;
+	} else {
+		Object.assign(routeConfig, matcher);
+	}
+
+	if (response) {
+		routeConfig.response = response;
+	}
+
+	Object.assign(routeConfig, options);
+	return routeConfig;
+};
+
 const sanitizeRoute = route => {
 	route = Object.assign({}, route);
 
 	if (route.method) {
 		route.method = route.method.toLowerCase();
 	}
-	route.identifier = route.name || route.matcher;
-
+	if (isUrlMatcher(route.matcher)) {
+		route.url = route.matcher;
+		delete route.matcher;
+	}
+	route.identifier = route.name || route.url;
+	route.functionMatcher = route.matcher || route.functionMatcher;
 	return route;
 };
 
@@ -16,9 +55,9 @@ const validateRoute = route => {
 		throw new Error('fetch-mock: Each route must define a response');
 	}
 
-	if (!route.matcher) {
+	if (!matcherProperties.some(matcherType => matcherType in route)) {
 		throw new Error(
-			'fetch-mock: Each route must specify a string, regex or function to match calls to fetch'
+			"fetch-mock: Each route must specify some criteria for matching calls to fetch. To match all calls use '*'"
 		);
 	}
 };
@@ -49,13 +88,16 @@ const delayResponse = route => {
 	}
 };
 
-module.exports = route => {
+const compileRoute = function(args) {
+	const route = sanitizeRoute(argsToRoute(args));
 	validateRoute(route);
-	route = sanitizeRoute(route);
 	route.matcher = generateMatcher(route);
 	limitMatcher(route);
 	delayResponse(route);
 	return route;
 };
 
-module.exports.sanitizeRoute = sanitizeRoute;
+module.exports = {
+	compileRoute,
+	sanitizeRoute
+};

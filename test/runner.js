@@ -4,6 +4,7 @@ module.exports = (fetchMock, theGlobal, fetch, AbortController) => {
 		require('./specs/global-fetch.test')(fetchMock, theGlobal);
 		require('./specs/sandbox.test')(fetchMock, theGlobal);
 		require('./specs/routing.test')(fetchMock);
+		require('./specs/matcher-object.test')(fetchMock);
 		require('./specs/responses.test')(fetchMock);
 		require('./specs/inspecting.test')(fetchMock);
 		require('./specs/repeat.test')(fetchMock);

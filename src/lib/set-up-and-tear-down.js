@@ -74,11 +74,11 @@ FetchMock.spy = function() {
 FetchMock.compileRoute = compileRoute;
 
 const defineShorthand = (methodName, underlyingMethod, shorthandOptions) => {
-	FetchMock[methodName] = function(...args) {
+	FetchMock[methodName] = function(matcher, response, options) {
 		return this[underlyingMethod](
-			args[0],
-			args[1],
-			Object.assign(args[2] || {}, shorthandOptions)
+			matcher,
+			response,
+			Object.assign(options || {}, shorthandOptions)
 		);
 	};
 };

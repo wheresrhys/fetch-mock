@@ -87,11 +87,11 @@ module.exports = fetchMock => {
 					expect(fm._mock).called;
 				});
 
-				it.skip('expects a matcher', () => {
+				it('expects a matcher', () => {
 					expect(() => fm.mock(null, 'ok')).to.throw();
 				});
 
-				it.skip('expects a response', () => {
+				it('expects a response', () => {
 					expect(() => fm.mock('http://it.at.there/')).to.throw();
 				});
 

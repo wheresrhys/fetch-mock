@@ -1,5 +1,15 @@
 const generateMatcher = require('./generate-matcher');
 
+const matcherProperties = [
+	'query',
+	'method',
+	'headers',
+	'params',
+	'body',
+	'functionMatcher',
+	'url'
+];
+
 const isUrlMatcher = matcher =>
 	matcher instanceof RegExp ||
 	typeof matcher === 'string' ||
@@ -40,24 +50,14 @@ const sanitizeRoute = route => {
 	return route;
 };
 
-const matcherTypes = [
-	'query',
-	'method',
-	'headers',
-	'params',
-	'body',
-	'functionMatcher',
-	'url'
-];
-
 const validateRoute = route => {
 	if (!('response' in route)) {
 		throw new Error('fetch-mock: Each route must define a response');
 	}
 
-	if (!matcherTypes.some(matcherType => matcherType in route)) {
+	if (!matcherProperties.some(matcherType => matcherType in route)) {
 		throw new Error(
-			'fetch-mock: Each route must specify a string, regex or function to match calls to fetch'
+			"fetch-mock: Each route must specify some criteria for matching calls to fetch. To match all calls use '*'"
 		);
 	}
 };

@@ -2,12 +2,13 @@
 title: "matcher"
 position: 1.1
 description: |-
-  Condition for deciding which requests to mock. For matching headers, query strings or other `fetch` options see the [`options` parameter](#api-mockingmock_options)
+  Criteria for deciding which requests to mock.
 types:
   - String
   - RegExp
   - Function
   - URL
+  - Object
 type: parameter
 parametersBlockTitle: Argument values
 parentMethod: mock
@@ -72,7 +73,7 @@ parameters:
       - RegExp
     examples:
       - |-
-        /(article|post)/\d+/
+        /(article|post)\/\d+/
     content: Match a url that satisfies a regular expression
   - types:
       - Function
@@ -85,11 +86,88 @@ parameters:
       Match if a function returns something truthy. The function will be passed the `url` and `options` `fetch` was called with. If `fetch` was called with a `Request` instance, it will be passed `url` and `options` inferred from the `Request` instance, with the original `Request` will be passed as a third argument.
 
       This can also be set as a `functionMatcher` in the [options parameter](#api-mockingmock_options), and in this way powerful arbitrary matching criteria can be combined with the ease of the declarative matching rules above.
-
-
+  - types: 
+      - Object
+    examples:
+      - |-
+        {url: 'end:/user/profile', headers: {Authorization: 'Basic 123'}}
+      - |-
+        {query: {search: 'abc'}, method: 'POST'}
+    content: |
+      The url and function matchers described above can be combined with other criteria for matching a request by passing an an object which may have one or more of the properties described below. All these options can also be define on the third `options` parameters of the `mock()` method.
+    options:
+      - name: url
+        types:
+          - String
+          - RegExp
+        content: |-
+          Use any of the `String` or `RegExp` matchers described above. *Note that the property name 'matcher' can be used instead of 'url', but this is deprecated and support will be dropped in the next major version, so prefer to use 'url'*
+      - name: functionMatcher
+        types:
+          - Function
+        content: |-
+          Use a function matcher, as described above
+      - name: method
+        types:
+          - String
+        content: |-
+          Match only requests using this http method. Not case-sensitive
+        examples:
+          - get, POST
+      - name: headers
+        types:
+          - Object
+          - Headers
+        content: |-
+          Match only requests that have these headers set
+        examples:
+          - |-
+            {"Accepts": "text/html"}
+      - name: body
+        types:
+          - Object
+        content: |-
+          Match only requests that send a JSON body with the exact structure and properties as the one provided here.
+        examples:
+          - |-
+            { "key1": "value1", "key2": "value2" }
+      - name: query
+        types:
+          - Object
+        content: |-
+          Match only requests that have these query parameters set (in any order)
+        examples:
+          - |-
+            {"q": "cute+kittenz", "format": "gif"}
+      - name: params
+        types:
+          - Object
+        content: |-
+          When the `express:` keyword is used in a string matcher, match only requests with these express parameters
+        examples:
+          - |-
+            {"section": "feed", "user": "geoff"}
+      - name: repeat
+        types:
+          - Integer
+        content: |-
+          Limits the number of times the route can be used. If the route has already been called `repeat` times, the call to `fetch()` will fall through to be handled by any other routes defined (which may eventually result in an error if nothing matches it)
+      - name: name
+        types:
+          - String
+        content: |-
+          A unique string naming the route. Used to subsequently retrieve references to the calls handled by it. Only needed for advanced use cases.
+      - name: overwriteRoutes
+        types:
+          - Boolean
+        content: See [global configuration](#usageconfiguration)
+      - name: response
+        content: Instead of defining the response as the second argument of `mock()`, it can be passed as a property on the first argument. See the [response documentation](#usageapimock_response) for valid values.
 content_markdown: |-
   Note that if using `end:` or an exact url matcher, fetch-mock ([for good reason](https://url.spec.whatwg.org/#url-equivalence)) is unable to distinguish whether URLs without a path end in a trailing slash or not i.e. `http://thing` is treated the same as `http://thing/`
   {: .warning}
----
 
+   If multiple mocks use the same `matcher` but use different options, such as `headers`, you will need to use the `overwriteRoutes: false` option.
+  {: .warning}
+---
 

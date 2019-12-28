@@ -1,34 +1,9 @@
-const compileRoute = require('./compile-route');
+const { compileRoute } = require('./compile-route');
 const FetchMock = {};
-
-const isUrlMatcher = matcher =>
-	matcher instanceof RegExp ||
-	typeof matcher === 'string' ||
-	(typeof matcher === 'object' && 'href' in matcher);
-
-const argsToRoute = args => {
-	const [matcher, response, options = {}] = args;
-
-	const routeConfig = {};
-
-	if (isUrlMatcher(matcher) || typeof matcher === 'function') {
-		routeConfig.matcher = matcher;
-	} else {
-		Object.assign(routeConfig, matcher);
-	}
-
-	if (response) {
-		routeConfig.response = response;
-	}
-
-	Object.assign(routeConfig, options);
-
-	return routeConfig;
-};
 
 FetchMock.mock = function(...args) {
 	if (args.length) {
-		this.addRoute(argsToRoute(args));
+		this.addRoute(args);
 	}
 
 	return this._mock();
@@ -99,9 +74,11 @@ FetchMock.spy = function() {
 FetchMock.compileRoute = compileRoute;
 
 const defineShorthand = (methodName, underlyingMethod, shorthandOptions) => {
-	FetchMock[methodName] = function(...args) {
+	FetchMock[methodName] = function(matcher, response, options) {
 		return this[underlyingMethod](
-			Object.assign(argsToRoute(args), shorthandOptions)
+			matcher,
+			response,
+			Object.assign(options || {}, shorthandOptions)
 		);
 	};
 };

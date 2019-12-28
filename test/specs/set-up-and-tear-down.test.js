@@ -59,16 +59,13 @@ module.exports = fetchMock => {
 						response: 200
 					};
 					expect(() => fm.mock(config)).not.to.throw();
-					expect(fm.compileRoute).calledWith(config);
+					expect(fm.compileRoute).calledWith([config]);
 					expect(fm._mock).called;
 				});
 
 				it('accepts matcher, route pairs', () => {
 					expect(() => fm.mock('http://it.at.there/', 200)).not.to.throw();
-					expect(fm.compileRoute).calledWith({
-						matcher: 'http://it.at.there/',
-						response: 200
-					});
+					expect(fm.compileRoute).calledWith(['http://it.at.there/', 200]);
 					expect(fm._mock).called;
 				});
 
@@ -79,12 +76,14 @@ module.exports = fetchMock => {
 							some: 'prop'
 						})
 					).not.to.throw();
-					expect(fm.compileRoute).calledWith({
-						matcher: 'http://it.at.there/',
-						response: 'ok',
-						method: 'PUT',
-						some: 'prop'
-					});
+					expect(fm.compileRoute).calledWith([
+						'http://it.at.there/',
+						'ok',
+						{
+							method: 'PUT',
+							some: 'prop'
+						}
+					]);
 					expect(fm._mock).called;
 				});
 
@@ -115,46 +114,31 @@ module.exports = fetchMock => {
 				testChainableMethod(() => fm, method, [/a/, 200]);
 
 				it(`has shorthand for ${method.toUpperCase()}`, () => {
-					sinon.stub(fm, 'mock');
+					sinon.spy(fm, 'compileRoute');
 					fm[method]('a', 'b');
-					fm[method]('a', 'b', { opt: 'c' });
-					expect(fm.mock).calledWith({
-						matcher: 'a',
-						response: 'b',
-						method: method
-					});
-					expect(fm.mock).calledWith({
-						matcher: 'a',
-						response: 'b',
-						opt: 'c',
-						method: method
-					});
-					fm.mock.restore();
+					fm[method]('c', 'd', { opt: 'e' });
+					expect(fm.compileRoute).calledWith([
+						'a',
+						'b',
+						{
+							method: method
+						}
+					]);
+					expect(fm.compileRoute).calledWith([
+						'c',
+						'd',
+						{
+							opt: 'e',
+							method: method
+						}
+					]);
+					fm.compileRoute.restore();
 					fm.restore();
 				});
 
 				testChainableMethod(() => fm, `${method}Once`, [/a/, 200]);
 
-				it(`has shorthand for ${method.toUpperCase()} called once`, () => {
-					sinon.stub(fm, 'mock');
-					fm[`${method}Once`]('a', 'b');
-					fm[`${method}Once`]('a', 'b', { opt: 'c' });
-					expect(fm.mock).calledWith({
-						matcher: 'a',
-						response: 'b',
-						method: method,
-						repeat: 1
-					});
-					expect(fm.mock).calledWith({
-						matcher: 'a',
-						response: 'b',
-						opt: 'c',
-						method: method,
-						repeat: 1
-					});
-					fm.mock.restore();
-					fm.restore();
-				});
+				// tests for behaviour of 'once' shorthands are in repeat.test.js
 			});
 		});
 

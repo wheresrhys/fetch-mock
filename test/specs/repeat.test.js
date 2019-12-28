@@ -195,45 +195,58 @@ module.exports = fetchMock => {
 
 		describe('strict matching shorthands', () => {
 			it('has once shorthand method', () => {
-				sinon.stub(fm, 'mock');
+				sinon.spy(fm, 'compileRoute');
 				fm['once']('a', 'b');
-				fm['once']('a', 'b', { opt: 'c' });
-				expect(fm.mock.calledWith({ matcher: 'a', response: 'b', repeat: 1 }))
-					.to.be.true;
+				fm['once']('c', 'd', { opt: 'e' });
 				expect(
-					fm.mock.calledWith({
-						matcher: 'a',
-						response: 'b',
-						opt: 'c',
-						repeat: 1
-					})
+					fm.compileRoute.calledWith([
+						'a',
+						'b',
+						{
+							repeat: 1
+						}
+					])
 				).to.be.true;
-				fm.mock.restore();
+				expect(
+					fm.compileRoute.calledWith([
+						'c',
+						'd',
+						{
+							opt: 'e',
+							repeat: 1
+						}
+					])
+				).to.be.true;
+				fm.compileRoute.restore();
 			});
 
 			'get,post,put,delete,head,patch'.split(',').forEach(method => {
 				it(`has once shorthand for ${method.toUpperCase()}`, () => {
-					sinon.stub(fm, 'mock');
+					sinon.spy(fm, 'compileRoute');
 					fm[method + 'Once']('a', 'b');
-					fm[method + 'Once']('a', 'b', { opt: 'c' });
+					fm[method + 'Once']('c', 'd', { opt: 'e' });
 					expect(
-						fm.mock.calledWith({
-							matcher: 'a',
-							response: 'b',
-							method: method,
-							repeat: 1
-						})
+						fm.compileRoute.calledWith([
+							'a',
+							'b',
+							{
+								method: method,
+								repeat: 1
+							}
+						])
 					).to.be.true;
 					expect(
-						fm.mock.calledWith({
-							matcher: 'a',
-							response: 'b',
-							opt: 'c',
-							method: method,
-							repeat: 1
-						})
+						fm.compileRoute.calledWith([
+							'c',
+							'd',
+							{
+								opt: 'e',
+								method: method,
+								repeat: 1
+							}
+						])
 					).to.be.true;
-					fm.mock.restore();
+					fm.compileRoute.restore();
 				});
 			});
 		});

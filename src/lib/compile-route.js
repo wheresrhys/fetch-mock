@@ -4,6 +4,26 @@ const isUrlMatcher = matcher =>
 	matcher instanceof RegExp ||
 	typeof matcher === 'string' ||
 	(typeof matcher === 'object' && 'href' in matcher);
+const isFunctionMatcher = matcher => typeof matcher === 'function';
+
+const argsToRoute = args => {
+	const [matcher, response, options = {}] = args;
+
+	const routeConfig = {};
+
+	if (isUrlMatcher(matcher) || isFunctionMatcher(matcher)) {
+		routeConfig.matcher = matcher;
+	} else {
+		Object.assign(routeConfig, matcher);
+	}
+
+	if (response) {
+		routeConfig.response = response;
+	}
+
+	Object.assign(routeConfig, options);
+	return routeConfig;
+};
 
 const sanitizeRoute = route => {
 	route = Object.assign({}, route);
@@ -68,8 +88,8 @@ const delayResponse = route => {
 	}
 };
 
-module.exports = route => {
-	route = sanitizeRoute(route);
+const compileRoute = function(args) {
+	const route = sanitizeRoute(argsToRoute(args));
 	validateRoute(route);
 	route.matcher = generateMatcher(route);
 	limitMatcher(route);
@@ -77,4 +97,7 @@ module.exports = route => {
 	return route;
 };
 
-module.exports.sanitizeRoute = sanitizeRoute;
+module.exports = {
+	compileRoute,
+	sanitizeRoute
+};

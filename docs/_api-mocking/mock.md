@@ -13,7 +13,8 @@ parameters:
       - String
       - Regex
       - Function
-    content: Rule for which calls to `fetch` should match this route
+      - Object
+    content: Criteria for which calls to `fetch` should match this route
   - name: response
     types:
       - String
@@ -27,20 +28,45 @@ parameters:
       - Object
     content: More options to configure matching and responding behaviour
 content_markdown: |-
-  Alternatively a single parameter, `options`, an Object with `matcher`, `response` and other options defined, can be passed in
-  
+  Alternatively a single parameter, `options`, an Object with `matcher`, `response` and other options defined, can be passed in. 
+
+  For complex matching (e.g. matching on headers in addition to url), there are 4 patterns to choose from:
+
+  1. Use an object as the first argument, e.g. 
+  ```javascript
+  .mock({url, headers}, response)
+  ``` 
+  This has the advantage of keeping all the matching criteria in one place.
+  2. Pass in options in a third parameter e.g.
+  ```javascript
+  .mock(url, response, {headers})
+  ```
+  This splits matching criteria between two parameters, which is arguably harder to read. However, if most of your tests only match on url, then this provides a convenient way to create a variant of an existing test.
+  3. Use a single object, e.g. 
+  ```javascript
+  .mock({url, response, headers})
+  ```
+  Nothing wrong with doing this, but keeping response configuration in a separate argument to the matcher config feels like a good split.
+  4. Use a function matcher e.g. 
+  ```javascript
+  .mock((url, options) => {
+    // write your own logic 
+  }, response)
+  ```
+  Avoid using this unless you need to match on some criteria fetch-mock does not support.
 
 left_code_blocks:
-  - code_block: |-
+  - title: Strings
+    code_block: |-
       fetchMock
         .mock('http://it.at.here/route', 200)
         .mock('begin:http://it', 200)
         .mock('end:here/route', 200)
         .mock('path:/route', 200)
         .mock('*', 200)
-    title: Strings
     language: javascript
-  - code_block: |-
+  - title: Complex Matchers
+    code_block: |-
       fetchMock
         .mock(/.*\.here.*/, 200)
         .mock((url, opts) => opts.method === 'patch', 200)
@@ -49,28 +75,38 @@ left_code_blocks:
             type: 'shoe'
           }
         })
-    title: Complex Matchers
+        .mock({
+          headers: {'Authorization': 'Bearer 123'},
+          method: 'POST'
+        }, 200)
     language: javascript
-  - code_block: |-
+  - title: Responses
+    code_block: |-
       fetchMock
         .mock('*', 'ok')
         .mock('*', 404)
         .mock('*', {results: []})
         .mock('*', {throw: new Error('Bad kitty')))
         .mock('*', new Promise(res => setTimeout(res, 1000, 404)))
-    title: Responses
+        .mock('*', (url, opts) => {
+          status: 302, 
+          headers: {
+            Location: url.replace(/^http/, 'https')
+          }, 
+        }))
     language: javascript
   - title: End to end example
     language: javascript
     code_block: |-
       fetchMock
-        .mock('begin:http://it.at.here/api', 200, {
+        .mock('begin:http://it.at.here/api', 403)
+        .mock({
+          url: 'begin:http://it.at.here/api',
           headers: {
             authorization: 'Basic dummy-token'
           }
-        })
-        .mock('begin:http://it.at.here/api', 403)
-
+        }, 200)
+        
       callApi('/endpoint', 'dummy-token')
         .then(res => {
           expect(res.status).to.equal(200)

@@ -19,6 +19,10 @@ declare namespace fetchMock {
      */
     type MockMatcherFunction = (url: string, opts: MockRequest) => boolean;
 
+
+    type MockMatcherUrl = string | RegExp;
+
+
     /**
      * Mock matcher. Can be one of following:
      * string: Either
@@ -32,7 +36,7 @@ declare namespace fetchMock {
      *  url and opts fetch() is called with (or, if fetch() was called with one,
      *  the Request instance)
      */
-    type MockMatcher = string | RegExp | MockMatcherFunction;
+    type MockMatcher = MockMatcherUrl | MockMatcherFunction;
 
     /**
      * Inspection filter. Can be one of the following:
@@ -169,6 +173,8 @@ declare namespace fetchMock {
          */
         matcher?: MockMatcher;
 
+        url?: MockMatcherUrl;
+
         /**
          * This option allows for existing routes in a mock to be overwritten.
          * It’s also possible to define multiple routes with ‘the same’ matcher.
@@ -252,7 +258,7 @@ declare namespace fetchMock {
          * @param response Configures the http response returned by the mock
          * @param [options] Additional properties defining the route to mock
          */
-        mock(matcher: MockMatcher, response: MockResponse | MockResponseFunction, options?: MockOptions): this;
+        mock(matcher: MockMatcher | MockOptions, response: MockResponse | MockResponseFunction, options?: MockOptions): this;
 
         /**
          * Replaces fetch() with a stub which records its calls, grouped by

@@ -191,6 +191,32 @@ module.exports = fetchMock => {
 
 				expect(() => sb1.fetchHandler('http://it.at.there/')).not.to.throw();
 			});
+
+			it('Allow overwriting routes when using multiple function matchers', async () => {
+				function matcher1() {
+					return true;
+				}
+
+				function matcher2() {
+					return true;
+				}
+
+				const sb = fm.sandbox();
+
+				expect(() =>
+					sb.postOnce(matcher1, 200).postOnce(matcher2, 200)
+				).not.to.throw();
+
+				await sb('https://example.com', { method: 'POST' });
+				expect(sb.done()).to.be.false;
+				expect(sb.done(matcher1)).to.be.true;
+				expect(sb.done(matcher2)).to.be.false;
+				await sb('https://example.com', { method: 'POST' });
+
+				expect(sb.done()).to.be.true;
+				expect(sb.done(matcher1)).to.be.true;
+				expect(sb.done(matcher2)).to.be.true;
+			});
 		});
 
 		describe('strict matching shorthands', () => {

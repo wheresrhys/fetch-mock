@@ -45,8 +45,10 @@ const sanitizeRoute = route => {
 		route.url = route.matcher;
 		delete route.matcher;
 	}
-	route.identifier = route.name || route.url;
+
 	route.functionMatcher = route.matcher || route.functionMatcher;
+
+	route.identifier = route.name || route.url || route.functionMatcher;
 	return route;
 };
 

@@ -46,8 +46,8 @@ const resolve = async (
 	}
 };
 
-FetchMock.fetchHandler = function(url, options, request) {
-	const normalizedRequest = requestUtils.normalizeRequest(
+FetchMock.fetchHandler = async function(url, options, request) {
+	const normalizedRequest = await requestUtils.normalizeRequest(
 		url,
 		options,
 		this.config.Request

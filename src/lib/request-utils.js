@@ -33,9 +33,14 @@ const normalizeUrl = url => {
 	}
 };
 
-const extractBody = request => {
+const extractBody = async request => {
 	try {
-		return request.body.toString();
+		// node-fetch
+		if ('body' in request) {
+			return request.body.toString();
+		}
+		// fetch
+		return request.text();
 	} catch (err) {
 		return;
 	}
@@ -45,13 +50,13 @@ module.exports = {
 	setUrlImplementation: it => {
 		URL = it;
 	},
-	normalizeRequest: (url, options, Request) => {
+	normalizeRequest: async (url, options, Request) => {
 		if (Request.prototype.isPrototypeOf(url)) {
 			const derivedOptions = {
 				method: url.method
 			};
 
-			const body = extractBody(url);
+			const body = await extractBody(url);
 
 			if (typeof body !== 'undefined') {
 				derivedOptions.body = body;

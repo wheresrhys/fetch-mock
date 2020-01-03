@@ -580,6 +580,18 @@ module.exports = fetchMock => {
 					expect(fm.calls(true).length).to.equal(1);
 				});
 
+				it('should match when using Request', async () => {
+					fm.mock('http://it.at.there/', 200, { body: { foo: 'bar' } }).catch();
+
+					await fm.fetchHandler(
+						new fm.config.Request('http://it.at.there/', {
+							method: 'POST',
+							body: JSON.stringify({ foo: 'bar' })
+						})
+					);
+					expect(fm.calls(true).length).to.equal(1);
+				});
+
 				it('should match if body sent matches expected body', async () => {
 					fm.mock('http://it.at.there/', 200, { body: { foo: 'bar' } }).catch();
 

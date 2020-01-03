@@ -33,6 +33,14 @@ const normalizeUrl = url => {
 	}
 };
 
+const extractBody = request => {
+	try {
+		return request.body.toString();
+	} catch (err) {
+		return;
+	}
+};
+
 module.exports = {
 	setUrlImplementation: it => {
 		URL = it;
@@ -42,6 +50,13 @@ module.exports = {
 			const derivedOptions = {
 				method: url.method
 			};
+
+			const body = extractBody(url);
+
+			if (typeof body !== 'undefined') {
+				derivedOptions.body = body;
+			}
+
 			const normalizedRequestObject = {
 				url: normalizeUrl(url.url),
 				options: Object.assign(derivedOptions, options),

@@ -34,6 +34,14 @@ module.exports = fetchMock => {
 			expect(fm.done('http://it.at.there1/')).to.be.true;
 		});
 
+		it('regression: can expect an un-normalized url to be called n times', async () => {
+			fm.mock('http://it.at.there1', 200, { repeat: 2 });
+			fm.fetchHandler('http://it.at.there1');
+			expect(fm.done()).to.be.false;
+			fm.fetchHandler('http://it.at.there1');
+			expect(fm.done()).to.be.true;
+		});
+
 		it('can expect multiple routes to have been called', async () => {
 			fm.mock('http://it.at.there1/', 200, {
 				repeat: 2

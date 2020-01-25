@@ -1,3 +1,4 @@
+const { debug, setDebugPhase, getDebug } = require('./debug');
 const responseBuilder = require('./response-builder');
 const requestUtils = require('./request-utils');
 const FetchMock = {};
@@ -23,6 +24,8 @@ const resolve = async (
 	options,
 	request
 ) => {
+	const debug = getDebug('resolve()');
+	debug('Recursively resolving function and promise responses');
 	// We want to allow things like
 	// - function returning a Promise for a response
 	// - delaying (using a timeout Promise) a function's execution to generate
@@ -32,21 +35,36 @@ const resolve = async (
 	// have something that looks like neither Promise nor function
 	while (true) {
 		if (typeof response === 'function') {
+			debug('  Response is a function');
 			// in the case of falling back to the network we need to make sure we're using
 			// the original Request instance, not our normalised url + options
-			response =
-				request && responseIsFetch
-					? response(request)
-					: response(url, options, request);
+			if (responseIsFetch) {
+				if (request) {
+					debug('  -> Calling fetch with Request instance');
+					return response(request);
+				}
+				debug('  -> Calling fetch with url and options');
+				return response(url, options);
+			} else {
+				debug('  -> Calling response function');
+				response = response(url, options, request);
+			}
 		} else if (typeof response.then === 'function') {
+			debug('  Response is a promise');
+			debug('  -> Resolving promise');
 			response = await response;
 		} else {
+			debug('  Response is not a function or a promise');
+			debug('  -> Exiting response resolution recursion');
 			return response;
 		}
 	}
 };
 
 FetchMock.fetchHandler = function(url, options, request) {
+	setDebugPhase('handle');
+	const debug = getDebug('fetchHandler()');
+	debug('fetch called with:', url, options);
 	const normalizedRequest = requestUtils.normalizeRequest(
 		url,
 		options,
@@ -56,6 +74,12 @@ FetchMock.fetchHandler = function(url, options, request) {
 	({ url, options, request } = normalizedRequest);
 
 	const { signal } = normalizedRequest;
+
+	debug('Request normalised');
+	debug('  url', url);
+	debug('  options', options);
+	debug('  request', request);
+	debug('  signal', signal);
 
 	const route = this.executeRouter(url, options, request);
 
@@ -67,7 +91,9 @@ FetchMock.fetchHandler = function(url, options, request) {
 	// constructors defined by the user
 	return new this.config.Promise((res, rej) => {
 		if (signal) {
+			debug('signal exists - enabling fetch abort');
 			const abort = () => {
+				debug('aborting fetch');
 				// note that DOMException is not available in node.js; even node-fetch uses a custom error class: https://github.com/bitinn/node-fetch/blob/master/src/abort-error.js
 				rej(
 					typeof DOMException !== 'undefined'
@@ -77,6 +103,7 @@ FetchMock.fetchHandler = function(url, options, request) {
 				done();
 			};
 			if (signal.aborted) {
+				debug('signal is already aborted - aborting the fetch');
 				abort();
 			}
 			signal.addEventListener('abort', abort);
@@ -84,20 +111,29 @@ FetchMock.fetchHandler = function(url, options, request) {
 
 		this.generateResponse(route, url, options, request)
 			.then(res, rej)
-			.then(done, done);
+			.then(done, done)
+			.then(() => {
+				setDebugPhase();
+			});
 	});
 };
 
 FetchMock.fetchHandler.isMock = true;
 
 FetchMock.executeRouter = function(url, options, request) {
+	const debug = getDebug('executeRouter()');
+	debug(`Attempting to match request to a route`);
 	if (this.config.fallbackToNetwork === 'always') {
+		debug(
+			'  Configured with fallbackToNetwork=always - passing through to fetch'
+		);
 		return { response: this.getNativeFetch(), responseIsFetch: true };
 	}
 
 	const match = this.router(url, options, request);
 
 	if (match) {
+		debug('  Matching route found');
 		return match;
 	}
 
@@ -108,6 +144,7 @@ FetchMock.executeRouter = function(url, options, request) {
 	this.push({ url, options, request, isUnmatched: true });
 
 	if (this.fallbackResponse) {
+		debug('  No matching route found - using fallbackResponse');
 		return { response: this.fallbackResponse };
 	}
 
@@ -119,20 +156,24 @@ FetchMock.executeRouter = function(url, options, request) {
 		);
 	}
 
+	debug('  Configured to fallbackToNetwork - passing through to fetch');
 	return { response: this.getNativeFetch(), responseIsFetch: true };
 };
 
 FetchMock.generateResponse = async function(route, url, options, request) {
+	const debug = getDebug('generateResponse()');
 	const response = await resolve(route, url, options, request);
 
 	// If the response says to throw an error, throw it
 	// Type checking is to deal with sinon spies having a throws property :-0
 	if (response.throws && typeof response !== 'function') {
+		debug('response.throws is defined - throwing an error');
 		throw response.throws;
 	}
 
 	// If the response is a pre-made Response, respond with it
 	if (this.config.Response.prototype.isPrototypeOf(response)) {
+		debug('response is already a Response instance - returning it');
 		return response;
 	}
 
@@ -146,7 +187,10 @@ FetchMock.generateResponse = async function(route, url, options, request) {
 };
 
 FetchMock.router = function(url, options, request) {
-	const route = this.routes.find(route => route.matcher(url, options, request));
+	const route = this.routes.find((route, i) => {
+		debug(`Trying to match route ${i}`);
+		return route.matcher(url, options, request);
+	});
 
 	if (route) {
 		this.push({
@@ -163,13 +207,20 @@ FetchMock.getNativeFetch = function() {
 	const func = this.realFetch || (this.isSandbox && this.config.fetch);
 	if (!func) {
 		throw new Error(
-			'fetch-mock: Falling back to network only available on gloabl fetch-mock, or by setting config.fetch on sandboxed fetch-mock'
+			'fetch-mock: Falling back to network only available on global fetch-mock, or by setting config.fetch on sandboxed fetch-mock'
 		);
 	}
 	return func;
 };
 
 FetchMock.push = function({ url, options, request, isUnmatched, identifier }) {
+	debug('Recording fetch call', {
+		url,
+		options,
+		request,
+		isUnmatched,
+		identifier
+	});
 	const args = [url, options];
 	args.request = request;
 	args.identifier = identifier;

@@ -55,6 +55,7 @@
   "dependencies": {
     "babel-runtime": "^6.26.0",
     "core-js": "^3.0.0",
+    "debug": "^4.1.1",
     "glob-to-regexp": "^0.4.0",
     "lodash.isequal": "^4.5.0",
     "path-to-regexp": "^2.2.1",

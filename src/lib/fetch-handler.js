@@ -45,8 +45,8 @@ const resolve = async (
 				debug('  > Calling fetch with url and options');
 				return response(url, options);
 			} else {
-				debug('  > Calling custom matcher function');
-				return response(url, options, request);
+				debug('  > Calling response function');
+				response = response(url, options, request);
 			}
 		} else if (typeof response.then === 'function') {
 			debug('  Response is a promise');
@@ -61,9 +61,8 @@ const resolve = async (
 };
 
 FetchMock.fetchHandler = function(url, options, request) {
-	debug('**HANDLING NEW FETCH**');
+	debug('fetch called with:', url, options)
 	const normalizedRequest = requestUtils.normalizeRequest(
-	({ url, options, request } = requestUtils.normalizeRequest(
 		url,
 		options,
 		this.config.Request
@@ -83,7 +82,7 @@ FetchMock.fetchHandler = function(url, options, request) {
 	// constructors defined by the user
 	return new this.config.Promise((res, rej) => {
 		if (signal) {
-			debug('options.signal exists - setting up fetch aborting')
+			debug('options.signal exists - setting up fetch aborting');
 			const abort = () => {
 				// note that DOMException is not available in node.js; even node-fetch uses a custom error class: https://github.com/bitinn/node-fetch/blob/master/src/abort-error.js
 				rej(
@@ -94,7 +93,7 @@ FetchMock.fetchHandler = function(url, options, request) {
 				done();
 			};
 			if (signal.aborted) {
-				debug('options.signal is already aborted- abort the fetch')
+				debug('options.signal is already aborted- abort the fetch');
 				abort();
 			}
 			signal.addEventListener('abort', abort);
@@ -102,14 +101,18 @@ FetchMock.fetchHandler = function(url, options, request) {
 
 		this.generateResponse(route, url, options, request)
 			.then(res, rej)
-			.then(done, done);
+			.then(done, done)
+			.then(() => {
+				debug('fetch handled successfully')
+				debug('---------------')
+			})
 	});
 };
 
 FetchMock.fetchHandler.isMock = true;
 
 FetchMock.executeRouter = function(url, options, request) {
-	debug('Attempting to match request to defined routes');
+	debug(`Attempting to match request to a route`);
 	if (this.config.fallbackToNetwork === 'always') {
 		debug(
 			'  Configured with fallbackToNetwork=always - passing through to fetch'
@@ -173,7 +176,10 @@ FetchMock.generateResponse = async function(route, url, options, request) {
 };
 
 FetchMock.router = function(url, options, request) {
-	const route = this.routes.find(route => route.matcher(url, options, request));
+	const route = this.routes.find((route, i) => {
+		debug(`Trying to match route ${i}`)
+		return route.matcher(url, options, request)
+			});
 
 	if (route) {
 		this.push({

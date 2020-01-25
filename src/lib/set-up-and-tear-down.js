@@ -1,3 +1,4 @@
+const debug = require('debug')('fetch-mock');
 const { compileRoute } = require('./compile-route');
 const FetchMock = {};
 
@@ -10,6 +11,7 @@ FetchMock.mock = function(...args) {
 };
 
 FetchMock.addRoute = function(uncompiledRoute) {
+	debug('Adding route', uncompiledRoute)
 	const route = this.compileRoute(uncompiledRoute);
 	const clashes = this.routes.filter(
 		({ identifier, method }) =>
@@ -24,6 +26,8 @@ FetchMock.addRoute = function(uncompiledRoute) {
 
 	if (overwriteRoutes === false || !clashes.length) {
 		this._uncompiledRoutes.push(uncompiledRoute);
+		debug('Route added successfully')
+		debug('---------------')
 		return this.routes.push(route);
 	}
 
@@ -33,7 +37,8 @@ FetchMock.addRoute = function(uncompiledRoute) {
 			this._uncompiledRoutes.splice(index, 1, uncompiledRoute);
 			this.routes.splice(index, 1, route);
 		});
-
+		debug('Route added successfully')
+		debug('---------------')
 		return this.routes;
 	}
 
@@ -45,6 +50,9 @@ FetchMock.addRoute = function(uncompiledRoute) {
 
 	this._uncompiledRoutes.push(uncompiledRoute);
 	this.routes.push(route);
+	debug('Route added successfully')
+	debug('---------------')
+
 };
 
 FetchMock._mock = function() {

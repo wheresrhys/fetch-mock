@@ -6,10 +6,7 @@ const isName = nameOrMatcher =>
 	typeof nameOrMatcher === 'string' && /^[\da-zA-Z\-]+$/.test(nameOrMatcher);
 
 const filterCallsWithMatcher = (matcher, options = {}, calls) => {
-	matcher = generateMatcher(
-		sanitizeRoute(Object.assign({ matcher }, options), false),
-		false
-	);
+	matcher = generateMatcher(sanitizeRoute(Object.assign({ matcher }, options)));
 	return calls.filter(([url, options]) => matcher(normalizeUrl(url), options));
 };
 

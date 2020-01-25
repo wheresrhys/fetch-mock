@@ -164,24 +164,13 @@ const getFullUrlMatcher = (route, matcherUrl, query) => {
 	};
 };
 
-const getFunctionMatcher = ({ matcher, functionMatcher }) => {
-	if (functionMatcher) {
-		debug('Using user defined function as matcher alongside other matchers');
-		return functionMatcher;
-	}
-	if (typeof matcher === 'function') {
-		debug('Using user defined function as matcher');
-		return matcher;
-	}
-};
-
 const getFunctionMatcher = ({ functionMatcher }) => {
 	debug('Detected user defined function matcher', functionMatcher);
 	return (...args) => {
-		debug('Calling function matcher with arguments', args)
+		debug('Calling function matcher with arguments', args);
 		return functionMatcher(...args);
-	}
-}
+	};
+};
 
 const getUrlMatcher = route => {
 	debug('Generating url matcher');
@@ -213,8 +202,8 @@ const getUrlMatcher = route => {
 	return getFullUrlMatcher(route, matcherUrl, query);
 };
 
-module.exports = (route, useDebugger = true) => {
-	useDebugger && debug('Compiling matcher for route');
+module.exports = route => {
+	debug('Compiling matcher for route');
 	const matchers = [
 		route.query && getQueryStringMatcher(route),
 		route.method && getMethodMatcher(route),

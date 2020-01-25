@@ -36,12 +36,12 @@ const argsToRoute = args => {
 	return routeConfig;
 };
 
-const sanitizeRoute = (route, useDebugger = true) => {
-	useDebugger && debug('Sanitizing route properties');
+const sanitizeRoute = route => {
+	debug('Sanitizing route properties');
 	route = Object.assign({}, route);
 
 	if (route.method) {
-		useDebugger && debug(`Converting method ${route.method} to lower case`);
+		debug(`Converting method ${route.method} to lower case`);
 		route.method = route.method.toLowerCase();
 	}
 	if (isUrlMatcher(route.matcher)) {
@@ -51,11 +51,12 @@ const sanitizeRoute = (route, useDebugger = true) => {
 
 	route.functionMatcher = route.matcher || route.functionMatcher;
 
-	useDebugger && debug('Setting route.identifier...')
-	useDebugger && debug(`  route.name is ${route.name}`)
-	useDebugger && debug(`  route.matcher is ${route.matcher}`)
+	debug('Setting route.identifier...');
+	debug(`  route.name is ${route.name}`);
+	debug(`  route.url is ${route.url}`);
+	debug(`  route.functionMatcher is ${route.functionMatcher}`);
 	route.identifier = route.name || route.url || route.functionMatcher;
-	useDebugger && debug(`  > route.identifier set to ${route.identifier}`);
+	debug(`  > route.identifier set to ${route.identifier}`);
 	return route;
 };
 
@@ -74,7 +75,7 @@ const validateRoute = route => {
 const limitMatcher = route => {
 	debug('Limiting number of requests to handle by route');
 	if (!route.repeat) {
-		debug('No `repeat` value set on route. Will match any number of requests');
+		debug('  No `repeat` value set on route. Will match any number of requests');
 		return;
 	}
 
@@ -92,11 +93,17 @@ const limitMatcher = route => {
 };
 
 const delayResponse = route => {
+	debug(`Delaying response`)
 	const { delay } = route;
 	if (delay) {
+		debug(`  Wrapping response in delay of ${delay} miliseconds`)
 		const response = route.response;
-		route.response = () =>
-			new Promise(res => setTimeout(() => res(response), delay));
+		route.response = () => {
+			debug(`Delaying response by ${delay} miliseconds`)
+			return new Promise(res => setTimeout(() => res(response), delay));
+		}
+	} else {
+		debug(`  No delay set on route. Will respond 'immediately' (but asynchronously)`)
 	}
 };
 

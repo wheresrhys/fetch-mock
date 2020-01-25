@@ -1,3 +1,4 @@
+const {debug} = require('./debug');
 const responseConfigProps = [
 	'body',
 	'headers',

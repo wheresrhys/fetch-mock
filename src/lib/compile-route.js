@@ -1,4 +1,4 @@
-const debug = require('debug')('fetch-mock');
+const {debug, setDebugNamespace} = require('./debug');
 const generateMatcher = require('./generate-matcher');
 
 const matcherProperties = [
@@ -15,6 +15,7 @@ const isUrlMatcher = matcher =>
 	matcher instanceof RegExp ||
 	typeof matcher === 'string' ||
 	(typeof matcher === 'object' && 'href' in matcher);
+
 const isFunctionMatcher = matcher => typeof matcher === 'function';
 
 const argsToRoute = args => {
@@ -45,6 +46,7 @@ const sanitizeRoute = route => {
 		route.method = route.method.toLowerCase();
 	}
 	if (isUrlMatcher(route.matcher)) {
+		debug('Mock uses a url matcher', route.matcher)
 		route.url = route.matcher;
 		delete route.matcher;
 	}
@@ -56,7 +58,7 @@ const sanitizeRoute = route => {
 	debug(`  route.url is ${route.url}`);
 	debug(`  route.functionMatcher is ${route.functionMatcher}`);
 	route.identifier = route.name || route.url || route.functionMatcher;
-	debug(`  > route.identifier set to ${route.identifier}`);
+	debug(`  -> route.identifier set to ${route.identifier}`);
 	return route;
 };
 
@@ -79,7 +81,7 @@ const limitMatcher = route => {
 		return;
 	}
 
-	debug(`Route set to repeat ${route.repeat} times`);
+	debug(`  Route set to repeat ${route.repeat} times`);
 	const matcher = route.matcher;
 	let timesLeft = route.repeat;
 	route.matcher = (url, options) => {
@@ -93,7 +95,7 @@ const limitMatcher = route => {
 };
 
 const delayResponse = route => {
-	debug(`Delaying response`)
+	debug(`Applying response delay settings`)
 	const { delay } = route;
 	if (delay) {
 		debug(`  Wrapping response in delay of ${delay} miliseconds`)
@@ -108,12 +110,14 @@ const delayResponse = route => {
 };
 
 const compileRoute = function(args) {
+	setDebugNamespace('compile');
 	debug('Compiling route');
 	const route = sanitizeRoute(argsToRoute(args));
 	validateRoute(route);
 	route.matcher = generateMatcher(route);
 	limitMatcher(route);
 	delayResponse(route);
+	setDebugNamespace();
 	return route;
 };
 

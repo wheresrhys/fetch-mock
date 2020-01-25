@@ -1,4 +1,4 @@
-const debug = require('debug')('fetch-mock');
+const {debug, setDebugPhase} = require('./debug');
 const responseBuilder = require('./response-builder');
 const requestUtils = require('./request-utils');
 const FetchMock = {};
@@ -39,28 +39,29 @@ const resolve = async (
 			// the original Request instance, not our normalised url + options
 			if (responseIsFetch) {
 				if (request) {
-					debug('  > Calling fetch with Request instance');
+					debug('  -> Calling fetch with Request instance');
 					return response(request);
 				}
-				debug('  > Calling fetch with url and options');
+				debug('  -> Calling fetch with url and options');
 				return response(url, options);
 			} else {
-				debug('  > Calling response function');
+				debug('  -> Calling response function');
 				response = response(url, options, request);
 			}
 		} else if (typeof response.then === 'function') {
 			debug('  Response is a promise');
-			debug('  > Resolving promise');
+			debug('  -> Resolving promise');
 			response = await response;
 		} else {
 			debug('  Response is not a function or a promise');
-			debug('  > Returning response for conversion into Response instance');
+			debug('  -> Exiting response resolution recursion');
 			return response;
 		}
 	}
 };
 
 FetchMock.fetchHandler = function(url, options, request) {
+	setDebugPhase('handle');
 	debug('fetch called with:', url, options)
 	const normalizedRequest = requestUtils.normalizeRequest(
 		url,
@@ -72,6 +73,12 @@ FetchMock.fetchHandler = function(url, options, request) {
 
 	const { signal } = normalizedRequest;
 
+	debug('Request normalised')
+	debug('  url', url)
+	debug('  options', options)
+	debug('  request', request)
+	debug('  signal', signal)
+
 	const route = this.executeRouter(url, options, request);
 
 	// this is used to power the .flush() method
@@ -82,8 +89,9 @@ FetchMock.fetchHandler = function(url, options, request) {
 	// constructors defined by the user
 	return new this.config.Promise((res, rej) => {
 		if (signal) {
-			debug('options.signal exists - setting up fetch aborting');
+			debug('signal exists - enabling fetch abort');
 			const abort = () => {
+				debug('aborting fetch');
 				// note that DOMException is not available in node.js; even node-fetch uses a custom error class: https://github.com/bitinn/node-fetch/blob/master/src/abort-error.js
 				rej(
 					typeof DOMException !== 'undefined'
@@ -93,7 +101,7 @@ FetchMock.fetchHandler = function(url, options, request) {
 				done();
 			};
 			if (signal.aborted) {
-				debug('options.signal is already aborted- abort the fetch');
+				debug('signal is already aborted - aborting the fetch');
 				abort();
 			}
 			signal.addEventListener('abort', abort);
@@ -103,8 +111,7 @@ FetchMock.fetchHandler = function(url, options, request) {
 			.then(res, rej)
 			.then(done, done)
 			.then(() => {
-				debug('fetch handled successfully')
-				debug('---------------')
+				setDebugPhase();
 			})
 	});
 };
@@ -196,13 +203,14 @@ FetchMock.getNativeFetch = function() {
 	const func = this.realFetch || (this.isSandbox && this.config.fetch);
 	if (!func) {
 		throw new Error(
-			'fetch-mock: Falling back to network only available on gloabl fetch-mock, or by setting config.fetch on sandboxed fetch-mock'
+			'fetch-mock: Falling back to network only available on global fetch-mock, or by setting config.fetch on sandboxed fetch-mock'
 		);
 	}
 	return func;
 };
 
 FetchMock.push = function({ url, options, request, isUnmatched, identifier }) {
+	debug('Recording fetch call', { url, options, request, isUnmatched, identifier })
 	const args = [url, options];
 	args.request = request;
 	args.identifier = identifier;

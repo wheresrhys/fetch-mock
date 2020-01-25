@@ -1,4 +1,4 @@
-const {debug, getDebug, setDebugNamespace} = require('./debug');
+const { getDebug } = require('./debug');
 const generateMatcher = require('./generate-matcher');
 
 const matcherProperties = [
@@ -47,7 +47,7 @@ const sanitizeRoute = route => {
 		route.method = route.method.toLowerCase();
 	}
 	if (isUrlMatcher(route.matcher)) {
-		debug('Mock uses a url matcher', route.matcher)
+		debug('Mock uses a url matcher', route.matcher);
 		route.url = route.matcher;
 		delete route.matcher;
 	}
@@ -79,7 +79,9 @@ const limit = route => {
 	const debug = getDebug('limit()');
 	debug('Limiting number of requests to handle by route');
 	if (!route.repeat) {
-		debug('  No `repeat` value set on route. Will match any number of requests');
+		debug(
+			'  No `repeat` value set on route. Will match any number of requests'
+		);
 		return;
 	}
 
@@ -98,17 +100,19 @@ const limit = route => {
 
 const delayResponse = route => {
 	const debug = getDebug('delayResponse()');
-	debug(`Applying response delay settings`)
+	debug(`Applying response delay settings`);
 	const { delay } = route;
 	if (delay) {
-		debug(`  Wrapping response in delay of ${delay} miliseconds`)
+		debug(`  Wrapping response in delay of ${delay} miliseconds`);
 		const response = route.response;
 		route.response = () => {
-			debug(`Delaying response by ${delay} miliseconds`)
+			debug(`Delaying response by ${delay} miliseconds`);
 			return new Promise(res => setTimeout(() => res(response), delay));
-		}
+		};
 	} else {
-		debug(`  No delay set on route. Will respond 'immediately' (but asynchronously)`)
+		debug(
+			`  No delay set on route. Will respond 'immediately' (but asynchronously)`
+		);
 	}
 };
 

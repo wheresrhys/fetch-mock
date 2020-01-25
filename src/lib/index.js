@@ -1,4 +1,4 @@
-const {debug} = require('./debug');
+const { debug } = require('./debug');
 const setUpAndTearDown = require('./set-up-and-tear-down');
 const fetchHandler = require('./fetch-handler');
 const inspecting = require('./inspecting');
@@ -14,7 +14,7 @@ FetchMock.config = {
 };
 
 FetchMock.createInstance = function() {
-	debug('Creating fetch-mock instance')
+	debug('Creating fetch-mock instance');
 	const instance = Object.create(FetchMock);
 	instance._uncompiledRoutes = (this._uncompiledRoutes || []).slice();
 	instance.routes = instance._uncompiledRoutes.map(config =>
@@ -36,7 +36,7 @@ FetchMock.bindMethods = function() {
 };
 
 FetchMock.sandbox = function() {
-	debug('Creating sandboxed fetch-mock instance')
+	debug('Creating sandboxed fetch-mock instance');
 	// this construct allows us to create a fetch-mock instance which is also
 	// a callable function, while circumventing circularity when defining the
 	// object that this function should be bound to

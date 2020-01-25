@@ -1,4 +1,4 @@
-const {debug, getDebug} = require('./debug');
+const { getDebug } = require('./debug');
 const responseConfigProps = [
 	'body',
 	'headers',
@@ -10,12 +10,12 @@ const responseConfigProps = [
 class ResponseBuilder {
 	constructor(options) {
 		this.debug = getDebug('ResponseBuilder()');
-		this.debug('Response builder created with options', options)
+		this.debug('Response builder created with options', options);
 		Object.assign(this, options);
 	}
 
 	exec() {
-		this.debug('building response')
+		this.debug('building response');
 		this.normalizeResponseConfig();
 		this.constructFetchOpts();
 		this.constructResponseBody();
@@ -43,14 +43,14 @@ class ResponseBuilder {
 	normalizeResponseConfig() {
 		// If the response config looks like a status, start to generate a simple response
 		if (typeof this.responseConfig === 'number') {
-			this.debug('building response using status', this.responseConfig)
+			this.debug('building response using status', this.responseConfig);
 			this.responseConfig = {
 				status: this.responseConfig
 			};
 			// If the response config is not an object, or is an object that doesn't use
 			// any reserved properties, assume it is meant to be the body of the response
 		} else if (typeof this.responseConfig === 'string' || this.sendAsObject()) {
-			this.debug('building text response from', this.responseConfig)
+			this.debug('building text response from', this.responseConfig);
 			this.responseConfig = {
 				body: this.responseConfig
 			};
@@ -59,7 +59,7 @@ class ResponseBuilder {
 
 	validateStatus(status) {
 		if (!status) {
-			this.debug('No status provided. Defaulting to 200')
+			this.debug('No status provided. Defaulting to 200');
 			return 200;
 		}
 
@@ -69,7 +69,7 @@ class ResponseBuilder {
 				status >= 200) ||
 			status < 600
 		) {
-			this.debug('Valid status provided', status)
+			this.debug('Valid status provided', status);
 			return status;
 		}
 
@@ -104,7 +104,7 @@ e.g. {"body": {"status: "registered"}}`);
 			this.responseConfig.body != null && //eslint-disable-line
 			typeof this.body === 'object'
 		) {
-			this.debug('Stringifying JSON response body')
+			this.debug('Stringifying JSON response body');
 			this.body = JSON.stringify(this.body);
 			if (!this.options.headers.has('Content-Type')) {
 				this.options.headers.set('Content-Type', 'application/json');
@@ -119,7 +119,7 @@ e.g. {"body": {"status: "registered"}}`);
 			typeof this.body === 'string' &&
 			!this.options.headers.has('Content-Length')
 		) {
-			this.debug('Setting content-length header:', this.body.length.toString())
+			this.debug('Setting content-length header:', this.body.length.toString());
 			this.options.headers.set('Content-Length', this.body.length.toString());
 		}
 	}
@@ -133,7 +133,7 @@ e.g. {"body": {"status: "registered"}}`);
 		// On the server we need to manually construct the readable stream for the
 		// Response object (on the client this done automatically)
 		if (this.Stream) {
-			this.debug('Creating response stream')
+			this.debug('Creating response stream');
 			const stream = new this.Stream.Readable();
 			if (this.body != null) { //eslint-disable-line
 				stream.push(this.body, 'utf-8');
@@ -150,26 +150,29 @@ e.g. {"body": {"status: "registered"}}`);
 		// Using a proxy means we can set properties that may not be writable on
 		// the original Response. It also means we can track the resolution of
 		// promises returned by res.json(), res.text() etc
-		this.debug('Wrappipng Response in ES proxy for observability')
+		this.debug('Wrappipng Response in ES proxy for observability');
 		return new Proxy(response, {
 			get: (originalResponse, name) => {
 				if (this.responseConfig.redirectUrl) {
 					if (name === 'url') {
-						this.debug('Retrieving redirect url', this.responseConfig.redirectUrl)
+						this.debug(
+							'Retrieving redirect url',
+							this.responseConfig.redirectUrl
+						);
 						return this.responseConfig.redirectUrl;
 					}
 
 					if (name === 'redirected') {
-						this.debug('Retrieving redirected status', true)
+						this.debug('Retrieving redirected status', true);
 						return true;
 					}
 				}
 
 				if (typeof originalResponse[name] === 'function') {
-					this.debug('Wrapping body promises in ES proxies for observability')
+					this.debug('Wrapping body promises in ES proxies for observability');
 					return new Proxy(originalResponse[name], {
 						apply: (func, thisArg, args) => {
-							this.debug(`Calling res.${name}`)
+							this.debug(`Calling res.${name}`);
 							const result = func.apply(response, args);
 							if (result.then) {
 								fetchMock._holdingPromises.push(result.catch(() => null));

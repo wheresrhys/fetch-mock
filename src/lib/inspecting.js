@@ -1,4 +1,4 @@
-const {setDebugPhase, setDebugNamespace, debug} = require('./debug');
+const { setDebugPhase, setDebugNamespace, debug } = require('./debug');
 const { normalizeUrl } = require('./request-utils');
 const FetchMock = {};
 const { sanitizeRoute } = require('./compile-route');
@@ -11,50 +11,57 @@ const filterCallsWithMatcher = (matcher, options = {}, calls) => {
 	return calls.filter(([url, options]) => matcher(normalizeUrl(url), options));
 };
 
-const formatDebug = (func) => {
-	return function (...args) {
-		setDebugPhase('inspect')
+const formatDebug = func => {
+	return function(...args) {
+		setDebugPhase('inspect');
 		const result = func.call(this, ...args);
-		setDebugPhase()
+		setDebugPhase();
 		return result;
-	}
-}
+	};
+};
 
 FetchMock.filterCalls = function(nameOrMatcher, options) {
-	debug('Filtering fetch calls')
+	debug('Filtering fetch calls');
 	let calls = this._calls;
 	let matcher = '*';
 
 	if ([true, 'matched'].includes(nameOrMatcher)) {
-		debug(`Filter provided is ${nameOrMatcher}. Returning matched calls only`)
+		debug(`Filter provided is ${nameOrMatcher}. Returning matched calls only`);
 		calls = calls.filter(({ isUnmatched }) => !isUnmatched);
-
 	} else if ([false, 'unmatched'].includes(nameOrMatcher)) {
-		debug(`Filter provided is ${nameOrMatcher}. Returning unmatched calls only`)
+		debug(
+			`Filter provided is ${nameOrMatcher}. Returning unmatched calls only`
+		);
 		calls = calls.filter(({ isUnmatched }) => isUnmatched);
 	} else if (typeof nameOrMatcher === 'undefined') {
-		debug(`Filter provided is undefined. Returning all calls`)
+		debug(`Filter provided is undefined. Returning all calls`);
 		calls = calls;
 	} else if (isName(nameOrMatcher)) {
-		debug(`Filter provided, looks like the name of a named route. Returning only calls handled by that route`)
+		debug(
+			`Filter provided, looks like the name of a named route. Returning only calls handled by that route`
+		);
 		calls = calls.filter(({ identifier }) => identifier === nameOrMatcher);
 	} else {
 		matcher = normalizeUrl(nameOrMatcher);
 		if (this.routes.some(({ identifier }) => identifier === matcher)) {
-			debug(`Filter provided, ${nameOrMatcher}, identifies a route. Returning only calls handled by that route`)
+			debug(
+				`Filter provided, ${nameOrMatcher}, identifies a route. Returning only calls handled by that route`
+			);
 			calls = calls.filter(call => call.identifier === matcher);
 		}
 	}
-
 
 	if ((options || matcher !== '*') && calls.length) {
 		if (typeof options === 'string') {
 			options = { method: options };
 		}
-		debug('Compiling filter and options to route in order to filter all calls', nameOrMatcher)
+		debug(
+			'Compiling filter and options to route in order to filter all calls',
+			nameOrMatcher
+		);
 		calls = filterCallsWithMatcher(matcher, options, calls);
 	}
-	debug(`Retrieved ${calls.length} calls`)
+	debug(`Retrieved ${calls.length} calls`);
 	return calls;
 };
 
@@ -84,45 +91,50 @@ FetchMock.called = formatDebug(function(nameOrMatcher, options) {
 });
 
 FetchMock.flush = formatDebug(async function(waitForResponseMethods) {
-	setDebugNamespace('flush')
-	debug(`flushing all fetch calls. ${waitForResponseMethods ? '' : 'Not '}waiting for response bodies to complete download`);
+	setDebugNamespace('flush');
+	debug(
+		`flushing all fetch calls. ${
+			waitForResponseMethods ? '' : 'Not '
+		}waiting for response bodies to complete download`
+	);
 
 	const queuedPromises = this._holdingPromises;
 	this._holdingPromises = [];
-	debug(`${queuedPromises.length} fetch calls to be awaited`)
+	debug(`${queuedPromises.length} fetch calls to be awaited`);
 
-	await Promise.all(queuedPromises)
-	debug(`All fetch calls have completed`)
+	await Promise.all(queuedPromises);
+	debug(`All fetch calls have completed`);
 	if (waitForResponseMethods && this._holdingPromises.length) {
-		debug(`Awaiting all fetch bodies to download`)
+		debug(`Awaiting all fetch bodies to download`);
 		await this.flush(waitForResponseMethods);
-		debug(`All fetch bodies have completed downloading`)
+		debug(`All fetch bodies have completed downloading`);
 	}
-	setDebugNamespace()
+	setDebugNamespace();
 });
 
 FetchMock.done = formatDebug(function(nameOrMatcher) {
-	setDebugPhase('inspect')
-	setDebugNamespace('done')
-	debug('Checking to see if expected calls have been made')
+	setDebugPhase('inspect');
+	setDebugNamespace('done');
+	debug('Checking to see if expected calls have been made');
 	let routesToCheck;
 
-
-		if(nameOrMatcher && typeof nameOrMatcher !== 'boolean') {
-			debug('Checking to see if expected calls have been made for single route:', nameOrMatcher)
-			routesToCheck = [{ identifier: nameOrMatcher }]
-		} else {
-			debug('Checking to see if expected calls have been made for all routes')
-			routesToCheck = this.routes;
-		}
-
+	if (nameOrMatcher && typeof nameOrMatcher !== 'boolean') {
+		debug(
+			'Checking to see if expected calls have been made for single route:',
+			nameOrMatcher
+		);
+		routesToCheck = [{ identifier: nameOrMatcher }];
+	} else {
+		debug('Checking to see if expected calls have been made for all routes');
+		routesToCheck = this.routes;
+	}
 
 	// Can't use array.every because would exit after first failure, which would
 	// break the logging
 	const result = routesToCheck
 		.map(({ identifier }) => {
 			if (!this.called(identifier)) {
-				debug('No calls made for route:', identifier)
+				debug('No calls made for route:', identifier);
 				console.warn(`Warning: ${identifier} not called`); // eslint-disable-line
 				return false;
 			}
@@ -132,14 +144,20 @@ FetchMock.done = formatDebug(function(nameOrMatcher) {
 			).repeat;
 
 			if (!expectedTimes) {
-				debug('Route has been called at least once, and no expectation of more set:', identifier)
+				debug(
+					'Route has been called at least once, and no expectation of more set:',
+					identifier
+				);
 				return true;
 			}
 			const actualTimes = this.filterCalls(identifier).length;
 
-			debug(`Route called ${actualTimes} times:`, identifier)
+			debug(`Route called ${actualTimes} times:`, identifier);
 			if (expectedTimes > actualTimes) {
-				debug(`Route called ${actualTimes} times, but expected ${expectedTimes}:`, identifier)
+				debug(
+					`Route called ${actualTimes} times, but expected ${expectedTimes}:`,
+					identifier
+				);
 				console.warn(
 					`Warning: ${identifier} only called ${actualTimes} times, but ${expectedTimes} expected`
 				); // eslint-disable-line
@@ -150,9 +168,9 @@ FetchMock.done = formatDebug(function(nameOrMatcher) {
 		})
 		.every(isDone => isDone);
 
-		setDebugNamespace()
-		setDebugPhase()
-		return result
+	setDebugNamespace();
+	setDebugPhase();
+	return result;
 });
 
 module.exports = FetchMock;

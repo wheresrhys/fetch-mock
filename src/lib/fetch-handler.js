@@ -1,4 +1,4 @@
-const {debug, setDebugPhase, getDebug} = require('./debug');
+const { debug, setDebugPhase, getDebug } = require('./debug');
 const responseBuilder = require('./response-builder');
 const requestUtils = require('./request-utils');
 const FetchMock = {};
@@ -64,7 +64,7 @@ const resolve = async (
 FetchMock.fetchHandler = function(url, options, request) {
 	setDebugPhase('handle');
 	const debug = getDebug('fetchHandler()');
-	debug('fetch called with:', url, options)
+	debug('fetch called with:', url, options);
 	const normalizedRequest = requestUtils.normalizeRequest(
 		url,
 		options,
@@ -75,11 +75,11 @@ FetchMock.fetchHandler = function(url, options, request) {
 
 	const { signal } = normalizedRequest;
 
-	debug('Request normalised')
-	debug('  url', url)
-	debug('  options', options)
-	debug('  request', request)
-	debug('  signal', signal)
+	debug('Request normalised');
+	debug('  url', url);
+	debug('  options', options);
+	debug('  request', request);
+	debug('  signal', signal);
 
 	const route = this.executeRouter(url, options, request);
 
@@ -114,7 +114,7 @@ FetchMock.fetchHandler = function(url, options, request) {
 			.then(done, done)
 			.then(() => {
 				setDebugPhase();
-			})
+			});
 	});
 };
 
@@ -188,9 +188,9 @@ FetchMock.generateResponse = async function(route, url, options, request) {
 
 FetchMock.router = function(url, options, request) {
 	const route = this.routes.find((route, i) => {
-		debug(`Trying to match route ${i}`)
-		return route.matcher(url, options, request)
-			});
+		debug(`Trying to match route ${i}`);
+		return route.matcher(url, options, request);
+	});
 
 	if (route) {
 		this.push({
@@ -214,7 +214,13 @@ FetchMock.getNativeFetch = function() {
 };
 
 FetchMock.push = function({ url, options, request, isUnmatched, identifier }) {
-	debug('Recording fetch call', { url, options, request, isUnmatched, identifier })
+	debug('Recording fetch call', {
+		url,
+		options,
+		request,
+		isUnmatched,
+		identifier
+	});
 	const args = [url, options];
 	args.request = request;
 	args.identifier = identifier;

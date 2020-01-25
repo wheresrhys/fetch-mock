@@ -1,4 +1,3 @@
-const {debug} = require('./debug');
 let URL;
 // https://stackoverflow.com/a/19709846/308237
 const absoluteUrlRX = new RegExp('^(?:[a-z]+:)?//', 'i');

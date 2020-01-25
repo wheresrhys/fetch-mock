@@ -1,4 +1,4 @@
-const {debug, setDebugPhase} = require('./debug');
+const {debug, setDebugPhase, getDebug} = require('./debug');
 const responseBuilder = require('./response-builder');
 const requestUtils = require('./request-utils');
 const FetchMock = {};
@@ -24,6 +24,7 @@ const resolve = async (
 	options,
 	request
 ) => {
+	const debug = getDebug('resolve()');
 	debug('Recursively resolving function and promise responses');
 	// We want to allow things like
 	// - function returning a Promise for a response
@@ -62,6 +63,7 @@ const resolve = async (
 
 FetchMock.fetchHandler = function(url, options, request) {
 	setDebugPhase('handle');
+	const debug = getDebug('fetchHandler()');
 	debug('fetch called with:', url, options)
 	const normalizedRequest = requestUtils.normalizeRequest(
 		url,
@@ -119,6 +121,7 @@ FetchMock.fetchHandler = function(url, options, request) {
 FetchMock.fetchHandler.isMock = true;
 
 FetchMock.executeRouter = function(url, options, request) {
+	const debug = getDebug('executeRouter()');
 	debug(`Attempting to match request to a route`);
 	if (this.config.fallbackToNetwork === 'always') {
 		debug(
@@ -158,6 +161,7 @@ FetchMock.executeRouter = function(url, options, request) {
 };
 
 FetchMock.generateResponse = async function(route, url, options, request) {
+	const debug = getDebug('generateResponse()');
 	const response = await resolve(route, url, options, request);
 
 	// If the response says to throw an error, throw it

@@ -114,14 +114,12 @@ const delayResponse = route => {
 
 const compileRoute = function(args) {
 	const debug = getDebug('compileRoute()');
-	setDebugNamespace('compile');
 	debug('Compiling route');
 	const route = sanitizeRoute(argsToRoute(args));
 	validateRoute(route);
 	route.matcher = generateMatcher(route);
 	limit(route);
 	delayResponse(route);
-	setDebugNamespace();
 	return route;
 };
 

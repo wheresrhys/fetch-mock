@@ -1,4 +1,4 @@
-const {debug} = require('./debug');
+const {debug, getDebug, setDebugNamespace} = require('./debug');
 const glob = require('glob-to-regexp');
 const pathToRegexp = require('path-to-regexp');
 const querystring = require('querystring');
@@ -203,6 +203,7 @@ const getUrlMatcher = route => {
 };
 
 module.exports = route => {
+	setDebugNamespace('generateMatcher()')
 	debug('Compiling matcher for route');
 	const matchers = [
 		route.query && getQueryStringMatcher(route),
@@ -215,6 +216,7 @@ module.exports = route => {
 	].filter(matcher => !!matcher);
 
 	debug('Compiled matcher for route');
+	setDebugNamespace()
 	return (url, options = {}, request) =>
 		matchers.every(matcher => matcher(url, options, request));
 };

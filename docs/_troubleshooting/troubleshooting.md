@@ -2,6 +2,8 @@
 title: General
 position: 1
 content_markdown: |-
+  The first  step when debugging tests should be to run with the environment variable `DEBUG=fetch-mock*`. This will output additional logs for debugging purposes.
+
   ### `fetch` is assigned to a local variable, not a global
 
   First of all, consider whether you could just use `fetch` as a global. Here are 3 reasons why this is a good idea:

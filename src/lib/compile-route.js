@@ -1,4 +1,4 @@
-const {debug, setDebugNamespace} = require('./debug');
+const {debug, getDebug, setDebugNamespace} = require('./debug');
 const generateMatcher = require('./generate-matcher');
 
 const matcherProperties = [
@@ -38,6 +38,7 @@ const argsToRoute = args => {
 };
 
 const sanitizeRoute = route => {
+	const debug = getDebug('sanitizeRoute()');
 	debug('Sanitizing route properties');
 	route = Object.assign({}, route);
 
@@ -74,7 +75,8 @@ const validateRoute = route => {
 	}
 };
 
-const limitMatcher = route => {
+const limit = route => {
+	const debug = getDebug('limit()');
 	debug('Limiting number of requests to handle by route');
 	if (!route.repeat) {
 		debug('  No `repeat` value set on route. Will match any number of requests');
@@ -95,6 +97,7 @@ const limitMatcher = route => {
 };
 
 const delayResponse = route => {
+	const debug = getDebug('delayResponse()');
 	debug(`Applying response delay settings`)
 	const { delay } = route;
 	if (delay) {
@@ -110,12 +113,13 @@ const delayResponse = route => {
 };
 
 const compileRoute = function(args) {
+	const debug = getDebug('compileRoute()');
 	setDebugNamespace('compile');
 	debug('Compiling route');
 	const route = sanitizeRoute(argsToRoute(args));
 	validateRoute(route);
 	route.matcher = generateMatcher(route);
-	limitMatcher(route);
+	limit(route);
 	delayResponse(route);
 	setDebugNamespace();
 	return route;

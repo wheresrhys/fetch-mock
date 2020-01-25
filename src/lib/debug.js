@@ -3,8 +3,8 @@ const debug = require('debug');
 let debugFunc
 let phase = 'default';
 let namespace = '';
-const newDebug = () => {
-	debugFunc = namespace ? debug(`fetch-mock:${phase}:${namespace}`) : debug(`fetch-mock:${phase}`)
+const newDebug = (ns) => {
+	debugFunc = (ns || namespace) ? debug(`fetch-mock:${phase}:${namespace}`) : debug(`fetch-mock:${phase}`)
 }
 
 newDebug()
@@ -20,5 +20,6 @@ module.exports = {
 	setDebugPhase: str => {
 		phase = str || 'default';
 		newDebug();
-	}
+	},
+	getDebug = (namespace) => newDebug(namespace);
 }

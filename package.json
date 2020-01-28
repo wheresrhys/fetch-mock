@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "description": "Mock http requests made using fetch (or isomorphic-fetch)",
   "main": "./cjs/server.js",
-  "browser": "./esm/client.mjs",
-  "module": "./esm/server.mjs",
+  "browser": "./esm/client.js",
+  "module": "./esm/server.js",
   "types": "./types/index.d.ts",
   "scripts": {
     "test": "make lint test",

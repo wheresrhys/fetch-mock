@@ -11,7 +11,11 @@ export default [
 			file: 'esm/client.mjs',
 			format: 'esm'
 		},
-		plugins: [resolve({ preferBuiltins: false }), commonjs()]
+		plugins: [
+			resolve({ preferBuiltins: false, browser: true }),
+			commonjs(),
+			builtins()
+		]
 	},
 	{
 		input: 'src/server.js',
@@ -44,7 +48,7 @@ export default [
 		},
 		plugins: [
 			json(),
-			resolve({ preferBuiltins: false }),
+			resolve({ preferBuiltins: false, browser: true }),
 			commonjs(),
 			builtins(),
 			globals()

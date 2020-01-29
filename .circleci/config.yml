@@ -130,6 +130,10 @@ workflows:
           <<: *triggerable-by-tag
           requires:
             - checkout_code
+      - build:
+          <<: *triggerable-by-tag
+          requires:
+            - checkout_code
       - deploy:
           context: wheresrhys-npm-publish
           requires:

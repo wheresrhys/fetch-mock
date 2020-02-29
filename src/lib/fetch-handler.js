@@ -81,6 +81,21 @@ FetchMock.fetchHandler = function(url, options, request) {
 	debug('  request', request);
 	debug('  signal', signal);
 
+	if (request && this.routes.some(({ body }) => !!body)) {
+		debug(
+			'Need to wait for Body to be streamed before calling router: switching to async mode'
+		);
+		return this._asyncFetchHandler(url, options, request, signal);
+	}
+	return this._fetchHandler(url, options, request, signal);
+};
+
+FetchMock._asyncFetchHandler = async function(url, options, request, signal) {
+	options.body = await options.body;
+	return this._fetchHandler(url, options, request, signal);
+};
+
+FetchMock._fetchHandler = function(url, options, request, signal) {
 	const route = this.executeRouter(url, options, request);
 
 	// this is used to power the .flush() method

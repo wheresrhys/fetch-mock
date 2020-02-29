@@ -17,7 +17,6 @@ module.exports = fetchMock => {
 				fm.mock('http://it.at.there/path', 200).catch();
 
 				await fm.fetchHandler('http://it.at.there/path');
-				console.log(fm._allCalls);
 				expect(fm.calls(true).length).to.equal(1);
 				await fm.fetchHandler('http://it.at.there/path/abouts');
 				await fm.fetchHandler('http://it.at.the');
@@ -577,6 +576,18 @@ module.exports = fetchMock => {
 						method: 'POST',
 						body: JSON.stringify({ foo: 'bar' })
 					});
+					expect(fm.calls(true).length).to.equal(1);
+				});
+
+				it('should match when using Request', async () => {
+					fm.mock('http://it.at.there/', 200, { body: { foo: 'bar' } }).catch();
+
+					await fm.fetchHandler(
+						new fm.config.Request('http://it.at.there/', {
+							method: 'POST',
+							body: JSON.stringify({ foo: 'bar' })
+						})
+					);
 					expect(fm.calls(true).length).to.equal(1);
 				});
 

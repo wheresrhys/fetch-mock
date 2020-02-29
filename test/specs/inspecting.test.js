@@ -434,7 +434,7 @@ module.exports = fetchMock => {
 		});
 
 		describe('call order', () => {
-			it('retrieves calls in correct order', () => {
+			it('retrieves calls in correct order', async () => {
 				fm.mock('http://it.at.here/', 200)
 					.mock('http://it.at.there/', 200)
 					.catch();
@@ -491,7 +491,7 @@ module.exports = fetchMock => {
 				expect(callOptions).to.include({ method: 'POST' });
 				expect(fm.lastUrl()).to.equal('http://it.at.here/');
 				const options = fm.lastOptions();
-				expect(options).to.eql({ method: 'POST' });
+				expect(options).to.include({ method: 'POST' });
 				expect(fm.lastCall().request).to.equal(req);
 			});
 
@@ -509,7 +509,7 @@ module.exports = fetchMock => {
 				expect(fm.lastUrl()).to.equal('http://it.at.here/');
 				const options = fm.lastOptions();
 
-				expect(options).to.eql({
+				expect(options).to.include({
 					method: 'POST',
 					arbitraryOption: true
 				});

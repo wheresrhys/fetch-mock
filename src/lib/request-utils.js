@@ -33,6 +33,19 @@ const normalizeUrl = url => {
 	}
 };
 
+const extractBody = async request => {
+	try {
+		// node-fetch
+		if ('body' in request) {
+			return request.body.toString();
+		}
+		// fetch
+		return request.clone().text();
+	} catch (err) {
+		return;
+	}
+};
+
 module.exports = {
 	setUrlImplementation: it => {
 		URL = it;
@@ -42,6 +55,13 @@ module.exports = {
 			const derivedOptions = {
 				method: url.method
 			};
+
+			const body = extractBody(url);
+
+			if (typeof body !== 'undefined') {
+				derivedOptions.body = body;
+			}
+
 			const normalizedRequestObject = {
 				url: normalizeUrl(url.url),
 				options: Object.assign(derivedOptions, options),

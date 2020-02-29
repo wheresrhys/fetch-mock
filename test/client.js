@@ -9,6 +9,18 @@ describe('native fetch behaviour', function() {
 		}).not.to.throw();
 		fetchMock.restore();
 	});
+
+	// this is because we read the body once when normalising the request and
+	// want to make sure fetch can still use the sullied request
+	it('can still POST a body successfully when spying', async () => {
+		fetchMock.spy();
+		const req = new fetchMock.config.Request(
+			'http://localhost:9876/dummy-file.txt',
+			{ method: 'post', body: JSON.stringify({ prop: 'val' }) }
+		);
+		expect(() => fetch(req)).not.to.throw();
+		fetchMock.restore();
+	});
 });
 
 describe('request types that only work in the browser', function() {

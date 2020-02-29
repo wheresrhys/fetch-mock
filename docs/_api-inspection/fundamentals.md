@@ -60,9 +60,6 @@ content_markdown: |-
   
   The filtering API is powerful, but potentially confusing. If in doubt, [add a `name` to your route](#api-mockingmock_options), and pass that name in to retrieve exactly the calls you want.
 
-  When matching based on the body content of a `Request` instance (as opposed to a body passed in as an option to fetch), fetch-mock must stream the body before matching any routes, and therefore switches into asynchronous mode sooner in its lifecycle. This means that, unlike all other scenarios, no calls can be inspected synchronously. Either await the fetches to resolve, or `await fetchMock.flush()` before trying to use any of fetch-mock's inspection methods.
-  {: .warning}
-
   #### A note on Regular Expression and Function matchers
   To retrieve calls handled by a route with a `RegExp` or `function` matcher, use a reference to the exact `RegExp`|`function` you used in your mock, e.g.
 

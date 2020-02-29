@@ -127,7 +127,12 @@ parameters:
         types:
           - Object
         content: |-
-          Match only requests that send a JSON body with the exact structure and properties as the one provided here.
+          Match only requests that send a JSON body with the exact structure and properties as the one provided here. 
+
+          Note that if matching on body _and_ using `Request` instances in your source code, this forces fetch-mock into an asynchronous flow _before_ it is able to route requests effectively. This means no [inspection methods](#api-inspectionfundamentals) can be used synchronously. You must first either await the fetches to resolve, or `await fetchMock.flush()`. The popular library [Ky](https://github.com/sindresorhus/ky) uses `Request` instances internally, and so also triggers this mode.
+          {: .warning}
+
+
         examples:
           - |-
             { "key1": "value1", "key2": "value2" }

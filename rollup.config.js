@@ -8,7 +8,7 @@ export default [
 	{
 		input: 'src/client.js',
 		output: {
-			file: 'esm/client.mjs',
+			file: 'esm/client.js',
 			format: 'esm'
 		},
 		plugins: [
@@ -20,7 +20,7 @@ export default [
 	{
 		input: 'src/server.js',
 		output: {
-			file: 'esm/server.mjs',
+			file: 'esm/server.js',
 			format: 'esm'
 		},
 		plugins: [

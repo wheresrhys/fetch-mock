@@ -4,9 +4,6 @@
 const chai = require('chai');
 const expect = chai.expect;
 const sinon = require('sinon');
-const chaiAsPromised = require('chai-as-promised');
-
-chai.use(chaiAsPromised);
 
 module.exports = fetchMock => {
 	describe('inspecting', () => {

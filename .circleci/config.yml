@@ -78,6 +78,14 @@ jobs:
       - run: npm install karma-firefox-launcher
       - run: make test-firefox
 
+  build:
+    <<: *env
+    steps:
+      - checkout
+      - restore_cache:
+          key: npm-cache-{{ checksum "package-lock.json" }}
+      - run: make build
+
   deploy:
     <<: *env
     steps:
@@ -122,6 +130,10 @@ workflows:
           <<: *triggerable-by-tag
           requires:
             - checkout_code
+      - build:
+          <<: *triggerable-by-tag
+          requires:
+            - checkout_code
       - deploy:
           context: wheresrhys-npm-publish
           requires:
@@ -131,6 +143,7 @@ workflows:
             - chrome
            # - firefox
             - lint
+            - build
           filters:
             branches:
               ignore: /.*/

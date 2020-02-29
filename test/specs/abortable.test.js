@@ -55,7 +55,6 @@ module.exports = (fetchMock, AbortController) => {
 				if (typeof DOMException !== 'undefined') {
 					expect(error instanceof DOMException).to.equal(true);
 				}
-				console.error(error);
 				expect(error.name).to.equal('AbortError');
 				expect(error.message).to.equal('The operation was aborted.');
 			}

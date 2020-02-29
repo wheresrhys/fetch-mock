@@ -40,7 +40,7 @@ const extractBody = async request => {
 			return request.body.toString();
 		}
 		// fetch
-		return request.text();
+		return request.clone().text();
 	} catch (err) {
 		return;
 	}

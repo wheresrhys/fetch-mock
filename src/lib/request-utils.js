@@ -50,13 +50,13 @@ module.exports = {
 	setUrlImplementation: it => {
 		URL = it;
 	},
-	normalizeRequest: async (url, options, Request) => {
+	normalizeRequest: (url, options, Request) => {
 		if (Request.prototype.isPrototypeOf(url)) {
 			const derivedOptions = {
 				method: url.method
 			};
 
-			const body = await extractBody(url);
+			const body = extractBody(url);
 
 			if (typeof body !== 'undefined') {
 				derivedOptions.body = body;

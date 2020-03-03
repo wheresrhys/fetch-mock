@@ -654,6 +654,70 @@ module.exports = fetchMock => {
 					await fm.fetchHandler('http://it.at.there/');
 					expect(fm.calls(true).length).to.equal(1);
 				});
+
+				describe('partial body matching', () => {
+					it('match when missing properties', async () => {
+						fm.mock(
+							{ body: { ham: 'sandwich' }, matchPartialBody: true },
+							200
+						).catch(404);
+						const res = await fm.fetchHandler('http://it.at.there', {
+							method: 'POST',
+							body: JSON.stringify({ ham: 'sandwich', egg: 'mayonaise' })
+						});
+						expect(res.status).to.equal(200);
+					});
+
+					it('match when missing nested properties', async () => {
+						fm.mock(
+							{ body: { meal: { ham: 'sandwich' } }, matchPartialBody: true },
+							200
+						).catch(404);
+						const res = await fm.fetchHandler('http://it.at.there', {
+							method: 'POST',
+							body: JSON.stringify({
+								meal: { ham: 'sandwich', egg: 'mayonaise' }
+							})
+						});
+						expect(res.status).to.equal(200);
+					});
+
+					it('not match when properties at wrong indentation', async () => {
+						fm.mock(
+							{ body: { ham: 'sandwich' }, matchPartialBody: true },
+							200
+						).catch(404);
+						const res = await fm.fetchHandler('http://it.at.there', {
+							method: 'POST',
+							body: JSON.stringify({ meal: { ham: 'sandwich' } })
+						});
+						expect(res.status).to.equal(404);
+					});
+
+					it('match when starting subset of array', async () => {
+						fm.mock(
+							{ body: { ham: [1, 2] }, matchPartialBody: true },
+							200
+						).catch(404);
+						const res = await fm.fetchHandler('http://it.at.there', {
+							method: 'POST',
+							body: JSON.stringify({ ham: [1, 2, 3] })
+						});
+						expect(res.status).to.equal(200);
+					});
+
+					it('not match when not starting subset of array', async () => {
+						fm.mock(
+							{ body: { ham: [1, 3] }, matchPartialBody: true },
+							200
+						).catch(404);
+						const res = await fm.fetchHandler('http://it.at.there', {
+							method: 'POST',
+							body: JSON.stringify({ ham: [1, 2, 3] })
+						});
+						expect(res.status).to.equal(404);
+					});
+				});
 			});
 		});
 

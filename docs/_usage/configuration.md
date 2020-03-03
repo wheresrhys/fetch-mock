@@ -38,6 +38,10 @@ parameters:
       - `undefined`: An error will be thrown
       - `true`: Overwrites the existing route
       - `false`: Appends the new route to the list of routes
+  - name: matchPartialBody
+    types:
+      - Boolean
+    content: Match calls that only partially match a specified body json. Uses the [is-subset](https://www.npmjs.com/package/is-subset) library under the hood, which implements behaviour the same as jest's [.objectContainig()](https://jestjs.io/docs/en/expect#expectobjectcontainingobject) method. 
   - name: warnOnFallback
     default: true
     types:

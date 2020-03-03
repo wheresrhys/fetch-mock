@@ -152,5 +152,16 @@ module.exports = fetchMock => {
 			const res = await fm.fetchHandler('http://it.at.there/');
 			expect(res.status).to.equal(300);
 		});
+
+		it('support setting matchPartialBody on matcher parameter', async () => {
+			fm.mock({ body: { ham: 'sandwich' }, matchPartialBody: true }, 200).catch(
+				404
+			);
+			const res = await fm.fetchHandler('http://it.at.there', {
+				method: 'POST',
+				body: JSON.stringify({ ham: 'sandwich', egg: 'mayonaise' })
+			});
+			expect(res.status).to.equal(200);
+		});
 	});
 };

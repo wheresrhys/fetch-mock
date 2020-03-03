@@ -136,6 +136,10 @@ parameters:
         examples:
           - |-
             { "key1": "value1", "key2": "value2" }
+      - name: matchPartialBody
+        types:
+          - Boolean
+        content: Match calls that only partially match a specified body json. See [global configuration](#usageconfiguration) for details.
       - name: query
         types:
           - Object

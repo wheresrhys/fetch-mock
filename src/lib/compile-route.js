@@ -121,7 +121,7 @@ const compileRoute = function(args) {
 	debug('Compiling route');
 	const route = sanitizeRoute(argsToRoute(args));
 	validateRoute(route);
-	route.matcher = generateMatcher(route);
+	route.matcher = generateMatcher(route, this);
 	limit(route);
 	delayResponse(route);
 	return route;

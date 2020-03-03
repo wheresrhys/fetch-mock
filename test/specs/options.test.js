@@ -155,6 +155,55 @@ module.exports = (fetchMock, theGlobal, fetch) => {
 			});
 		});
 
+		describe('matchPartialBody', () => {
+			it("don't match partial bodies by default", async () => {
+				fm.mock({ body: { ham: 'sandwich' } }, 200).catch(404);
+				const res = await fm.fetchHandler('http://it.at.there', {
+					method: 'POST',
+					body: JSON.stringify({ ham: 'sandwich', egg: 'mayonaise' })
+				});
+				expect(res.status).to.equal(404);
+			});
+
+			it('match partial bodies when configured true', async () => {
+				fm.config.matchPartialBody = true;
+				fm.mock({ body: { ham: 'sandwich' } }, 200).catch(404);
+				const res = await fm.fetchHandler('http://it.at.there', {
+					method: 'POST',
+					body: JSON.stringify({ ham: 'sandwich', egg: 'mayonaise' })
+				});
+				expect(res.status).to.equal(200);
+				fm.config.matchPartialBody = false;
+			});
+
+			it('local setting can override to false', async () => {
+				fm.config.matchPartialBody = true;
+				fm.mock(
+					{ body: { ham: 'sandwich' }, matchPartialBody: false },
+					200
+				).catch(404);
+				const res = await fm.fetchHandler('http://it.at.there', {
+					method: 'POST',
+					body: JSON.stringify({ ham: 'sandwich', egg: 'mayonaise' })
+				});
+				expect(res.status).to.equal(404);
+				fm.config.matchPartialBody = false;
+			});
+
+			it('local setting can override to true', async () => {
+				fm.config.matchPartialBody = false;
+				fm.mock(
+					{ body: { ham: 'sandwich' }, matchPartialBody: true },
+					200
+				).catch(404);
+				const res = await fm.fetchHandler('http://it.at.there', {
+					method: 'POST',
+					body: JSON.stringify({ ham: 'sandwich', egg: 'mayonaise' })
+				});
+				expect(res.status).to.equal(200);
+			});
+		});
+
 		describe.skip('warnOnFallback', () => {
 			it('warn on fallback response by default', async () => {});
 			it("don't warn on fallback response when configured false", async () => {});

@@ -2,6 +2,7 @@ const { debug, setDebugNamespace } = require('./debug');
 const glob = require('glob-to-regexp');
 const pathToRegexp = require('path-to-regexp');
 const querystring = require('querystring');
+const isSubset = require('is-subset');
 const {
 	headers: headerUtils,
 	getPath,
@@ -115,7 +116,14 @@ const getParamsMatcher = ({ params: expectedParams, url: matcherUrl }) => {
 	};
 };
 
-const getBodyMatcher = ({ body: expectedBody }) => {
+const getBodyMatcher = (
+	{ body: expectedBody, matchPartialBody },
+	fetchMock
+) => {
+	matchPartialBody =
+		typeof matchPartialBody !== 'undefined'
+			? matchPartialBody
+			: fetchMock.config.matchPartialBody || false;
 	debug('Generating body matcher');
 	return (url, { body, method = 'get' }) => {
 		debug('Attempting to match body');
@@ -135,8 +143,16 @@ const getBodyMatcher = ({ body: expectedBody }) => {
 		}
 		debug('Expected body:', expectedBody);
 		debug('Actual body:', sentBody);
+		if (matchPartialBody) {
+			debug('matchPartialBody is true - checking for partial match only');
+		}
 
-		return sentBody && isEqual(sentBody, expectedBody);
+		return (
+			sentBody &&
+			(matchPartialBody
+				? isSubset(sentBody, expectedBody)
+				: isEqual(sentBody, expectedBody))
+		);
 	};
 };
 
@@ -202,7 +218,7 @@ const getUrlMatcher = route => {
 	return getFullUrlMatcher(route, matcherUrl, query);
 };
 
-module.exports = route => {
+module.exports = (route, fetchMock) => {
 	setDebugNamespace('generateMatcher()');
 	debug('Compiling matcher for route');
 	const matchers = [
@@ -210,7 +226,7 @@ module.exports = route => {
 		route.method && getMethodMatcher(route),
 		route.headers && getHeaderMatcher(route),
 		route.params && getParamsMatcher(route),
-		route.body && getBodyMatcher(route),
+		route.body && getBodyMatcher(route, fetchMock),
 		route.functionMatcher && getFunctionMatcher(route),
 		route.url && getUrlMatcher(route)
 	].filter(matcher => !!matcher);

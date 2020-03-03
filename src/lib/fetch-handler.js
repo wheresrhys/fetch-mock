@@ -138,7 +138,7 @@ FetchMock.fetchHandler.isMock = true;
 FetchMock.executeRouter = function(url, options, request) {
 	const debug = getDebug('executeRouter()');
 	debug(`Attempting to match request to a route`);
-	if (this.config.fallbackToNetwork === 'always') {
+	if (this.getOption('fallbackToNetwork') === 'always') {
 		debug(
 			'  Configured with fallbackToNetwork=always - passing through to fetch'
 		);
@@ -152,7 +152,7 @@ FetchMock.executeRouter = function(url, options, request) {
 		return match;
 	}
 
-	if (this.config.warnOnFallback) {
+	if (this.getOption('warnOnFallback')) {
 		console.warn(`Unmatched ${(options && options.method) || 'GET'} to ${url}`); // eslint-disable-line
 	}
 
@@ -163,7 +163,7 @@ FetchMock.executeRouter = function(url, options, request) {
 		return { response: this.fallbackResponse };
 	}
 
-	if (!this.config.fallbackToNetwork) {
+	if (!this.getOption('fallbackToNetwork')) {
 		throw new Error(
 			`fetch-mock: No fallback response defined for ${(options &&
 				options.method) ||

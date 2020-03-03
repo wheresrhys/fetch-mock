@@ -53,4 +53,8 @@ FetchMock.sandbox = function() {
 	return sandbox;
 };
 
+FetchMock.getOption = function(name, route = {}) {
+	return name in route ? route[name] : this.config[name];
+};
+
 module.exports = FetchMock;

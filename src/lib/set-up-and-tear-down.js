@@ -20,17 +20,12 @@ FetchMock.addRoute = function(uncompiledRoute) {
 			(!method || !route.method || method === route.method)
 	);
 
-	const overwriteRoutes =
-		'overwriteRoutes' in route
-			? route.overwriteRoutes
-			: this.config.overwriteRoutes;
-
-	if (overwriteRoutes === false || !clashes.length) {
+	if (this.getOption('overwriteRoutes', route) === false || !clashes.length) {
 		this._uncompiledRoutes.push(uncompiledRoute);
 		return this.routes.push(route);
 	}
 
-	if (overwriteRoutes === true) {
+	if (this.getOption('overwriteRoutes', route) === true) {
 		clashes.forEach(clash => {
 			const index = this.routes.indexOf(clash);
 			this._uncompiledRoutes.splice(index, 1, uncompiledRoute);

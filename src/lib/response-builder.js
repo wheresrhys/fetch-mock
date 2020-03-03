@@ -94,7 +94,7 @@ e.g. {"body": {"status: "registered"}}`);
 	}
 
 	getOption(name) {
-		return name in this.route ? this.route[name] : this.fetchMock.config[name];
+		return this.fetchMock.getOption(name, this.route);
 	}
 
 	convertToJson() {

@@ -116,14 +116,10 @@ const getParamsMatcher = ({ params: expectedParams, url: matcherUrl }) => {
 	};
 };
 
-const getBodyMatcher = (
-	{ body: expectedBody, matchPartialBody },
-	fetchMock
-) => {
-	matchPartialBody =
-		typeof matchPartialBody !== 'undefined'
-			? matchPartialBody
-			: fetchMock.config.matchPartialBody || false;
+const getBodyMatcher = (route, fetchMock) => {
+	const matchPartialBody = fetchMock.getOption('matchPartialBody', route);
+	const { body: expectedBody } = route;
+
 	debug('Generating body matcher');
 	return (url, { body, method = 'get' }) => {
 		debug('Attempting to match body');

@@ -408,6 +408,55 @@ module.exports = fetchMock => {
 					]);
 				});
 
+				it('can retrieve only calls handled by a body matcher', async () => {
+					const bodyMatcher = { body: { cat: 'whiskers' } };
+					fm.mock(bodyMatcher, 200).catch();
+
+					await fm.fetchHandler('http://it.at.there/path', {
+						method: 'post',
+						body: JSON.stringify({ cat: 'whiskers' })
+					});
+					await fm.fetchHandler('http://it.at.there/path', {
+						method: 'post',
+						body: JSON.stringify({ cat: 'miao' })
+					});
+					expect(fm.filterCalls(true, bodyMatcher).length).to.equal(1);
+					expect(fm.filterCalls(true, bodyMatcher).length).to.equal(1);
+					expect(fm.filterCalls(true, bodyMatcher)[0]).to.eql([
+						'http://it.at.there/path',
+						{
+							method: 'post',
+							body: JSON.stringify({ cat: 'whiskers' })
+						}
+					]);
+				});
+
+				it('can retrieve only calls handled by a partial body matcher', async () => {
+					const bodyMatcher = {
+						body: { cat: 'whiskers' },
+						matchPartialBody: true
+					};
+					fm.mock(bodyMatcher, 200).catch();
+
+					await fm.fetchHandler('http://it.at.there/path', {
+						method: 'post',
+						body: JSON.stringify({ cat: 'whiskers', dog: 'tail' })
+					});
+					await fm.fetchHandler('http://it.at.there/path', {
+						method: 'post',
+						body: JSON.stringify({ cat: 'miao', dog: 'tail' })
+					});
+					expect(fm.filterCalls(true, bodyMatcher).length).to.equal(1);
+					expect(fm.filterCalls(true, bodyMatcher).length).to.equal(1);
+					expect(fm.filterCalls(true, bodyMatcher)[0]).to.eql([
+						'http://it.at.there/path',
+						{
+							method: 'post',
+							body: JSON.stringify({ cat: 'whiskers', dog: 'tail' })
+						}
+					]);
+				});
+
 				it('can retrieve only calls which match a previously undeclared matcher', async () => {
 					fm.mock('http://it.at.here/path', 200).catch();
 

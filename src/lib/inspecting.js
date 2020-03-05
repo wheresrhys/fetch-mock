@@ -6,8 +6,8 @@ const generateMatcher = require('./generate-matcher');
 const isName = nameOrMatcher =>
 	typeof nameOrMatcher === 'string' && /^[\da-zA-Z\-]+$/.test(nameOrMatcher);
 
-const filterCallsWithMatcher = (matcher, options = {}, calls) => {
-	matcher = generateMatcher(sanitizeRoute(Object.assign({ matcher }, options)));
+const filterCallsWithMatcher = (matcher, options = {}, calls, fetchMockInstance) => {
+	matcher = generateMatcher(sanitizeRoute(Object.assign({ matcher }, options)), fetchMockInstance);
 	return calls.filter(([url, options]) => matcher(normalizeUrl(url), options));
 };
 
@@ -59,7 +59,7 @@ FetchMock.filterCalls = function(nameOrMatcher, options) {
 			'Compiling filter and options to route in order to filter all calls',
 			nameOrMatcher
 		);
-		calls = filterCallsWithMatcher(matcher, options, calls);
+		calls = filterCallsWithMatcher(matcher, options, calls, this);
 	}
 	debug(`Retrieved ${calls.length} calls`);
 	return calls;

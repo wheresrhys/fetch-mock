@@ -11,5 +11,6 @@ module.exports = (fetchMock, theGlobal, fetch, AbortController) => {
 		require('./specs/custom-implementations.test')(fetchMock);
 		require('./specs/options.test')(fetchMock, theGlobal, fetch);
 		require('./specs/abortable.test')(fetchMock, AbortController);
+		require('./specs/shorthands.test')(fetchMock);
 	});
 };

@@ -1,7 +1,7 @@
 ---
 title: ".spy()"
 navTitle: .spy()
-position: 6
+position: 9
 description: |-
   Records call history while passing each call on to `fetch` to be handled by the network
 parentMethodGroup: mocking

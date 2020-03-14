@@ -109,39 +109,6 @@ module.exports = fetchMock => {
 			});
 		});
 
-		describe('method shorthands', () => {
-			'get,post,put,delete,head,patch'.split(',').forEach(method => {
-				testChainableMethod(() => fm, method, [/a/, 200]);
-
-				it(`has shorthand for ${method.toUpperCase()}`, () => {
-					sinon.spy(fm, 'compileRoute');
-					fm[method]('a', 'b');
-					fm[method]('c', 'd', { opt: 'e' });
-					expect(fm.compileRoute).calledWith([
-						'a',
-						'b',
-						{
-							method: method
-						}
-					]);
-					expect(fm.compileRoute).calledWith([
-						'c',
-						'd',
-						{
-							opt: 'e',
-							method: method
-						}
-					]);
-					fm.compileRoute.restore();
-					fm.restore();
-				});
-
-				testChainableMethod(() => fm, `${method}Once`, [/a/, 200]);
-
-				// tests for behaviour of 'once' shorthands are in repeat.test.js
-			});
-		});
-
 		describe('reset', () => {
 			testChainableMethod(() => fm, 'reset');
 

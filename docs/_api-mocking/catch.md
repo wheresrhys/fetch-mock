@@ -1,7 +1,7 @@
 ---
 title: ".catch(response)"
 navTitle: .catch()
-position: 5
+position: 8
 description: |-
   Specifies how to respond to calls to `fetch` that don't match any mocks.
 parentMethodGroup: mocking

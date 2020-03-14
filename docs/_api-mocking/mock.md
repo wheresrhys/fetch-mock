@@ -1,7 +1,7 @@
 ---
 title: ".mock(matcher, response, options)"
 navTitle: .mock()
-position: 1.0
+position: 1
 description: |
   Initialises or extends a stub implementation of fetch, applying a `route` that matches `matcher`, delivers a `Response` configured using `response`, and that respects the additional `options`. The stub will record its calls so they can be inspected later. If `.mock` is called on the top level `fetch-mock` instance, this stub function will also replace `fetch` globally. Calling `.mock()` with no arguments will carry out this stubbing without defining any mock responses.
 

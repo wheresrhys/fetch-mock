@@ -109,7 +109,6 @@ module.exports = fetchMock => {
 			});
 		});
 
-
 		describe('reset', () => {
 			testChainableMethod(() => fm, 'reset');
 

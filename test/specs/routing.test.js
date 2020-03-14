@@ -544,7 +544,6 @@ module.exports = fetchMock => {
 					await fm.fetchHandler('http://domain.com/person', { method: 'POST' });
 					expect(fm.calls(true).length).to.equal(1);
 				});
-
 			});
 
 			describe('body matching', () => {

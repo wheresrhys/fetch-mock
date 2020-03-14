@@ -83,11 +83,7 @@ const defineShorthand = (methodName, underlyingMethod, shorthandOptions) => {
 
 const defineGreedyShorthand = (methodName, underlyingMethod) => {
 	FetchMock[methodName] = function(response, options) {
-		return this[underlyingMethod](
-			{},
-			response,
-			options
-		);
+		return this[underlyingMethod]({}, response, options);
 	};
 };
 

@@ -226,7 +226,5 @@ module.exports = fetchMock => {
 				expect(sb.done(matcher2)).to.be.true;
 			});
 		});
-
-
 	});
 };

@@ -152,6 +152,25 @@ module.exports = fetchMock => {
 				});
 
 				testChainableMethod(() => fm, `${method}Any`, [200]);
+
+				it(`has ${method}AnyOnce() shorthand`, () => {
+					sinon.spy(fm, 'compileRoute');
+					fm[method + 'AnyOnce']('a', { opt: 'b' });
+					expect(
+						fm.compileRoute.calledWith([
+							{},
+							'a',
+							{
+								opt: 'b',
+								method: method,
+								repeat: 1
+							}
+						])
+					).to.be.true;
+					fm.compileRoute.restore();
+				});
+
+				testChainableMethod(() => fm, `${method}Any`, [200]);
 				})
 			});
 		});

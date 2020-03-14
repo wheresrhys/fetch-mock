@@ -97,7 +97,8 @@ defineGreedyShorthand('any', 'mock');
 ['get', 'post', 'put', 'delete', 'head', 'patch'].forEach(method => {
 	defineShorthand(method, 'mock', { method });
 	defineShorthand(`${method}Once`, 'once', { method });
-	defineGreedyShorthand(`${method}Any`, method, { method });
+	defineGreedyShorthand(`${method}Any`, method);
+	defineGreedyShorthand(`${method}AnyOnce`, `${method}Once`);
 });
 
 FetchMock.resetBehavior = function() {

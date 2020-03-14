@@ -545,18 +545,6 @@ module.exports = fetchMock => {
 					expect(fm.calls(true).length).to.equal(1);
 				});
 
-				['get', 'post', 'put', 'delete', 'head', 'patch'].forEach(method => {
-					it(`have shorthand method for ${method}`, async () => {
-						fm[method]('http://it.at.there/', 200).catch();
-
-						await fm.fetchHandler('http://it.at.there/', {
-							method: 'bad-method'
-						});
-						expect(fm.calls(true).length).to.equal(0);
-						await fm.fetchHandler('http://it.at.there/', { method });
-						expect(fm.calls(true).length).to.equal(1);
-					});
-				});
 			});
 
 			describe('body matching', () => {

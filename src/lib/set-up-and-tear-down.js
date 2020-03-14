@@ -80,7 +80,19 @@ const defineShorthand = (methodName, underlyingMethod, shorthandOptions) => {
 		);
 	};
 };
+
+const defineGreedyShorthand = (methodName, underlyingMethod) => {
+	FetchMock[methodName] = function(response, options) {
+		return this[underlyingMethod](
+			{},
+			response,
+			Object.assign(options || {}, shorthandOptions)
+		);
+	};
+};
+
 defineShorthand('once', 'mock', { repeat: 1 });
+defineGreedyShorthand('any', 'mock');
 
 ['get', 'post', 'put', 'delete', 'head', 'patch'].forEach(method => {
 	defineShorthand(method, 'mock', { method });

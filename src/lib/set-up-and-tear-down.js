@@ -86,7 +86,7 @@ const defineGreedyShorthand = (methodName, underlyingMethod) => {
 		return this[underlyingMethod](
 			{},
 			response,
-			Object.assign(options || {}, shorthandOptions)
+			options
 		);
 	};
 };

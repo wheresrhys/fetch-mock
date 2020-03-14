@@ -56,20 +56,13 @@ module.exports = fetchMock => {
 
 			it.only('has any() shorthand method', () => {
 				sinon.spy(fm, 'compileRoute');
-				fm.any('a');
-				fm.any('c', { opt: 'e' });
+				fm.any('a', { opt: 'b' });
 				expect(
 					fm.compileRoute.calledWith([
 						{},
-						'b'
-					])
-				).to.be.true;
-				expect(
-					fm.compileRoute.calledWith([
-						{},
-						'd',
+						'a',
 						{
-							opt: 'e',
+							opt: 'b',
 						}
 					])
 				).to.be.true;

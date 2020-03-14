@@ -27,10 +27,10 @@ module.exports = fetchMock => {
 		});
 		afterEach(() => fm.restore());
 
-			it('has once shorthand method', () => {
+			it('has once() shorthand method', () => {
 				sinon.spy(fm, 'compileRoute');
-				fm['once']('a', 'b');
-				fm['once']('c', 'd', { opt: 'e' });
+				fm.once('a', 'b');
+				fm.once('c', 'd', { opt: 'e' });
 				expect(
 					fm.compileRoute.calledWith([
 						'a',
@@ -54,12 +54,31 @@ module.exports = fetchMock => {
 			});
 
 
+			it.only('has any() shorthand method', () => {
+				sinon.spy(fm, 'compileRoute');
+				fm.any('a');
+				fm.any('c', { opt: 'e' });
+				expect(
+					fm.compileRoute.calledWith([
+						{},
+						'b'
+					])
+				).to.be.true;
+				expect(
+					fm.compileRoute.calledWith([
+						{},
+						'd',
+						{
+							opt: 'e',
+						}
+					])
+				).to.be.true;
+				fm.compileRoute.restore();
+			});
+
 		describe('method shorthands', () => {
 			'get,post,put,delete,head,patch'.split(',').forEach(method => {
 				describe(method.toUpperCase(), () => {
-
-
-
 
 				it(`has ${method}() shorthand`, () => {
 					sinon.spy(fm, 'compileRoute');
@@ -85,8 +104,6 @@ module.exports = fetchMock => {
 				});
 
 				testChainableMethod(() => fm, method, [/a/, 200]);
-
-
 
 				it(`has ${method}Once() shorthand`, () => {
 					sinon.spy(fm, 'compileRoute');

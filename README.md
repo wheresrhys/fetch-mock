@@ -4,11 +4,12 @@ Mock http requests made using [fetch](https://developer.mozilla.org/en-US/docs/W
 
 Features include:
 
-- helpers for all common http methods and for responding a limited number of times
-- declarative matching for most aspects of a http request
-- delayed responses
-- spying on real network requests
-- support for advanced fetch behaviours, such as streaming responses and aborting
+- mocks most of the fetch API spec, even advanced behaviours such as streaming and aborting
+- declarative matching for most aspects of a http request, including url, headers, body and query parameters
+- shorthands for the most commonly used features, such as matching a http method or matching one fetch only
+- support for delaying responses, or using your own async functions to define custom race conditions
+- can be used as a spy to observe real network requests
+- isomorphic, and supports either a global fetch instance or a locally required instance
 
 _New_ If using jest, try the new [fetch-mock-jest](https://www.npmjs.com/package/fetch-mock-jest) wrapper.
 

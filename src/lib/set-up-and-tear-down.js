@@ -89,6 +89,7 @@ const defineGreedyShorthand = (methodName, underlyingMethod) => {
 
 defineShorthand('once', 'mock', { repeat: 1 });
 defineGreedyShorthand('any', 'mock');
+defineGreedyShorthand('anyOnce', 'once');
 
 ['get', 'post', 'put', 'delete', 'head', 'patch'].forEach(method => {
 	defineShorthand(method, 'mock', { method });

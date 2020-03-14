@@ -66,6 +66,22 @@ module.exports = fetchMock => {
 			fm.compileRoute.restore();
 		});
 
+		it('has anyOnce() shorthand method', () => {
+			sinon.spy(fm, 'compileRoute');
+			fm.anyOnce('a', { opt: 'b' });
+			expect(
+				fm.compileRoute.calledWith([
+					{},
+					'a',
+					{
+						opt: 'b',
+						repeat: 1
+					}
+				])
+			).to.be.true;
+			fm.compileRoute.restore();
+		});
+
 		describe('method shorthands', () => {
 			['get', 'post', 'put', 'delete', 'head', 'patch'].forEach(method => {
 				describe(method.toUpperCase(), () => {

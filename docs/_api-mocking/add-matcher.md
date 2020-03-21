@@ -62,4 +62,7 @@ left_code_blocks:
         // TODO - can't think of a good use case yet
         // Raise a PR if you can :-) 
     language: javascript
+content_markdown: |-
+  One intent behind this functionality is to allow companies or publishers of particular toolsets to provide packages that extend fetch-mock to provide a more user friendly experience for developers using fetch to interact with their APIs. The GraphQL use case is a good example of this - the things which a developer might want to match on are buried in the request body, and written in a non-javascript query language. Please get in touch if you'd liek to collaborate on writing such a package.
+  {: .info}
 ---

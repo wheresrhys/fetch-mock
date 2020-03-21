@@ -24,7 +24,7 @@ parameters:
     types:
       - Function
     content: |
-        A function which takes a route definition object as input, and returns a function of the signature `(url, options, request) => Boolean`. See the examples below for more detail
+        A function which takes a route definition object as input, and returns a function of the signature `(url, options, request) => Boolean`. See the examples below for more detail. The function is passed the fetchMock instance as a second parameter in case you need to access any config.
 left_code_blocks:
   - title: Authorization example
     code_block: |-
@@ -56,6 +56,10 @@ left_code_blocks:
             name: 'wheresrhys',
             repos: [ ... ]
             }}})
-        
+    language: javascript
+  - title: Example using fetch-mock options
+    code_block: |-
+        // TODO - can't think of a good use case yet
+        // Raise a PR if you can :-) 
     language: javascript
 ---

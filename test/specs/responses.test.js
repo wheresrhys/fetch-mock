@@ -39,6 +39,14 @@ module.exports = fetchMock => {
 				expect(await res.text()).to.equal('a string');
 			});
 
+			it('respond with an empty string', async () => {
+				fm.mock('http://it.at.there/', '');
+				const res = await fm.fetchHandler('http://it.at.there/');
+				expect(res.status).to.equal(200);
+				expect(res.statusText).to.equal('OK');
+				expect(await res.text()).to.equal('');
+			});
+
 			describe('json responses', () => {
 				it('respond with a json', async () => {
 					fm.mock('http://it.at.there/', { an: 'object' });

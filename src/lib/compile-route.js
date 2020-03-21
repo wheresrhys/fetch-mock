@@ -29,7 +29,7 @@ const argsToRoute = args => {
 		Object.assign(routeConfig, matcher);
 	}
 
-	if (response) {
+	if (typeof response !== 'undefined') {
 		routeConfig.response = response;
 	}
 

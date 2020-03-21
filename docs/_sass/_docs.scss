@@ -1,8 +1,11 @@
 .docs {
 	section {
-		p, pre, ul {
+		p, ul {
 			max-width: 55rem
 		}
+		pre {
+	    max-width: 68rem;
+	  }
 	}
 
 	ul {

@@ -52,7 +52,7 @@ const sanitizeRoute = route => {
 	return route;
 };
 
-const validateRoute = function (route) {
+const validateRoute = function(route) {
 	if (!('response' in route)) {
 		throw new Error('fetch-mock: Each route must define a response');
 	}
@@ -105,7 +105,7 @@ const delayResponse = route => {
 	}
 };
 
-const generateMatcher = function (route) {
+const generateMatcher = function(route) {
 	setDebugNamespace('generateMatcher()');
 	debug('Compiling matcher for route');
 

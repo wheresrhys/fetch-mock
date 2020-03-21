@@ -6,7 +6,7 @@ const isName = nameOrMatcher =>
 
 const filterCallsWithMatcher = function(matcher, options = {}, calls) {
 	matcher = this.generateMatcher(
-		this.sanitizeRoute(Object.assign({ matcher }, options)),
+		this.sanitizeRoute(Object.assign({ matcher }, options))
 	);
 	return calls.filter(([url, options]) => matcher(normalizeUrl(url), options));
 };

@@ -3,7 +3,7 @@ const setUpAndTearDown = require('./set-up-and-tear-down');
 const fetchHandler = require('./fetch-handler');
 const inspecting = require('./inspecting');
 const matchers = require('./matchers');
-const compileRoute = require('./compile-route')
+const compileRoute = require('./compile-route');
 
 const FetchMock = Object.assign(
 	{},

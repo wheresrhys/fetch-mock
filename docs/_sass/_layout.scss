@@ -86,7 +86,8 @@ section dd {
 			grid-column: 1 / 2
 		}
 
-		section > dl {
+		section > dl,
+		section > .code-blocks {
 			grid-column: 1 / 3
 		}
 	}

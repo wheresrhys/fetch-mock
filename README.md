@@ -9,6 +9,7 @@ Features include:
 - shorthands for the most commonly used features, such as matching a http method or matching one fetch only
 - support for delaying responses, or using your own async functions to define custom race conditions
 - can be used as a spy to observe real network requests
+- can be extended with your own reusable custom matchers that can be used both for matching fetch-calls and inspecting the results
 - isomorphic, and supports either a global fetch instance or a locally required instance
 
 _New_ If using jest, try the new [fetch-mock-jest](https://www.npmjs.com/package/fetch-mock-jest) wrapper.

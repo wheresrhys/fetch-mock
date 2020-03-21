@@ -1,15 +1,4 @@
-const { getDebug } = require('./debug');
-const generateMatcher = require('./generate-matcher');
-
-const matcherProperties = [
-	'query',
-	'method',
-	'headers',
-	'params',
-	'body',
-	'functionMatcher',
-	'url'
-];
+const { debug, setDebugNamespace, getDebug } = require('./debug');
 
 const isUrlMatcher = matcher =>
 	matcher instanceof RegExp ||
@@ -63,12 +52,12 @@ const sanitizeRoute = route => {
 	return route;
 };
 
-const validateRoute = route => {
+const validateRoute = function (route) {
 	if (!('response' in route)) {
 		throw new Error('fetch-mock: Each route must define a response');
 	}
 
-	if (!matcherProperties.some(matcherType => matcherType in route)) {
+	if (!this._matchers.some(({ name }) => name in route)) {
 		throw new Error(
 			"fetch-mock: Each route must specify some criteria for matching calls to fetch. To match all calls use '*'"
 		);
@@ -116,12 +105,31 @@ const delayResponse = route => {
 	}
 };
 
+const generateMatcher = function (route) {
+	setDebugNamespace('generateMatcher()');
+	debug('Compiling matcher for route');
+
+	const matchers = this._matchers
+		.map(
+			({ name, matcher, usesBody }) =>
+				route[name] && { matcher: matcher(route, this), usesBody }
+		)
+		.filter(matcher => !!matcher);
+
+	route.usesBody = matchers.some(({ usesBody }) => usesBody);
+
+	debug('Compiled matcher for route');
+	setDebugNamespace();
+	return (url, options = {}, request) =>
+		matchers.every(({ matcher }) => matcher(url, options, request));
+};
+
 const compileRoute = function(args) {
 	const debug = getDebug('compileRoute()');
 	debug('Compiling route');
 	const route = sanitizeRoute(argsToRoute(args));
-	validateRoute(route);
-	route.matcher = generateMatcher(route, this);
+	this.validateRoute(route);
+	route.matcher = this.generateMatcher(route);
 	limit(route);
 	delayResponse(route);
 	return route;
@@ -129,5 +137,7 @@ const compileRoute = function(args) {
 
 module.exports = {
 	compileRoute,
-	sanitizeRoute
+	sanitizeRoute,
+	generateMatcher,
+	validateRoute
 };

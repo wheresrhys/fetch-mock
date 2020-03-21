@@ -85,6 +85,7 @@ FetchMock.fetchHandler = function(url, options, request) {
 		debug(
 			'Need to wait for Body to be streamed before calling router: switching to async mode'
 		);
+		console.log('lalal');
 		return this._asyncFetchHandler(url, options, request, signal);
 	}
 	return this._fetchHandler(url, options, request, signal);

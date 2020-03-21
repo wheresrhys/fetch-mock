@@ -24,7 +24,7 @@ lint-ci: typecheck
 	eslint --ignore-pattern test/fixtures/* src test
 	prettier *.md
 
-lint: typecheck
+lint:
 	eslint --cache --fix .
 	prettier --write *.md
 

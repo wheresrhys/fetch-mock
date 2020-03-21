@@ -81,7 +81,7 @@ FetchMock.fetchHandler = function(url, options, request) {
 	debug('  request', request);
 	debug('  signal', signal);
 
-	if (request && this.routes.some(({ body }) => !!body)) {
+	if (request && this.routes.some(({ usesBody }) => usesBody)) {
 		debug(
 			'Need to wait for Body to be streamed before calling router: switching to async mode'
 		);

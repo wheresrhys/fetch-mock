@@ -1,15 +1,12 @@
 const { setDebugPhase, setDebugNamespace, debug } = require('./debug');
 const { normalizeUrl } = require('./request-utils');
 const FetchMock = {};
-const { sanitizeRoute } = require('./compile-route');
-const generateMatcher = require('./generate-matcher');
 const isName = nameOrMatcher =>
 	typeof nameOrMatcher === 'string' && /^[\da-zA-Z\-]+$/.test(nameOrMatcher);
 
 const filterCallsWithMatcher = function(matcher, options = {}, calls) {
-	matcher = generateMatcher(
-		sanitizeRoute(Object.assign({ matcher }, options)),
-		this
+	matcher = this.generateMatcher(
+		this.sanitizeRoute(Object.assign({ matcher }, options))
 	);
 	return calls.filter(([url, options]) => matcher(normalizeUrl(url), options));
 };

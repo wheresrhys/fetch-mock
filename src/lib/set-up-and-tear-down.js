@@ -1,5 +1,4 @@
 const { debug, setDebugPhase } = require('./debug');
-const { compileRoute } = require('./compile-route');
 const FetchMock = {};
 
 FetchMock.mock = function(...args) {
@@ -68,8 +67,6 @@ FetchMock.spy = function() {
 	this._mock();
 	return this.catch(this.getNativeFetch());
 };
-
-FetchMock.compileRoute = compileRoute;
 
 const defineShorthand = (methodName, underlyingMethod, shorthandOptions) => {
 	FetchMock[methodName] = function(matcher, response, options) {

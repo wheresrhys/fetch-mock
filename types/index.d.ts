@@ -9,6 +9,13 @@
 //                 Colin Doig <https://github.com/captain-igloo>
 //                 Felix Chen <https://github.com/ChenNima>
 //                 Katsuya Hino <https://github.com/dobogo>
+//
+// Please note that I - wheresrys - don't use Typescript
+// These types have ben copied in here as a convenience for (some of)
+// fetch-mock's users
+// If you are a Typescript user and find a problem in these types, please
+// submit a PR
+//
 // TypeScript Version: 2.2
 
 declare namespace fetchMock {

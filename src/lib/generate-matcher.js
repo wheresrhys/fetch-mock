@@ -227,6 +227,8 @@ module.exports = (route, fetchMock) => {
 		route.url && getUrlMatcher(route)
 	].filter(matcher => !!matcher);
 
+	route.usesBody = !!route.body;
+
 	debug('Compiled matcher for route');
 	setDebugNamespace();
 	return (url, options = {}, request) =>

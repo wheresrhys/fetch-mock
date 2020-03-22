@@ -5,22 +5,23 @@
 - .sandbox()
 
 ## Mock setup methods
-- Stub fetch defining a mock routes `.mock(matcher, response)`
-- Stub fetch without defining any mock routes `.mock()`
-- Let unmatched calls fall through to the network, and record them `.spy()`
-- Respond with the given response to any unmatched calls `.catch(response)`
-- Add a mock that only responds once `.once(matcher, response)`
-- Add a mock that responds to any request `.any(response)`
-- Add a mock that responds to any request, but only to that one request `.anyOnce(response)`
-- Add a mock that only responds to the given method `.get()`, `.post()`, `.put()`, `.delete()`, `.head()`, `.patch()`
-- Combinations of the above behaviours `getAny()`, `getOnce()`, `getAnyOnce()`, `postAny()` ...
+All these methods can be chained e.g. `fetchMock.getAny(200).catch(400)`
+- Stub fetch and **define a route** `.mock(matcher, response)`
+- Stub fetch **without a route** `.mock()`
+- Spy on calls, letting them **fall through to the network** `.spy()`
+- Respond with the given response to any **unmatched calls** `.catch(response)`
+- Add a mock that only responds **once** `.once(matcher, response)`
+- Add a mock that responds to **any** request `.any(response)`
+- Add a mock that responds to **any request, but only once** `.anyOnce(response)`
+- Add a mock that only responds to the given **method** `.get()`, `.post()`, `.put()`, `.delete()`, `.head()`, `.patch()`
+- **Combinations** of the above behaviours `getAny()`, `getOnce()`, `getAnyOnce()`, `postAny()` ...
 
 ## Tear down methods
-- Remove all routes & call history from fetch-mock, and also (if relevant)restore global `fetch` to its initial implementation `.restore()`, `.reset()`
+- Remove all mocks and history `.restore()`, `.reset()`
 - Discard all recorded calls, but keep defined routes `.resetHistory()`
 - Discard all routes, but keep defined recorded calls`.resetBehavior()`
 
-## Matching rules
+## Request matching
 
 ### Reference request
 The following request would be matched by all the mocks described below:
@@ -39,23 +40,23 @@ fetch('http://example.com/users/bob?q=rita', {
 
 ### Matching urls
 All the below can be passed as the first argument into `.mock()`, (or as the `url` property on the first parameter for combining with other matchers).
-- Match any url `'*'`
-- Match exact url `'http://example.com/users/bob?q=rita'` 
-- Match beginning of url `'begin:http://example.com'` 
-- Match end of url `'end:bob?q=rita'`
-- Match path of url `'path:/users/bob'` 
-- Match url using a glob expression `'glob:http://example.{com,gov}/*'` 
-- Match url using express parameter syntax `'express:/users/:name'` 
-- Match url using a RegExp `/\/users\/.*/` 
+- Match **any** url `'*'`
+- Match **exact** url `'http://example.com/users/bob?q=rita'` 
+- Match **beginning** `'begin:http://example.com'` 
+- Match **end** `'end:bob?q=rita'`
+- Match **path** `'path:/users/bob'` 
+- Match using a **glob** expression `'glob:http://example.{com,gov}/*'` 
+- Match using **express** syntax `'express:/users/:name'` 
+- Match using a **RegExp** `/\/users\/.*/` 
 
 ### Matching other parts of the request
 The following should be passed as properties of an object as the first argument of `.mock()`. Multiple rules can be combined together.
-- Match the method used by the request `{method: 'POST'}`
-- Match based on headers sent `{headers: {'Content-Type': 'application/json'}}`
-- Match an exact JSON body `{body: {prop1: 'val1', prop2: 'val2'}}`
-- Match part of a JSON body `{body: {prop1: 'val1'}, matchPartialBody: true}`
-- Match query parameters `{query: {q: 'rita'}}`
-- Match express path parameters `{url: 'express:/users/:name', params: {name: 'bob'}}`
+- Match the request **method** `{method: 'POST'}`
+- Match **headers** `{headers: {'Content-Type': 'application/json'}}`
+- Match a **JSON body** `{body: {prop1: 'val1', prop2: 'val2'}}`
+- Match **part of a JSON body** `{body: {prop1: 'val1'}, matchPartialBody: true}`
+- Match **query** parameters `{query: {q: 'rita'}}`
+- Match express **path parameters** `{url: 'express:/users/:name', params: {name: 'bob'}}`
 
 ### Custom matching
 Match on any condition you like by:

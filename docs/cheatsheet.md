@@ -88,7 +88,7 @@ The following should be passed as properties of the first argument of `.mock()`.
 
 ### Custom
 Match on any condition you like by:
-- using a function `{functionMatcher: (url, options, request) => url.length > 100}`
+- using a function `{functionMatcher: (url, options, request) => url.length > 100}` (or can jsut pas the function in as the first parameter, not wrapped in an object)
 - defining your own declarative matchers with [`addMatcher()`](http://www.wheresrhys.co.uk/fetch-mock/#api-mockingadd-matcher), e.g. something like this would be possible  `{isCorsRequest: true, hasBody: true}`
 
 ## Response configuration

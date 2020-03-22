@@ -4,16 +4,23 @@
 
 - .sandbox()
 
-## Lifecycle
-- Stub fetch without defining any routes `.mock()`
+## Mock setup methods
+- Stub fetch defining a mock routes `.mock(matcher, response)`
+- Stub fetch without defining any mock routes `.mock()`
 - Let unmatched calls fall through to the network, and record them `.spy()`
 - Respond with the given response to any unmatched calls `.catch(response)`
-- Wait for all fetches to respond `.flush()` (pass in `true` to wait for all bodies to be streamed). e.g. `await fetchMock.flush(true)`
+- Add a mock that only responds once `.once(matcher, response)`
+- Add a mock that responds to any request `.any(response)`
+- Add a mock that responds to any request, but only to that one request `.anyOnce(response)`
+- Add a mock that only responds to the given method `.get()`, `.post()`, `.put()`, `.delete()`, `.head()`, `.patch()`
+- Combinations of the above behaviours `getAny()`, `getOnce()`, `getAnyOnce()`, `postAny()` ...
+
+## Tear down methods
 - Remove all routes & call history from fetch-mock, and also (if relevant)restore global `fetch` to its initial implementation `.restore()`, `.reset()`
 - Discard all recorded calls, but keep defined routes `.resetHistory()`
 - Discard all routes, but keep defined recorded calls`.resetBehavior()`
 
-## Matching requests
+## Matching rules
 
 ### Reference request
 The following request would be matched by all the mocks described below:
@@ -61,4 +68,7 @@ Match on any condition you like by:
 ## Inspecting calls
 - done
 ### Naming routes
+
+- Wait for all fetches to respond `.flush()` (pass in `true` to wait for all bodies to be streamed). e.g. `await fetchMock.flush(true)`
+
 

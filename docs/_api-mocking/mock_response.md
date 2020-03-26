@@ -70,7 +70,7 @@ parameters:
         types:
           - Error
         content: |-
-          Forrce `fetch` to return a `Promise` rejected with the value of `throws`
+          Force `fetch` to return a `Promise` rejected with the value of `throws`
         examples:
           - "new TypeError('Failed to fetch')"
   - types:

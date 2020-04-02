@@ -92,7 +92,7 @@ Match on any condition you like by:
 - defining your own declarative matchers with [`addMatcher()`](http://www.wheresrhys.co.uk/fetch-mock/#api-mockingadd-matcher), e.g. setting up declarative matchers that can be used like this is possible  `{isCorsRequest: true, hasBody: true}`
 
 ## Response configuration
-Responses are configured with eth second, and sometimes third, arguments passed to `.mock()` (or the first and second argument of `.any()` or `.catch()`). Where only one code sample is given below, it describes the second argument; otherwise the second and third are given. *[Note - in the next major version these will all be available on the second argument]* 
+Responses are configured with the second, and sometimes third, arguments passed to `.mock()` (or the first and second argument of `.any()` or `.catch()`). Where only one code sample is given below, it describes the second argument; otherwise the second and third are given. *[Note - in the next major version these will all be available on the second argument]* 
 
 - **`Response`** instance `new Response('hello world')`
 - **status code** `200`

@@ -144,5 +144,20 @@ module.exports = (fetchMock, theGlobal) => {
 			fm.config.fetch = originalFetch;
 			expect(() => fm.spy()).not.to.throw();
 		});
+
+		it('exports a properly mocked node-fetch module shape', () => {
+			// uses node-fetch default require pattern
+			const {
+				default: fetch,
+				Headers,
+				Request,
+				Response
+			} = fetchMock.sandbox();
+
+			expect(fetch.name).to.equal('proxy');
+			expect(new Headers()).to.be.an.instanceOf(fetchMock.config.Headers);
+			expect(new Request()).to.be.an.instanceOf(fetchMock.config.Request);
+			expect(new Response()).to.be.an.instanceOf(fetchMock.config.Response);
+		});
 	});
 };

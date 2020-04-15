@@ -5,7 +5,7 @@ const chai = require('chai');
 const expect = chai.expect;
 const sinon = require('sinon');
 
-module.exports = fetchMock => {
+module.exports = (fetchMock) => {
 	describe('inspecting', () => {
 		let fm;
 		before(() => {
@@ -19,7 +19,7 @@ module.exports = fetchMock => {
 					fm.mock('http://it.at.here/', 200).mock('http://it.at.there/', 200);
 					return fm.fetchHandler('http://it.at.here/', {
 						method: 'post',
-						arbitraryOption: true
+						arbitraryOption: true,
 					});
 				});
 				after(() => fm.restore());
@@ -29,14 +29,14 @@ module.exports = fetchMock => {
 				});
 				it('calls() returns array of calls', () => {
 					expect(fm.calls('http://it.at.here/')).to.eql([
-						['http://it.at.here/', { method: 'post', arbitraryOption: true }]
+						['http://it.at.here/', { method: 'post', arbitraryOption: true }],
 					]);
 					expect(fm.calls('http://it.at.there/')).to.eql([]);
 				});
 				it('lastCall() returns array of parameters', () => {
 					expect(fm.lastCall('http://it.at.here/')).to.eql([
 						'http://it.at.here/',
-						{ method: 'post', arbitraryOption: true }
+						{ method: 'post', arbitraryOption: true },
 					]);
 					expect(fm.lastCall('http://it.at.there/')).to.be.undefined;
 				});
@@ -49,7 +49,7 @@ module.exports = fetchMock => {
 				it('lastOptions() returns object', () => {
 					expect(fm.lastOptions('http://it.at.here/')).to.eql({
 						method: 'post',
-						arbitraryOption: true
+						arbitraryOption: true,
 					});
 					expect(fm.lastOptions('http://it.at.there/')).to.be.undefined;
 				});
@@ -62,7 +62,7 @@ module.exports = fetchMock => {
 					fm.filterCalls.restore();
 				});
 				['called', 'calls', 'lastCall', 'lastUrl', 'lastOptions'].forEach(
-					method => {
+					(method) => {
 						it(`${method}() uses the internal filtering method`, () => {
 							fm[method]('name', { an: 'option' });
 							expect(fm.filterCalls.calledWith('name', { an: 'option' })).to.be
@@ -88,7 +88,7 @@ module.exports = fetchMock => {
 				await fm.fetchHandler('http://it.at.where/', { method: 'post' });
 				expect(fm.filterCalls()[0]).to.eql([
 					'http://it.at.here/',
-					{ method: 'get' }
+					{ method: 'get' },
 				]);
 			});
 
@@ -193,7 +193,7 @@ module.exports = fetchMock => {
 					expect(fm.filterCalls(true, 'POST').length).to.equal(1);
 					expect(fm.filterCalls(true, 'POST')[0]).to.eql([
 						'http://it.at.here/',
-						{ method: 'post' }
+						{ method: 'post' },
 					]);
 				});
 
@@ -208,14 +208,14 @@ module.exports = fetchMock => {
 					expect(fm.filterCalls(false, 'POST').length).to.equal(1);
 					expect(fm.filterCalls(false, 'POST')[0]).to.eql([
 						'http://it.at.where/',
-						{ method: 'POST' }
+						{ method: 'POST' },
 					]);
 				});
 
 				it('can retrieve only calls handled by a named route', async () => {
 					fm.mock('http://it.at.here/', 200, { name: 'here' }).catch();
 					fm.mock('http://caps.it.at.here/', 200, {
-						name: 'hereWithCaps'
+						name: 'hereWithCaps',
 					}).catch();
 
 					await fm.fetchHandler('http://it.at.here/', { method: 'post' });
@@ -226,7 +226,7 @@ module.exports = fetchMock => {
 					expect(fm.filterCalls('hereWithCaps').length).to.equal(1);
 					expect(fm.filterCalls('here', 'POST')[0]).to.eql([
 						'http://it.at.here/',
-						{ method: 'post' }
+						{ method: 'post' },
 					]);
 				});
 
@@ -239,7 +239,7 @@ module.exports = fetchMock => {
 					expect(fm.filterCalls('path:/path', 'POST').length).to.equal(1);
 					expect(fm.filterCalls('path:/path', 'POST')[0]).to.eql([
 						'http://it.at.there/path',
-						{ method: 'post' }
+						{ method: 'post' },
 					]);
 				});
 
@@ -253,7 +253,7 @@ module.exports = fetchMock => {
 					expect(fm.filterCalls(rx, 'POST').length).to.equal(1);
 					expect(fm.filterCalls(rx, 'POST')[0]).to.eql([
 						'http://it.at.there/path',
-						{ method: 'post' }
+						{ method: 'post' },
 					]);
 				});
 
@@ -266,7 +266,7 @@ module.exports = fetchMock => {
 					expect(fm.filterCalls('path:/path', 'POST').length).to.equal(1);
 					expect(fm.filterCalls('path:/path', 'POST')[0]).to.eql([
 						'http://it.at.there/path',
-						{ method: 'post' }
+						{ method: 'post' },
 					]);
 				});
 			});
@@ -276,11 +276,11 @@ module.exports = fetchMock => {
 					fm.mock('http://it.at.here/', 200).catch();
 
 					await fm.fetchHandler('http://it.at.here/', {
-						headers: { 'api-key': 'abcde' }
+						headers: { 'api-key': 'abcde' },
 					});
 					await fm.fetchHandler('http://it.at.here/');
 					await fm.fetchHandler('http://it.at.where/', {
-						headers: { 'api-key': 'abcde' }
+						headers: { 'api-key': 'abcde' },
 					});
 					await fm.fetchHandler('http://it.at.where/');
 					expect(
@@ -302,11 +302,11 @@ module.exports = fetchMock => {
 					fm.mock('http://it.at.here/', 200).catch();
 
 					await fm.fetchHandler('http://it.at.here/', {
-						headers: { 'api-key': 'abcde' }
+						headers: { 'api-key': 'abcde' },
 					});
 					await fm.fetchHandler('http://it.at.here/');
 					await fm.fetchHandler('http://it.at.where/', {
-						headers: { 'api-key': 'abcde' }
+						headers: { 'api-key': 'abcde' },
 					});
 					await fm.fetchHandler('http://it.at.where/');
 					expect(
@@ -324,11 +324,11 @@ module.exports = fetchMock => {
 					fm.mock('http://it.at.here/', 200).catch();
 
 					await fm.fetchHandler('http://it.at.here/', {
-						headers: { 'api-key': 'abcde' }
+						headers: { 'api-key': 'abcde' },
 					});
 					await fm.fetchHandler('http://it.at.here/');
 					await fm.fetchHandler('http://it.at.where/', {
-						headers: { 'api-key': 'abcde' }
+						headers: { 'api-key': 'abcde' },
 					});
 					await fm.fetchHandler('http://it.at.where/');
 					expect(
@@ -341,7 +341,7 @@ module.exports = fetchMock => {
 						fm.filterCalls(false, { headers: { 'api-key': 'abcde' } })[0]
 					).to.eql([
 						'http://it.at.where/',
-						{ headers: { 'api-key': 'abcde' } }
+						{ headers: { 'api-key': 'abcde' } },
 					]);
 				});
 
@@ -349,7 +349,7 @@ module.exports = fetchMock => {
 					fm.mock('http://it.at.here/', 200, { name: 'here' }).catch();
 
 					await fm.fetchHandler('http://it.at.here/', {
-						headers: { 'api-key': 'abcde' }
+						headers: { 'api-key': 'abcde' },
 					});
 					await fm.fetchHandler('http://it.at.here/');
 					expect(
@@ -367,7 +367,7 @@ module.exports = fetchMock => {
 					fm.mock('path:/path', 200).catch();
 
 					await fm.fetchHandler('http://it.at.there/path', {
-						headers: { 'api-key': 'abcde' }
+						headers: { 'api-key': 'abcde' },
 					});
 					await fm.fetchHandler('http://it.at.there/path');
 					expect(
@@ -382,7 +382,7 @@ module.exports = fetchMock => {
 						fm.filterCalls('path:/path', { headers: { 'api-key': 'abcde' } })[0]
 					).to.eql([
 						'http://it.at.there/path',
-						{ headers: { 'api-key': 'abcde' } }
+						{ headers: { 'api-key': 'abcde' } },
 					]);
 				});
 
@@ -391,7 +391,7 @@ module.exports = fetchMock => {
 					fm.mock(rx, 200).catch();
 
 					await fm.fetchHandler('http://it.at.there/path', {
-						headers: { 'api-key': 'abcde' }
+						headers: { 'api-key': 'abcde' },
 					});
 					await fm.fetchHandler('http://it.at.there/path');
 					expect(
@@ -404,7 +404,7 @@ module.exports = fetchMock => {
 						fm.filterCalls(rx, { headers: { 'api-key': 'abcde' } })[0]
 					).to.eql([
 						'http://it.at.there/path',
-						{ headers: { 'api-key': 'abcde' } }
+						{ headers: { 'api-key': 'abcde' } },
 					]);
 				});
 
@@ -414,11 +414,11 @@ module.exports = fetchMock => {
 
 					await fm.fetchHandler('http://it.at.there/path', {
 						method: 'post',
-						body: JSON.stringify({ cat: 'whiskers' })
+						body: JSON.stringify({ cat: 'whiskers' }),
 					});
 					await fm.fetchHandler('http://it.at.there/path', {
 						method: 'post',
-						body: JSON.stringify({ cat: 'miao' })
+						body: JSON.stringify({ cat: 'miao' }),
 					});
 					expect(fm.filterCalls(true, bodyMatcher).length).to.equal(1);
 					expect(fm.filterCalls(true, bodyMatcher).length).to.equal(1);
@@ -426,25 +426,25 @@ module.exports = fetchMock => {
 						'http://it.at.there/path',
 						{
 							method: 'post',
-							body: JSON.stringify({ cat: 'whiskers' })
-						}
+							body: JSON.stringify({ cat: 'whiskers' }),
+						},
 					]);
 				});
 
 				it('can retrieve only calls handled by a partial body matcher', async () => {
 					const bodyMatcher = {
 						body: { cat: 'whiskers' },
-						matchPartialBody: true
+						matchPartialBody: true,
 					};
 					fm.mock(bodyMatcher, 200).catch();
 
 					await fm.fetchHandler('http://it.at.there/path', {
 						method: 'post',
-						body: JSON.stringify({ cat: 'whiskers', dog: 'tail' })
+						body: JSON.stringify({ cat: 'whiskers', dog: 'tail' }),
 					});
 					await fm.fetchHandler('http://it.at.there/path', {
 						method: 'post',
-						body: JSON.stringify({ cat: 'miao', dog: 'tail' })
+						body: JSON.stringify({ cat: 'miao', dog: 'tail' }),
 					});
 					expect(fm.filterCalls(true, bodyMatcher).length).to.equal(1);
 					expect(fm.filterCalls(true, bodyMatcher).length).to.equal(1);
@@ -452,8 +452,8 @@ module.exports = fetchMock => {
 						'http://it.at.there/path',
 						{
 							method: 'post',
-							body: JSON.stringify({ cat: 'whiskers', dog: 'tail' })
-						}
+							body: JSON.stringify({ cat: 'whiskers', dog: 'tail' }),
+						},
 					]);
 				});
 
@@ -461,7 +461,7 @@ module.exports = fetchMock => {
 					fm.mock('http://it.at.here/path', 200).catch();
 
 					await fm.fetchHandler('http://it.at.there/path', {
-						headers: { 'api-key': 'abcde' }
+						headers: { 'api-key': 'abcde' },
 					});
 					await fm.fetchHandler('http://it.at.there/path');
 					expect(
@@ -476,7 +476,7 @@ module.exports = fetchMock => {
 						fm.filterCalls('path:/path', { headers: { 'api-key': 'abcde' } })[0]
 					).to.eql([
 						'http://it.at.there/path',
-						{ headers: { 'api-key': 'abcde' } }
+						{ headers: { 'api-key': 'abcde' } },
 					]);
 				});
 			});
@@ -510,14 +510,14 @@ module.exports = fetchMock => {
 				expect(fm.calls()[0]).to.eql(['http://it.at.here/', undefined]);
 				expect(fm.calls()[1]).to.eql([
 					'http://it.at.here/',
-					{ method: 'POST' }
+					{ method: 'POST' },
 				]);
 			});
 
 			it('lastCall', () => {
 				expect(fm.lastCall()).to.eql([
 					'http://it.at.here/',
-					{ method: 'POST' }
+					{ method: 'POST' },
 				]);
 			});
 
@@ -531,7 +531,7 @@ module.exports = fetchMock => {
 
 			it('when called with Request instance', () => {
 				const req = new fm.config.Request('http://it.at.here/', {
-					method: 'POST'
+					method: 'POST',
 				});
 				fm.fetchHandler(req);
 				const [url, callOptions] = fm.lastCall();
@@ -546,28 +546,28 @@ module.exports = fetchMock => {
 
 			it('when called with Request instance and arbitrary option', () => {
 				const req = new fm.config.Request('http://it.at.here/', {
-					method: 'POST'
+					method: 'POST',
 				});
 				fm.fetchHandler(req, { arbitraryOption: true });
 				const [url, callOptions] = fm.lastCall();
 				expect(url).to.equal('http://it.at.here/');
 				expect(callOptions).to.include({
 					method: 'POST',
-					arbitraryOption: true
+					arbitraryOption: true,
 				});
 				expect(fm.lastUrl()).to.equal('http://it.at.here/');
 				const options = fm.lastOptions();
 
 				expect(options).to.include({
 					method: 'POST',
-					arbitraryOption: true
+					arbitraryOption: true,
 				});
 				expect(fm.lastCall().request).to.equal(req);
 			});
 
 			it('Not make default signal available in options when called with Request instance using signal', () => {
 				const req = new fm.config.Request('http://it.at.here/', {
-					method: 'POST'
+					method: 'POST',
 				});
 				fm.fetchHandler(req);
 				const [, callOptions] = fm.lastCall();
@@ -605,7 +605,7 @@ module.exports = fetchMock => {
 					fm.mock('http://example/', { a: 'ok' });
 					let data;
 					fetch('http://example/')
-						.then(res => res.json())
+						.then((res) => res.json())
 						.then(() => (data = 'done'));
 
 					await fm.flush(true);
@@ -616,7 +616,7 @@ module.exports = fetchMock => {
 					fm.mock('http://example/', 'bleurgh');
 					let data;
 					fetch('http://example/')
-						.then(res => res.json())
+						.then((res) => res.json())
 						.catch(() => (data = 'done'));
 
 					await fm.flush(true);
@@ -627,7 +627,7 @@ module.exports = fetchMock => {
 					fm.mock('http://example/', 'working!');
 					let data;
 					fetch('http://example/')
-						.then(res => res.text())
+						.then((res) => res.text())
 						.then(() => (data = 'done'));
 
 					await fm.flush(true);
@@ -638,7 +638,7 @@ module.exports = fetchMock => {
 			it('flush waits for unresolved promises', async () => {
 				fm.mock('http://one.com/', 200).mock(
 					'http://two.com/',
-					() => new Promise(res => setTimeout(() => res(200), 50))
+					() => new Promise((res) => setTimeout(() => res(200), 50))
 				);
 
 				const orderedResults = [];

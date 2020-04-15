@@ -16,7 +16,7 @@ const testChainableMethod = (getFetchMock, method, args = []) => {
 	});
 };
 
-module.exports = fetchMock => {
+module.exports = (fetchMock) => {
 	describe('shorthands', () => {
 		let fm;
 		let expectRoute;
@@ -37,18 +37,18 @@ module.exports = fetchMock => {
 			fm.once('a', 'b');
 			fm.once('c', 'd', { opt: 'e' });
 			expectRoute('a', 'b', {
-				repeat: 1
+				repeat: 1,
 			});
 			expectRoute('c', 'd', {
 				opt: 'e',
-				repeat: 1
+				repeat: 1,
 			});
 		});
 
 		it('has any() shorthand method', () => {
 			fm.any('a', { opt: 'b' });
 			expectRoute({}, 'a', {
-				opt: 'b'
+				opt: 'b',
 			});
 		});
 
@@ -56,22 +56,22 @@ module.exports = fetchMock => {
 			fm.anyOnce('a', { opt: 'b' });
 			expectRoute({}, 'a', {
 				opt: 'b',
-				repeat: 1
+				repeat: 1,
 			});
 		});
 
 		describe('method shorthands', () => {
-			['get', 'post', 'put', 'delete', 'head', 'patch'].forEach(method => {
+			['get', 'post', 'put', 'delete', 'head', 'patch'].forEach((method) => {
 				describe(method.toUpperCase(), () => {
 					it(`has ${method}() shorthand`, () => {
 						fm[method]('a', 'b');
 						fm[method]('c', 'd', { opt: 'e' });
 						expectRoute('a', 'b', {
-							method: method
+							method: method,
 						});
 						expectRoute('c', 'd', {
 							opt: 'e',
-							method: method
+							method: method,
 						});
 					});
 
@@ -82,12 +82,12 @@ module.exports = fetchMock => {
 						fm[method + 'Once']('c', 'd', { opt: 'e' });
 						expectRoute('a', 'b', {
 							method: method,
-							repeat: 1
+							repeat: 1,
 						});
 						expectRoute('c', 'd', {
 							opt: 'e',
 							method: method,
-							repeat: 1
+							repeat: 1,
 						});
 					});
 
@@ -97,7 +97,7 @@ module.exports = fetchMock => {
 						fm[method + 'Any']('a', { opt: 'b' });
 						expectRoute({}, 'a', {
 							opt: 'b',
-							method: method
+							method: method,
 						});
 					});
 
@@ -108,7 +108,7 @@ module.exports = fetchMock => {
 						expectRoute({}, 'a', {
 							opt: 'b',
 							method: method,
-							repeat: 1
+							repeat: 1,
 						});
 					});
 

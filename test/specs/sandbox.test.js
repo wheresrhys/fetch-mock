@@ -63,7 +63,7 @@ module.exports = (fetchMock, theGlobal) => {
 
 			const [sandboxed, globally] = await Promise.all([
 				sbx('http://domain.url/'),
-				fetch('http://domain2.url/')
+				fetch('http://domain2.url/'),
 			]);
 
 			expect(sandboxed.status).to.equal(200);
@@ -93,7 +93,7 @@ module.exports = (fetchMock, theGlobal) => {
 
 			const [res1, res2] = await Promise.all([
 				sbx('http://domain.url/'),
-				sbx2('http://domain2.url/')
+				sbx2('http://domain2.url/'),
 			]);
 			expect(res1.status).to.equal(200);
 			expect(res2.status).to.equal(200);
@@ -116,15 +116,9 @@ module.exports = (fetchMock, theGlobal) => {
 		});
 
 		it("can 'fork' existing sandboxes or the global fetchMock", () => {
-			const sbx1 = fetchMock
-				.sandbox()
-				.mock(/a/, 200)
-				.catch(300);
+			const sbx1 = fetchMock.sandbox().mock(/a/, 200).catch(300);
 
-			const sbx2 = sbx1
-				.sandbox()
-				.mock(/b/, 200)
-				.catch(400);
+			const sbx2 = sbx1.sandbox().mock(/b/, 200).catch(400);
 
 			expect(sbx1.routes.length).to.equal(1);
 			expect(sbx2.routes.length).to.equal(2);
@@ -151,7 +145,7 @@ module.exports = (fetchMock, theGlobal) => {
 				default: fetch,
 				Headers,
 				Request,
-				Response
+				Response,
 			} = fetchMock.sandbox();
 
 			expect(fetch.name).to.equal('fetchMockProxy');

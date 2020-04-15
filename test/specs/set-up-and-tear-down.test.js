@@ -16,7 +16,7 @@ const testChainableMethod = (getFetchMock, method, args = []) => {
 	});
 };
 
-module.exports = fetchMock => {
+module.exports = (fetchMock) => {
 	describe('Set up and tear down', () => {
 		let fm;
 		before(() => {
@@ -36,9 +36,7 @@ module.exports = fetchMock => {
 
 			it('can be called after fetchMock is restored', () => {
 				expect(() => {
-					fm.mock(/a/, 200)
-						.restore()
-						.mock(/a/, 200);
+					fm.mock(/a/, 200).restore().mock(/a/, 200);
 				}).not.to.throw();
 			});
 
@@ -56,7 +54,7 @@ module.exports = fetchMock => {
 				it('accepts single config object', () => {
 					const config = {
 						matcher: 'http://it.at.there/',
-						response: 200
+						response: 200,
 					};
 					expect(() => fm.mock(config)).not.to.throw();
 					expect(fm.compileRoute).calledWith([config]);
@@ -73,7 +71,7 @@ module.exports = fetchMock => {
 					expect(() =>
 						fm.mock('http://it.at.there/', 'ok', {
 							method: 'PUT',
-							some: 'prop'
+							some: 'prop',
 						})
 					).not.to.throw();
 					expect(fm.compileRoute).calledWith([
@@ -81,8 +79,8 @@ module.exports = fetchMock => {
 						'ok',
 						{
 							method: 'PUT',
-							some: 'prop'
-						}
+							some: 'prop',
+						},
 					]);
 					expect(fm._mock).called;
 				});

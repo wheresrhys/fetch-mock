@@ -9,49 +9,49 @@ export default [
 		input: 'src/client.js',
 		output: {
 			file: 'esm/client.js',
-			format: 'esm'
+			format: 'esm',
 		},
 		plugins: [
 			resolve({ preferBuiltins: false, browser: true }),
 			commonjs(),
-			builtins()
-		]
+			builtins(),
+		],
 	},
 	{
 		input: 'src/server.js',
 		output: {
 			file: 'esm/server.js',
-			format: 'esm'
+			format: 'esm',
 		},
 		plugins: [
 			resolve({ preferBuiltins: true }),
 			commonjs(),
 			builtins(),
-			globals()
-		]
+			globals(),
+		],
 	},
 	{
 		input: 'es5/client-legacy.js',
 		output: {
 			file: 'es5/client-legacy-bundle.js',
 			format: 'umd',
-			name: 'fetchMock'
+			name: 'fetchMock',
 		},
-		plugins: [json(), resolve(), commonjs(), builtins(), globals()]
+		plugins: [json(), resolve(), commonjs(), builtins(), globals()],
 	},
 	{
 		input: 'es5/client.js',
 		output: {
 			file: 'es5/client-bundle.js',
 			format: 'umd',
-			name: 'fetchMock'
+			name: 'fetchMock',
 		},
 		plugins: [
 			json(),
 			resolve({ preferBuiltins: false, browser: true }),
 			commonjs(),
 			builtins(),
-			globals()
-		]
-	}
+			globals(),
+		],
+	},
 ];

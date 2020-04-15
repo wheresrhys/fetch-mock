@@ -160,7 +160,7 @@ module.exports = (fetchMock, theGlobal, fetch) => {
 				fm.mock({ body: { ham: 'sandwich' } }, 200).catch(404);
 				const res = await fm.fetchHandler('http://it.at.there', {
 					method: 'POST',
-					body: JSON.stringify({ ham: 'sandwich', egg: 'mayonaise' })
+					body: JSON.stringify({ ham: 'sandwich', egg: 'mayonaise' }),
 				});
 				expect(res.status).to.equal(404);
 			});
@@ -170,7 +170,7 @@ module.exports = (fetchMock, theGlobal, fetch) => {
 				fm.mock({ body: { ham: 'sandwich' } }, 200).catch(404);
 				const res = await fm.fetchHandler('http://it.at.there', {
 					method: 'POST',
-					body: JSON.stringify({ ham: 'sandwich', egg: 'mayonaise' })
+					body: JSON.stringify({ ham: 'sandwich', egg: 'mayonaise' }),
 				});
 				expect(res.status).to.equal(200);
 				fm.config.matchPartialBody = false;
@@ -184,7 +184,7 @@ module.exports = (fetchMock, theGlobal, fetch) => {
 				).catch(404);
 				const res = await fm.fetchHandler('http://it.at.there', {
 					method: 'POST',
-					body: JSON.stringify({ ham: 'sandwich', egg: 'mayonaise' })
+					body: JSON.stringify({ ham: 'sandwich', egg: 'mayonaise' }),
 				});
 				expect(res.status).to.equal(404);
 				fm.config.matchPartialBody = false;
@@ -198,7 +198,7 @@ module.exports = (fetchMock, theGlobal, fetch) => {
 				).catch(404);
 				const res = await fm.fetchHandler('http://it.at.there', {
 					method: 'POST',
-					body: JSON.stringify({ ham: 'sandwich', egg: 'mayonaise' })
+					body: JSON.stringify({ ham: 'sandwich', egg: 'mayonaise' }),
 				});
 				expect(res.status).to.equal(200);
 			});

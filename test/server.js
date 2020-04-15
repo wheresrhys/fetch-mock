@@ -31,26 +31,26 @@ describe('nodejs tests', () => {
 			fetchMock.mock(/a/, new Buffer('buffer'), { sendAsJson: false });
 			return fetchMock
 				.fetchHandler('http://a.com')
-				.then(res => res.text())
-				.then(txt => {
+				.then((res) => res.text())
+				.then((txt) => {
 					expect(txt).to.equal('buffer');
 				});
 		});
 
-		it('can respond with a readable stream', done => {
+		it('can respond with a readable stream', (done) => {
 			const { Readable, Writable } = require('stream');
 			const readable = new Readable();
 			const write = sinon.stub().callsFake((chunk, enc, cb) => {
 				cb();
 			});
 			const writable = new Writable({
-				write
+				write,
 			});
 			readable.push('response string');
 			readable.push(null);
 
 			fetchMock.mock(/a/, readable, { sendAsJson: false });
-			fetchMock.fetchHandler('http://a.com').then(res => {
+			fetchMock.fetchHandler('http://a.com').then((res) => {
 				res.body.pipe(writable);
 			});
 

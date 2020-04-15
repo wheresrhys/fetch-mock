@@ -5,7 +5,7 @@ const sinon = require('sinon');
 const BluebirdPromise = require('bluebird');
 const NativePromise = Promise;
 
-module.exports = fetchMock => {
+module.exports = (fetchMock) => {
 	describe('custom implementations', () => {
 		let fm;
 		before(() => {
@@ -27,13 +27,13 @@ module.exports = fetchMock => {
 
 			it('should allow non-native Promises as responses', async () => {
 				fm.config.Promise = BluebirdPromise;
-				const stub = sinon.spy(fn =>
+				const stub = sinon.spy((fn) =>
 					fn(
 						BluebirdPromise.resolve(new fm.config.Response('', { status: 203 }))
 					)
 				);
 				fm.mock(/.*/, {
-					then: stub
+					then: stub,
 				});
 				const res = await fm.fetchHandler('http://thing.place');
 				expect(stub.calledOnce).to.be.true;
@@ -53,7 +53,7 @@ module.exports = fetchMock => {
 
 		describe('fetch classes', () => {
 			const getHeadersSpy = () => {
-				const spy = function(config) {
+				const spy = function (config) {
 					spy.callCount += 1;
 					if (config) {
 						return new fetchMock.config.Headers(config);
@@ -67,7 +67,7 @@ module.exports = fetchMock => {
 			};
 
 			const getResponseSpy = () => {
-				const spy = function(body, opts) {
+				const spy = function (body, opts) {
 					spy.callCount += 1;
 					return new fetchMock.config.Response(body, opts);
 				};
@@ -83,7 +83,7 @@ module.exports = fetchMock => {
 
 				defaultSpies = {
 					Headers: getHeadersSpy(),
-					Response: getResponseSpy()
+					Response: getResponseSpy(),
 				};
 
 				fm.config = Object.assign(fm.config, defaultSpies);
@@ -95,18 +95,18 @@ module.exports = fetchMock => {
 
 				fm.mock('http://example.com/', {
 					status: 200,
-					headers: { id: 1 }
+					headers: { id: 1 },
 				});
 
 				await fetch('http://example.com/', {
-					headers: { id: 1 }
+					headers: { id: 1 },
 				});
 				expect(spiedReplacementHeaders.callCount).to.equal(1);
 				expect(defaultSpies.Headers.callCount).to.equal(0);
 			});
 
 			it('should use the configured Request', () => {
-				const ReplacementRequest = function(url) {
+				const ReplacementRequest = function (url) {
 					this.url = url;
 					this.method = 'GET';
 					this.headers = [];

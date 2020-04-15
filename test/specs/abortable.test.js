@@ -10,7 +10,7 @@ module.exports = (fetchMock, AbortController) => {
 
 		it('error on signal abort', async () => {
 			fm.mock('http://it.at.there/', () => {
-				return new Promise(resolve => {
+				return new Promise((resolve) => {
 					setTimeout(() => {
 						resolve();
 					}, 500);
@@ -22,7 +22,7 @@ module.exports = (fetchMock, AbortController) => {
 
 			try {
 				await fm.fetchHandler('http://it.at.there/', {
-					signal: controller.signal
+					signal: controller.signal,
 				});
 			} catch (error) {
 				if (typeof DOMException !== 'undefined') {
@@ -35,7 +35,7 @@ module.exports = (fetchMock, AbortController) => {
 
 		it('error on signal abort for request object', async () => {
 			fm.mock('http://it.at.there/', () => {
-				return new Promise(resolve => {
+				return new Promise((resolve) => {
 					setTimeout(() => {
 						resolve({});
 					}, 500);
@@ -48,7 +48,7 @@ module.exports = (fetchMock, AbortController) => {
 			try {
 				await fm.fetchHandler(
 					new fm.config.Request('http://it.at.there/', {
-						signal: controller.signal
+						signal: controller.signal,
 					})
 				);
 			} catch (error) {
@@ -68,7 +68,7 @@ module.exports = (fetchMock, AbortController) => {
 
 			try {
 				await fm.fetchHandler('http://it.at.there/', {
-					signal: controller.signal
+					signal: controller.signal,
 				});
 			} catch (error) {
 				if (typeof DOMException !== 'undefined') {
@@ -81,7 +81,7 @@ module.exports = (fetchMock, AbortController) => {
 
 		it('go into `done` state even when aborted', async () => {
 			fm.once('http://it.at.there/', () => {
-				return new Promise(resolve => {
+				return new Promise((resolve) => {
 					setTimeout(() => {
 						resolve();
 					}, 500);
@@ -92,7 +92,7 @@ module.exports = (fetchMock, AbortController) => {
 			setTimeout(() => controller.abort(), 300);
 			try {
 				await fm.fetchHandler('http://it.at.there/', {
-					signal: controller.signal
+					signal: controller.signal,
 				});
 			} catch (error) {
 				if (typeof DOMException !== 'undefined') {
@@ -104,7 +104,7 @@ module.exports = (fetchMock, AbortController) => {
 
 		it('will flush even when aborted', async () => {
 			fm.mock('http://it.at.there/', () => {
-				return new Promise(resolve => {
+				return new Promise((resolve) => {
 					setTimeout(() => {
 						resolve();
 					}, 500);

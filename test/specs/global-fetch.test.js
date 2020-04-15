@@ -34,12 +34,7 @@ module.exports = (fetchMock, theGlobal) => {
 		});
 
 		it('restores global fetch after a complex mock', () => {
-			fetchMock
-				.mock(/a/, 200)
-				.mock(/b/, 200)
-				.spy()
-				.catch(404)
-				.restore();
+			fetchMock.mock(/a/, 200).mock(/b/, 200).spy().catch(404).restore();
 			expect(theGlobal.fetch).to.equal(originalFetch);
 		});
 

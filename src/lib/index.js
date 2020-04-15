@@ -19,15 +19,15 @@ FetchMock.config = {
 	includeContentLength: true,
 	sendAsJson: true,
 	warnOnFallback: true,
-	overwriteRoutes: undefined
+	overwriteRoutes: undefined,
 };
 
-FetchMock.createInstance = function() {
+FetchMock.createInstance = function () {
 	debug('Creating fetch-mock instance');
 	const instance = Object.create(FetchMock);
 	instance._uncompiledRoutes = (this._uncompiledRoutes || []).slice();
 	instance._matchers = this._matchers.slice();
-	instance.routes = instance._uncompiledRoutes.map(config =>
+	instance.routes = instance._uncompiledRoutes.map((config) =>
 		instance.compileRoute(config)
 	);
 	instance.fallbackResponse = this.fallbackResponse || undefined;
@@ -38,14 +38,14 @@ FetchMock.createInstance = function() {
 	return instance;
 };
 
-FetchMock.bindMethods = function() {
+FetchMock.bindMethods = function () {
 	this.fetchHandler = FetchMock.fetchHandler.bind(this);
 	this.reset = this.restore = FetchMock.reset.bind(this);
 	this.resetHistory = FetchMock.resetHistory.bind(this);
 	this.resetBehavior = FetchMock.resetBehavior.bind(this);
 };
 
-FetchMock.sandbox = function() {
+FetchMock.sandbox = function () {
 	debug('Creating sandboxed fetch-mock instance');
 	// this construct allows us to create a fetch-mock instance which is also
 	// a callable function, while circumventing circularity when defining the
@@ -59,7 +59,7 @@ FetchMock.sandbox = function() {
 		{
 			Headers: this.config.Headers,
 			Request: this.config.Request,
-			Response: this.config.Response
+			Response: this.config.Response,
 		}
 	);
 
@@ -69,7 +69,7 @@ FetchMock.sandbox = function() {
 	return sandbox;
 };
 
-FetchMock.getOption = function(name, route = {}) {
+FetchMock.getOption = function (name, route = {}) {
 	return name in route ? route[name] : this.config[name];
 };
 

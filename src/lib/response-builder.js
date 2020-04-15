@@ -4,7 +4,7 @@ const responseConfigProps = [
 	'headers',
 	'throws',
 	'status',
-	'redirectUrl'
+	'redirectUrl',
 ];
 
 class ResponseBuilder {
@@ -25,9 +25,9 @@ class ResponseBuilder {
 	}
 
 	sendAsObject() {
-		if (responseConfigProps.some(prop => this.responseConfig[prop])) {
+		if (responseConfigProps.some((prop) => this.responseConfig[prop])) {
 			if (
-				Object.keys(this.responseConfig).every(key =>
+				Object.keys(this.responseConfig).every((key) =>
 					responseConfigProps.includes(key)
 				)
 			) {
@@ -45,14 +45,14 @@ class ResponseBuilder {
 		if (typeof this.responseConfig === 'number') {
 			this.debug('building response using status', this.responseConfig);
 			this.responseConfig = {
-				status: this.responseConfig
+				status: this.responseConfig,
 			};
 			// If the response config is not an object, or is an object that doesn't use
 			// any reserved properties, assume it is meant to be the body of the response
 		} else if (typeof this.responseConfig === 'string' || this.sendAsObject()) {
 			this.debug('building text response from', this.responseConfig);
 			this.responseConfig = {
-				body: this.responseConfig
+				body: this.responseConfig,
 			};
 		}
 	}
@@ -178,14 +178,14 @@ e.g. {"body": {"status: "registered"}}`);
 								fetchMock._holdingPromises.push(result.catch(() => null));
 							}
 							return result;
-						}
+						},
 					});
 				}
 
 				return originalResponse[name];
-			}
+			},
 		});
 	}
 }
 
-module.exports = options => new ResponseBuilder(options).exec();
+module.exports = (options) => new ResponseBuilder(options).exec();

@@ -61,7 +61,7 @@ const resolve = async (
 	}
 };
 
-FetchMock.fetchHandler = function(url, options, request) {
+FetchMock.fetchHandler = function (url, options, request) {
 	setDebugPhase('handle');
 	const debug = getDebug('fetchHandler()');
 	debug('fetch called with:', url, options);
@@ -90,17 +90,17 @@ FetchMock.fetchHandler = function(url, options, request) {
 	return this._fetchHandler(url, options, request, signal);
 };
 
-FetchMock._asyncFetchHandler = async function(url, options, request, signal) {
+FetchMock._asyncFetchHandler = async function (url, options, request, signal) {
 	options.body = await options.body;
 	return this._fetchHandler(url, options, request, signal);
 };
 
-FetchMock._fetchHandler = function(url, options, request, signal) {
+FetchMock._fetchHandler = function (url, options, request, signal) {
 	const route = this.executeRouter(url, options, request);
 
 	// this is used to power the .flush() method
 	let done;
-	this._holdingPromises.push(new this.config.Promise(res => (done = res)));
+	this._holdingPromises.push(new this.config.Promise((res) => (done = res)));
 
 	// wrapped in this promise to make sure we respect custom Promise
 	// constructors defined by the user
@@ -135,7 +135,7 @@ FetchMock._fetchHandler = function(url, options, request, signal) {
 
 FetchMock.fetchHandler.isMock = true;
 
-FetchMock.executeRouter = function(url, options, request) {
+FetchMock.executeRouter = function (url, options, request) {
 	const debug = getDebug('executeRouter()');
 	debug(`Attempting to match request to a route`);
 	if (this.getOption('fallbackToNetwork') === 'always') {
@@ -165,9 +165,9 @@ FetchMock.executeRouter = function(url, options, request) {
 
 	if (!this.getOption('fallbackToNetwork')) {
 		throw new Error(
-			`fetch-mock: No fallback response defined for ${(options &&
-				options.method) ||
-				'GET'} to ${url}`
+			`fetch-mock: No fallback response defined for ${
+				(options && options.method) || 'GET'
+			} to ${url}`
 		);
 	}
 
@@ -175,7 +175,7 @@ FetchMock.executeRouter = function(url, options, request) {
 	return { response: this.getNativeFetch(), responseIsFetch: true };
 };
 
-FetchMock.generateResponse = async function(route, url, options, request) {
+FetchMock.generateResponse = async function (route, url, options, request) {
 	const debug = getDebug('generateResponse()');
 	const response = await resolve(route, url, options, request);
 
@@ -197,11 +197,11 @@ FetchMock.generateResponse = async function(route, url, options, request) {
 		url,
 		responseConfig: response,
 		fetchMock: this,
-		route
+		route,
 	});
 };
 
-FetchMock.router = function(url, options, request) {
+FetchMock.router = function (url, options, request) {
 	const route = this.routes.find((route, i) => {
 		debug(`Trying to match route ${i}`);
 		return route.matcher(url, options, request);
@@ -212,13 +212,13 @@ FetchMock.router = function(url, options, request) {
 			url,
 			options,
 			request,
-			identifier: route.identifier
+			identifier: route.identifier,
 		});
 		return route;
 	}
 };
 
-FetchMock.getNativeFetch = function() {
+FetchMock.getNativeFetch = function () {
 	const func = this.realFetch || (this.isSandbox && this.config.fetch);
 	if (!func) {
 		throw new Error(
@@ -228,13 +228,13 @@ FetchMock.getNativeFetch = function() {
 	return func;
 };
 
-FetchMock.push = function({ url, options, request, isUnmatched, identifier }) {
+FetchMock.push = function ({ url, options, request, isUnmatched, identifier }) {
 	debug('Recording fetch call', {
 		url,
 		options,
 		request,
 		isUnmatched,
-		identifier
+		identifier,
 	});
 	const args = [url, options];
 	args.request = request;

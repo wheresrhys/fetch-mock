@@ -1,17 +1,17 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-module.exports = fetchMock => {
+module.exports = (fetchMock) => {
 	describe('user defined matchers', () => {
 		it('match on sync property', async () => {
 			const fm = fetchMock.createInstance();
 			fm.addMatcher({
 				name: 'syncMatcher',
-				matcher: route => url => url.indexOf(route.syncMatcher) > 10
+				matcher: (route) => (url) => url.indexOf(route.syncMatcher) > 10,
 			});
 			fm.mock(
 				{
-					syncMatcher: 'lime'
+					syncMatcher: 'lime',
 				},
 				200
 			).catch();
@@ -25,27 +25,27 @@ module.exports = fetchMock => {
 			const fm = fetchMock.createInstance();
 			fm.addMatcher({
 				name: 'asyncBodyMatcher',
-				matcher: route => (url, options, request) =>
+				matcher: (route) => (url, options, request) =>
 					request && JSON.parse(options.body)[route.asyncBodyMatcher] === true,
-				usesBody: true
+				usesBody: true,
 			});
 			fm.mock(
 				{
-					asyncBodyMatcher: 'lime'
+					asyncBodyMatcher: 'lime',
 				},
 				200
 			).catch();
 			await fm.fetchHandler(
 				new fm.config.Request('http://it.at.there', {
 					method: 'POST',
-					body: JSON.stringify({ lemon: true })
+					body: JSON.stringify({ lemon: true }),
 				})
 			);
 			expect(fm.calls(true).length).to.equal(0);
 			await fm.fetchHandler(
 				new fm.config.Request('http://it.at.there', {
 					method: 'POST',
-					body: JSON.stringify({ lime: true })
+					body: JSON.stringify({ lime: true }),
 				})
 			);
 			expect(fm.calls(true).length).to.equal(1);

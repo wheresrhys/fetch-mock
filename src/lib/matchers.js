@@ -7,29 +7,32 @@ const {
 	headers: headerUtils,
 	getPath,
 	getQuery,
-	normalizeUrl
+	normalizeUrl,
 } = require('./request-utils');
 const isEqual = require('lodash.isequal');
 
-const debuggableUrlFunc = func => url => {
+const debuggableUrlFunc = (func) => (url) => {
 	debug('Actual url:', url);
 	return func(url);
 };
 
 const stringMatchers = {
-	begin: targetString =>
-		debuggableUrlFunc(url => url.indexOf(targetString) === 0),
-	end: targetString =>
-		debuggableUrlFunc(url => url.substr(-targetString.length) === targetString),
-	glob: targetString => {
+	begin: (targetString) =>
+		debuggableUrlFunc((url) => url.indexOf(targetString) === 0),
+	end: (targetString) =>
+		debuggableUrlFunc(
+			(url) => url.substr(-targetString.length) === targetString
+		),
+	glob: (targetString) => {
 		const urlRX = glob(targetString);
-		return debuggableUrlFunc(url => urlRX.test(url));
+		return debuggableUrlFunc((url) => urlRX.test(url));
 	},
-	express: targetString => {
+	express: (targetString) => {
 		const urlRX = pathToRegexp(targetString);
-		return debuggableUrlFunc(url => urlRX.test(getPath(url)));
+		return debuggableUrlFunc((url) => urlRX.test(getPath(url)));
 	},
-	path: targetString => debuggableUrlFunc(url => getPath(url) === targetString)
+	path: (targetString) =>
+		debuggableUrlFunc((url) => getPath(url) === targetString),
 };
 
 const getHeaderMatcher = ({ headers: expectedHeaders }) => {
@@ -47,7 +50,7 @@ const getHeaderMatcher = ({ headers: expectedHeaders }) => {
 		);
 		debug('  Expected headers:', expectation);
 		debug('  Actual headers:', lowerCaseHeaders);
-		return Object.keys(expectation).every(headerName =>
+		return Object.keys(expectation).every((headerName) =>
 			headerUtils.equal(lowerCaseHeaders[headerName], expectation[headerName])
 		);
 	};
@@ -77,12 +80,12 @@ const getQueryStringMatcher = ({ query: expectedQuery }) => {
 	}
 	debug('  Expected query parameters:', expectedQuery);
 	const keys = Object.keys(expectedQuery);
-	return url => {
+	return (url) => {
 		debug('Attempting to match query parameters');
 		const query = querystring.parse(getQuery(url));
 		debug('  Expected query parameters:', expectedQuery);
 		debug('  Actual query parameters:', query);
-		return keys.every(key => query[key] === expectedQuery[key]);
+		return keys.every((key) => query[key] === expectedQuery[key]);
 	};
 };
 
@@ -101,7 +104,7 @@ const getParamsMatcher = ({ params: expectedParams, url: matcherUrl }) => {
 	const expectedKeys = Object.keys(expectedParams);
 	const keys = [];
 	const re = pathToRegexp(matcherUrl.replace(/^express:/, ''), keys);
-	return url => {
+	return (url) => {
 		debug('Attempting to match path parameters');
 		const vals = re.exec(getPath(url)) || [];
 		vals.shift();
@@ -112,7 +115,7 @@ const getParamsMatcher = ({ params: expectedParams, url: matcherUrl }) => {
 		);
 		debug('  Expected path parameters:', expectedParams);
 		debug('  Actual path parameters:', params);
-		return expectedKeys.every(key => params[key] === expectedParams[key]);
+		return expectedKeys.every((key) => params[key] === expectedParams[key]);
 	};
 };
 
@@ -165,7 +168,7 @@ const getFullUrlMatcher = (route, matcherUrl, query) => {
 		route.identifier = expectedUrl;
 	}
 
-	return matcherUrl => {
+	return (matcherUrl) => {
 		debug('Expected url:', expectedUrl);
 		debug('Actual url:', matcherUrl);
 		if (query && expectedUrl.indexOf('?')) {
@@ -184,7 +187,7 @@ const getFunctionMatcher = ({ functionMatcher }) => {
 	};
 };
 
-const getUrlMatcher = route => {
+const getUrlMatcher = (route) => {
 	debug('Generating url matcher');
 	const { url: matcherUrl, query } = route;
 
@@ -195,7 +198,7 @@ const getUrlMatcher = route => {
 
 	if (matcherUrl instanceof RegExp) {
 		debug('  Using regular expression to match url:', matcherUrl);
-		return url => matcherUrl.test(url);
+		return (url) => matcherUrl.test(url);
 	}
 
 	if (matcherUrl.href) {
@@ -218,7 +221,7 @@ const FetchMock = {};
 
 FetchMock._matchers = [];
 
-FetchMock.addMatcher = function(matcher) {
+FetchMock.addMatcher = function (matcher) {
 	this._matchers.push(matcher);
 };
 

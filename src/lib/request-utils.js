@@ -2,7 +2,7 @@ let URL;
 // https://stackoverflow.com/a/19709846/308237
 const absoluteUrlRX = new RegExp('^(?:[a-z]+:)?//', 'i');
 
-const headersToArray = headers => {
+const headersToArray = (headers) => {
 	// node-fetch 1 Headers
 	if (typeof headers.raw === 'function') {
 		return Object.entries(headers.raw());
@@ -13,10 +13,10 @@ const headersToArray = headers => {
 	}
 };
 
-const zipObject = entries =>
+const zipObject = (entries) =>
 	entries.reduce((obj, [key, val]) => Object.assign(obj, { [key]: val }), {});
 
-const normalizeUrl = url => {
+const normalizeUrl = (url) => {
 	if (
 		typeof url === 'function' ||
 		url instanceof RegExp ||
@@ -33,7 +33,7 @@ const normalizeUrl = url => {
 	}
 };
 
-const extractBody = async request => {
+const extractBody = async (request) => {
 	try {
 		// node-fetch
 		if ('body' in request) {
@@ -45,13 +45,13 @@ const extractBody = async request => {
 };
 
 module.exports = {
-	setUrlImplementation: it => {
+	setUrlImplementation: (it) => {
 		URL = it;
 	},
 	normalizeRequest: (url, options, Request) => {
 		if (Request.prototype.isPrototypeOf(url)) {
 			const derivedOptions = {
-				method: url.method
+				method: url.method,
 			};
 
 			const body = extractBody(url);
@@ -64,7 +64,7 @@ module.exports = {
 				url: normalizeUrl(url.url),
 				options: Object.assign(derivedOptions, options),
 				request: url,
-				signal: (options && options.signal) || url.signal
+				signal: (options && options.signal) || url.signal,
 			};
 
 			const headers = headersToArray(url.headers);
@@ -81,7 +81,7 @@ module.exports = {
 			return {
 				url: normalizeUrl(url),
 				options: options,
-				signal: options && options.signal
+				signal: options && options.signal,
 			};
 		} else if (typeof url === 'object') {
 			throw new TypeError(
@@ -92,22 +92,22 @@ module.exports = {
 		}
 	},
 	normalizeUrl,
-	getPath: url => {
+	getPath: (url) => {
 		const u = absoluteUrlRX.test(url)
 			? new URL(url)
 			: new URL(url, 'http://dummy');
 		return u.pathname;
 	},
 
-	getQuery: url => {
+	getQuery: (url) => {
 		const u = absoluteUrlRX.test(url)
 			? new URL(url)
 			: new URL(url, 'http://dummy');
 		return u.search ? u.search.substr(1) : '';
 	},
 	headers: {
-		normalize: headers => zipObject(headersToArray(headers)),
-		toLowerCase: headers =>
+		normalize: (headers) => zipObject(headersToArray(headers)),
+		toLowerCase: (headers) =>
 			Object.keys(headers).reduce((obj, k) => {
 				obj[k.toLowerCase()] = headers[k];
 				return obj;
@@ -125,6 +125,6 @@ module.exports = {
 			}
 
 			return actualHeader.every((val, i) => val === expectedHeader[i]);
-		}
-	}
+		},
+	},
 };

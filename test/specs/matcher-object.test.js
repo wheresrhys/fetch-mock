@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-module.exports = fetchMock => {
+module.exports = (fetchMock) => {
 	describe('matcher object', () => {
 		let fm;
 		beforeEach(() => {
@@ -32,7 +32,7 @@ module.exports = fetchMock => {
 					url: 'end:profile',
 					matcher: (url, opts) => {
 						return opts && opts.headers && opts.headers.authorized === true;
-					}
+					},
 				},
 				200
 			).catch();
@@ -40,11 +40,11 @@ module.exports = fetchMock => {
 			await fm.fetchHandler('http://it.at.there/profile');
 			expect(fm.calls(true).length).to.equal(0);
 			await fm.fetchHandler('http://it.at.there/not', {
-				headers: { authorized: true }
+				headers: { authorized: true },
 			});
 			expect(fm.calls(true).length).to.equal(0);
 			await fm.fetchHandler('http://it.at.there/profile', {
-				headers: { authorized: true }
+				headers: { authorized: true },
 			});
 			expect(fm.calls(true).length).to.equal(1);
 		});
@@ -55,7 +55,7 @@ module.exports = fetchMock => {
 					url: 'end:profile',
 					functionMatcher: (url, opts) => {
 						return opts && opts.headers && opts.headers.authorized === true;
-					}
+					},
 				},
 				200
 			).catch();
@@ -65,11 +65,11 @@ module.exports = fetchMock => {
 			fm.mock({ url: 'http://it.at.there/', headers: { a: 'b' } }, 200).catch();
 
 			await fm.fetchHandler('http://it.at.there/', {
-				headers: { a: 'c' }
+				headers: { a: 'c' },
 			});
 			expect(fm.calls(true).length).to.equal(0);
 			await fm.fetchHandler('http://it.at.there/', {
-				headers: { a: 'b' }
+				headers: { a: 'b' },
 			});
 			expect(fm.calls(true).length).to.equal(1);
 		});
@@ -112,14 +112,14 @@ module.exports = fetchMock => {
 			).catch();
 
 			await fm.fetchHandler('http://it.at.there/', {
-				method: 'POST'
+				method: 'POST',
 			});
 			expect(fm.calls(true).length).to.equal(0);
 
 			await fm.fetchHandler('http://it.at.there/', {
 				method: 'POST',
 				body: JSON.stringify({ foo: 'bar' }),
-				headers: { 'Content-Type': 'application/json' }
+				headers: { 'Content-Type': 'application/json' },
 			});
 			expect(fm.calls(true).length).to.equal(1);
 		});
@@ -127,17 +127,17 @@ module.exports = fetchMock => {
 		it('if no url provided, match any url', async () => {
 			fm.mock(
 				{
-					headers: { a: 'b' }
+					headers: { a: 'b' },
 				},
 				200
 			).catch();
 
 			await fm.fetchHandler('http://it.at.anywhere/', {
-				headers: { a: 'c' }
+				headers: { a: 'c' },
 			});
 			expect(fm.calls(true).length).to.equal(0);
 			await fm.fetchHandler('http://it.at.anywhere/', {
-				headers: { a: 'b' }
+				headers: { a: 'b' },
 			});
 			expect(fm.calls(true).length).to.equal(1);
 		});
@@ -159,7 +159,7 @@ module.exports = fetchMock => {
 			);
 			const res = await fm.fetchHandler('http://it.at.there', {
 				method: 'POST',
-				body: JSON.stringify({ ham: 'sandwich', egg: 'mayonaise' })
+				body: JSON.stringify({ ham: 'sandwich', egg: 'mayonaise' }),
 			});
 			expect(res.status).to.equal(200);
 		});

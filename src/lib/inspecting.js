@@ -1,18 +1,18 @@
 const { setDebugPhase, setDebugNamespace, debug } = require('./debug');
 const { normalizeUrl } = require('./request-utils');
 const FetchMock = {};
-const isName = nameOrMatcher =>
+const isName = (nameOrMatcher) =>
 	typeof nameOrMatcher === 'string' && /^[\da-zA-Z\-]+$/.test(nameOrMatcher);
 
-const filterCallsWithMatcher = function(matcher, options = {}, calls) {
+const filterCallsWithMatcher = function (matcher, options = {}, calls) {
 	matcher = this.generateMatcher(
 		this.sanitizeRoute(Object.assign({ matcher }, options))
 	);
 	return calls.filter(([url, options]) => matcher(normalizeUrl(url), options));
 };
 
-const formatDebug = func => {
-	return function(...args) {
+const formatDebug = (func) => {
+	return function (...args) {
 		setDebugPhase('inspect');
 		const result = func.call(this, ...args);
 		setDebugPhase();
@@ -20,7 +20,7 @@ const formatDebug = func => {
 	};
 };
 
-FetchMock.filterCalls = function(nameOrMatcher, options) {
+FetchMock.filterCalls = function (nameOrMatcher, options) {
 	debug('Filtering fetch calls');
 	let calls = this._calls;
 	let matcher = '*';
@@ -47,7 +47,7 @@ FetchMock.filterCalls = function(nameOrMatcher, options) {
 			debug(
 				`Filter provided, ${nameOrMatcher}, identifies a route. Returning only calls handled by that route`
 			);
-			calls = calls.filter(call => call.identifier === matcher);
+			calls = calls.filter((call) => call.identifier === matcher);
 		}
 	}
 
@@ -65,32 +65,32 @@ FetchMock.filterCalls = function(nameOrMatcher, options) {
 	return calls;
 };
 
-FetchMock.calls = formatDebug(function(nameOrMatcher, options) {
+FetchMock.calls = formatDebug(function (nameOrMatcher, options) {
 	debug('retrieving matching calls');
 	return this.filterCalls(nameOrMatcher, options);
 });
 
-FetchMock.lastCall = formatDebug(function(nameOrMatcher, options) {
+FetchMock.lastCall = formatDebug(function (nameOrMatcher, options) {
 	debug('retrieving last matching call');
 	return [...this.filterCalls(nameOrMatcher, options)].pop();
 });
 
-FetchMock.lastUrl = formatDebug(function(nameOrMatcher, options) {
+FetchMock.lastUrl = formatDebug(function (nameOrMatcher, options) {
 	debug('retrieving url of last matching call');
 	return (this.lastCall(nameOrMatcher, options) || [])[0];
 });
 
-FetchMock.lastOptions = formatDebug(function(nameOrMatcher, options) {
+FetchMock.lastOptions = formatDebug(function (nameOrMatcher, options) {
 	debug('retrieving options of last matching call');
 	return (this.lastCall(nameOrMatcher, options) || [])[1];
 });
 
-FetchMock.called = formatDebug(function(nameOrMatcher, options) {
+FetchMock.called = formatDebug(function (nameOrMatcher, options) {
 	debug('checking if matching call was made');
 	return Boolean(this.filterCalls(nameOrMatcher, options).length);
 });
 
-FetchMock.flush = formatDebug(async function(waitForResponseMethods) {
+FetchMock.flush = formatDebug(async function (waitForResponseMethods) {
 	setDebugNamespace('flush');
 	debug(
 		`flushing all fetch calls. ${
@@ -112,7 +112,7 @@ FetchMock.flush = formatDebug(async function(waitForResponseMethods) {
 	setDebugNamespace();
 });
 
-FetchMock.done = formatDebug(function(nameOrMatcher) {
+FetchMock.done = formatDebug(function (nameOrMatcher) {
 	setDebugPhase('inspect');
 	setDebugNamespace('done');
 	debug('Checking to see if expected calls have been made');
@@ -140,7 +140,7 @@ FetchMock.done = formatDebug(function(nameOrMatcher) {
 			}
 
 			const expectedTimes = (
-				this.routes.find(r => r.identifier === identifier) || {}
+				this.routes.find((r) => r.identifier === identifier) || {}
 			).repeat;
 
 			if (!expectedTimes) {
@@ -166,7 +166,7 @@ FetchMock.done = formatDebug(function(nameOrMatcher) {
 				return true;
 			}
 		})
-		.every(isDone => isDone);
+		.every((isDone) => isDone);
 
 	setDebugNamespace();
 	setDebugPhase();

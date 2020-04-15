@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-module.exports = fetchMock => {
+module.exports = (fetchMock) => {
 	describe('responses', () => {
 		let fm;
 		before(() => {
@@ -59,7 +59,7 @@ module.exports = fetchMock => {
 
 				it('convert body properties to json', async () => {
 					fm.mock('http://it.at.there/', {
-						body: { an: 'object' }
+						body: { an: 'object' },
 					});
 					const res = await fm.fetchHandler('http://it.at.there/');
 					expect(res.headers.get('content-type')).to.equal('application/json');
@@ -70,8 +70,8 @@ module.exports = fetchMock => {
 					fm.mock('http://it.at.there/', {
 						body: { an: 'object' },
 						headers: {
-							'content-type': 'text/html'
-						}
+							'content-type': 'text/html',
+						},
 					});
 					const res = await fm.fetchHandler('http://it.at.there/');
 					expect(res.headers.get('content-type')).to.equal('text/html');
@@ -104,7 +104,7 @@ module.exports = fetchMock => {
 				if (typeof window === 'undefined') {
 					it('not convert if `redirectUrl` property exists', async () => {
 						fm.mock('http://it.at.there/', {
-							redirectUrl: 'http://url.to.hit'
+							redirectUrl: 'http://url.to.hit',
 						});
 						const res = await fm.fetchHandler('http://it.at.there/');
 						expect(res.headers.get('content-type')).not.to.exist;
@@ -123,8 +123,8 @@ module.exports = fetchMock => {
 					status: 202,
 					body: { an: 'object' },
 					headers: {
-						header: 'val'
-					}
+						header: 'val',
+					},
 				});
 				const res = await fm.fetchHandler('http://it.at.there/');
 				expect(res.status).to.equal(202);
@@ -153,7 +153,7 @@ module.exports = fetchMock => {
 			it('respond with a redirected response', async () => {
 				fm.mock('http://it.at.there/', {
 					redirectUrl: 'http://it.at.there/destination',
-					body: 'I am a redirect'
+					body: 'I am a redirect',
 				});
 				const res = await fm.fetchHandler('http://it.at.there/');
 				expect(res.redirected).to.equal(true);
@@ -167,7 +167,7 @@ module.exports = fetchMock => {
 					(url, opts) => url + opts.headers.header
 				);
 				const res = await fm.fetchHandler('http://it.at.there/', {
-					headers: { header: 'val' }
+					headers: { header: 'val' },
 				});
 				expect(res.status).to.equal(200);
 				expect(await res.text()).to.equal('http://it.at.there/val');
@@ -180,7 +180,7 @@ module.exports = fetchMock => {
 				const res = await fm.fetchHandler(
 					new fm.config.Request('http://it.at.there/path', {
 						body: JSON.stringify({ greeting: 'hi' }),
-						method: 'post'
+						method: 'post',
 					})
 				);
 				expect(res.status).to.equal(200);
@@ -203,11 +203,11 @@ module.exports = fetchMock => {
 				it('should not overrule explicit mocked content-length header', async () => {
 					fm.mock('http://it.at.there/', {
 						body: {
-							hello: 'world'
+							hello: 'world',
 						},
 						headers: {
-							'Content-Length': '100'
-						}
+							'Content-Length': '100',
+						},
 					});
 					const res = await fetch('http://it.at.there/');
 					expect(res.headers.get('content-length')).to.equal('100');
@@ -216,11 +216,11 @@ module.exports = fetchMock => {
 				it('should be case-insensitive when checking for explicit content-length header', async () => {
 					fm.mock('http://it.at.there/', {
 						body: {
-							hello: 'world'
+							hello: 'world',
 						},
 						headers: {
-							'CoNtEnT-LeNgTh': '100'
-						}
+							'CoNtEnT-LeNgTh': '100',
+						},
 					});
 					const res = await fetch('http://it.at.there/');
 					expect(res.headers.get('content-length')).to.equal('100');
@@ -230,7 +230,7 @@ module.exports = fetchMock => {
 
 		describe('response negotiation', () => {
 			it('function', async () => {
-				fm.mock('http://it.at.there/', url => url);
+				fm.mock('http://it.at.there/', (url) => url);
 				const res = await fm.fetchHandler('http://it.at.there/');
 				expect(res.status).to.equal(200);
 				expect(await res.text()).to.equal('http://it.at.there/');
@@ -243,7 +243,9 @@ module.exports = fetchMock => {
 			});
 
 			it('function that returns a Promise', async () => {
-				fm.mock('http://it.at.there/', url => Promise.resolve('test: ' + url));
+				fm.mock('http://it.at.there/', (url) =>
+					Promise.resolve('test: ' + url)
+				);
 				const res = await fm.fetchHandler('http://it.at.there/');
 				expect(res.status).to.equal(200);
 				expect(await res.text()).to.equal('test: http://it.at.there/');
@@ -252,7 +254,7 @@ module.exports = fetchMock => {
 			it('Promise for a function that returns a response', async () => {
 				fm.mock(
 					'http://it.at.there/',
-					Promise.resolve(url => 'test: ' + url)
+					Promise.resolve((url) => 'test: ' + url)
 				);
 				const res = await fm.fetchHandler('http://it.at.there/');
 				expect(res.status).to.equal(200);
@@ -264,9 +266,9 @@ module.exports = fetchMock => {
 				const req = fm.fetchHandler('http://it.at.there/');
 				let resolved = false;
 				req.then(() => (resolved = true));
-				await new Promise(res => setTimeout(res, 10));
+				await new Promise((res) => setTimeout(res, 10));
 				expect(resolved).to.be.false;
-				await new Promise(res => setTimeout(res, 11));
+				await new Promise((res) => setTimeout(res, 11));
 				expect(resolved).to.be.true;
 				const res = await req;
 				expect(res.status).to.equal(200);
@@ -282,9 +284,9 @@ module.exports = fetchMock => {
 				const req = fm.fetchHandler('http://it.at.there/');
 				let resolved = false;
 				req.then(() => (resolved = true));
-				await new Promise(res => setTimeout(res, 10));
+				await new Promise((res) => setTimeout(res, 10));
 				expect(resolved).to.be.false;
-				await new Promise(res => setTimeout(res, 11));
+				await new Promise((res) => setTimeout(res, 11));
 				expect(resolved).to.be.true;
 				const res = await req;
 				expect(res.status).to.equal(200);
@@ -293,9 +295,11 @@ module.exports = fetchMock => {
 			});
 
 			it('pass values to delayed function', async () => {
-				fm.mock('http://it.at.there/', url => `delayed: ${url}`, { delay: 10 });
+				fm.mock('http://it.at.there/', (url) => `delayed: ${url}`, {
+					delay: 10,
+				});
 				const req = fm.fetchHandler('http://it.at.there/');
-				await new Promise(res => setTimeout(res, 11));
+				await new Promise((res) => setTimeout(res, 11));
 				const res = await req;
 				expect(res.status).to.equal(200);
 				expect(await res.text()).to.equal('delayed: http://it.at.there/');
@@ -306,18 +310,18 @@ module.exports = fetchMock => {
 				const req1 = fm.fetchHandler('http://it.at.there/');
 				let resolved = false;
 				req1.then(() => (resolved = true));
-				await new Promise(res => setTimeout(res, 10));
+				await new Promise((res) => setTimeout(res, 10));
 				expect(resolved).to.be.false;
-				await new Promise(res => setTimeout(res, 11));
+				await new Promise((res) => setTimeout(res, 11));
 				expect(resolved).to.be.true;
 				const res1 = await req1;
 				expect(res1.status).to.equal(200);
 				const req2 = fm.fetchHandler('http://it.at.there/');
 				resolved = false;
 				req2.then(() => (resolved = true));
-				await new Promise(res => setTimeout(res, 10));
+				await new Promise((res) => setTimeout(res, 10));
 				expect(resolved).to.be.false;
-				await new Promise(res => setTimeout(res, 11));
+				await new Promise((res) => setTimeout(res, 11));
 				expect(resolved).to.be.true;
 				const res2 = await req2;
 				expect(res2.status).to.equal(200);
@@ -361,7 +365,7 @@ module.exports = fetchMock => {
 						.then(() => {
 							throw 'not as expected';
 						})
-						.catch(err => {
+						.catch((err) => {
 							expect(err).to.equal('as expected');
 						});
 				});
@@ -374,7 +378,7 @@ module.exports = fetchMock => {
 						.then(() => {
 							throw 'not as expected';
 						})
-						.catch(err => {
+						.catch((err) => {
 							expect(err).to.equal('as expected');
 						});
 				});

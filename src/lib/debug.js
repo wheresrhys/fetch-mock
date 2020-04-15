@@ -9,7 +9,7 @@ const newDebug = () => {
 		: debug(`fetch-mock:${phase}`);
 };
 
-const newDebugSandbox = ns => debug(`fetch-mock:${phase}:${ns}`);
+const newDebugSandbox = (ns) => debug(`fetch-mock:${phase}:${ns}`);
 
 newDebug();
 
@@ -17,13 +17,13 @@ module.exports = {
 	debug: (...args) => {
 		debugFunc(...args);
 	},
-	setDebugNamespace: str => {
+	setDebugNamespace: (str) => {
 		namespace = str;
 		newDebug();
 	},
-	setDebugPhase: str => {
+	setDebugPhase: (str) => {
 		phase = str || 'default';
 		newDebug();
 	},
-	getDebug: namespace => newDebugSandbox(namespace)
+	getDebug: (namespace) => newDebugSandbox(namespace),
 };

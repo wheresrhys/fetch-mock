@@ -55,11 +55,17 @@ FetchMock.sandbox = function() {
 	const sandbox = Object.assign(
 		proxy, // Ensures that the entire returned object is a callable function
 		FetchMock, // prototype methods
-		this.createInstance() // instance data
+		this.createInstance(), // instance data
+		{
+			Headers: this.config.Headers,
+			Request: this.config.Request,
+			Response: this.config.Response
+		}
 	);
 
 	sandbox.bindMethods();
 	sandbox.isSandbox = true;
+	sandbox.default = sandbox;
 	return sandbox;
 };
 

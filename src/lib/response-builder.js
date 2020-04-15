@@ -83,7 +83,7 @@ e.g. {"body": {"status: "registered"}}`);
 		this.options.url = this.responseConfig.redirectUrl || this.url;
 		this.options.status = this.validateStatus(this.responseConfig.status);
 		this.options.statusText = this.fetchMock.statusTextMap[
-			'' + this.options.status
+			String(this.options.status)
 		];
 		// Set up response headers. The empty object is to cope with
 		// new Headers(undefined) throwing in Chrome

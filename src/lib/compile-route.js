@@ -114,7 +114,7 @@ const generateMatcher = function(route) {
 			({ name, matcher, usesBody }) =>
 				route[name] && { matcher: matcher(route, this), usesBody }
 		)
-		.filter(matcher => !!matcher);
+		.filter(matcher => Boolean(matcher));
 
 	route.usesBody = matchers.some(({ usesBody }) => usesBody);
 

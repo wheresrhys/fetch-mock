@@ -41,9 +41,7 @@ const extractBody = async request => {
 		}
 		// fetch
 		return request.clone().text();
-	} catch (err) {
-		return;
-	}
+	} catch (err) {}
 };
 
 module.exports = {

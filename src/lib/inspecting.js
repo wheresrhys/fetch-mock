@@ -87,7 +87,7 @@ FetchMock.lastOptions = formatDebug(function(nameOrMatcher, options) {
 
 FetchMock.called = formatDebug(function(nameOrMatcher, options) {
 	debug('checking if matching call was made');
-	return !!this.filterCalls(nameOrMatcher, options).length;
+	return Boolean(this.filterCalls(nameOrMatcher, options).length);
 });
 
 FetchMock.flush = formatDebug(async function(waitForResponseMethods) {

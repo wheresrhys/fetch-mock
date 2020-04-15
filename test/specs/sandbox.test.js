@@ -154,9 +154,11 @@ module.exports = (fetchMock, theGlobal) => {
 				Response
 			} = fetchMock.sandbox();
 
-			expect(fetch.name).to.equal('proxy');
+			expect(fetch.name).to.equal('fetchMockProxy');
 			expect(new Headers()).to.be.an.instanceOf(fetchMock.config.Headers);
-			expect(new Request()).to.be.an.instanceOf(fetchMock.config.Request);
+			expect(new Request('http://example.com')).to.be.an.instanceOf(
+				fetchMock.config.Request
+			);
 			expect(new Response()).to.be.an.instanceOf(fetchMock.config.Response);
 		});
 	});

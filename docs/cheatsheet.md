@@ -13,7 +13,7 @@
 `npm i -D fetch-mock` (or `npm i -D fetch-mock-jest` if using jest)
 
 ### Global fetch
-import/require the fetch-mock/fetch-mock-jest library. For the vast majority of test toolchains this _should_ jsut work without any additional wiring.
+import/require the fetch-mock/fetch-mock-jest library. For the vast majority of test toolchains this _should_ just work without any additional wiring.
 
 ### Local fetch with jest
 ```js
@@ -88,7 +88,7 @@ The following should be passed as properties of the first argument of `.mock()`.
 
 ### Custom
 Match on any condition you like by:
-- using a function `{functionMatcher: (url, options, request) => url.length > 100}` (or can jsut pas the function in as the first parameter, not wrapped in an object)
+- using a function `{functionMatcher: (url, options, request) => url.length > 100}` (or can just pass the function in as the first parameter, not wrapped in an object)
 - defining your own declarative matchers with [`addMatcher()`](http://www.wheresrhys.co.uk/fetch-mock/#api-mockingadd-matcher), e.g. setting up declarative matchers that can be used like this is possible  `{isCorsRequest: true, hasBody: true}`
 
 ## Response configuration

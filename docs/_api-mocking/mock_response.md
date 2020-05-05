@@ -1,5 +1,5 @@
 ---
-title: "response"
+title: 'response'
 position: 1.2
 description: |-
   Configures the http response returned by the mock. Accepts any of the following values or a `Promise` for any of them (useful when testing race conditions, loading transitions etc.). Unless otherwise stated, all responses have a `200` status
@@ -74,23 +74,22 @@ parameters:
         examples:
           - "new TypeError('Failed to fetch')"
   - types:
-    - Object
-    - ArrayBuffer
-    - ...
+      - Object
+      - ArrayBuffer
+      - ...
     content: |-
       If the `sendAsJson` option is set to `true`, any object that does not meet the criteria above will be converted to a `JSON` string and set as the response `body`. Otherwise, the object will be set as the response `body` (useful for `ArrayBuffer`s etc.)
   - types:
-    - Promise
+      - Promise
     content: |-
       A `Promise` that resolves to any of the options documented above
     examples:
-      - "new Promise(res => setTimeout(() => res(200), 50))"
+      - 'new Promise(res => setTimeout(() => res(200), 50))'
   - types:
-    - Function
+      - Function
     content: |-
       A function that returns any of the options documented above. The function will be passed the `url` and `options` `fetch` was called with. If `fetch` was called with a `Request` instance, it will be passed `url` and `options` inferred from the `Request` instance, with the original `Request` will be passed as a third argument.
     examples:
-      - "(url, opts) => opts.headers.Authorization ? 200 : 403"
+      - '(url, opts) => opts.headers.Authorization ? 200 : 403'
       - "(_, _, request) => request.headers.get('Authorization') ?  200 : 403"
-
 ---

@@ -1,5 +1,5 @@
 ---
-title: 
+title:
 position:
 parameters:
   - name:

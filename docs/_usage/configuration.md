@@ -21,7 +21,7 @@ parameters:
       - Boolean
     content: Sets a `Content-Length` header on each response.
   - name: fallbackToNetwork
-    default: "false"
+    default: 'false'
     types:
       - Boolean
       - String
@@ -30,7 +30,7 @@ parameters:
       - `false`: Unhandled calls throw an error
       - `'always'`: All calls fall through to the network, effectively disabling fetch-mock.
   - name: overwriteRoutes<sup>†</sup>
-    default: "undefined"
+    default: 'undefined'
     types:
       - Boolean
     content: |-
@@ -41,7 +41,7 @@ parameters:
   - name: matchPartialBody
     types:
       - Boolean
-    content: Match calls that only partially match a specified body json. Uses the [is-subset](https://www.npmjs.com/package/is-subset) library under the hood, which implements behaviour the same as jest's [.objectContainig()](https://jestjs.io/docs/en/expect#expectobjectcontainingobject) method. 
+    content: Match calls that only partially match a specified body json. Uses the [is-subset](https://www.npmjs.com/package/is-subset) library under the hood, which implements behaviour the same as jest's [.objectContainig()](https://jestjs.io/docs/en/expect#expectobjectcontainingobject) method.
   - name: warnOnFallback
     default: true
     types:
@@ -71,6 +71,4 @@ parameters:
 
 content_markdown: |-
   Options marked with a `†` can also be overridden for individual calls to `.mock(matcher, response, options)` by setting as properties on the `options` parameter
-  
-
 ---

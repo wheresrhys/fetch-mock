@@ -72,5 +72,4 @@ content_markdown: |-
   $ node mocked.js
   'got data' { hello: 'world' }
   ```
-
 ---

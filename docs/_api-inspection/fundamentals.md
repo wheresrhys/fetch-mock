@@ -1,10 +1,10 @@
 ---
-title: "Inspection fundamentals"
+title: 'Inspection fundamentals'
 position: 0
 description: |-
   Check out the new [cheatsheet](https://github.com/wheresrhys/fetch-mock/blob/master/docs/cheatsheet.md)
   {: .info}
-  
+
   `fetch-mock`'s inspection methods allow information about how `fetch` was called to be retrieved after your application code has run. Most inspection methods take two arguments — `filter` and `options` — which allow individual, or groups of, `fetch` calls to be extracted and examined.
 parameters:
   - name: filter
@@ -12,12 +12,12 @@ parameters:
       Filter calls to `fetch` using one of the following criteria:
     options:
       - types:
-        - undefined
+          - undefined
         content: |-
           Retrieve all calls made to `fetch`
       - types:
-        - true
-        - '"matched"'
+          - true
+          - '"matched"'
         content: |-
           Retrieve all calls to `fetch` matched by some route defined by `fetch-mock`. The string `'matched'` can be used instead of `true` to make tests more readable
         examples:
@@ -26,8 +26,8 @@ parameters:
             ...
             fetchMock.calls(MATCHED)
       - types:
-        - false
-        - '"unmatched"'
+          - false
+          - '"unmatched"'
         content: |-
           Retrieve all calls to `fetch` not matched by some route defined by `fetch-mock`. The string `'unmatched'` can be used instead of `false` to make tests more readable
         examples:
@@ -60,7 +60,7 @@ parameters:
     content: |-
       Either an object compatible with the [mocking api](#api-mockingmock_options) or a string specifying a http method to filter by. This will be used to filter the list of calls further
 content_markdown: |-
-  
+
   The filtering API is powerful, but potentially confusing. If in doubt, [add a `name` to your route](#api-mockingmock_options), and pass that name in to retrieve exactly the calls you want.
 
   #### A note on Regular Expression and Function matchers

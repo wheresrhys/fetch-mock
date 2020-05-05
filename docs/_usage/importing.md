@@ -37,4 +37,3 @@ content_markdown: |-
   - When not using any bundler in the browser, use one of the following as the src of a script tag: `node_modules/fetch-mock/es5/client-bundle.js`, `node_modules/fetch-mock/es5/client-legacy-bundle.js`. This loads fetch-mock into the `fetchMock` global variable.
   - For Node.js 6 or lower use `require('fetch-mock/es5/server')`
 ---
-

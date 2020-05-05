@@ -1,5 +1,5 @@
 ---
-title: ".mock(matcher, response, options)"
+title: '.mock(matcher, response, options)'
 navTitle: .mock()
 position: 1
 description: |
@@ -120,5 +120,3 @@ left_code_blocks:
           expect(res.status).to.equal(200)
         })
 ---
-
-

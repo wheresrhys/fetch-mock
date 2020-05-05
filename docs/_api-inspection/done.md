@@ -9,8 +9,8 @@ parameters:
     content: Rule for matching calls to `fetch`.
     options:
       - types:
-        - undefined
-        - true
+          - undefined
+          - true
         content: |-
           Returns true if all routes have been called the expected number of times
       - name: routeIdentifier
@@ -24,5 +24,4 @@ parameters:
           Returns true if the routes specified by the identifier has been called the expected number of times
 content_markdown: |-
   If several routes have the same matcher/url, but use [mocking options](#apimockingmock_options), the recommended way to handle this is to [name each route](#api-mockingmock_options) and filter using those names
-  
 ---

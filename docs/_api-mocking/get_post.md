@@ -1,5 +1,5 @@
 ---
-title: ".get(), .post(), .put(), .delete(), .head(), .patch()"
+title: '.get(), .post(), .put(), .delete(), .head(), .patch()'
 navTitle: .get(), .post() ...
 position: 2
 description: |-

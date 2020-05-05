@@ -1,5 +1,5 @@
 ---
-title: "matcher"
+title: 'matcher'
 position: 1.1
 description: |-
   Criteria for deciding which requests to mock.
@@ -17,7 +17,7 @@ parametersBlockTitle: Argument values
 parentMethod: mock
 parentMethodGroup: mocking
 parameters:
-  - name: "*"
+  - name: '*'
     types:
       - String
     content: Match any url
@@ -89,7 +89,7 @@ parameters:
       Match if a function returns something truthy. The function will be passed the `url` and `options` `fetch` was called with. If `fetch` was called with a `Request` instance, it will be passed `url` and `options` inferred from the `Request` instance, with the original `Request` will be passed as a third argument.
 
       This can also be set as a `functionMatcher` in the [options parameter](#api-mockingmock_options), and in this way powerful arbitrary matching criteria can be combined with the ease of the declarative matching rules above.
-  - types: 
+  - types:
       - Object
     examples:
       - |-
@@ -134,7 +134,6 @@ parameters:
 
           Note that if matching on body _and_ using `Request` instances in your source code, this forces fetch-mock into an asynchronous flow _before_ it is able to route requests effectively. This means no [inspection methods](#api-inspectionfundamentals) can be used synchronously. You must first either await the fetches to resolve, or `await fetchMock.flush()`. The popular library [Ky](https://github.com/sindresorhus/ky) uses `Request` instances internally, and so also triggers this mode.
           {: .warning}
-
 
         examples:
           - |-
@@ -182,4 +181,3 @@ content_markdown: |-
    If multiple mocks use the same `matcher` but use different options, such as `headers`, you will need to use the `overwriteRoutes: false` option.
   {: .warning}
 ---
-

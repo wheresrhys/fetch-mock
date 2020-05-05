@@ -22,10 +22,11 @@ FetchMock.statusTextMap = http.STATUS_CODES;
 FetchMock.Stream = Stream;
 
 FetchMock.config = Object.assign(FetchMock.config, {
-	Promise: Promise,
-	Request: Request,
-	Response: Response,
-	Headers: Headers,
+	Promise,
+	Request,
+	Response,
+	Headers,
+	fetch
 });
 
 module.exports = FetchMock.createInstance();

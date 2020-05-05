@@ -130,7 +130,9 @@ module.exports = (fetchMock, theGlobal) => {
 		});
 
 		it('error if spy() is called and no fetch defined in config', () => {
-			expect(() => fetchMock.sandbox().spy()).to.throw();
+			const fm = fetchMock.sandbox();
+			delete fm.config.fetch
+			expect(() => fm.spy()).to.throw();
 		});
 
 		it("don't error if spy() is called and fetch defined in config", () => {

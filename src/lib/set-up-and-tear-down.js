@@ -63,9 +63,12 @@ FetchMock.catch = function (response) {
 	return this._mock();
 };
 
-FetchMock.spy = function () {
+FetchMock.spy = function (route) {
+	// even though ._mock() is called by .mock() and .catch() we still need to
+	// call it here otherwise .getNativeFetch() won't be able to use the reference
+	// to .realFetch that ._mock() sets up
 	this._mock();
-	return this.catch(this.getNativeFetch());
+	return route ? this.mock(route, this.getNativeFetch()) : this.catch(this.getNativeFetch());
 };
 
 const defineShorthand = (methodName, underlyingMethod, shorthandOptions) => {

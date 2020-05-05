@@ -35,7 +35,8 @@ proxyquire('./my-module', {'node-fetch': fetchMock})
 All these methods can be chained e.g. `fetchMock.getAny(200).catch(400)`
 - Stub fetch and **define a route** `.mock(matcher, response)`
 - Stub fetch **without a route** `.mock()`
-- Spy on calls, letting them **fall through to the network** `.spy()`
+- Spy on calls, letting them **fall through to the network** `.spy()` 
+- Let **specific calls fall through to the network** `.spy(matcher)` 
 - Respond with the given response to any **unmatched calls** `.catch(response)`
 - Add a mock that only responds **once** `.once(matcher, response)`
 - Add a mock that responds to **any** request `.any(response)`

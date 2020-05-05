@@ -7,7 +7,9 @@
 Please give me your feedback as github issues/pull requests. It feels like a big improvement to me. Hopefully fetch-mock users think the same. http://www.wheresrhys.co.uk/fetch-mock/
 
 ## Teardown methods names have changed
+
 To keep the library in line with `sinon`, the most popular mocking libarry in the js ecosystem, a few method names & behaviours have been changed
+
 - `reset()` now resets both call history _and_ the mocking behaviour of fetch-mock - It's a complete teardown of the mocks that have been set up. `restore()` has been kept as an alias for this method
 - `resetHistory()` now removes call history. Any previous uses of `reset()` shodul be replaced with `resetHistory()`
 - `resetBehavior()` is a new method which removes mocking behaviour without resetting call history
@@ -17,6 +19,7 @@ To keep the library in line with `sinon`, the most popular mocking libarry in th
 A regression was introduced in v6 whereby the `throws` option would throw an uncaught error. The `fetch` api catches all its internal errors and returns a rejected `Promise` in every case, so this change has been reverted to be more useful for mocking typical `fetch` errors.
 
 ## sendAsJson and includeContentLength options have moved
+
 These shoudl no longer be set on the second - `response` - argument of `.mock()`, but on the third - `options` - argument
 
 ## Responses are wrapped in an ES Proxy
@@ -63,26 +66,25 @@ fetchMock.called(MATCHED);
 `fetchMock.mock('path:/apples/pears')` Will match any url whose `path` part is `/apples/pears`
 
 ## done(filter) no longer filterable by method
+
 This added a lot of complexity to the source code. Users who were using this feature are encouraged to give names to routes handling different methods and filter using those names
 
 e.g. before
 
 ```javascript
-fetchMock
-	.getOnce('http://route/form', 200)
-	.postOnce('http://route/form', 201)
+fetchMock.getOnce('http://route/form', 200).postOnce('http://route/form', 201);
 
-fetchMock.done('http://route/form', 'post')
+fetchMock.done('http://route/form', 'post');
 ```
 
 after
 
 ```javascript
 fetchMock
-	.getOnce('http://route/form', 200, {name: 'get-form'})
-	.postOnce('http://route/form', 201, {name: 'post-form'})
+	.getOnce('http://route/form', 200, { name: 'get-form' })
+	.postOnce('http://route/form', 201, { name: 'post-form' });
 
-fetchMock.done('post-form')
+fetchMock.done('post-form');
 ```
 
 ## More powerful inspection filtering
@@ -97,7 +99,7 @@ Read more in the [filtering docs](http://www.wheresrhys.co.uk/fetch-mock/#api-in
 fetchMock.mock('*', 200);
 await fetch('/main-course/lasagne', {
 	method: 'POST',
-	headers: { discount: true }
+	headers: { discount: true },
 });
 await fetch('/main-course/bolognaise');
 

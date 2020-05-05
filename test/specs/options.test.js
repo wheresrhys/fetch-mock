@@ -32,6 +32,7 @@ module.exports = (fetchMock, theGlobal, fetch) => {
 
 			it('error when configured on sandbox without fetch defined', () => {
 				const sbx = fm.sandbox();
+				delete sbx.config.fetch;
 				sbx.config.fallbackToNetwork = true;
 				expect(() => sbx('http://it.at.there/')).to.throw();
 			});

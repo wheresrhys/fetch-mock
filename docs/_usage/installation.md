@@ -21,4 +21,3 @@ content_markdown: |-
   const fetchMock = require('fetch-mock');
   ```
 ---
-

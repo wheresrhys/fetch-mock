@@ -1,5 +1,5 @@
 ---
-title: ".getAnyOnce(), .postAnyOnce(), .putAnyOnce(), .deleteAnyOnce(), .headAnyOnce(), .patchAnyOnce()"
+title: '.getAnyOnce(), .postAnyOnce(), .putAnyOnce(), .deleteAnyOnce(), .headAnyOnce(), .patchAnyOnce()'
 navTitle: .getAnyOnce(), .postAnyOnce() ...
 position: 7
 description: |-

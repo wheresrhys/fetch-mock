@@ -22,11 +22,11 @@ typecheck:
 
 lint-ci: typecheck
 	eslint --ignore-pattern test/fixtures/* src test
-	prettier *.md
+	prettier *.md docs/*.md docs/**/*.md
 
 lint:
-	eslint --cache --fix .
-	prettier --write *.md
+	eslint --cache --fix --ignore-pattern test/fixtures/* src test
+	prettier --write *.md docs/*.md docs/**/*.md
 
 coverage-report:
 	nyc --reporter=lcovonly --reporter=text mocha test/server.js

@@ -8,10 +8,10 @@ references:
         only: /.*/
   env: &env
     docker:
-      - image: circleci/node:8.9.0
+      - image: circleci/node:10.20.1
   env-browsers: &env-browsers
     docker:
-      - image: circleci/node:8.9.0-browsers
+      - image: circleci/node:10.20.1-browsers
 
 jobs:
   checkout_code:

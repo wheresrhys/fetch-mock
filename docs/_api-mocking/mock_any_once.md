@@ -1,5 +1,5 @@
 ---
-title: ".anyOnce(response, options)"
+title: '.anyOnce(response, options)'
 navTitle: .anyOnce()
 position: 6
 description: |-

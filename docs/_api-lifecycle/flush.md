@@ -1,6 +1,6 @@
 ---
 title: .flush(waitForBody)
-navTitle: ".flush()"
+navTitle: '.flush()'
 position: 2
 description: |-
   Returns a `Promise` that resolves once all fetches handled by fetch-mock have resolved

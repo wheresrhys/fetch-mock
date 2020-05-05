@@ -7,9 +7,7 @@ module.exports = (fetchMock, theGlobal) => {
 	describe('use with global fetch', () => {
 		let originalFetch;
 		before(() => {
-			originalFetch = theGlobal.fetch = sinon
-				.stub()
-				.returns(Promise.resolve('dummy'));
+			originalFetch = theGlobal.fetch = sinon.stub().returns(Promise.resolve());
 		});
 		afterEach(fetchMock.restore);
 
@@ -43,13 +41,6 @@ module.exports = (fetchMock, theGlobal) => {
 
 			await theGlobal.fetch('http://a.com');
 			expect(originalFetch).not.called;
-		});
-
-		it('spy falls through to default fetch', async () => {
-			fetchMock.spy();
-
-			await theGlobal.fetch('http://a.com/', { method: 'get' });
-			expect(originalFetch).calledWith('http://a.com/', { method: 'get' });
 		});
 	});
 };

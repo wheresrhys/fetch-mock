@@ -7,9 +7,7 @@ module.exports = (fetchMock, theGlobal) => {
 	describe('use with global fetch', () => {
 		let originalFetch;
 		before(() => {
-			originalFetch = theGlobal.fetch = sinon
-				.stub()
-				.returns(Promise.resolve());
+			originalFetch = theGlobal.fetch = sinon.stub().returns(Promise.resolve());
 		});
 		afterEach(fetchMock.restore);
 

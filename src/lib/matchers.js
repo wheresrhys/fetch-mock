@@ -87,13 +87,15 @@ const getQueryStringMatcher = ({ query: expectedQuery }) => {
 		debug('  Actual query parameters:', query);
 		return keys.every((key) => {
 			const value = query[key];
-			const expectedValue = query[key];
+			const expectedValue = expectedQuery[key];
 			if (Array.isArray(value) && Array.isArray(expectedValue)) {
-				return value.every(q => expectedValue.includes(q)) &&
-					expectedValue.every(q => value.includes(q));
+				return (
+					value.every((q) => expectedValue.includes(q)) &&
+					expectedValue.every((q) => value.includes(q))
+				);
 			}
-                        return real === expected;
-               });
+			return value === expectedValue;
+		});
 	};
 };
 

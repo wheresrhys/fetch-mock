@@ -170,6 +170,8 @@ parameters:
         examples:
           - |-
             {"q": "cute+kittenz", "format": "gif"}
+          - |-
+            {"tags": ["cute", "kittenz"]}
       - name: params
         versionAdded: 6.0.0
         types:

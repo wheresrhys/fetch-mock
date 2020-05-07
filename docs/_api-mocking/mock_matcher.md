@@ -150,6 +150,8 @@ parameters:
         examples:
           - |-
             {"q": "cute+kittenz", "format": "gif"}
+          - |-
+            {"tags": ["cute", "kittenz"]}
       - name: params
         types:
           - Object

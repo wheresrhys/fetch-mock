@@ -16,6 +16,7 @@ parentMethodGroup: mocking
 parametersBlockTitle: Response options
 parameters:
   - name: delay
+    versionAdded: 7.7.0
     types:
       - Integer
     content: |-

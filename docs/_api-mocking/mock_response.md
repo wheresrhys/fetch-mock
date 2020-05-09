@@ -62,6 +62,7 @@ parameters:
         examples:
           - "{'Content-Type': 'text/html'}"
       - name: redirectUrl
+        versionAdded: 6.0.0
         types:
           - String
         content: |-

@@ -2,6 +2,7 @@
 title: .done(filter)
 navTitle: .done()
 position: 6
+versionAdded: 5.3.0
 description: |-
   Returns a Boolean indicating whether `fetch` was called the expected number of times (or has been called at least once if `repeat` is undefined for the route). It does not take into account whether the `fetches` completed successfully.
 parameters:

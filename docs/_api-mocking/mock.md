@@ -2,6 +2,8 @@
 title: '.mock(matcher, response, options)'
 navTitle: .mock()
 position: 1
+versionAdded: "???"
+versionAddedDetails: Callable with no arguments since v7.6.0
 description: |
   Check out the new [cheatsheet](https://github.com/wheresrhys/fetch-mock/blob/master/docs/cheatsheet.md)
   {: .info}

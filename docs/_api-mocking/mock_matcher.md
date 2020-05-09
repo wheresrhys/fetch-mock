@@ -27,12 +27,15 @@ parameters:
     types:
       - String
       - URL
+    versionAdded: 1.0.0
+    versionAddedDetails: URL instances only supported since v8.1.0
     examples:
       - |-
         "http://www.site.com/page.html"
     content: Match an exact url. Can be defined using a string or a `URL` instance
   - name: |-
       begin:...
+    versionAdded: 6.0.0
     types:
       - String
     examples:
@@ -49,6 +52,7 @@ parameters:
     content: Match a url ending with a string
   - name: |-
       path:...
+    versionAdded: 7.0.0
     types:
       - String
     examples:
@@ -106,6 +110,7 @@ parameters:
         content: |-
           Use any of the `String` or `RegExp` matchers described above. *Note that the property name 'matcher' can be used instead of 'url', but this is deprecated and support will be dropped in the next major version, so prefer to use 'url'*
       - name: functionMatcher
+        versionAdded: 7.3.0
         types:
           - Function
         content: |-
@@ -129,6 +134,7 @@ parameters:
       - name: body
         types:
           - Object
+        versionAdded: 7.4.0
         content: |-
           Match only requests that send a JSON body with the exact structure and properties as the one provided here. 
 
@@ -139,6 +145,7 @@ parameters:
           - |-
             { "key1": "value1", "key2": "value2" }
       - name: matchPartialBody
+        versionAdded: 9.1.0
         types:
           - Boolean
         content: Match calls that only partially match a specified body json. See [global configuration](#usageconfiguration) for details.
@@ -159,6 +166,7 @@ parameters:
           - |-
             {"section": "feed", "user": "geoff"}
       - name: repeat
+        versionAdded: 6.0.0
         types:
           - Integer
         content: |-
@@ -178,6 +186,9 @@ content_markdown: |-
   Note that if using `end:` or an exact url matcher, fetch-mock ([for good reason](https://url.spec.whatwg.org/#url-equivalence)) is unable to distinguish whether URLs without a path end in a trailing slash or not i.e. `http://thing` is treated the same as `http://thing/`
   {: .warning}
 
-   If multiple mocks use the same `matcher` but use different options, such as `headers`, you will need to use the `overwriteRoutes: false` option.
+  If multiple mocks use the same `matcher` but use different options, such as `headers`, you will need to use the `overwriteRoutes: false` option.
+  {: .warning}
+
+  Before v8.3.0 some of the options above had to be passed in as properties on a third parameter of `.mock()`
   {: .warning}
 ---

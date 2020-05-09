@@ -92,6 +92,18 @@ dt code  {
 	font-family: monospace;
 }
 
+.version-added {
+	font-weight: normal;
+  background: #fafafa;
+  border: 1px solid #00994D;
+  border-radius: 2px;
+  color: #00994D;
+  display: inline-block;
+  padding: 0 4px;
+  font-size: 0.6em;
+  vertical-align: text-bottom;
+}
+
 .types-zone code {
 	font-family: monospace;
 	font-weight: bold;

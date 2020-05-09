@@ -1,4 +1,11 @@
 {{ include.block.name }}
+{% unless include.noVersion %}
+	{% if include.block.name %}
+		{%if include.block.versionAdded %}
+			<small class="version-added" title="Added in version {{include.block.versionAdded}}{%if include.block.versionAddedDetails %}{{include.block.versionAddedDetails}}{% endif %}">v{{include.block.versionAdded}}</small>
+		{% endif %}
+	{% endif %}
+{% endunless %}
 <div class="types-zone">
 {% if include.block.types %}
 	{% for type in include.block.types %}
@@ -6,6 +13,16 @@
 		{% if forloop.last != true %}|{% endif %}
 	{% endfor %}
 {% endif %}
+
+
+{% unless include.noVersion %}
+
+{% unless include.block.name %}
+		{%if include.block.versionAdded %}
+			<small class="version-added" title="Added in version {{include.block.versionAdded}}{%if include.block.versionAddedDetails %}{{include.block.versionAddedDetails}}{% endif %}">v{{include.block.versionAdded}}</small>
+		{% endif %}
+	{% endunless %}
+	{% endunless %}
 {%if include.block.default %}
 	<span class="default">[default&nbsp;<code>{{ include.block.default}}</code>]</span>
 {% endif %}

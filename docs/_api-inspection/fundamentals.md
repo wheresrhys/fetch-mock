@@ -13,11 +13,12 @@ parameters:
     options:
       - types:
           - undefined
+        versionAdded: 6.0.0
         content: |-
           Retrieve all calls made to `fetch`
       - types:
           - true
-          - '"matched"'
+        versionAdded: 6.0.0
         content: |-
           Retrieve all calls to `fetch` matched by some route defined by `fetch-mock`. The string `'matched'` can be used instead of `true` to make tests more readable
         examples:
@@ -27,7 +28,7 @@ parameters:
             fetchMock.calls(MATCHED)
       - types:
           - false
-          - '"unmatched"'
+        versionAdded: 6.0.0
         content: |-
           Retrieve all calls to `fetch` not matched by some route defined by `fetch-mock`. The string `'unmatched'` can be used instead of `false` to make tests more readable
         examples:
@@ -35,6 +36,10 @@ parameters:
             const {UNMATCHED, fetchMock} = require('fetch-mock');
             ...
             fetchMock.calls(UNMATCHED)
+      - types:
+          - '"matched"'
+          - '"unmatched"'
+        content: Aliases for `true` and `false`
       - name: routeIdentifier
         types:
           - String

@@ -1,6 +1,7 @@
 ---
 title: Configuration
 position: 7
+versionAdded: 6.0.0
 description: |-
   On any `fetch-mock` instance, set configuration options directly on the `fetchMock.config` object. e.g.
   ```js
@@ -21,6 +22,8 @@ parameters:
       - Boolean
     content: Sets a `Content-Length` header on each response.
   - name: fallbackToNetwork
+    versionAdded: "???"
+    versionAddedDetails: "'always' option added in v6.5.0"
     default: 'false'
     types:
       - Boolean
@@ -31,6 +34,7 @@ parameters:
       - `'always'`: All calls fall through to the network, effectively disabling fetch-mock.
   - name: overwriteRoutes<sup>†</sup>
     default: 'undefined'
+    versionAdded: 6.0.0
     types:
       - Boolean
     content: |-

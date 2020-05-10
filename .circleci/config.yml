@@ -13,7 +13,7 @@ references:
     docker:
       - image: circleci/node:10.20.1-browsers
   workspace: &workspace
-    workspace:
+    attach_workspace:
       at: ~/project
   persist: &persist
     persist_to_workspace:

@@ -450,6 +450,20 @@ module.exports = (fetchMock) => {
 					expect(fm.calls(true).length).to.equal(2);
 				});
 
+				it('can match a query string array of length 1', async () => {
+					fm.mock(
+						{ url: 'http://it.at.there/', query: { a: ['b'] } },
+						200
+					).catch();
+
+					await fm.fetchHandler('http://it.at.there');
+					expect(fm.calls(true).length).to.equal(0);
+					await fm.fetchHandler('http://it.at.there?a=b');
+					expect(fm.calls(true).length).to.equal(1);
+					await fm.fetchHandler('http://it.at.there?a=b&a=c');
+					expect(fm.calls(true).length).to.equal(1);
+				});
+
 				it('can be used alongside existing query strings', async () => {
 					fm.mock('http://it.at.there/?c=d', 200, {
 						query: { a: 'b' },

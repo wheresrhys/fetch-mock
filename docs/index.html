@@ -20,9 +20,8 @@ title: API Docs
 					{% if doc.parentMethod %}
 						&nbsp;<span class="endpoint">parameter for <a href="#api-{{doc.parentMethodGroup}}{{doc.parentMethod}}">{{doc.parentMethod}}()</a></span>
 					{% endif %}
-	{%if doc.versionAdded %}
-		<small class="version-added" title="Added in version {{doc.versionAdded}}{%if doc.versionAddedDetails %}. {{doc.versionAddedDetails}}{% endif %}">v{{doc.versionAdded}}</small>
-	{% endif %}
+					{% include version-added.html block=doc %}
+
 				</h3>
 				{% include types.html block=doc noVersion=true %}
 				{% if doc.description %}

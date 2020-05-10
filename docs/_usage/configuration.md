@@ -11,18 +11,20 @@ description: |-
 parametersBlockTitle: Options
 parameters:
   - name: sendAsJson<sup>†</sup>
+    versionAdded: 4.1.0
     default: true
     types:
       - Boolean
     content: |-
       Always convert objects passed to `.mock()` to JSON strings before building reponses. Can be useful to set to `false` globally if e.g. dealing with a lot of `ArrayBuffer`s. When `true` the `Content-Type: application/json` header will also be set on each response.
   - name: includeContentLength<sup>†</sup>
+    versionAdded: 5.13.0
     default: true
     types:
       - Boolean
     content: Sets a `Content-Length` header on each response.
   - name: fallbackToNetwork
-    versionAdded: "???"
+    versionAdded: 6.5.0
     versionAddedDetails: "'always' option added in v6.5.0"
     default: 'false'
     types:
@@ -43,10 +45,12 @@ parameters:
       - `true`: Overwrites the existing route
       - `false`: Appends the new route to the list of routes
   - name: matchPartialBody
+    versionAdded: 9.1.0
     types:
       - Boolean
     content: Match calls that only partially match a specified body json. Uses the [is-subset](https://www.npmjs.com/package/is-subset) library under the hood, which implements behaviour the same as jest's [.objectContainig()](https://jestjs.io/docs/en/expect#expectobjectcontainingobject) method.
   - name: warnOnFallback
+    versionAdded: 6.0.0
     default: true
     types:
       - Boolean
@@ -55,6 +59,7 @@ parameters:
   - name: Promise
     types:
       - Constructor
+    versionAdded: 5.9.0
     content: A custom `Promise` constructor, if your application uses one
   - name: fetch
     types:
@@ -63,14 +68,17 @@ parameters:
   - name: Headers
     types:
       - Constructor
+    versionAdded: 5.9.0
     content: The `Headers` constructor of a custom `fetch` implementation, if your application uses one
   - name: Request
     types:
       - Constructor
+    versionAdded: 5.9.0
     content: The `Request` constructor of a custom `fetch` implementation, if your application uses one
   - name: Response
     types:
       - Constructor
+    versionAdded: 5.0.0
     content: The `Response` constructor of a custom `fetch` implementation, if your application uses one
 
 content_markdown: |-

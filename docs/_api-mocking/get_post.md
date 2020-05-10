@@ -2,6 +2,7 @@
 title: '.get(), .post(), .put(), .delete(), .head(), .patch()'
 navTitle: .get(), .post() ...
 position: 2
+versionAdded: 5.0.0
 description: |-
   Shorthands for `mock()` that create routes that only respond to requests using a particular http method.
 parentMethodGroup: mocking

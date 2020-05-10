@@ -39,12 +39,14 @@ parameters:
       - types:
           - '"matched"'
           - '"unmatched"'
+        versionAdded: 9.0.0
         content: Aliases for `true` and `false`
       - name: routeIdentifier
         types:
           - String
           - RegExp
           - function
+        versionAdded: 2.0.0
         content: |-
           All routes have an identifier:
           - If it's a [named route](#api-mockingmock_options), the identifier is the route's `name`
@@ -52,6 +54,7 @@ parameters:
 
           All calls that were handled by the route with the given identifier will be retrieved
       - name: matcher
+        versionAdded: 7.0.0
         types:
           - String
           - RegExp
@@ -59,6 +62,7 @@ parameters:
         content: |-
           Any matcher compatible with the [mocking api](#api-mockingmock_matcher) can be passed in to filter the calls arbitrarily. The matcher will be executed using exactly the same rules as the mocking api
   - name: options
+    versionAdded: 7.0.0
     types:
       - Object
       - String

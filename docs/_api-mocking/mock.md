@@ -2,7 +2,7 @@
 title: '.mock(matcher, response, options)'
 navTitle: .mock()
 position: 1
-versionAdded: "???"
+versionAdded: 2.0.0
 versionAddedDetails: Callable with no arguments since v7.6.0
 description: |
   Check out the new [cheatsheet](https://github.com/wheresrhys/fetch-mock/blob/master/docs/cheatsheet.md)
@@ -14,6 +14,7 @@ description: |
   {: .warning}
 parameters:
   - name: matcher
+    versionAdded: 2.0.0
     types:
       - String
       - Regex
@@ -21,6 +22,7 @@ parameters:
       - Object
     content: Criteria for which calls to `fetch` should match this route
   - name: response
+    versionAdded: 2.0.0
     types:
       - String
       - Object
@@ -29,6 +31,7 @@ parameters:
       - Response
     content: Response to send when a call is matched
   - name: options
+    versionAdded: 2.0.0
     types:
       - Object
     content: More options to configure matching and responding behaviour

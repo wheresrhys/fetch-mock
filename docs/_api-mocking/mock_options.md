@@ -1,6 +1,7 @@
 ---
 title: 'options'
 position: 1.3
+versionAdded: 5.0.0
 description: |-
   An object containing further options for configuring mocking behaviour.
 
@@ -22,12 +23,14 @@ parameters:
     content: |-
       Delays responding for the number of milliseconds specified.
   - name: sendAsJson
+    versionAdded: 4.1.0
     default: true
     types:
       - Boolean
     content: See [global configuration](#usageconfiguration)
   - name: includeContentLength
     default: true
+    versionAdded: 5.13.0
     types:
       - Boolean
     content: See [global configuration](#usageconfiguration)

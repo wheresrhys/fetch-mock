@@ -86,15 +86,11 @@ const getQueryStringMatcher = ({ query: expectedQuery }) => {
 		debug('  Expected query parameters:', expectedQuery);
 		debug('  Actual query parameters:', query);
 		return keys.every((key) => {
-			const value = query[key];
-			const expectedValue = expectedQuery[key];
-			if (Array.isArray(value) && Array.isArray(expectedValue)) {
-				return (
-					value.every((q) => expectedValue.includes(q)) &&
-					expectedValue.every((q) => value.includes(q))
-				);
-			}
-			return value === expectedValue;
+			const value = Array.isArray(query[key]) ? query[key] : [query[key]];
+			const expectedValue = Array.isArray(expectedQuery[key])
+				? expectedQuery[key]
+				: [expectedQuery[key]];
+			return isEqual(value.sort(), expectedValue.sort());
 		});
 	};
 };

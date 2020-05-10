@@ -166,7 +166,7 @@ parameters:
         types:
           - Object
         content: |-
-          Match only requests that have these query parameters set (in any order)
+          Match only requests that have these query parameters set (in any order). In order to match keys which are used multiple times use an array of strings.
         examples:
           - |-
             {"q": "cute+kittenz", "format": "gif"}

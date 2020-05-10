@@ -15,7 +15,7 @@ test-browser:
 		else karma start --single-run --browsers=${TEST_BROWSER}; \
 	fi
 
-test-node6: transpile
+test-node6:
 	node test/node6.js
 
 typecheck:
@@ -42,6 +42,7 @@ transpile:
 build: transpile
 	if [ ! -d "cjs" ]; then mkdir cjs; fi
 	cp -r src/* cjs
+	cp src/package.json es5
 	rollup -c rollup.config.js
 
 docs:

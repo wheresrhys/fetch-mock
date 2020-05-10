@@ -7,6 +7,7 @@ module.exports = (fetchMock) => {
 	describe('nodejs only tests', () => {
 		describe('support for nodejs body types', () => {
 			afterEach(() => fetchMock.reset());
+
 			it('can respond with a buffer', () => {
 				fetchMock.mock(/a/, new Buffer('buffer'), { sendAsJson: false });
 				return fetchMock

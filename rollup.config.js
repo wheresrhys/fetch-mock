@@ -3,6 +3,7 @@ import commonjs from 'rollup-plugin-commonjs';
 import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals';
 import json from 'rollup-plugin-json';
+// import sourcemaps from 'rollup-plugin-sourcemaps';
 
 export default [
 	{
@@ -26,6 +27,7 @@ export default [
 		plugins: [
 			resolve({ preferBuiltins: true }),
 			commonjs(),
+			// sourcemaps(),
 			builtins(),
 			globals(),
 		],

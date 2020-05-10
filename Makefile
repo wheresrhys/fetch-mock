@@ -18,6 +18,9 @@ test-browser:
 test-es5:
 	node test/es5.js
 
+test-esm:
+	FETCH_MOCK_SRC=../esm/server.js ./node_modules/.bin/mocha test/server.mjs
+
 typecheck:
 	dtslint --expectOnly types
 

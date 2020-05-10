@@ -1,4 +1,4 @@
-const fetchMock = require('../src/server.js');
+const fetchMock = require(process.env.FETCH_MOCK_SRC || '../src/server.js');
 const expect = require('chai').expect;
 const http = require('http');
 const sinon = require('sinon');

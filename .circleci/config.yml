@@ -111,6 +111,19 @@ workflows:
           <<: *triggerable-by-tag
           requires:
             - checkout_code
+      - typecheck:
+          <<: *triggerable-by-tag
+          requires:
+            - checkout_code
+      - lint:
+          <<: *triggerable-by-tag
+          requires:
+            - checkout_code
+      - build:
+          <<: *triggerable-by-tag
+          requires:
+            - lint
+            - test
       - nodefetch1:
           <<: *triggerable-by-tag
           requires:
@@ -127,23 +140,10 @@ workflows:
           <<: *triggerable-by-tag
           requires:
             - build
-# firefox version too old for sw, so postpone cross browser tests till updated in circleci
-#      - firefox:
-#          requires:
-#            - checkout_code
-      - typecheck:
+      - firefox:
           <<: *triggerable-by-tag
           requires:
-            - checkout_code
-      - lint:
-          <<: *triggerable-by-tag
-          requires:
-            - checkout_code
-      - build:
-          <<: *triggerable-by-tag
-          requires:
-            - lint
-            - test
+            - build
       - deploy:
           context: wheresrhys-npm-publish
           requires:

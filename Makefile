@@ -22,11 +22,11 @@ typecheck:
 	dtslint --expectOnly types
 
 lint-ci:
-	eslint --ignore-pattern test/fixtures/* src test
+	eslint --ext .js,.mjs --ignore-pattern test/fixtures/* src test
 	prettier *.md docs/*.md docs/**/*.md
 
 lint:
-	eslint --cache --fix --ignore-pattern test/fixtures/* src test
+	eslint --cache --fix --ext .js,.mjs --ignore-pattern test/fixtures/* src test
 	prettier --write *.md docs/*.md docs/**/*.md
 
 coverage:

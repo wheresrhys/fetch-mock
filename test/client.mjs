@@ -1,6 +1,6 @@
 import fetchMock from '../esm/client.js';
-import {expect} from 'chai';
 import runner from './runner.js';
 import clientOnly from './specs/client-only.test.js';
-clientOnly(fetchMock)
+
+clientOnly(fetchMock);
 runner(fetchMock, window, window.fetch, window.AbortController);

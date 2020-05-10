@@ -107,7 +107,7 @@ jobs:
 
 workflows:
   version: 2
-  checkout_and_test:
+  fetch-mock-ci-cd:
     jobs:
       - checkout_code: *triggerable-by-tag
       - test:

@@ -34,13 +34,22 @@ jobs:
           key: npm-cache-{{ checksum "package-lock.json" }}
       - run: make lint-ci
 
-  nodefetch2:
+  test:
     <<: *env
     steps:
       - checkout
       - restore_cache:
           key: npm-cache-{{ checksum "package-lock.json" }}
       - run: make coverage-report
+
+
+  nodefetch2:
+    <<: *env
+    steps:
+      - checkout
+      - restore_cache:
+          key: npm-cache-{{ checksum "package-lock.json" }}
+      - run: make test-unit
 
   nodefetch1:
     <<: *env
@@ -101,6 +110,10 @@ workflows:
   checkout_and_test:
     jobs:
       - checkout_code: *triggerable-by-tag
+      - test:
+          <<: *triggerable-by-tag
+          requires:
+            - checkout_code
       - nodefetch1:
           <<: *triggerable-by-tag
           requires:
@@ -128,7 +141,8 @@ workflows:
       - build:
           <<: *triggerable-by-tag
           requires:
-            - checkout_code
+            - lint
+            - test
       - deploy:
           context: wheresrhys-npm-publish
           requires:
@@ -137,7 +151,6 @@ workflows:
             - node6
             - chrome
            # - firefox
-            - lint
             - build
           filters:
             branches:

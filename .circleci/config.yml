@@ -6,16 +6,16 @@ references:
     filters:
       tags:
         only: /.*/
-  env: &env
+  container: &container
     docker:
       - image: circleci/node:10.20.1
-  env-browsers: &env-browsers
+  container-browsers: &container-browsers
     docker:
       - image: circleci/node:10.20.1-browsers
 
 jobs:
   checkout_code:
-    <<: *env
+    <<: *container
     steps:
       - checkout
       - restore_cache:
@@ -27,7 +27,7 @@ jobs:
             - node_modules
 
   lint:
-    <<: *env
+    <<: *container
     steps:
       - checkout
       - restore_cache:
@@ -35,6 +35,7 @@ jobs:
       - run: make lint-ci
 
   typecheck:
+    <<: *container
     steps:
       - checkout
       - restore_cache:
@@ -42,7 +43,7 @@ jobs:
       - run: make typecheck
 
   test:
-    <<: *env
+    <<: *container
     steps:
       - checkout
       - restore_cache:
@@ -51,7 +52,7 @@ jobs:
 
 
   nodefetch2:
-    <<: *env
+    <<: *container
     steps:
       - checkout
       - restore_cache:
@@ -59,7 +60,7 @@ jobs:
       - run: FETCH_MOCK_SRC=./cjs/server.js make test-unit
 
   nodefetch1:
-    <<: *env
+    <<: *container
     steps:
       - checkout
       - restore_cache:
@@ -78,7 +79,7 @@ jobs:
       - run: make test-node6
 
   chrome:
-    <<: *env-browsers
+    <<: *container-browsers
     steps:
       - checkout
       - restore_cache:
@@ -86,7 +87,7 @@ jobs:
       - run: make test-chrome
 
   firefox:
-    <<: *env-browsers
+    <<: *container-browsers
     steps:
       - checkout
       - restore_cache:
@@ -95,7 +96,7 @@ jobs:
       - run: make test-firefox
 
   build:
-    <<: *env
+    <<: *container
     steps:
       - checkout
       - restore_cache:
@@ -103,7 +104,7 @@ jobs:
       - run: make build
 
   deploy:
-    <<: *env
+    <<: *container
     steps:
       - checkout
       - restore_cache:

@@ -29,6 +29,8 @@ lint:
 	eslint --cache --fix --ext .js,.mjs --ignore-pattern test/fixtures/* src test
 	prettier --cache --write *.md docs/*.md docs/**/*.md
 
+verify: lint
+
 coverage:
 	nyc --reporter=lcovonly --reporter=text mocha test/server.js
 	cat ./coverage/lcov.info | coveralls

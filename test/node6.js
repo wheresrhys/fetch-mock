@@ -5,9 +5,9 @@
 require('babel-core').transform('code', {
 	plugins: ['transform-runtime'],
 });
-const fetchMock = require('../es5/server');
+// const fetchMock = require('../es5/server');
 
 // fetchMock.mock('http://it.at.there/', 200);
 // fetchMock.fetchHandler('http://it.at.there/').catch(() => process.exit(2));
 
-require('./server.js')
+require('./server.js');

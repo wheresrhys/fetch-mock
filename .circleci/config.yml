@@ -79,7 +79,7 @@ jobs:
     steps:
       - *workspace
       - run: npm rebuild
-      - run: make test-node6
+      - run: FETCH_MOCK_SRC=../es5/server make test-node6
 
   chrome:
     <<: *container-browsers

@@ -143,6 +143,7 @@ workflows:
 #            - checkout_code
       - typecheck:
           <<: *triggerable-by-tag
+          requires:
             - checkout_code
       - lint:
           <<: *triggerable-by-tag

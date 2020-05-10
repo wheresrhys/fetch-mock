@@ -34,6 +34,13 @@ jobs:
           key: npm-cache-{{ checksum "package-lock.json" }}
       - run: make lint-ci
 
+  typecheck:
+    steps:
+      - checkout
+      - restore_cache:
+          key: npm-cache-{{ checksum "package-lock.json" }}
+      - run: make typecheck
+
   test:
     <<: *env
     steps:
@@ -134,6 +141,9 @@ workflows:
 #      - firefox:
 #          requires:
 #            - checkout_code
+      - typecheck:
+          <<: *triggerable-by-tag
+            - checkout_code
       - lint:
           <<: *triggerable-by-tag
           requires:
@@ -152,6 +162,7 @@ workflows:
             - chrome
            # - firefox
             - build
+            - typecheck
           filters:
             branches:
               ignore: /.*/

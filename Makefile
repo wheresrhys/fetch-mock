@@ -20,7 +20,7 @@ test-node6: transpile
 typecheck:
 	dtslint --expectOnly types
 
-lint-ci: typecheck
+lint-ci:
 	eslint --ignore-pattern test/fixtures/* src test
 	prettier *.md docs/*.md docs/**/*.md
 

@@ -74,7 +74,7 @@ jobs:
       - *workspace
       - restore_cache:
           key: npm-cache-{{ checksum "package-lock.json" }}
-      - run: FETCH_MOCK_SRC=./cjs/server.js make test-unit
+      - run: FETCH_MOCK_SRC=../cjs/server.js make test-unit
 
   nodefetch1:
     <<: *container
@@ -83,7 +83,7 @@ jobs:
       - restore_cache:
           key: npm-cache-{{ checksum "package-lock.json" }}
       - run: npm install node-fetch@1
-      - run: FETCH_MOCK_SRC=./cjs/server.js make test-unit
+      - run: FETCH_MOCK_SRC=../cjs/server.js make test-unit
 
   node6:
     docker:

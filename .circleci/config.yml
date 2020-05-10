@@ -104,19 +104,19 @@ workflows:
       - nodefetch1:
           <<: *triggerable-by-tag
           requires:
-            - checkout_code
+            - build
       - nodefetch2:
           <<: *triggerable-by-tag
           requires:
-            - checkout_code
+            - build
       - node6:
           <<: *triggerable-by-tag
           requires:
-            - checkout_code
+            - build
       - chrome:
           <<: *triggerable-by-tag
           requires:
-            - checkout_code
+            - build
 # firefox version too old for sw, so postpone cross browser tests till updated in circleci
 #      - firefox:
 #          requires:

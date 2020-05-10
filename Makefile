@@ -45,3 +45,8 @@ build: transpile
 
 docs:
 	cd docs; jekyll serve build --watch
+
+NPM_PUBLISH_TAG := $(shell [[ "$(CIRCLE_TAG)" =~ -[a-z-]+ ]] && echo "pre-release" || echo "latest")
+publish:
+	npm version --no-git-tag-version $(CIRCLE_TAG)
+	npm publish --access public --tag $(NPM_PUBLISH_TAG)

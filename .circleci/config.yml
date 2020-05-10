@@ -176,10 +176,10 @@ workflows:
           <<: *triggerable-by-tag
           requires:
             - build
-      - esm:
-          <<: *triggerable-by-tag
-          requires:
-            - build
+      # - esm:
+      #     <<: *triggerable-by-tag
+      #     requires:
+      #       - build
       - node10:
           <<: *triggerable-by-tag
           requires:

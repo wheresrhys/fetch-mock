@@ -42,7 +42,7 @@ transpile:
 build: transpile
 	if [ ! -d "cjs" ]; then mkdir cjs; fi
 	cp -r src/* cjs
-	cp src/package.json es5
+	echo '{"type": "module"}' > esm/package.json
 	rollup -c rollup.config.js
 
 docs:

@@ -1,4 +1,4 @@
-{
+module.exports = {
   "extends": ["origami-component", "plugin:prettier/recommended"],
   "env": {
     "browser": true,

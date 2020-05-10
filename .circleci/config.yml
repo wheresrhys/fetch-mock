@@ -101,7 +101,14 @@ jobs:
     steps:
       - *workspace
       - run: npm rebuild
-      - run: FETCH_MOCK_SRC=../es5/server make test-es5
+      - run: FETCH_MOCK_SRC=../es5/server.js make test-es5
+
+  esm:
+    <<: *node14
+    steps:
+      - *workspace
+      - run: npm rebuild
+      - run: FETCH_MOCK_SRC=../esm/server.js mocha test/server.mjs
 
   node10:
     <<: *node10
@@ -169,6 +176,10 @@ workflows:
           <<: *triggerable-by-tag
           requires:
             - build
+      - esm:
+          <<: *triggerable-by-tag
+          requires:
+            - build
       - node10:
           <<: *triggerable-by-tag
           requires:
@@ -202,6 +213,7 @@ workflows:
             - node10
             - node13
             - node14
+            - esm
           filters:
             branches:
               ignore: /.*/

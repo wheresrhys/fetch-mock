@@ -1,6 +1,5 @@
 {
   "name": "fetch-mock",
-  "type": "module",
   "version": "0.0.0",
   "description": "Mock http requests made using fetch (or isomorphic-fetch)",
   "main": "./cjs/server.js",

@@ -6,12 +6,28 @@ references:
     filters:
       tags:
         only: /.*/
-  container: &container
+
+
+  nodejs: &nodejs
+    docker:
+      - image: circleci/node:12.16.3
+  browsers: &browsers
+    docker:
+      - image: circleci/node:12.16.3-browsers
+
+  node14: &node14
+    docker:
+      - image: circleci/node:14.2.0
+  node13: &node13
+    docker:
+      - image: circleci/node:13.14.0
+  node10: &node10
     docker:
       - image: circleci/node:10.20.1
-  container-browsers: &container-browsers
+  node6: &node6
     docker:
-      - image: circleci/node:10.20.1-browsers
+      - image: circleci/node:6.13.0
+
   workspace: &workspace
     attach_workspace:
       at: ~/project
@@ -21,9 +37,16 @@ references:
       paths:
         - .
 
+  rebuild_test: &rebuild_test
+    steps:
+      - *workspace
+      - run: npm rebuild
+      - run: make test
+
+
 jobs:
   checkout_code:
-    <<: *container
+    <<: *nodejs
     steps:
       - checkout
       - restore_cache:
@@ -36,59 +59,69 @@ jobs:
       - *persist
 
   build:
-    <<: *container
+    <<: *nodejs
     steps:
       - *workspace
       - run: make build
       - *persist
   lint:
-    <<: *container
+    <<: *nodejs
     steps:
       - *workspace
       - run: make lint-ci
 
   typecheck:
-    <<: *container
+    <<: *nodejs
     steps:
       - *workspace
       - run: make typecheck
 
   test:
-    <<: *container
+    <<: *nodejs
     steps:
       - *workspace
       - run: make coverage
 
 
   nodefetch2:
-    <<: *container
+    <<: *nodejs
     steps:
       - *workspace
       - run: FETCH_MOCK_SRC=../cjs/server.js make test
 
   nodefetch1:
-    <<: *container
+    <<: *nodejs
     steps:
       - *workspace
       - run: npm install node-fetch@1
       - run: FETCH_MOCK_SRC=../cjs/server.js make test
 
-  node6:
-    docker:
-      - image: circleci/node:6.13.0
+  es5:
+    <<: *node6
     steps:
       - *workspace
       - run: npm rebuild
-      - run: FETCH_MOCK_SRC=../es5/server make test-node6
+      - run: FETCH_MOCK_SRC=../es5/server make test-es5
+
+  node10:
+    <<: *node10
+    <<: *rebuild_test
+  node13:
+    <<: *node13
+    <<: *rebuild_test
+
+  node14:
+    <<: *node14
+    <<: *rebuild_test
 
   chrome:
-    <<: *container-browsers
+    <<: *browsers
     steps:
       - *workspace
       - run: TEST_BROWSER=Chrome make test-browser
 
   firefox:
-    <<: *container-browsers
+    <<: *browsers
     steps:
       - *workspace
       - run: npm install karma-firefox-launcher
@@ -96,7 +129,7 @@ jobs:
 
 
   deploy:
-    <<: *container
+    <<: *nodejs
     steps:
       - *workspace
       - run: make publish
@@ -132,7 +165,19 @@ workflows:
           <<: *triggerable-by-tag
           requires:
             - build
-      - node6:
+      - es5:
+          <<: *triggerable-by-tag
+          requires:
+            - build
+      - node10:
+          <<: *triggerable-by-tag
+          requires:
+            - build
+      - node13:
+          <<: *triggerable-by-tag
+          requires:
+            - build
+      - node14:
           <<: *triggerable-by-tag
           requires:
             - build
@@ -149,11 +194,14 @@ workflows:
           requires:
             - nodefetch1
             - nodefetch2
-            - node6
+            - es5
             - chrome
             - firefox
             - build
             - typecheck
+            - node10
+            - node13
+            - node14
           filters:
             branches:
               ignore: /.*/

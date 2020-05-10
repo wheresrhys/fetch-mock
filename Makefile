@@ -15,8 +15,8 @@ test-browser:
 		else karma start --single-run --browsers=${TEST_BROWSER}; \
 	fi
 
-test-node6:
-	node test/node6.js
+test-es5:
+	node test/es5.js
 
 typecheck:
 	dtslint --expectOnly types

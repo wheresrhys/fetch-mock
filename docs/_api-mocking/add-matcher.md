@@ -2,6 +2,7 @@
 title: ".addMatcher({name, usesBody, matcher})"
 navTitle: .addMatcher()
 position: 1.9
+versionAdded: 9.3.0
 description: |-
   Allows adding your own, reusable custom matchers to fetch-mock, for example a matcher for interacting with GraphQL queries, or an `isAuthorized` matcher that encapsulates the exact authorization conditions for the API you are mocking, and only requires a `true` or `false` to be input
 parentMethodGroup: mocking

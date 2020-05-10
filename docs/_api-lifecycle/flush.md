@@ -2,6 +2,7 @@
 title: .flush(waitForBody)
 navTitle: '.flush()'
 position: 2
+versionAdded: 5.11.0
 description: |-
   Returns a `Promise` that resolves once all fetches handled by fetch-mock have resolved
 content_markdown: |-

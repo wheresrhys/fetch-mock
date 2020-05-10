@@ -1,6 +1,7 @@
 ---
 title: .resetHistory()
 position: 4
+versionAdded: 7.0.0
 description: |-
   Clears all data recorded for `fetch`'s calls. It _will not_ restore fetch to its default implementation
 content_markdown: |-

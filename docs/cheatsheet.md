@@ -63,7 +63,7 @@ The following request would be matched by all the mocks described below:
 fetch('http://example.com/users/bob?q=rita', {
 	method: 'POST',
 	headers: { 'Content-Type': 'application/json' },
-	body: '{"prop1": "val1", "prop2": "val2"}',
+	body: '{"prop1": "val1", "prop2": "val2"}'
 });
 ```
 

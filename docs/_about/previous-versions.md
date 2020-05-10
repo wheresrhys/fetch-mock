@@ -2,7 +2,7 @@
 title: Previous versions
 position: 3
 content_markdown: |-
-  v7, v8 & v9 are practically identical, only differing in their treatment of a few edge cases, or in compatibility with other libraries and environments.
+  v7, v8 & v9 are practically identical, only differing in their treatment of a few edge cases, or in compatibility with other libraries and environments. For clarity, each section of the documentation tells you which version a feature was added with a <small class="version-added">version</small> label.
 
   For previous versions follow the documentation below: 
 

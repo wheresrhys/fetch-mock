@@ -29,7 +29,7 @@ lint:
 	eslint --cache --fix --ignore-pattern test/fixtures/* src test
 	prettier --write *.md docs/*.md docs/**/*.md
 
-coverage-report:
+coverage:
 	nyc --reporter=lcovonly --reporter=text mocha test/server.js
 	cat ./coverage/lcov.info | coveralls
 
@@ -47,7 +47,7 @@ build: transpile
 docs:
 	cd docs; jekyll serve build --watch
 
-
 publish:
+	echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ${HOME}/.npmrc
 	npm version --no-git-tag-version $(CIRCLE_TAG)
 	npm publish --access public --tag $(NPM_PUBLISH_TAG)

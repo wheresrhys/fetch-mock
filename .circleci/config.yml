@@ -39,59 +39,45 @@ jobs:
     <<: *container
     steps:
       - *workspace
-      - restore_cache:
-          key: npm-cache-{{ checksum "package-lock.json" }}
       - run: make build
       - *persist
   lint:
     <<: *container
     steps:
       - *workspace
-      - restore_cache:
-          key: npm-cache-{{ checksum "package-lock.json" }}
       - run: make lint-ci
 
   typecheck:
     <<: *container
     steps:
       - *workspace
-      - restore_cache:
-          key: npm-cache-{{ checksum "package-lock.json" }}
       - run: make typecheck
 
   test:
     <<: *container
     steps:
       - *workspace
-      - restore_cache:
-          key: npm-cache-{{ checksum "package-lock.json" }}
-      - run: make coverage-report
+      - run: make coverage
 
 
   nodefetch2:
     <<: *container
     steps:
       - *workspace
-      - restore_cache:
-          key: npm-cache-{{ checksum "package-lock.json" }}
-      - run: FETCH_MOCK_SRC=../cjs/server.js make test-unit
+      - run: FETCH_MOCK_SRC=../cjs/server.js make test
 
   nodefetch1:
     <<: *container
     steps:
       - *workspace
-      - restore_cache:
-          key: npm-cache-{{ checksum "package-lock.json" }}
       - run: npm install node-fetch@1
-      - run: FETCH_MOCK_SRC=../cjs/server.js make test-unit
+      - run: FETCH_MOCK_SRC=../cjs/server.js make test
 
   node6:
     docker:
       - image: circleci/node:6.13.0
     steps:
       - *workspace
-      - restore_cache:
-          key: npm-cache-{{ checksum "package-lock.json" }}
       - run: npm rebuild
       - run: make test-node6
 
@@ -99,27 +85,20 @@ jobs:
     <<: *container-browsers
     steps:
       - *workspace
-      - restore_cache:
-          key: npm-cache-{{ checksum "package-lock.json" }}
-      - run: make test-chrome
+      - run: TEST_BROWSER=Chrome make test-browser
 
   firefox:
     <<: *container-browsers
     steps:
       - *workspace
-      - restore_cache:
-          key: npm-cache-{{ checksum "package-lock.json" }}
       - run: npm install karma-firefox-launcher
-      - run: make test-firefox
+      - run: TEST_BROWSER=Firefox make test-browser
 
 
   deploy:
     <<: *container
     steps:
       - *workspace
-      - restore_cache:
-          key: npm-cache-{{ checksum "package-lock.json" }}
-      - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ${HOME}/.npmrc'
       - run: make publish
 
 
@@ -172,7 +151,7 @@ workflows:
             - nodefetch2
             - node6
             - chrome
-           # - firefox
+            - firefox
             - build
             - typecheck
           filters:

@@ -44,8 +44,8 @@ transpile:
 build: transpile
 	if [ ! -d "cjs" ]; then mkdir cjs; fi
 	cp -r src/* cjs
-	echo '{"type": "module"}' > esm/package.json
 	rollup -c rollup.config.js
+	echo '{"type": "module"}' > esm/package.json
 
 docs:
 	cd docs; jekyll serve build --watch

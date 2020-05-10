@@ -41,7 +41,7 @@ references:
     steps:
       - *workspace
       - run: npm rebuild
-      - run: make test
+      - run: FETCH_MOCK_SRC=../cjs/server.js make test
 
 
 jobs:

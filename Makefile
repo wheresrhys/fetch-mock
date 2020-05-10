@@ -27,7 +27,7 @@ lint-ci:
 
 lint:
 	eslint --cache --fix --ext .js,.mjs --ignore-pattern test/fixtures/* src test
-	prettier --write *.md docs/*.md docs/**/*.md
+	prettier --cache --write *.md docs/*.md docs/**/*.md
 
 coverage:
 	nyc --reporter=lcovonly --reporter=text mocha test/server.js

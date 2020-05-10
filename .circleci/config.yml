@@ -108,7 +108,7 @@ jobs:
     steps:
       - *workspace
       - run: npm rebuild
-      - run: FETCH_MOCK_SRC=../esm/server.js ./node_modules/.bin/mocha test/server.mjs
+      - run: FETCH_MOCK_SRC=../esm/server.js ./node_modules/.bin/mocha test/server.mjs --require esm
 
   node10:
     <<: *node10

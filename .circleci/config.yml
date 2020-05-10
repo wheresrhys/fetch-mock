@@ -12,6 +12,14 @@ references:
   container-browsers: &container-browsers
     docker:
       - image: circleci/node:10.20.1-browsers
+  workspace: &workspace
+    workspace:
+      at: ~/project
+  persist: &persist
+    persist_to_workspace:
+      root: .
+      paths:
+        - .
 
 jobs:
   checkout_code:
@@ -25,11 +33,20 @@ jobs:
           key: npm-cache-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
+      - *persist
 
+  build:
+    <<: *container
+    steps:
+      - *workspace
+      - restore_cache:
+          key: npm-cache-{{ checksum "package-lock.json" }}
+      - run: make build
+      - *persist
   lint:
     <<: *container
     steps:
-      - checkout
+      - *workspace
       - restore_cache:
           key: npm-cache-{{ checksum "package-lock.json" }}
       - run: make lint-ci
@@ -37,7 +54,7 @@ jobs:
   typecheck:
     <<: *container
     steps:
-      - checkout
+      - *workspace
       - restore_cache:
           key: npm-cache-{{ checksum "package-lock.json" }}
       - run: make typecheck
@@ -45,7 +62,7 @@ jobs:
   test:
     <<: *container
     steps:
-      - checkout
+      - *workspace
       - restore_cache:
           key: npm-cache-{{ checksum "package-lock.json" }}
       - run: make coverage-report
@@ -54,7 +71,7 @@ jobs:
   nodefetch2:
     <<: *container
     steps:
-      - checkout
+      - *workspace
       - restore_cache:
           key: npm-cache-{{ checksum "package-lock.json" }}
       - run: FETCH_MOCK_SRC=./cjs/server.js make test-unit
@@ -62,7 +79,7 @@ jobs:
   nodefetch1:
     <<: *container
     steps:
-      - checkout
+      - *workspace
       - restore_cache:
           key: npm-cache-{{ checksum "package-lock.json" }}
       - run: npm install node-fetch@1
@@ -72,7 +89,7 @@ jobs:
     docker:
       - image: circleci/node:6.13.0
     steps:
-      - checkout
+      - *workspace
       - restore_cache:
           key: npm-cache-{{ checksum "package-lock.json" }}
       - run: npm rebuild
@@ -81,7 +98,7 @@ jobs:
   chrome:
     <<: *container-browsers
     steps:
-      - checkout
+      - *workspace
       - restore_cache:
           key: npm-cache-{{ checksum "package-lock.json" }}
       - run: make test-chrome
@@ -89,24 +106,17 @@ jobs:
   firefox:
     <<: *container-browsers
     steps:
-      - checkout
+      - *workspace
       - restore_cache:
           key: npm-cache-{{ checksum "package-lock.json" }}
       - run: npm install karma-firefox-launcher
       - run: make test-firefox
 
-  build:
-    <<: *container
-    steps:
-      - checkout
-      - restore_cache:
-          key: npm-cache-{{ checksum "package-lock.json" }}
-      - run: make build
 
   deploy:
     <<: *container
     steps:
-      - checkout
+      - *workspace
       - restore_cache:
           key: npm-cache-{{ checksum "package-lock.json" }}
       - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ${HOME}/.npmrc'

@@ -2,6 +2,7 @@ export PATH := $(PATH):./node_modules/.bin
 
 .PHONY: test docs
 
+SHELL := env "PATH=$(PATH)" /bin/bash
 NPM_PUBLISH_TAG := $(shell [[ "$(CIRCLE_TAG)" =~ -[a-z-]+ ]] && echo "pre-release" || echo "latest")
 TEST_BROWSER := $(shell [ -z $(TEST_BROWSER) ] && echo "Chrome" || echo ${TEST_BROWSER})
 
@@ -52,6 +53,9 @@ build: transpile
 
 docs:
 	cd docs; jekyll serve build --watch
+
+la:
+	@echo $(NPM_PUBLISH_TAG)
 
 publish:
 	echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ${HOME}/.npmrc

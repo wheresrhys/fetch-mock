@@ -1,5 +1,5 @@
 module.exports = {
-  extends: ['origami-component', 'plugin:prettier/recommended'],
+  "extends": ["origami-component", "plugin:prettier/recommended"],
   "env": {
     "browser": true,
     "mocha": true,
@@ -11,8 +11,8 @@ module.exports = {
   "globals": {
     "expect": true
   },
-  rules: {
-    'guard-for-in': 0
+  "rules": {
+    "guard-for-in": 0
   }
 }
 

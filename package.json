@@ -1,6 +1,5 @@
 {
   "name": "fetch-mock",
-  "type": "module",
   "version": "0.0.0",
   "description": "Mock http requests made using fetch (or isomorphic-fetch)",
   "main": "./cjs/server.js",
@@ -94,7 +93,7 @@
     "karma-mocha": "^1.3.0",
     "karma-mocha-reporter": "^2.2.5",
     "karma-webpack": "^3.0.0",
-    "mocha": "^5.1.1",
+    "mocha": "^7.1.2",
     "node-fetch": "^2.0.0",
     "nyc": "^11.7.3",
     "prettier": "^2.0.4",
@@ -104,6 +103,7 @@
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-globals": "^1.4.0",
     "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-sourcemaps": "^0.6.2",
     "sinon": "^4.5.0",
     "sinon-chai": "^2.14.0",
     "typescript": "^3.6.4",

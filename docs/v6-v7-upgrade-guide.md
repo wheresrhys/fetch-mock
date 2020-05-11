@@ -99,7 +99,7 @@ Read more in the [filtering docs](http://www.wheresrhys.co.uk/fetch-mock/#api-in
 fetchMock.mock('*', 200);
 await fetch('/main-course/lasagne', {
 	method: 'POST',
-	headers: { discount: true }
+	headers: { discount: true },
 });
 await fetch('/main-course/bolognaise');
 

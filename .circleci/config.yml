@@ -6,16 +6,47 @@ references:
     filters:
       tags:
         only: /.*/
-  env: &env
+
+
+  nodejs: &nodejs
+    docker:
+      - image: circleci/node:12.16.3
+  browsers: &browsers
+    docker:
+      - image: circleci/node:12.16.3-browsers
+
+  node14: &node14
+    docker:
+      - image: circleci/node:14.2.0
+  node13: &node13
+    docker:
+      - image: circleci/node:13.14.0
+  node10: &node10
     docker:
       - image: circleci/node:10.20.1
-  env-browsers: &env-browsers
+  node6: &node6
     docker:
-      - image: circleci/node:10.20.1-browsers
+      - image: circleci/node:6.13.0
+
+  workspace: &workspace
+    attach_workspace:
+      at: ~/project
+  persist: &persist
+    persist_to_workspace:
+      root: .
+      paths:
+        - .
+
+  rebuild_test: &rebuild_test
+    steps:
+      - *workspace
+      - run: npm rebuild
+      - run: FETCH_MOCK_SRC=../cjs/server.js make test
+
 
 jobs:
   checkout_code:
-    <<: *env
+    <<: *nodejs
     steps:
       - checkout
       - restore_cache:
@@ -25,102 +56,105 @@ jobs:
           key: npm-cache-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
-
-  lint:
-    <<: *env
-    steps:
-      - checkout
-      - restore_cache:
-          key: npm-cache-{{ checksum "package-lock.json" }}
-      - run: make lint-ci
-
-  nodefetch2:
-    <<: *env
-    steps:
-      - checkout
-      - restore_cache:
-          key: npm-cache-{{ checksum "package-lock.json" }}
-      - run: make coverage-report
-
-  nodefetch1:
-    <<: *env
-    steps:
-      - checkout
-      - restore_cache:
-          key: npm-cache-{{ checksum "package-lock.json" }}
-      - run: npm install node-fetch@1
-      - run: make test-unit
-
-  node6:
-    docker:
-      - image: circleci/node:6.13.0
-    steps:
-      - checkout
-      - restore_cache:
-          key: npm-cache-{{ checksum "package-lock.json" }}
-      - run: npm rebuild
-      - run: make test-node6
-
-  chrome:
-    <<: *env-browsers
-    steps:
-      - checkout
-      - restore_cache:
-          key: npm-cache-{{ checksum "package-lock.json" }}
-      - run: make test-chrome
-
-  firefox:
-    <<: *env-browsers
-    steps:
-      - checkout
-      - restore_cache:
-          key: npm-cache-{{ checksum "package-lock.json" }}
-      - run: npm install karma-firefox-launcher
-      - run: make test-firefox
+      - *persist
 
   build:
-    <<: *env
+    <<: *nodejs
     steps:
-      - checkout
-      - restore_cache:
-          key: npm-cache-{{ checksum "package-lock.json" }}
+      - *workspace
       - run: make build
+      - *persist
+  lint:
+    <<: *nodejs
+    steps:
+      - *workspace
+      - run: make lint-ci
+
+  typecheck:
+    <<: *nodejs
+    steps:
+      - *workspace
+      - run: make typecheck
+
+  test:
+    <<: *nodejs
+    steps:
+      - *workspace
+      - run: make coverage
+
+
+  nodefetch2:
+    <<: *nodejs
+    steps:
+      - *workspace
+      - run: FETCH_MOCK_SRC=../cjs/server.js make test
+
+  nodefetch1:
+    <<: *nodejs
+    steps:
+      - *workspace
+      - run: npm install node-fetch@1
+      - run: FETCH_MOCK_SRC=../cjs/server.js make test
+
+  es5:
+    <<: *node6
+    steps:
+      - *workspace
+      - run: npm rebuild
+      - run: FETCH_MOCK_SRC=../es5/server.js make test-es5
+
+  esm:
+    <<: *node14
+    steps:
+      - *workspace
+      - run: npm rebuild
+      - run: make test-esm
+
+  node10:
+    <<: *node10
+    <<: *rebuild_test
+  node13:
+    <<: *node13
+    <<: *rebuild_test
+
+  node14:
+    <<: *node14
+    <<: *rebuild_test
+
+  chrome:
+    <<: *browsers
+    steps:
+      - *workspace
+      - run: TEST_BROWSER=Chrome make test-browser
+
+  firefox:
+    <<: *browsers
+    steps:
+      - *workspace
+      - run: npm install karma-firefox-launcher
+      - run: TEST_BROWSER=Firefox make test-browser
+
 
   deploy:
-    <<: *env
+    <<: *nodejs
     steps:
-      - checkout
-      - restore_cache:
-          key: npm-cache-{{ checksum "package-lock.json" }}
-      - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ${HOME}/.npmrc'
+      - *workspace
       - run: make publish
 
 
 workflows:
   version: 2
-  checkout_and_test:
+  fetch-mock-ci-cd:
     jobs:
       - checkout_code: *triggerable-by-tag
-      - nodefetch1:
+      - test:
           <<: *triggerable-by-tag
           requires:
             - checkout_code
-      - nodefetch2:
+      - typecheck:
           <<: *triggerable-by-tag
           requires:
             - checkout_code
-      - node6:
-          <<: *triggerable-by-tag
-          requires:
-            - checkout_code
-      - chrome:
-          <<: *triggerable-by-tag
-          requires:
-            - checkout_code
-# firefox version too old for sw, so postpone cross browser tests till updated in circleci
-#      - firefox:
-#          requires:
-#            - checkout_code
       - lint:
           <<: *triggerable-by-tag
           requires:
@@ -128,17 +162,58 @@ workflows:
       - build:
           <<: *triggerable-by-tag
           requires:
-            - checkout_code
+            - lint
+            - test
+      - nodefetch1:
+          <<: *triggerable-by-tag
+          requires:
+            - build
+      - nodefetch2:
+          <<: *triggerable-by-tag
+          requires:
+            - build
+      - es5:
+          <<: *triggerable-by-tag
+          requires:
+            - build
+      # - esm:
+      #     <<: *triggerable-by-tag
+      #     requires:
+      #       - build
+      - node10:
+          <<: *triggerable-by-tag
+          requires:
+            - build
+      - node13:
+          <<: *triggerable-by-tag
+          requires:
+            - build
+      - node14:
+          <<: *triggerable-by-tag
+          requires:
+            - build
+      - chrome:
+          <<: *triggerable-by-tag
+          requires:
+            - build
+      - firefox:
+          <<: *triggerable-by-tag
+          requires:
+            - build
       - deploy:
           context: wheresrhys-npm-publish
           requires:
             - nodefetch1
             - nodefetch2
-            - node6
+            - es5
             - chrome
-           # - firefox
-            - lint
+            - firefox
             - build
+            - typecheck
+            - node10
+            - node13
+            - node14
+            # - esm
           filters:
             branches:
               ignore: /.*/

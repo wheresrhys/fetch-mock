@@ -14,5 +14,6 @@ module.exports = (fetchMock, theGlobal, fetch, AbortController) => {
 		require('./specs/shorthands.test')(fetchMock);
 		require('./specs/spy.test')(fetchMock, theGlobal, fetch);
 		require('./specs/user-defined-matchers.test')(fetchMock);
+		require('./specs/sticky-routes.test')(fetchMock, theGlobal);
 	});
 };

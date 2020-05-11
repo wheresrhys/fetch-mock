@@ -100,16 +100,27 @@ defineGreedyShorthand('anyOnce', 'once');
 	defineGreedyShorthand(`${method}AnyOnce`, `${method}Once`);
 });
 
-FetchMock.resetBehavior = function ({sticky: removeStickyRoutes} = {}) {
-
-	const stickyRoutes = this.routes.filter(({sticky}) => sticky);
+FetchMock.resetBehavior = function (options = {}) {
+	// HACK workaround for this https://github.com/mochajs/mocha/issues/4280
+	// note that it doesn't matter that we call it _before_ carrying out all
+	// the thinsg resetbehavior does as everythnig in here is synchronous
+	if (typeof options === 'function') {
+		console.warn(`Deprecated: Passing fetch-mock reset methods
+directly in as handlers for before/after test runner hooks.
+Wrap in an arrow function instead e.g. \`() => fetchMock.restore()\``);
+		options();
+	}
+	const { sticky: removeStickyRoutes } = options;
+	const stickyRoutes = this.routes.filter(({ sticky }) => sticky);
 	if (this.realFetch && (removeStickyRoutes || !stickyRoutes.length)) {
 		this.global.fetch = this.realFetch;
 		this.realFetch = undefined;
 	}
 	this.fallbackResponse = undefined;
 	this.routes = removeStickyRoutes ? [] : stickyRoutes;
-	this._uncompiledRoutes = removeStickyRoutes ? [] : this._uncompiledRoutes.filter(({sticky}) => sticky);
+	this._uncompiledRoutes = removeStickyRoutes
+		? []
+		: this._uncompiledRoutes.filter(({ sticky }) => sticky);
 	return this;
 };
 

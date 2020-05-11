@@ -100,14 +100,14 @@ defineGreedyShorthand('anyOnce', 'once');
 	defineGreedyShorthand(`${method}AnyOnce`, `${method}Once`);
 });
 
-FetchMock.resetBehavior = function () {
+FetchMock.resetBehavior = function ({sticky: removeStickyRoutes} = {}) {
 	if (this.realFetch) {
 		this.global.fetch = this.realFetch;
 		this.realFetch = undefined;
 	}
 	this.fallbackResponse = undefined;
-	this.routes = [];
-	this._uncompiledRoutes = [];
+	this.routes = removeStickyRoutes ? [] : this.routes.filter(({sticky}) => !sticky);
+	this._uncompiledRoutes = removeStickyRoutes ? [] : this._uncompiledRoutes.filter(({sticky}) => !sticky);
 	return this;
 };
 
@@ -118,8 +118,8 @@ FetchMock.resetHistory = function () {
 	return this;
 };
 
-FetchMock.restore = FetchMock.reset = function () {
-	this.resetBehavior();
+FetchMock.restore = FetchMock.reset = function (options) {
+	this.resetBehavior(options);
 	this.resetHistory();
 	return this;
 };

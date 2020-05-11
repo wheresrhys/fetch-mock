@@ -89,6 +89,7 @@ const defineGreedyShorthand = (methodName, underlyingMethod) => {
 	};
 };
 
+defineShorthand('sticky', 'mock', { sticky: true });
 defineShorthand('once', 'mock', { repeat: 1 });
 defineGreedyShorthand('any', 'mock');
 defineGreedyShorthand('anyOnce', 'once');

@@ -28,10 +28,22 @@ module.exports = (fetchMock) => {
 		});
 		afterEach(() => {
 			fm.compileRoute.resetHistory();
-			fm.restore();
+			fm.restore({sticky: true});
 		});
 
 		after(() => fm.compileRoute.restore());
+
+		it('has sticky() shorthand method', () => {
+			fm.sticky('a', 'b');
+			fm.sticky('c', 'd', { opt: 'e' });
+			expectRoute('a', 'b', {
+				sticky: true,
+			});
+			expectRoute('c', 'd', {
+				opt: 'e',
+				sticky: true,
+			});
+		});
 
 		it('has once() shorthand method', () => {
 			fm.once('a', 'b');

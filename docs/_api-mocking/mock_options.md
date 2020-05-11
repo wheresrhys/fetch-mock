@@ -22,6 +22,12 @@ parameters:
       - Integer
     content: |-
       Delays responding for the number of milliseconds specified.
+  - name: sticky
+    versionAdded: 9.7.0
+    types:
+      - Boolean
+    content: |-
+      Avoids a route being removed when `reset()`, `restore()` or `resetBehavior()` are called. *Note - this does not preserve the history of calls to the route*
   - name: sendAsJson
     versionAdded: 4.1.0
     default: true

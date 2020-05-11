@@ -89,6 +89,7 @@ const defineGreedyShorthand = (methodName, underlyingMethod) => {
 	};
 };
 
+defineShorthand('sticky', 'mock', { sticky: true });
 defineShorthand('once', 'mock', { repeat: 1 });
 defineGreedyShorthand('any', 'mock');
 defineGreedyShorthand('anyOnce', 'once');
@@ -100,14 +101,34 @@ defineGreedyShorthand('anyOnce', 'once');
 	defineGreedyShorthand(`${method}AnyOnce`, `${method}Once`);
 });
 
-FetchMock.resetBehavior = function () {
-	if (this.realFetch) {
+const mochaAsyncHookWorkaround = (options) => {
+	// HACK workaround for this https://github.com/mochajs/mocha/issues/4280
+	// Note that it doesn't matter that we call it _before_ carrying out all
+	// the things resetBehavior does as everything in there is synchronous
+	if (typeof options === 'function') {
+		console.warn(`Deprecated: Passing fetch-mock reset methods
+directly in as handlers for before/after test runner hooks.
+Wrap in an arrow function instead e.g. \`() => fetchMock.restore()\``);
+		options();
+	}
+};
+
+const getRouteRemover = ({ sticky: removeStickyRoutes }) => (routes) =>
+	removeStickyRoutes ? [] : routes.filter(({ sticky }) => sticky);
+
+FetchMock.resetBehavior = function (options = {}) {
+	mochaAsyncHookWorkaround(options);
+	const removeRoutes = getRouteRemover(options);
+
+	this.routes = removeRoutes(this.routes);
+	this._uncompiledRoutes = removeRoutes(this._uncompiledRoutes);
+
+	if (this.realFetch && !this.routes.length) {
 		this.global.fetch = this.realFetch;
 		this.realFetch = undefined;
 	}
+
 	this.fallbackResponse = undefined;
-	this.routes = [];
-	this._uncompiledRoutes = [];
 	return this;
 };
 
@@ -118,8 +139,8 @@ FetchMock.resetHistory = function () {
 	return this;
 };
 
-FetchMock.restore = FetchMock.reset = function () {
-	this.resetBehavior();
+FetchMock.restore = FetchMock.reset = function (options) {
+	this.resetBehavior(options);
 	this.resetHistory();
 	return this;
 };

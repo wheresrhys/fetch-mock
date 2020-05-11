@@ -28,7 +28,7 @@ module.exports = (fetchMock) => {
 		});
 		afterEach(() => {
 			fm.compileRoute.resetHistory();
-			fm.restore({sticky: true});
+			fm.restore({ sticky: true });
 		});
 
 		after(() => fm.compileRoute.restore());

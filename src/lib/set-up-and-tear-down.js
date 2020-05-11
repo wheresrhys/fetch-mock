@@ -101,13 +101,15 @@ defineGreedyShorthand('anyOnce', 'once');
 });
 
 FetchMock.resetBehavior = function ({sticky: removeStickyRoutes} = {}) {
-	if (this.realFetch) {
+
+	const stickyRoutes = this.routes.filter(({sticky}) => sticky);
+	if (this.realFetch && (removeStickyRoutes || !stickyRoutes.length)) {
 		this.global.fetch = this.realFetch;
 		this.realFetch = undefined;
 	}
 	this.fallbackResponse = undefined;
-	this.routes = removeStickyRoutes ? [] : this.routes.filter(({sticky}) => !sticky);
-	this._uncompiledRoutes = removeStickyRoutes ? [] : this._uncompiledRoutes.filter(({sticky}) => !sticky);
+	this.routes = removeStickyRoutes ? [] : stickyRoutes;
+	this._uncompiledRoutes = removeStickyRoutes ? [] : this._uncompiledRoutes.filter(({sticky}) => sticky);
 	return this;
 };
 

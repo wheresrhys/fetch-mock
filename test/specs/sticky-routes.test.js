@@ -4,7 +4,7 @@ const expect = chai.expect;
 const sinon = require('sinon');
 
 module.exports = (fetchMock, theGlobal) => {
-	describe.only('sticky routes', () => {
+	describe('sticky routes', () => {
 		describe('effect on routes', () => {
 			let fm;
 			before(() => {
@@ -105,7 +105,7 @@ module.exports = (fetchMock, theGlobal) => {
 					.stub()
 					.returns(Promise.resolve());
 			});
-			afterEach(fetchMock.restore);
+			afterEach(() => fetchMock.restore({sticky: true}));
 
 			it('global mocking resists resetBehavior calls', async () => {
 				fetchMock.mock(/a/, 200, { sticky: true }).resetBehavior();

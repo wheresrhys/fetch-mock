@@ -1,7 +1,7 @@
 ---
 title: '.sticky()'
 position: 3
-versionAdded: 9.6.0
+versionAdded: 9.7.0
 description: |-
   Shorthand for `mock()` which creates a route that persists even when `restore()`, `reset()` or `resetbehavior()` are called;
 parentMethodGroup: mocking

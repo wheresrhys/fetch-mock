@@ -72,14 +72,15 @@ const getMethodMatcher = ({ method: expectedMethod }) => {
 	};
 };
 
-const getQueryStringMatcher = ({ query: expectedQuery }) => {
+const getQueryStringMatcher = ({ query: passedQuery }) => {
 	debug('Generating query parameters matcher');
-	if (!expectedQuery) {
+	if (!passedQuery) {
 		debug('  No query parameters expectations defined - skipping');
 		return;
 	}
-	debug('  Expected query parameters:', expectedQuery);
-	const keys = Object.keys(expectedQuery);
+	const expectedQuery = querystring.parse(querystring.stringify(passedQuery))
+	debug('  Expected query parameters:', passedQuery);
+	const keys = Object.keys(passedQuery);
 	return (url) => {
 		debug('Attempting to match query parameters');
 		const query = querystring.parse(getQuery(url));

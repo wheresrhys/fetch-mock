@@ -1,3 +1,5 @@
+const querystring = require('querystring');
+
 const { debug, setDebugNamespace, getDebug } = require('./debug');
 
 const isUrlMatcher = (matcher) =>
@@ -42,6 +44,10 @@ const sanitizeRoute = (route) => {
 	}
 
 	route.functionMatcher = route.matcher || route.functionMatcher;
+
+	if(route.query && route.url){
+		route.url += '?' + querystring.stringify(route.query)
+	}
 
 	debug('Setting route.identifier...');
 	debug(`  route.name is ${route.name}`);

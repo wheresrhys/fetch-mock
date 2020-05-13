@@ -173,11 +173,11 @@ parameters:
           The request will be matched whichever order keys appear in the query string
         examples:
           - |-
-            {"q": "cute+kittenz"} // matches 'q=cute kittenz' or q=cute+kittenz'
+            {"q": "cute+kittenz"} // matches '?q=cute kittenz' or ?q=cute+kittenz'
           - |-
-            {"tags": ["cute", "kittenz"]} // matches `q=cute&q=kittenz`
+            {"tags": ["cute", "kittenz"]} // matches `?q=cute&q=kittenz`
           - |-
-            {"q": undefined, inform: true} // matches `q=&inform=true`
+            {"q": undefined, inform: true} // matches `?q=&inform=true`
       - name: params
         versionAdded: 6.0.0
         types:

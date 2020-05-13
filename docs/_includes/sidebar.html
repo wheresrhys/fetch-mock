@@ -5,6 +5,7 @@
 			<section>
 				<h1>{{ collection.title }}</h1>
 				<ul>
+
 					{% assign sorted_docs = collection.docs | sort: "position" %}
 					{% for doc in sorted_docs %}
 						<li{% if doc.parentMethod or doc.parentItem %} class="parameter"{% endif %}>
@@ -23,6 +24,16 @@
 						<li>
 							<a class="github-link" href="https://github.com/wheresrhys/fetch-mock">
 								Github project
+							</a>
+						</li>
+						<li>
+							<a href="/">
+								Blog
+							</a>
+						</li>
+						<li>
+							<a href="https://www.refugeesupport.eu/donate/">
+								Donate
 							</a>
 						</li>
 					{%endif%}

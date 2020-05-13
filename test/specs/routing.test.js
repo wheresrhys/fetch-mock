@@ -387,10 +387,7 @@ module.exports = (fetchMock) => {
 
 				it('match a query string against an URL object', async () => {
 					fm.mock('http://it.at.there/path', 200, {
-						query: {
-							a: 'b',
-							b: 1
-						},
+						query: { a: 'b', b: 1 },
 					}).catch();
 					const url = new URL.URL('http://it.at.there/path');
 					url.searchParams.append('a', 'b');

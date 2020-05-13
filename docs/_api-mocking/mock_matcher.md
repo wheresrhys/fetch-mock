@@ -169,7 +169,9 @@ parameters:
           Match only requests that have these query parameters set (in any order). Query parameters are matched by using Node.js [querystring](https://nodejs.org/api/querystring.html) module. If it doesn't fulfil your requirements, you should append query parameters to the url manually.
         examples:
           - |-
-            {"q": "cute+kittenz", "format": "gif", inform: true}
+             {"q": "cute+kittenz", "format": "gif", inform: true}
+          - |-
+            {"tags": ["cute", "kittenz"]}
       - name: params
         versionAdded: 6.0.0
         types:

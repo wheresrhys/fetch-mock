@@ -376,21 +376,25 @@ module.exports = (fetchMock) => {
 			describe('query strings', () => {
 				it('can match a query string', async () => {
 					fm.mock('http://it.at.there/', 200, {
-						query: { a: 'b' },
+						query: { a: 'b', b: 2 },
 					}).catch();
 
 					await fm.fetchHandler('http://it.at.there');
 					expect(fm.calls(true).length).to.equal(0);
-					await fm.fetchHandler('http://it.at.there?a=b');
+					await fm.fetchHandler('http://it.at.there?a=b&b=2');
 					expect(fm.calls(true).length).to.equal(1);
 				});
 
 				it('match a query string against an URL object', async () => {
 					fm.mock('http://it.at.there/path', 200, {
-						query: { a: 'b' },
+						query: {
+							a: 'b',
+							b: 1
+						},
 					}).catch();
 					const url = new URL.URL('http://it.at.there/path');
 					url.searchParams.append('a', 'b');
+					url.searchParams.append('b', '1');
 					await fm.fetchHandler(url);
 					expect(fm.calls(true).length).to.equal(1);
 				});

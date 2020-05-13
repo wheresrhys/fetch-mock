@@ -86,7 +86,18 @@ const getQueryStringMatcher = ({ query: passedQuery }) => {
 		const query = querystring.parse(getQuery(url));
 		debug('  Expected query parameters:', expectedQuery);
 		debug('  Actual query parameters:', query);
-		return keys.every((key) => query[key] === expectedQuery[key]);
+		return keys.every((key) => {
+			if(Array.isArray(query[key])){
+				if(!Array.isArray(expectedQuery[key])){
+					return false
+				}else{
+					// Not the recommend way of checking but it would cover all cases
+					// because both of the values are gone through querystring module
+					return query[key].sort().toString() === expectedQuery[key].sort().toString()
+				}
+			}
+			return query[key] === expectedQuery[key]
+		});
 	};
 };
 

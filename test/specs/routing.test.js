@@ -456,6 +456,30 @@ module.exports = (fetchMock) => {
 					await fm.fetchHandler('http://domain.com/person?a=b');
 					expect(fm.calls(true).length).to.equal(1);
 				});
+
+				it('can match a query string with different value types', async () => {
+					fm.mock('http://it.at.there/', 200, {
+						query: { foo: 'bar', baz: ['qux', 'quux'], corge: '' }
+					}).catch();
+
+					await fm.fetchHandler('http://it.at.there');
+					expect(fm.calls(true).length).to.equal(0);
+					await fm.fetchHandler('http://it.at.there?foo=bar&baz=qux&baz=quux&corge=');
+					expect(fm.calls(true).length).to.equal(1);
+				});
+
+
+				it('can match a query string with different ordered array value types', async () => {
+					fm.mock( 'http://it.at.there/', 200, {
+						query: { baz: ['1', '2'] }
+					}).catch();
+
+					await fm.fetchHandler('http://it.at.there');
+					expect(fm.calls(true).length).to.equal(0);
+					await fm.fetchHandler('http://it.at.there?baz=2&baz=1');
+					expect(fm.calls(true).length).to.equal(1);
+				});
+
 			});
 
 			describe('path parameters', () => {

@@ -166,12 +166,18 @@ parameters:
         types:
           - Object
         content: |-
-          Match only requests that have these query parameters set (in any order). Query parameters are matched by using Node.js [querystring](https://nodejs.org/api/querystring.html) module. If it doesn't fulfil your requirements, you should append query parameters to the url manually.
+          Match only requests that have these query parameters set (in any order). Query parameters are matched by using Node.js [querystring](https://nodejs.org/api/querystring.html) module. In summary the bahaviour is as follows
+          - strings, numbers and booleans are coerced to strings
+          - arrays of values are coerced to repetitions of the key
+          - all other values, including `undefined`, are coerced to an empty string
+          The request will be matched whichever order keys appear in the query string
         examples:
           - |-
-             {"q": "cute+kittenz", "format": "gif", inform: true}
+            {"q": "cute+kittenz"} // matches 'q=cute kittenz' or q=cute+kittenz'
           - |-
-            {"tags": ["cute", "kittenz"]}
+            {"tags": ["cute", "kittenz"]} // matches `q=cute&q=kittenz`
+          - |-
+            {"q": undefined, inform: true} // matches `q=&inform=true`
       - name: params
         versionAdded: 6.0.0
         types:

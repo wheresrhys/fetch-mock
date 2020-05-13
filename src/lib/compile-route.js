@@ -1,5 +1,3 @@
-const querystring = require('querystring');
-
 const { debug, setDebugNamespace, getDebug } = require('./debug');
 
 const isUrlMatcher = (matcher) =>

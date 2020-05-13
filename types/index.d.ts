@@ -157,7 +157,7 @@ declare namespace fetchMock {
         /**
          * key/value map of query strings to match, in any order
          */
-        query?: { [key: string]: string | string[] };
+        query?: object;
 
         /**
          * key/value map of express style path params to match

@@ -166,12 +166,18 @@ parameters:
         types:
           - Object
         content: |-
-          Match only requests that have these query parameters set (in any order). In order to match keys which are used multiple times use an array of strings.
+          Match only requests that have these query parameters set (in any order). Query parameters are matched by using Node.js [querystring](https://nodejs.org/api/querystring.html) module. In summary the bahaviour is as follows
+          - strings, numbers and booleans are coerced to strings
+          - arrays of values are coerced to repetitions of the key
+          - all other values, including `undefined`, are coerced to an empty string
+          The request will be matched whichever order keys appear in the query string
         examples:
           - |-
-            {"q": "cute+kittenz", "format": "gif"}
+            {"q": "cute+kittenz"} // matches '?q=cute kittenz' or ?q=cute+kittenz'
           - |-
-            {"tags": ["cute", "kittenz"]}
+            {"tags": ["cute", "kittenz"]} // matches `?q=cute&q=kittenz`
+          - |-
+            {"q": undefined, inform: true} // matches `?q=&inform=true`
       - name: params
         versionAdded: 6.0.0
         types:

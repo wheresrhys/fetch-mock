@@ -72,13 +72,14 @@ const getMethodMatcher = ({ method: expectedMethod }) => {
 	};
 };
 
-const getQueryStringMatcher = ({ query: expectedQuery }) => {
+const getQueryStringMatcher = ({ query: passedQuery }) => {
 	debug('Generating query parameters matcher');
-	if (!expectedQuery) {
+	if (!passedQuery) {
 		debug('  No query parameters expectations defined - skipping');
 		return;
 	}
-	debug('  Expected query parameters:', expectedQuery);
+	const expectedQuery = querystring.parse(querystring.stringify(passedQuery));
+	debug('  Expected query parameters:', passedQuery);
 	const keys = Object.keys(expectedQuery);
 	return (url) => {
 		debug('Attempting to match query parameters');
@@ -86,11 +87,14 @@ const getQueryStringMatcher = ({ query: expectedQuery }) => {
 		debug('  Expected query parameters:', expectedQuery);
 		debug('  Actual query parameters:', query);
 		return keys.every((key) => {
-			const value = Array.isArray(query[key]) ? query[key] : [query[key]];
-			const expectedValue = Array.isArray(expectedQuery[key])
-				? expectedQuery[key]
-				: [expectedQuery[key]];
-			return isEqual(value.sort(), expectedValue.sort());
+			if (Array.isArray(query[key])) {
+				if (!Array.isArray(expectedQuery[key])) {
+					return false;
+				} else {
+					return isEqual(query[key].sort(), expectedQuery[key].sort());
+				}
+			}
+			return query[key] === expectedQuery[key];
 		});
 	};
 };

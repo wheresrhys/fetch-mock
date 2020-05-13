@@ -91,9 +91,7 @@ const getQueryStringMatcher = ({ query: passedQuery }) => {
 				if(!Array.isArray(expectedQuery[key])){
 					return false
 				}else{
-					// Not the recommend way of checking but it would cover all cases
-					// because both of the values are gone through querystring module
-					return query[key].sort().toString() === expectedQuery[key].sort().toString()
+					return isEqual(query[key].sort(), expectedQuery[key].sort())
 				}
 			}
 			return query[key] === expectedQuery[key]

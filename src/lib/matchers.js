@@ -80,7 +80,7 @@ const getQueryStringMatcher = ({ query: passedQuery }) => {
 	}
 	const expectedQuery = querystring.parse(querystring.stringify(passedQuery))
 	debug('  Expected query parameters:', passedQuery);
-	const keys = Object.keys(passedQuery);
+	const keys = Object.keys(expectedQuery);
 	return (url) => {
 		debug('Attempting to match query parameters');
 		const query = querystring.parse(getQuery(url));

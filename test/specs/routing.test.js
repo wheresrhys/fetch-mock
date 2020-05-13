@@ -1,3 +1,5 @@
+const querystring = require('querystring');
+
 const chai = require('chai');
 const URL = require('whatwg-url');
 const expect = chai.expect;
@@ -477,6 +479,21 @@ module.exports = (fetchMock) => {
 					await fm.fetchHandler('http://it.at.there');
 					expect(fm.calls(true).length).to.equal(0);
 					await fm.fetchHandler('http://it.at.there?baz=2&baz=1');
+					expect(fm.calls(true).length).to.equal(1);
+				});
+
+				it('can match a query string with different value types', async () => {
+					const query = { bool: true, num: 1, arr: [1, 2], nested: { key: ["val1", "val2"] }, nullish: null, und: undefined }
+					fm.mock( 'http://it.at.there/', 200, {
+						query
+					}).catch();
+
+					await fm.fetchHandler('http://it.at.there');
+					expect(fm.calls(true).length).to.equal(0);
+
+					const qs = querystring.stringify(query)
+
+					await fm.fetchHandler('http://it.at.there?'+ qs);
 					expect(fm.calls(true).length).to.equal(1);
 				});
 

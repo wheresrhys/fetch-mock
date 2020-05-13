@@ -45,10 +45,6 @@ const sanitizeRoute = (route) => {
 
 	route.functionMatcher = route.matcher || route.functionMatcher;
 
-	if(route.query && route.url){
-		route.url += '?' + querystring.stringify(route.query)
-	}
-
 	debug('Setting route.identifier...');
 	debug(`  route.name is ${route.name}`);
 	debug(`  route.url is ${route.url}`);

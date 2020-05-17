@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-const { fetchMock, theGlobal, fetch } = testGlobals;
+const { fetchMock, theGlobal } = testGlobals;
 describe('options', () => {
 	let fm;
 	beforeEach(() => {
@@ -23,9 +23,10 @@ describe('options', () => {
 			theGlobal.fetch = async () => ({ status: 202 });
 			fetchMock.config.fallbackToNetwork = true;
 			fetchMock.mock('http://mocked.com', 201);
-			const res = await fm.fetchHandler('http://unmocked.com');
+			const res = await fetchMock.fetchHandler('http://unmocked.com');
 			expect(res.status).to.equal(202);
 			fetchMock.restore();
+			fetchMock.config.fallbackToNetwork = false;
 		});
 
 		it('actually falls back to network when configured in a sandbox properly', async () => {

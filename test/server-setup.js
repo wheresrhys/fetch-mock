@@ -8,8 +8,6 @@ global.testGlobals = {
 	AbortController: require('abort-controller')
 }
 
-
-
 let server;
 before(() => {
 	server = http.createServer((req, res) => {

@@ -8,7 +8,7 @@ TEST_BROWSER := $(shell [ -z $(TEST_BROWSER) ] && echo "Chrome" || echo ${TEST_B
 
 # intended for local dev
 test:
-	mocha --file test/server-setup.js test/{server-specs,specs}/*.test.js
+	mocha --file test/server-setup.js test/{server-specs,specs}/*.test.js test/specs/**/*.test.js
 
 test-browser:
 	@if [ -z $(CI) ]; \

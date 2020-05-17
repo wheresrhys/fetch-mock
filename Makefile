@@ -8,7 +8,7 @@ TEST_BROWSER := $(shell [ -z $(TEST_BROWSER) ] && echo "Chrome" || echo ${TEST_B
 
 # intended for local dev
 test:
-	mocha test/server.js
+	mocha --file test/server-setup.js test/{server-specs,specs}/*.test.js
 
 test-browser:
 	@if [ -z $(CI) ]; \
@@ -36,11 +36,9 @@ lint:
 verify: lint
 
 coverage:
-	nyc --reporter=lcovonly --reporter=text mocha test/server.js
+	nyc --reporter=lcovonly --reporter=text make test
 	cat ./coverage/lcov.info | coveralls
 
-local-coverage:
-	nyc --reporter=html --reporter=text mocha test/server.js
 
 transpile:
 	babel src --out-dir es5

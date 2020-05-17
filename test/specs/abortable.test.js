@@ -1,6 +1,6 @@
 const chai = require('chai');
 const expect = chai.expect;
-const {fetchMock, AbortController} = testGlobals;
+const { fetchMock, AbortController } = testGlobals;
 
 describe('abortable fetch', () => {
 	let fm;

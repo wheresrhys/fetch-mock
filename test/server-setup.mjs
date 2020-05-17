@@ -8,8 +8,8 @@ global.testGlobals = {
 	fetchMock,
 	theGlobal: global,
 	fetch,
-	AbortController
-}
+	AbortController,
+};
 
 let server;
 before(() => {

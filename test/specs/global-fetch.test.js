@@ -3,7 +3,7 @@ chai.use(require('sinon-chai'));
 const expect = chai.expect;
 const sinon = require('sinon');
 
-const {fetchMock, theGlobal} = testGlobals;
+const { fetchMock, theGlobal } = testGlobals;
 
 describe('use with global fetch', () => {
 	let originalFetch;

@@ -9,7 +9,8 @@ module.exports = {
     "ecmaVersion": 2018
   },
   "globals": {
-    "expect": true
+    "expect": true,
+    "testGlobals": true
   },
   "rules": {
     "guard-for-in": 0

@@ -36,11 +36,9 @@ lint:
 verify: lint
 
 coverage:
-	nyc --reporter=lcovonly --reporter=text mocha test/server.js
+	nyc --reporter=lcovonly --reporter=text make test
 	cat ./coverage/lcov.info | coveralls
 
-local-coverage:
-	nyc --reporter=html --reporter=text mocha test/server.js
 
 transpile:
 	babel src --out-dir es5

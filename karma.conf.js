@@ -3,7 +3,8 @@ module.exports = (karma) =>
 		port: 9876,
 		frameworks: ['mocha'],
 		files: [
-			process.env.TEST_SRC || 'test/client.js',
+			'test/client-setup.js',
+			process.env.TEST_SRC || 'test/{client-specs,specs}/*.test.js',
 			{ pattern: 'test/fixtures/sw.js', served: true, included: false },
 		],
 		proxies: {

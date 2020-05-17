@@ -1,8 +1,8 @@
-const fetchMock = require(process.env.FETCH_MOCK_SRC || '../src/server.js');
-const fetch = require('node-fetch');
-const AbortController = require('abort-controller');
-const http = require('http');
-const { promisify } = require('util');
+import fetchMock from '../esm/server.js';
+import fetch from 'node-fetch';
+import AbortController from 'abort-controller';
+import http from 'http';
+import { promisify } from 'util';
 
 global.testGlobals = {
 	fetchMock,

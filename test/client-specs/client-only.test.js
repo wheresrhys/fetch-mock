@@ -1,7 +1,6 @@
 const chai = require('chai');
 const expect = chai.expect;
-
-module.exports = (fetchMock) => {
+const {fetchMock} = testGlobals;
 	describe('client-side only tests', () => {
 		describe('native fetch behaviour', function () {
 			it('should not throw when passing unmatched calls through to native fetch', function () {
@@ -88,4 +87,3 @@ module.exports = (fetchMock) => {
 			});
 		});
 	});
-};

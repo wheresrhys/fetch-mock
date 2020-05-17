@@ -85,6 +85,7 @@ e.g. {"body": {"status: "registered"}}`);
 		this.options.statusText = this.fetchMock.statusTextMap[
 			String(this.options.status)
 		];
+
 		// Set up response headers. The empty object is to cope with
 		// new Headers(undefined) throwing in Chrome
 		// https://code.google.com/p/chromium/issues/detail?id=335871
@@ -150,7 +151,7 @@ e.g. {"body": {"status: "registered"}}`);
 		// Using a proxy means we can set properties that may not be writable on
 		// the original Response. It also means we can track the resolution of
 		// promises returned by res.json(), res.text() etc
-		this.debug('Wrappipng Response in ES proxy for observability');
+		this.debug('Wrapping Response in ES proxy for observability');
 		return new Proxy(response, {
 			get: (originalResponse, name) => {
 				if (this.responseConfig.redirectUrl) {

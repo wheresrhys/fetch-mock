@@ -4,11 +4,10 @@ const expect = chai.expect;
 const sinon = require('sinon');
 const BluebirdPromise = require('bluebird');
 const NativePromise = Promise;
-
 const { fetchMock } = testGlobals;
 describe('custom implementations', () => {
 	let fm;
-	before(() => {
+	beforeEach(() => {
 		fm = fetchMock.createInstance();
 		fm.config.warnOnUnmatched = false;
 	});
@@ -18,34 +17,34 @@ describe('custom implementations', () => {
 	describe('Promise', () => {
 		it('can be configured to use alternate Promise implementations', async () => {
 			fm.config.Promise = BluebirdPromise;
-			fm.mock('http://example.com/', 200);
-			const fetchCall = fetch('http://example.com');
-			expect(fetchCall).to.be.instanceof(BluebirdPromise);
-			await fetchCall;
-			fm.config.Promise = NativePromise;
+			fm.mock('*', 200);
+			const responsePromise = fetch('http://a.com');
+			expect(responsePromise).to.be.instanceof(BluebirdPromise);
+			// this tests we actually resolve tthe promise ok
+			const { status } = await responsePromise;
+			expect(status).to.equal(200);
 		});
 
 		it('should allow non-native Promises as responses', async () => {
 			fm.config.Promise = BluebirdPromise;
 			const stub = sinon.spy((fn) =>
-				fn(BluebirdPromise.resolve(new fm.config.Response('', { status: 203 })))
+				fn(BluebirdPromise.resolve(new fm.config.Response('', { status: 200 })))
 			);
-			fm.mock(/.*/, {
+			fm.mock('*', {
 				then: stub,
 			});
-			const res = await fm.fetchHandler('http://thing.place');
+			const { status } = await fm.fetchHandler('http://a.com');
 			expect(stub.calledOnce).to.be.true;
-			expect(res.status).to.equal(203);
-			fm.config.Promise = NativePromise;
+			expect(status).to.equal(200);
 		});
 
 		it('can use custom promises but return native promise', async () => {
-			fm.mock('http://example.com/', BluebirdPromise.resolve(200));
+			fm.mock('*', BluebirdPromise.resolve(200));
 
-			const responsePromise = fm.fetchHandler('http://example.com');
+			const responsePromise = fm.fetchHandler('http://a.com');
 			expect(responsePromise).to.be.instanceof(NativePromise);
-			const res = await responsePromise;
-			expect(res.status).to.equal(200);
+			const { status } = await responsePromise;
+			expect(status).to.equal(200);
 		});
 	});
 
@@ -74,7 +73,7 @@ describe('custom implementations', () => {
 			return spy;
 		};
 
-		let defaultSpies = null;
+		let defaultSpies;
 
 		beforeEach(() => {
 			fm = fetchMock.createInstance();
@@ -83,27 +82,23 @@ describe('custom implementations', () => {
 				Headers: getHeadersSpy(),
 				Response: getResponseSpy(),
 			};
-
 			fm.config = Object.assign(fm.config, defaultSpies);
 		});
 
-		it('should use the configured Headers', async () => {
+		it('should use the configured Headers when generating a response', async () => {
 			const spiedReplacementHeaders = getHeadersSpy();
 			fm.config.Headers = spiedReplacementHeaders;
-
-			fm.mock('http://example.com/', {
+			fm.mock('*', {
 				status: 200,
 				headers: { id: 1 },
 			});
 
-			await fetch('http://example.com/', {
-				headers: { id: 1 },
-			});
+			await fetch('http://a.com');
 			expect(spiedReplacementHeaders.callCount).to.equal(1);
 			expect(defaultSpies.Headers.callCount).to.equal(0);
 		});
 
-		it('should use the configured Request', () => {
+		it('should use the configured Request when matching', async () => {
 			const ReplacementRequest = function (url) {
 				this.url = url;
 				this.method = 'GET';
@@ -111,24 +106,29 @@ describe('custom implementations', () => {
 			};
 
 			fm.config.Request = ReplacementRequest;
-			fm.mock('http://example.com/', { status: 200 });
-
-			const requestInstance = new ReplacementRequest('http://example.com/');
+			fm.mock('*', 200);
 
 			// As long as this is successful, it's worked, as we've correctly
 			// matched the request against overridden prototype.
-			return fetch(requestInstance);
+			await fetch(new ReplacementRequest('http://a.com'));
+
+			expect(() =>
+				fetch(new fetchMock.config.Request('http://a.com'))
+			).to.throw('Unrecognised Request object');
 		});
 
 		it('should use the configured Response', async () => {
 			const spiedReplacementResponse = sinon.stub().returns({ isFake: true });
 			fm.config.Response = spiedReplacementResponse;
 
-			fm.mock('http://example.com/', { status: 200 });
+			fm.mock('*', 'hello');
 
-			const res = await fetch('http://example.com/');
+			const res = await fetch('http://a.com');
 			expect(res.isFake).to.be.true;
 			expect(spiedReplacementResponse.callCount).to.equal(1);
+			const lastCall = spiedReplacementResponse.lastCall.args;
+			expect(lastCall[0]).to.equal('hello');
+			expect(lastCall[1].status).to.equal(200);
 			expect(defaultSpies.Response.callCount).to.equal(0);
 		});
 	});

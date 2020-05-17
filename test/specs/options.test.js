@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-const { fetchMock, fetch } = testGlobals;
+const { fetchMock } = testGlobals;
 describe('options', () => {
 	let fm;
 	beforeEach(() => {
@@ -10,80 +10,64 @@ describe('options', () => {
 
 	describe('fallbackToNetwork', () => {
 		it('error by default', () => {
-			expect(() => fm.fetchHandler('http://it.at.there/')).to.throw();
+			expect(() => fm.fetchHandler('http://unmocked.com')).to.throw();
 		});
 
 		it('not error when configured globally', async () => {
 			fm.config.fallbackToNetwork = true;
-			fm.mock('http://it.at.where/', 200);
-			expect(() => fm.fetchHandler('http://it.at.there/')).not.to.throw();
+			fm.mock('http://mocked.com', 201);
+			expect(() => fm.fetchHandler('http://unmocked.com')).not.to.throw();
 		});
 
 		it('actually falls back to network when configured globally', async () => {
-			fm.realFetch = fetch;
+			fm.realFetch = async () => ({ status: 202 });
 			fm.config.fallbackToNetwork = true;
-
-			fm.mock('http://it.at.where/', 204);
-			const res = await fm.fetchHandler('http://localhost:9876/dummy-file.txt');
-			expect(res.status).to.equal(200);
-		});
-
-		it('error when configured on sandbox without fetch defined', () => {
-			const sbx = fm.sandbox();
-			delete sbx.config.fetch;
-			sbx.config.fallbackToNetwork = true;
-			expect(() => sbx('http://it.at.there/')).to.throw();
-		});
-
-		it('not error when configured on sandbox with fetch defined', async () => {
-			const sbx = fm.sandbox();
-			sbx.config.fallbackToNetwork = true;
-			sbx.config.fetch = () => Promise.resolve(200);
-			expect(() => sbx('http://it.at.there/')).not.to.throw();
+			fm.mock('http://mocked.com', 201);
+			const res = await fm.fetchHandler('http://unmocked.com');
+			expect(res.status).to.equal(202);
 		});
 
 		it('actually falls back to network when configured in a sandbox properly', async () => {
 			const sbx = fm.sandbox();
-			const fakeRealFetch = fm.sandbox().catch();
-			sbx.config.fetch = fakeRealFetch;
+			sbx.config.fetch = async () => ({ status: 202 });
 			sbx.config.fallbackToNetwork = true;
-			sbx.mock('http://it.at.there/', 204);
-			const res = await sbx('http://it.at.where/');
-			expect(res.status).to.equal(200);
+			sbx.mock('http://mocked.com', 201);
+			const res = await sbx('http://unmocked.com');
+			expect(res.status).to.equal(202);
 		});
 
 		it('calls fetch with original Request object', async () => {
 			const sbx = fm.sandbox();
-			const fakeRealFetch = fm.sandbox().catch();
-			sbx.config.fetch = fakeRealFetch;
+			let calledWith;
+			sbx.config.fetch = async (req) => {
+				calledWith = req;
+				return { status: 202 };
+			};
 			sbx.config.fallbackToNetwork = true;
-			sbx.mock('http://it.at.there/', 204);
-			const req = new sbx.config.Request('http://it.at.where/');
+			sbx.mock('http://mocked.com', 201);
+			const req = new sbx.config.Request('http://unmocked.com');
 			await sbx(req);
-			expect(fakeRealFetch.lastCall().request).to.equal(req);
+			expect(calledWith).to.equal(req);
 		});
 
 		describe('always', () => {
 			it('ignores routes that are matched', async () => {
-				fm.realFetch = fetch;
+				fm.realFetch = async () => ({ status: 202 });
 				fm.config.fallbackToNetwork = 'always';
 
-				fm.mock('http://localhost:9876/dummy-file.txt', 204);
-				const res = await fm.fetchHandler(
-					'http://localhost:9876/dummy-file.txt'
-				);
-				expect(res.status).to.equal(200);
+				fm.mock('http://mocked.com', 201);
+				const res = await fm.fetchHandler('http://unmocked.com');
+				expect(res.status).to.equal(202);
 			});
 
 			it('ignores routes that are not matched', async () => {
-				fm.realFetch = fetch;
+				fm.realFetch = async () => ({ status: 202 });
+
 				fm.config.fallbackToNetwork = 'always';
 
-				fm.mock('http://it.at.where', 204);
-				const res = await fm.fetchHandler(
-					'http://localhost:9876/dummy-file.txt'
-				);
-				expect(res.status).to.equal(200);
+				fm.mock('http://mocked.com', 201);
+				const res = await fm.fetchHandler('http://unmocked.com');
+				expect(res.status).to.equal(202);
 			});
 		});
 	});
@@ -206,31 +190,29 @@ describe('options', () => {
 	describe('overwriteRoutes', () => {
 		it('error on duplicate routes by default', async () => {
 			expect(() =>
-				fm.mock('http://it.at.there/', 200).mock('http://it.at.there/', 300)
+				fm.mock('http://a.com', 200).mock('http://a.com', 300)
 			).to.throw();
 		});
 
 		it('allow overwriting existing route', async () => {
 			fm.config.overwriteRoutes = true;
 			expect(() =>
-				fm.mock('http://it.at.there/', 200).mock('http://it.at.there/', 300)
+				fm.mock('http://a.com', 200).mock('http://a.com', 300)
 			).not.to.throw();
 
-			const res = await fm.fetchHandler('http://it.at.there/');
+			const res = await fm.fetchHandler('http://a.com');
 			expect(res.status).to.equal(300);
 		});
 
 		it('allow adding additional routes with same matcher', async () => {
 			fm.config.overwriteRoutes = false;
 			expect(() =>
-				fm
-					.mock('http://it.at.there/', 200, { repeat: 1 })
-					.mock('http://it.at.there/', 300)
+				fm.mock('http://a.com', 200, { repeat: 1 }).mock('http://a.com', 300)
 			).not.to.throw();
 
-			const res = await fm.fetchHandler('http://it.at.there/');
+			const res = await fm.fetchHandler('http://a.com');
 			expect(res.status).to.equal(200);
-			const res2 = await fm.fetchHandler('http://it.at.there/');
+			const res2 = await fm.fetchHandler('http://a.com');
 			expect(res2.status).to.equal(300);
 		});
 	});

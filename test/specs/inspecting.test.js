@@ -5,7 +5,8 @@ const chai = require('chai');
 const expect = chai.expect;
 const sinon = require('sinon');
 
-module.exports = (fetchMock) => {
+const {fetchMock} = testGlobals;
+
 	describe('inspecting', () => {
 		let fm;
 		before(() => {
@@ -658,4 +659,3 @@ module.exports = (fetchMock) => {
 			});
 		});
 	});
-};

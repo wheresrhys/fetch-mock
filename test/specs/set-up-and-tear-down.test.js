@@ -16,7 +16,7 @@ const testChainableMethod = (getFetchMock, method, args = []) => {
 	});
 };
 
-module.exports = (fetchMock) => {
+const {fetchMock} = testGlobals;
 	describe('Set up and tear down', () => {
 		let fm;
 		before(() => {
@@ -196,4 +196,3 @@ module.exports = (fetchMock) => {
 			testChainableMethod(() => fm, 'catch');
 		});
 	});
-};

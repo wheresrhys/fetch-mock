@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-module.exports = (fetchMock, theGlobal, fetch) => {
+const {fetchMock, theGlobal, fetch} = testGlobals;
 	describe('options', () => {
 		let fm;
 		beforeEach(() => {
@@ -242,4 +242,3 @@ module.exports = (fetchMock, theGlobal, fetch) => {
 			});
 		});
 	});
-};

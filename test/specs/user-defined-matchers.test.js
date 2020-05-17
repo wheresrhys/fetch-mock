@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-module.exports = (fetchMock) => {
+const {fetchMock} = testGlobals;
 	describe('user defined matchers', () => {
 		it('match on sync property', async () => {
 			const fm = fetchMock.createInstance();
@@ -51,4 +51,3 @@ module.exports = (fetchMock) => {
 			expect(fm.calls(true).length).to.equal(1);
 		});
 	});
-};

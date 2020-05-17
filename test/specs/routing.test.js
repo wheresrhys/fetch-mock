@@ -2,7 +2,7 @@ const chai = require('chai');
 const URL = require('whatwg-url');
 const expect = chai.expect;
 
-module.exports = (fetchMock) => {
+const {fetchMock} = testGlobals;
 	describe('routing', () => {
 		let fm;
 		before(() => {
@@ -1121,4 +1121,3 @@ module.exports = (fetchMock) => {
 			});
 		});
 	});
-};

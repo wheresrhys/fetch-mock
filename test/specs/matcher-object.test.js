@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-module.exports = (fetchMock) => {
+const {fetchMock} = testGlobals;
 	describe('matcher object', () => {
 		let fm;
 		beforeEach(() => {
@@ -164,4 +164,3 @@ module.exports = (fetchMock) => {
 			expect(res.status).to.equal(200);
 		});
 	});
-};

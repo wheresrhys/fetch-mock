@@ -3,7 +3,7 @@ chai.use(require('sinon-chai'));
 const expect = chai.expect;
 const sinon = require('sinon');
 
-module.exports = (fetchMock, theGlobal) => {
+const {fetchMock, theGlobal} = testGlobals;
 	describe('sticky routes', () => {
 		describe('effect on routes', () => {
 			let fm;
@@ -135,4 +135,3 @@ module.exports = (fetchMock, theGlobal) => {
 			});
 		});
 	});
-};

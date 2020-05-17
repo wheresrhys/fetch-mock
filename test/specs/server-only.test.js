@@ -3,7 +3,7 @@ chai.use(require('sinon-chai'));
 const expect = chai.expect;
 const sinon = require('sinon');
 
-module.exports = (fetchMock) => {
+const {fetchMock} = testGlobals;
 	describe('nodejs only tests', () => {
 		describe('support for nodejs body types', () => {
 			afterEach(() => fetchMock.reset());
@@ -42,4 +42,3 @@ module.exports = (fetchMock) => {
 			});
 		});
 	});
-};

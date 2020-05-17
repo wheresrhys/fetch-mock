@@ -3,7 +3,7 @@ chai.use(require('sinon-chai'));
 const expect = chai.expect;
 const sinon = require('sinon');
 
-module.exports = (fetchMock, theGlobal) => {
+const {fetchMock, theGlobal} = testGlobals;
 	describe('sandbox', () => {
 		let originalFetch;
 
@@ -158,4 +158,3 @@ module.exports = (fetchMock, theGlobal) => {
 			expect(new Response()).to.be.an.instanceOf(fetchMock.config.Response);
 		});
 	});
-};

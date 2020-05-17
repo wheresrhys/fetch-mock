@@ -3,7 +3,7 @@ chai.use(require('sinon-chai'));
 const expect = chai.expect;
 const sinon = require('sinon');
 
-module.exports = (fetchMock) => {
+const {fetchMock} = testGlobals;
 	describe('repeat and done()', () => {
 		let fm;
 		before(() => {
@@ -227,4 +227,3 @@ module.exports = (fetchMock) => {
 			});
 		});
 	});
-};

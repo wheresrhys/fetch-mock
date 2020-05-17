@@ -5,7 +5,7 @@ const sinon = require('sinon');
 const BluebirdPromise = require('bluebird');
 const NativePromise = Promise;
 
-module.exports = (fetchMock) => {
+const {fetchMock} = testGlobals;
 	describe('custom implementations', () => {
 		let fm;
 		before(() => {
@@ -135,4 +135,3 @@ module.exports = (fetchMock) => {
 			});
 		});
 	});
-};

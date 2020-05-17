@@ -16,7 +16,7 @@ const testChainableMethod = (getFetchMock, method, args = []) => {
 	});
 };
 
-module.exports = (fetchMock) => {
+const {fetchMock} = testGlobals;
 	describe('shorthands', () => {
 		let fm;
 		let expectRoute;
@@ -129,4 +129,3 @@ module.exports = (fetchMock) => {
 			});
 		});
 	});
-};

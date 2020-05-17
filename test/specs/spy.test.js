@@ -3,7 +3,7 @@ chai.use(require('sinon-chai'));
 const expect = chai.expect;
 const sinon = require('sinon');
 
-module.exports = (fetchMock, theGlobal) => {
+const {fetchMock, theGlobal} = testGlobals;
 	describe('spy()', () => {
 		it('when mocking globally, spy falls through to global fetch', async () => {
 			const originalFetch = theGlobal.fetch;
@@ -49,4 +49,3 @@ module.exports = (fetchMock, theGlobal) => {
 			fm.restore();
 		});
 	});
-};

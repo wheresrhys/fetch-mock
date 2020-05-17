@@ -21,6 +21,7 @@ describe('abortable fetch', () => {
 			await fm.fetchHandler(...fetchArgs);
 			throw new Error('unexpected');
 		} catch (error) {
+			console.log(error)
 			if (typeof DOMException !== 'undefined') {
 				expect(error instanceof DOMException).to.equal(true);
 			}
@@ -40,7 +41,12 @@ describe('abortable fetch', () => {
 		});
 	});
 
-	it('error on signal abort for request object', () => {
+	const isNodeFetch1 = /^1/.test(require('node-fetch/package.json').version);
+
+	// node-fetch 1 does not support abort signals at all, so when passing
+	// a signal into the Request constructor it just gets ignored. So use of
+	// signals in this way is both unimplementable and untestable in node-fetch@1
+	(isNodeFetch1 ? it.skip : it)('error on signal abort for request object', () => {
 		fm.mock('*', getDelayedOk());
 		return expectAbortError(
 			new fm.config.Request('http://a.com', {

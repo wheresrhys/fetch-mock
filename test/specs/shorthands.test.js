@@ -3,23 +3,26 @@ chai.use(require('sinon-chai'));
 const expect = chai.expect;
 const sinon = require('sinon');
 
-const testChainableMethod = (getFetchMock, method, args = []) => {
-	it(`${method}() is chainable`, () => {
-		expect(getFetchMock()[method](...args)).to.equal(getFetchMock());
-	});
-
-	it(`${method}() has "this"`, () => {
-		sinon.spy(getFetchMock(), method);
-		getFetchMock()[method](...args);
-		expect(getFetchMock()[method].lastCall.thisValue).to.equal(getFetchMock());
-		getFetchMock()[method].restore();
-	});
-};
-
 const { fetchMock } = testGlobals;
 describe('shorthands', () => {
 	let fm;
 	let expectRoute;
+
+	const testChainableMethod = (method) => {
+		const args = fetchMock[method].length === 3 ? ['*', 200] : [200];
+
+		it(`${method}() is chainable`, () => {
+			expect(fm[method](...args)).to.equal(fm);
+		});
+
+		it(`${method}() has "this"`, () => {
+			sinon.spy(fm, method);
+			fm[method](...args);
+			expect(fm[method].lastCall.thisValue).to.equal(fm);
+			fm[method].restore();
+		});
+	};
+
 	before(() => {
 		fm = fetchMock.createInstance();
 		sinon.spy(fm, 'compileRoute');
@@ -45,6 +48,8 @@ describe('shorthands', () => {
 		});
 	});
 
+	testChainableMethod('sticky');
+
 	it('has once() shorthand method', () => {
 		fm.once('a', 'b');
 		fm.once('c', 'd', { opt: 'e' });
@@ -57,12 +62,16 @@ describe('shorthands', () => {
 		});
 	});
 
+	testChainableMethod('once');
+
 	it('has any() shorthand method', () => {
 		fm.any('a', { opt: 'b' });
 		expectRoute({}, 'a', {
 			opt: 'b',
 		});
 	});
+
+	testChainableMethod('any');
 
 	it('has anyOnce() shorthand method', () => {
 		fm.anyOnce('a', { opt: 'b' });
@@ -71,6 +80,8 @@ describe('shorthands', () => {
 			repeat: 1,
 		});
 	});
+
+	testChainableMethod('anyOnce');
 
 	describe('method shorthands', () => {
 		['get', 'post', 'put', 'delete', 'head', 'patch'].forEach((method) => {
@@ -87,7 +98,7 @@ describe('shorthands', () => {
 					});
 				});
 
-				testChainableMethod(() => fm, method, [/a/, 200]);
+				testChainableMethod(method);
 
 				it(`has ${method}Once() shorthand`, () => {
 					fm[method + 'Once']('a', 'b');
@@ -103,7 +114,7 @@ describe('shorthands', () => {
 					});
 				});
 
-				testChainableMethod(() => fm, `${method}Once`, [/a/, 200]);
+				testChainableMethod(`${method}Once`);
 
 				it(`has ${method}Any() shorthand`, () => {
 					fm[method + 'Any']('a', { opt: 'b' });
@@ -113,7 +124,7 @@ describe('shorthands', () => {
 					});
 				});
 
-				testChainableMethod(() => fm, `${method}Any`, [200]);
+				testChainableMethod(`${method}Any`);
 
 				it(`has ${method}AnyOnce() shorthand`, () => {
 					fm[method + 'AnyOnce']('a', { opt: 'b' });
@@ -124,7 +135,7 @@ describe('shorthands', () => {
 					});
 				});
 
-				testChainableMethod(() => fm, `${method}Any`, [200]);
+				testChainableMethod(`${method}Any`);
 			});
 		});
 	});

@@ -1,7 +1,6 @@
-const chai = require('chai');
-const expect = chai.expect;
-
+const { expect } = require('chai');
 const { fetchMock } = testGlobals;
+
 describe('response generation', () => {
 	let fm;
 	before(() => {

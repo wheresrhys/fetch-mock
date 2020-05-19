@@ -75,6 +75,22 @@ describe('inspecting', () => {
 	describe('filtering', () => {
 		afterEach(() => fm.reset());
 
+		const fetchUrls = (...urls) => Promise.all(urls.map(fm.fetchHandler));
+
+		const expectFilteredLength = (...filter) => (length) =>
+			expect(fm.filterCalls(...filter).length).to.equal(length);
+
+		const expectFilteredUrl = (...filter) => (url) =>
+			expect(fm.filterCalls(...filter)[0][0]).to.equal(url);
+
+		const expectSingleUrl = (...filter) => (url) => {
+			expectFilteredLength(...filter)(1);
+			expectFilteredUrl(...filter)(url);
+		};
+
+		const expectFilteredResponse = (...filter) => (...response) =>
+			expect(fm.filterCalls(...filter)[0]).to.eql(response);
+
 		it('returns [url, options] pairs', async () => {
 			fm.mock('http://a.com/', 200, { name: 'fetch-mock' });
 
@@ -85,67 +101,53 @@ describe('inspecting', () => {
 		it('can retrieve all calls', async () => {
 			fm.mock('http://a.com/', 200).catch();
 
-			await fm.fetchHandler('http://a.com/');
-			await fm.fetchHandler('http://b.com/');
-			expect(fm.filterCalls().length).to.equal(2);
+			await fetchUrls('http://a.com/', 'http://b.com/');
+			expectFilteredLength()(2);
 		});
 
 		it('can retrieve only calls matched by any route', async () => {
 			fm.mock('http://a.com/', 200).catch();
 
-			await fm.fetchHandler('http://a.com/');
-			await fm.fetchHandler('http://b.com/');
-			expect(fm.filterCalls(true).length).to.equal(1);
-			expect(fm.filterCalls(true)[0][0]).to.equal('http://a.com/');
-			expect(fm.filterCalls('matched').length).to.equal(1);
-			expect(fm.filterCalls('matched')[0][0]).to.equal('http://a.com/');
+			await fetchUrls('http://a.com/', 'http://b.com/');
+			expectSingleUrl(true)('http://a.com/');
+			expectSingleUrl('matched')('http://a.com/');
 		});
 
 		it('can retrieve only calls not matched by any route', async () => {
 			fm.mock('http://a.com/', 200).catch();
 
-			await fm.fetchHandler('http://a.com/');
-			await fm.fetchHandler('http://b.com/');
-			expect(fm.filterCalls(false).length).to.equal(1);
-			expect(fm.filterCalls(false)[0][0]).to.equal('http://b.com/');
-			expect(fm.filterCalls('unmatched').length).to.equal(1);
-			expect(fm.filterCalls('unmatched')[0][0]).to.equal('http://b.com/');
+			await fetchUrls('http://a.com/', 'http://b.com/');
+			expectSingleUrl(false)('http://b.com/');
+			expectSingleUrl('unmatched')('http://b.com/');
 		});
 
 		it('can retrieve only calls handled by a named route', async () => {
 			fm.mock('http://a.com/', 200, { name: 'a' }).catch();
 
-			await fm.fetchHandler('http://a.com/');
-			await fm.fetchHandler('http://b.com/');
-			expect(fm.filterCalls('a').length).to.equal(1);
-			expect(fm.filterCalls('a')[0][0]).to.equal('http://a.com/');
+			await fetchUrls('http://a.com/', 'http://b.com/');
+			expectSingleUrl('a')('http://a.com/');
 		});
 
 		it('can retrieve only calls handled by matcher', async () => {
 			fm.mock('path:/path', 200).catch();
 
-			await fm.fetchHandler('http://a.com/');
-			await fm.fetchHandler('http://b.com/path');
-			expect(fm.filterCalls('path:/path').length).to.equal(1);
-			expect(fm.filterCalls('path:/path')[0][0]).to.equal('http://b.com/path');
+			await fetchUrls('http://a.com/', 'http://b.com/path');
+			expectSingleUrl('path:/path')('http://b.com/path');
 		});
 
 		it('can retrieve only calls handled by a non-string matcher', async () => {
 			const rx = /path/;
 			fm.mock(rx, 200).catch();
 
-			await fm.fetchHandler('http://a.com/');
-			await fm.fetchHandler('http://b.com/path');
-			expect(fm.filterCalls(rx).length).to.equal(1);
-			expect(fm.filterCalls(rx)[0][0]).to.equal('http://b.com/path');
+			await fetchUrls('http://a.com/', 'http://b.com/path');
+			expectSingleUrl(rx)('http://b.com/path');
 		});
 
 		it('can retrieve only calls which match a previously undeclared matcher', async () => {
 			fm.mock('http://a.com/path', 200).catch();
 
 			await fm.fetchHandler('http://a.com/path');
-			expect(fm.filterCalls('path:/path').length).to.equal(1);
-			expect(fm.filterCalls('path:/path')[0][0]).to.equal('http://a.com/path');
+			expectSingleUrl('path:/path')('http://a.com/path');
 		});
 
 		context('filtered by method', () => {
@@ -156,8 +158,8 @@ describe('inspecting', () => {
 				await fm.fetchHandler('http://a.com/');
 				await fm.fetchHandler('http://b.com/', { method: 'POST' });
 				await fm.fetchHandler('http://b.com/');
-				expect(fm.filterCalls(undefined, 'post').length).to.equal(2);
-				expect(fm.filterCalls(undefined, 'POST').length).to.equal(2);
+				expectFilteredLength(undefined, 'post')(2);
+				expectFilteredLength(undefined, 'POST')(2);
 				expect(
 					fm
 						.filterCalls(undefined, 'POST')
@@ -173,12 +175,11 @@ describe('inspecting', () => {
 				await fm.fetchHandler('http://a.com/');
 				await fm.fetchHandler('http://b.com/', { method: 'POST' });
 				await fm.fetchHandler('http://b.com/');
-				expect(fm.filterCalls(true, 'post').length).to.equal(1);
-				expect(fm.filterCalls(true, 'POST').length).to.equal(1);
-				expect(fm.filterCalls(true, 'POST')[0]).to.eql([
-					'http://a.com/',
-					{ method: 'post' },
-				]);
+				expectFilteredLength(true, 'post')(1);
+				expectFilteredLength(true, 'POST')(1);
+				expectFilteredResponse(true, 'POST')('http://a.com/', {
+					method: 'post',
+				});
 			});
 
 			it('can retrieve only calls not matched by any route', async () => {
@@ -188,30 +189,26 @@ describe('inspecting', () => {
 				await fm.fetchHandler('http://a.com/');
 				await fm.fetchHandler('http://b.com/', { method: 'POST' });
 				await fm.fetchHandler('http://b.com/');
-				expect(fm.filterCalls(false, 'post').length).to.equal(1);
-				expect(fm.filterCalls(false, 'POST').length).to.equal(1);
-				expect(fm.filterCalls(false, 'POST')[0]).to.eql([
-					'http://b.com/',
-					{ method: 'POST' },
-				]);
+				expectFilteredLength(false, 'post')(1);
+				expectFilteredLength(false, 'POST')(1);
+				expectFilteredResponse(false, 'POST')('http://b.com/', {
+					method: 'POST',
+				});
 			});
 
 			it('can retrieve only calls handled by a named route', async () => {
 				fm.mock('http://a.com/', 200, { name: 'a' }).catch();
-				fm.mock('http://b.com/', 200, {
-					name: 'b',
-				}).catch();
+				fm.mock('http://b.com/', 200, { name: 'b' }).catch();
 
 				await fm.fetchHandler('http://a.com/', { method: 'post' });
 				await fm.fetchHandler('http://a.com/');
 				await fm.fetchHandler('http://b.com/');
-				expect(fm.filterCalls('a', 'post').length).to.equal(1);
-				expect(fm.filterCalls('a', 'POST').length).to.equal(1);
-				expect(fm.filterCalls('b').length).to.equal(1);
-				expect(fm.filterCalls('a', 'POST')[0]).to.eql([
-					'http://a.com/',
-					{ method: 'post' },
-				]);
+				expectFilteredLength('a', 'post')(1);
+				expectFilteredLength('a', 'POST')(1);
+				expectFilteredLength('b')(1);
+				expectFilteredResponse('a', 'POST')('http://a.com/', {
+					method: 'post',
+				});
 			});
 
 			it('can retrieve only calls handled by matcher', async () => {
@@ -219,12 +216,11 @@ describe('inspecting', () => {
 
 				await fm.fetchHandler('http://b.com/path', { method: 'post' });
 				await fm.fetchHandler('http://b.com/path');
-				expect(fm.filterCalls('path:/path', 'post').length).to.equal(1);
-				expect(fm.filterCalls('path:/path', 'POST').length).to.equal(1);
-				expect(fm.filterCalls('path:/path', 'POST')[0]).to.eql([
-					'http://b.com/path',
-					{ method: 'post' },
-				]);
+				expectFilteredLength('path:/path', 'post')(1);
+				expectFilteredLength('path:/path', 'POST')(1);
+				expectFilteredResponse('path:/path', 'POST')('http://b.com/path', {
+					method: 'post',
+				});
 			});
 
 			it('can retrieve only calls handled by a non-string matcher', async () => {
@@ -233,12 +229,11 @@ describe('inspecting', () => {
 
 				await fm.fetchHandler('http://b.com/path', { method: 'post' });
 				await fm.fetchHandler('http://b.com/path');
-				expect(fm.filterCalls(rx, 'post').length).to.equal(1);
-				expect(fm.filterCalls(rx, 'POST').length).to.equal(1);
-				expect(fm.filterCalls(rx, 'POST')[0]).to.eql([
-					'http://b.com/path',
-					{ method: 'post' },
-				]);
+				expectFilteredLength(rx, 'post')(1);
+				expectFilteredLength(rx, 'POST')(1);
+				expectFilteredResponse(rx, 'POST')('http://b.com/path', {
+					method: 'post',
+				});
 			});
 
 			it('can retrieve only calls which match a previously undeclared matcher', async () => {
@@ -246,12 +241,11 @@ describe('inspecting', () => {
 
 				await fm.fetchHandler('http://b.com/path', { method: 'post' });
 				await fm.fetchHandler('http://b.com/path');
-				expect(fm.filterCalls('path:/path', 'post').length).to.equal(1);
-				expect(fm.filterCalls('path:/path', 'POST').length).to.equal(1);
-				expect(fm.filterCalls('path:/path', 'POST')[0]).to.eql([
-					'http://b.com/path',
-					{ method: 'post' },
-				]);
+				expectFilteredLength('path:/path', 'post')(1);
+				expectFilteredLength('path:/path', 'POST')(1);
+				expectFilteredResponse('path:/path', 'POST')('http://b.com/path', {
+					method: 'post',
+				});
 			});
 		});
 
@@ -260,23 +254,18 @@ describe('inspecting', () => {
 				fm.mock('http://a.com/', 200).catch();
 
 				await fm.fetchHandler('http://a.com/', {
-					headers: { 'api-key': 'abcde' },
+					headers: { a: 'z' },
 				});
 				await fm.fetchHandler('http://a.com/');
 				await fm.fetchHandler('http://b.com/', {
-					headers: { 'api-key': 'abcde' },
+					headers: { a: 'z' },
 				});
 				await fm.fetchHandler('http://b.com/');
-				expect(
-					fm.filterCalls(undefined, { headers: { 'api-key': 'abcde' } }).length
-				).to.equal(2);
-				expect(
-					fm.filterCalls(undefined, { headers: { 'api-key': 'abcde' } }).length
-				).to.equal(2);
+				expectFilteredLength(undefined, { headers: { a: 'z' } })(2);
 				expect(
 					fm
-						.filterCalls(undefined, { headers: { 'api-key': 'abcde' } })
-						.filter(([, options]) => options.headers['api-key']).length
+						.filterCalls(undefined, { headers: { a: 'z' } })
+						.filter(([, options]) => options.headers['a']).length
 				).to.equal(2);
 			});
 
@@ -284,82 +273,62 @@ describe('inspecting', () => {
 				fm.mock('http://a.com/', 200).catch();
 
 				await fm.fetchHandler('http://a.com/', {
-					headers: { 'api-key': 'abcde' },
+					headers: { a: 'z' },
 				});
 				await fm.fetchHandler('http://a.com/');
 				await fm.fetchHandler('http://b.com/', {
-					headers: { 'api-key': 'abcde' },
+					headers: { a: 'z' },
 				});
 				await fm.fetchHandler('http://b.com/');
-				expect(
-					fm.filterCalls(true, { headers: { 'api-key': 'abcde' } }).length
-				).to.equal(1);
-				expect(
-					fm.filterCalls(true, { headers: { 'api-key': 'abcde' } }).length
-				).to.equal(1);
-				expect(
-					fm.filterCalls(true, { headers: { 'api-key': 'abcde' } })[0]
-				).to.eql(['http://a.com/', { headers: { 'api-key': 'abcde' } }]);
+				expectFilteredLength(true, { headers: { a: 'z' } })(1);
+				expectFilteredResponse(true, { headers: { a: 'z' } })('http://a.com/', {
+					headers: { a: 'z' },
+				});
 			});
 
 			it('can retrieve only calls not matched by any route', async () => {
 				fm.mock('http://a.com/', 200).catch();
 
 				await fm.fetchHandler('http://a.com/', {
-					headers: { 'api-key': 'abcde' },
+					headers: { a: 'z' },
 				});
 				await fm.fetchHandler('http://a.com/');
 				await fm.fetchHandler('http://b.com/', {
-					headers: { 'api-key': 'abcde' },
+					headers: { a: 'z' },
 				});
 				await fm.fetchHandler('http://b.com/');
-				expect(
-					fm.filterCalls(false, { headers: { 'api-key': 'abcde' } }).length
-				).to.equal(1);
-				expect(
-					fm.filterCalls(false, { headers: { 'api-key': 'abcde' } }).length
-				).to.equal(1);
-				expect(
-					fm.filterCalls(false, { headers: { 'api-key': 'abcde' } })[0]
-				).to.eql(['http://b.com/', { headers: { 'api-key': 'abcde' } }]);
+				expectFilteredLength(false, { headers: { a: 'z' } })(1);
+				expectFilteredResponse(false, { headers: { a: 'z' } })(
+					'http://b.com/',
+					{ headers: { a: 'z' } }
+				);
 			});
 
 			it('can retrieve only calls handled by a named route', async () => {
 				fm.mock('http://a.com/', 200, { name: 'here' }).catch();
 
 				await fm.fetchHandler('http://a.com/', {
-					headers: { 'api-key': 'abcde' },
+					headers: { a: 'z' },
 				});
 				await fm.fetchHandler('http://a.com/');
-				expect(
-					fm.filterCalls('here', { headers: { 'api-key': 'abcde' } }).length
-				).to.equal(1);
-				expect(
-					fm.filterCalls('here', { headers: { 'api-key': 'abcde' } }).length
-				).to.equal(1);
-				expect(
-					fm.filterCalls('here', { headers: { 'api-key': 'abcde' } })[0]
-				).to.eql(['http://a.com/', { headers: { 'api-key': 'abcde' } }]);
+				expectFilteredLength('here', { headers: { a: 'z' } })(1);
+				expectFilteredResponse('here', { headers: { a: 'z' } })(
+					'http://a.com/',
+					{ headers: { a: 'z' } }
+				);
 			});
 
 			it('can retrieve only calls handled by matcher', async () => {
 				fm.mock('path:/path', 200).catch();
 
 				await fm.fetchHandler('http://b.com/path', {
-					headers: { 'api-key': 'abcde' },
+					headers: { a: 'z' },
 				});
 				await fm.fetchHandler('http://b.com/path');
-				expect(
-					fm.filterCalls('path:/path', { headers: { 'api-key': 'abcde' } })
-						.length
-				).to.equal(1);
-				expect(
-					fm.filterCalls('path:/path', { headers: { 'api-key': 'abcde' } })
-						.length
-				).to.equal(1);
-				expect(
-					fm.filterCalls('path:/path', { headers: { 'api-key': 'abcde' } })[0]
-				).to.eql(['http://b.com/path', { headers: { 'api-key': 'abcde' } }]);
+				expectFilteredLength('path:/path', { headers: { a: 'z' } })(1);
+				expectFilteredResponse('path:/path', {
+					headers: { a: 'z' },
+				})('http://b.com/path', { headers: { a: 'z' } });
 			});
 
 			it('can retrieve only calls handled by a non-string matcher', async () => {
@@ -367,18 +336,14 @@ describe('inspecting', () => {
 				fm.mock(rx, 200).catch();
 
 				await fm.fetchHandler('http://b.com/path', {
-					headers: { 'api-key': 'abcde' },
+					headers: { a: 'z' },
 				});
 				await fm.fetchHandler('http://b.com/path');
-				expect(
-					fm.filterCalls(rx, { headers: { 'api-key': 'abcde' } }).length
-				).to.equal(1);
-				expect(
-					fm.filterCalls(rx, { headers: { 'api-key': 'abcde' } }).length
-				).to.equal(1);
-				expect(
-					fm.filterCalls(rx, { headers: { 'api-key': 'abcde' } })[0]
-				).to.eql(['http://b.com/path', { headers: { 'api-key': 'abcde' } }]);
+				expectFilteredLength(rx, { headers: { a: 'z' } })(1);
+				expectFilteredResponse(rx, { headers: { a: 'z' } })(
+					'http://b.com/path',
+					{ headers: { a: 'z' } }
+				);
 			});
 
 			it('can retrieve only calls handled by a body matcher', async () => {
@@ -393,15 +358,11 @@ describe('inspecting', () => {
 					method: 'post',
 					body: JSON.stringify({ a: 2 }),
 				});
-				expect(fm.filterCalls(true, bodyMatcher).length).to.equal(1);
-				expect(fm.filterCalls(true, bodyMatcher).length).to.equal(1);
-				expect(fm.filterCalls(true, bodyMatcher)[0]).to.eql([
-					'http://b.com/path',
-					{
-						method: 'post',
-						body: JSON.stringify({ a: 1 }),
-					},
-				]);
+				expectFilteredLength(true, bodyMatcher)(1);
+				expectFilteredResponse(true, bodyMatcher)('http://b.com/path', {
+					method: 'post',
+					body: JSON.stringify({ a: 1 }),
+				});
 			});
 
 			it('can retrieve only calls handled by a partial body matcher', async () => {
@@ -419,35 +380,24 @@ describe('inspecting', () => {
 					method: 'post',
 					body: JSON.stringify({ a: 2, b: 2 }),
 				});
-				expect(fm.filterCalls(true, bodyMatcher).length).to.equal(1);
-				expect(fm.filterCalls(true, bodyMatcher).length).to.equal(1);
-				expect(fm.filterCalls(true, bodyMatcher)[0]).to.eql([
-					'http://b.com/path',
-					{
-						method: 'post',
-						body: JSON.stringify({ a: 1, b: 2 }),
-					},
-				]);
+				expectFilteredLength(true, bodyMatcher)(1);
+				expectFilteredResponse(true, bodyMatcher)('http://b.com/path', {
+					method: 'post',
+					body: JSON.stringify({ a: 1, b: 2 }),
+				});
 			});
 
 			it('can retrieve only calls which match a previously undeclared matcher', async () => {
 				fm.mock('http://a.com/path', 200).catch();
 
 				await fm.fetchHandler('http://b.com/path', {
-					headers: { 'api-key': 'abcde' },
+					headers: { a: 'z' },
 				});
 				await fm.fetchHandler('http://b.com/path');
-				expect(
-					fm.filterCalls('path:/path', { headers: { 'api-key': 'abcde' } })
-						.length
-				).to.equal(1);
-				expect(
-					fm.filterCalls('path:/path', { headers: { 'api-key': 'abcde' } })
-						.length
-				).to.equal(1);
-				expect(
-					fm.filterCalls('path:/path', { headers: { 'api-key': 'abcde' } })[0]
-				).to.eql(['http://b.com/path', { headers: { 'api-key': 'abcde' } }]);
+				expectFilteredLength('path:/path', { headers: { a: 'z' } })(1);
+				expectFilteredResponse('path:/path', {
+					headers: { a: 'z' },
+				})('http://b.com/path', { headers: { a: 'z' } });
 			});
 		});
 	});

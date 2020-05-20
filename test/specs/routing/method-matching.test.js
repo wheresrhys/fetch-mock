@@ -12,7 +12,7 @@ describe('method matching', () => {
 	afterEach(() => fm.restore());
 
 	it('match any method by default', async () => {
-		fm.mock('http://a.com/', 200).catch();
+		fm.mock('*', 200).catch();
 
 		await fm.fetchHandler('http://a.com/', { method: 'GET' });
 		expect(fm.calls(true).length).to.equal(1);
@@ -21,7 +21,7 @@ describe('method matching', () => {
 	});
 
 	it('configure an exact method to match', async () => {
-		fm.mock('http://a.com/', 200, { method: 'POST' }).catch();
+		fm.mock({ method: 'POST' }, 200).catch();
 
 		await fm.fetchHandler('http://a.com/', { method: 'GET' });
 		expect(fm.calls(true).length).to.equal(0);
@@ -30,29 +30,33 @@ describe('method matching', () => {
 	});
 
 	it('match implicit GET', async () => {
-		fm.mock('http://a.com/', 200, { method: 'GET' }).catch();
+		fm.mock({ method: 'GET' }, 200).catch();
 
 		await fm.fetchHandler('http://a.com/');
 		expect(fm.calls(true).length).to.equal(1);
 	});
 
 	it('be case insensitive', async () => {
-		fm.mock('http://a.com/', 200, { method: 'POST' })
-			.mock('http://it.at.where/', 200, { method: 'patch' })
-			.catch();
+		fm.mock({ method: 'POST' }, 200).mock({ method: 'patch' }, 200).catch();
 
 		await fm.fetchHandler('http://a.com/', { method: 'post' });
 		expect(fm.calls(true).length).to.equal(1);
-		await fm.fetchHandler('http://it.at.where/', { method: 'PATCH' });
+		await fm.fetchHandler('http://a.com/', { method: 'PATCH' });
 		expect(fm.calls(true).length).to.equal(2);
 	});
 
 	it('can be used alongside function matchers', async () => {
-		fm.mock((url) => /person/.test(url), 200, { method: 'POST' }).catch();
+		fm.mock(
+			{
+				method: 'POST',
+				functionMatcher: (url) => /a\.com/.test(url),
+			},
+			200
+		).catch();
 
-		await fm.fetchHandler('http://domain.com/person');
+		await fm.fetchHandler('http://a.com');
 		expect(fm.calls(true).length).to.equal(0);
-		await fm.fetchHandler('http://domain.com/person', { method: 'POST' });
+		await fm.fetchHandler('http://a.com', { method: 'POST' });
 		expect(fm.calls(true).length).to.equal(1);
 	});
 });

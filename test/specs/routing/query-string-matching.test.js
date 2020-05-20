@@ -13,9 +13,12 @@ describe('query string matching', () => {
 	afterEach(() => fm.restore());
 
 	it('match a query string', async () => {
-		fm.mock('http://a.com/', 200, {
-			query: { a: 'b', c: 'd' },
-		}).catch();
+		fm.mock(
+			{
+				query: { a: 'b', c: 'd' },
+			},
+			200
+		).catch();
 
 		await fm.fetchHandler('http://a.com');
 		expect(fm.calls(true).length).to.equal(0);
@@ -24,9 +27,12 @@ describe('query string matching', () => {
 	});
 
 	it('match a query string against a URL object', async () => {
-		fm.mock('http://a.com/path', 200, {
-			query: { a: 'b', c: 'd' },
-		}).catch();
+		fm.mock(
+			{
+				query: { a: 'b', c: 'd' },
+			},
+			200
+		).catch();
 		const url = new URL.URL('http://a.com/path');
 		url.searchParams.append('a', 'b');
 		url.searchParams.append('c', 'd');
@@ -35,18 +41,24 @@ describe('query string matching', () => {
 	});
 
 	it('match a query string against a relative path', async () => {
-		fm.mock('/path', 200, {
-			query: { a: 'b' },
-		}).catch();
+		fm.mock(
+			{
+				query: { a: 'b' },
+			},
+			200
+		).catch();
 		const url = '/path?a=b';
 		await fm.fetchHandler(url);
 		expect(fm.calls(true).length).to.equal(1);
 	});
 
 	it('match multiple query strings', async () => {
-		fm.mock('http://a.com/', 200, {
-			query: { a: 'b', c: 'd' },
-		}).catch();
+		fm.mock(
+			{
+				query: { a: 'b', c: 'd' },
+			},
+			200
+		).catch();
 
 		await fm.fetchHandler('http://a.com');
 		expect(fm.calls(true).length).to.equal(0);
@@ -59,9 +71,12 @@ describe('query string matching', () => {
 	});
 
 	it('match an empty query string', async () => {
-		fm.mock('http://a.com/', 200, {
-			query: { a: '' },
-		}).catch();
+		fm.mock(
+			{
+				query: { a: '' },
+			},
+			200
+		).catch();
 
 		await fm.fetchHandler('http://a.com');
 		expect(fm.calls(true).length).to.equal(0);
@@ -71,14 +86,15 @@ describe('query string matching', () => {
 
 	it('distinguish between query strings that only partially differ', async () => {
 		expect(() =>
-			fm
-				.mock('/it-at-there', 200, { query: { a: 'b', c: 'e' } })
-				.mock('/it-at-there', 300, {
+			fm.mock({ query: { a: 'b', c: 'e' } }, 200).mock(
+				{
 					overwriteRoutes: false,
 					query: { a: 'b', c: 'd' },
-				})
+				},
+				300
+			)
 		).not.to.throw();
-		const res = await fm.fetchHandler('/it-at-there?a=b&c=d');
+		const res = await fm.fetchHandler('http://a.com?a=b&c=d');
 		expect(res.status).to.equal(300);
 	});
 
@@ -92,9 +108,9 @@ describe('query string matching', () => {
 				},
 				200
 			).catch();
-			await fm.fetchHandler('/path');
+			await fm.fetchHandler('http://a.com');
 			expect(fm.calls(true).length).to.equal(0);
-			await fm.fetchHandler('/path?a=1');
+			await fm.fetchHandler('http://a.com?a=1');
 			expect(fm.calls(true).length).to.equal(1);
 		});
 
@@ -107,9 +123,9 @@ describe('query string matching', () => {
 				},
 				200
 			).catch();
-			await fm.fetchHandler('/path');
+			await fm.fetchHandler('http://a.com');
 			expect(fm.calls(true).length).to.equal(0);
-			await fm.fetchHandler('/path?a=1.2');
+			await fm.fetchHandler('http://a.com?a=1.2');
 			expect(fm.calls(true).length).to.equal(1);
 		});
 
@@ -132,11 +148,11 @@ describe('query string matching', () => {
 					200
 				)
 				.catch();
-			await fm.fetchHandler('/path');
+			await fm.fetchHandler('http://a.com');
 			expect(fm.calls(true).length).to.equal(0);
-			await fm.fetchHandler('/path?a=true');
+			await fm.fetchHandler('http://a.com?a=true');
 			expect(fm.calls(true).length).to.equal(1);
-			await fm.fetchHandler('/path?b=false');
+			await fm.fetchHandler('http://a.com?b=false');
 			expect(fm.calls(true).length).to.equal(2);
 		});
 
@@ -149,9 +165,9 @@ describe('query string matching', () => {
 				},
 				200
 			).catch();
-			await fm.fetchHandler('/path');
+			await fm.fetchHandler('http://a.com');
 			expect(fm.calls(true).length).to.equal(0);
-			await fm.fetchHandler('/path?a=');
+			await fm.fetchHandler('http://a.com?a=');
 			expect(fm.calls(true).length).to.equal(1);
 		});
 
@@ -164,9 +180,9 @@ describe('query string matching', () => {
 				},
 				200
 			).catch();
-			await fm.fetchHandler('/path');
+			await fm.fetchHandler('http://a.com');
 			expect(fm.calls(true).length).to.equal(0);
-			await fm.fetchHandler('/path?a=');
+			await fm.fetchHandler('http://a.com?a=');
 			expect(fm.calls(true).length).to.equal(1);
 		});
 
@@ -179,9 +195,9 @@ describe('query string matching', () => {
 				},
 				200
 			).catch();
-			await fm.fetchHandler('/path');
+			await fm.fetchHandler('http://a.com');
 			expect(fm.calls(true).length).to.equal(0);
-			await fm.fetchHandler('/path?a=');
+			await fm.fetchHandler('http://a.com?a=');
 			expect(fm.calls(true).length).to.equal(1);
 		});
 
@@ -270,13 +286,13 @@ describe('query string matching', () => {
 		});
 
 		it('can be used alongside function matchers', async () => {
-			fm.mock((url) => /person/.test(url), 200, {
+			fm.mock((url) => /a\.com/.test(url), 200, {
 				query: { a: 'b' },
 			}).catch();
 
-			await fm.fetchHandler('http://domain.com/person');
+			await fm.fetchHandler('http://a.com');
 			expect(fm.calls(true).length).to.equal(0);
-			await fm.fetchHandler('http://domain.com/person?a=b');
+			await fm.fetchHandler('http://a.com?a=b');
 			expect(fm.calls(true).length).to.equal(1);
 		});
 	});

@@ -12,18 +12,24 @@ describe('header matching', () => {
 	afterEach(() => fm.restore());
 
 	it('not match when headers not present', async () => {
-		fm.mock('http://a.com/', 200, {
-			headers: { a: 'b' },
-		}).catch();
+		fm.mock(
+			{
+				headers: { a: 'b' },
+			},
+			200
+		).catch();
 
 		await fm.fetchHandler('http://a.com/');
 		expect(fm.calls(true).length).to.equal(0);
 	});
 
 	it("not match when headers don't match", async () => {
-		fm.mock('http://a.com/', 200, {
-			headers: { a: 'b' },
-		}).catch();
+		fm.mock(
+			{
+				headers: { a: 'b' },
+			},
+			200
+		).catch();
 
 		await fm.fetchHandler('http://a.com/', {
 			headers: { a: 'c' },
@@ -32,9 +38,12 @@ describe('header matching', () => {
 	});
 
 	it('match simple headers', async () => {
-		fm.mock('http://a.com/', 200, {
-			headers: { a: 'b' },
-		}).catch();
+		fm.mock(
+			{
+				headers: { a: 'b' },
+			},
+			200
+		).catch();
 
 		await fm.fetchHandler('http://a.com/', {
 			headers: { a: 'b' },
@@ -43,9 +52,12 @@ describe('header matching', () => {
 	});
 
 	it('be case insensitive', async () => {
-		fm.mock('http://a.com/', 200, {
-			headers: { a: 'b' },
-		}).catch();
+		fm.mock(
+			{
+				headers: { a: 'b' },
+			},
+			200
+		).catch();
 
 		await fm.fetchHandler('http://a.com/', {
 			headers: { A: 'b' },
@@ -54,9 +66,12 @@ describe('header matching', () => {
 	});
 
 	it('match multivalue headers', async () => {
-		fm.mock('http://a.com/', 200, {
-			headers: { a: ['b', 'c'] },
-		}).catch();
+		fm.mock(
+			{
+				headers: { a: ['b', 'c'] },
+			},
+			200
+		).catch();
 
 		await fm.fetchHandler('http://a.com/', {
 			headers: { a: ['b', 'c'] },
@@ -65,9 +80,12 @@ describe('header matching', () => {
 	});
 
 	it('not match partially satisfied multivalue headers', async () => {
-		fm.mock('http://a.com/', 200, {
-			headers: { a: ['b', 'c', 'd'] },
-		}).catch();
+		fm.mock(
+			{
+				headers: { a: ['b', 'c', 'd'] },
+			},
+			200
+		).catch();
 
 		await fm.fetchHandler('http://a.com/', {
 			headers: { a: ['b', 'c'] },
@@ -76,9 +94,12 @@ describe('header matching', () => {
 	});
 
 	it('match multiple headers', async () => {
-		fm.mock('http://a.com/', 200, {
-			headers: { a: 'b', c: 'd' },
-		}).catch();
+		fm.mock(
+			{
+				headers: { a: 'b', c: 'd' },
+			},
+			200
+		).catch();
 
 		await fm.fetchHandler('http://a.com/', {
 			headers: { a: 'b', c: 'd' },
@@ -87,9 +108,12 @@ describe('header matching', () => {
 	});
 
 	it('not match unsatisfied multiple headers', async () => {
-		fm.mock('http://a.com/', 200, {
-			headers: { a: 'b', c: 'd' },
-		}).catch();
+		fm.mock(
+			{
+				headers: { a: 'b', c: 'd' },
+			},
+			200
+		).catch();
 
 		await fm.fetchHandler('http://a.com/', {
 			headers: { a: 'b' },
@@ -98,9 +122,12 @@ describe('header matching', () => {
 	});
 
 	it('match Headers instance', async () => {
-		fm.mock('http://a.com/', 200, {
-			headers: { a: 'b' },
-		}).catch();
+		fm.mock(
+			{
+				headers: { a: 'b' },
+			},
+			200
+		).catch();
 
 		await fm.fetchHandler('http://a.com/', {
 			headers: new fm.config.Headers({ a: 'b' }),
@@ -123,9 +150,12 @@ describe('header matching', () => {
 		};
 
 		customHeaderInstance
-			.mock('http://a.com/', 200, {
-				headers: { a: 'b' },
-			})
+			.mock(
+				{
+					headers: { a: 'b' },
+				},
+				200
+			)
 			.catch();
 
 		await customHeaderInstance.fetchHandler('http://a.com/', {

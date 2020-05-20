@@ -12,7 +12,7 @@ describe('body matching', () => {
 	afterEach(() => fm.restore());
 
 	it('should not match if no body provided in request', async () => {
-		fm.mock('http://a.com/', 200, { body: { foo: 'bar' } }).catch();
+		fm.mock({ body: { foo: 'bar' } }, 200).catch();
 
 		await fm.fetchHandler('http://a.com/', {
 			method: 'POST',
@@ -21,7 +21,7 @@ describe('body matching', () => {
 	});
 
 	it('should match if no content type is specified', async () => {
-		fm.mock('http://a.com/', 200, { body: { foo: 'bar' } }).catch();
+		fm.mock({ body: { foo: 'bar' } }, 200).catch();
 
 		await fm.fetchHandler('http://a.com/', {
 			method: 'POST',
@@ -31,7 +31,7 @@ describe('body matching', () => {
 	});
 
 	it('should match when using Request', async () => {
-		fm.mock('http://a.com/', 200, { body: { foo: 'bar' } }).catch();
+		fm.mock({ body: { foo: 'bar' } }, 200).catch();
 
 		await fm.fetchHandler(
 			new fm.config.Request('http://a.com/', {
@@ -43,7 +43,7 @@ describe('body matching', () => {
 	});
 
 	it('should match if body sent matches expected body', async () => {
-		fm.mock('http://a.com/', 200, { body: { foo: 'bar' } }).catch();
+		fm.mock({ body: { foo: 'bar' } }, 200).catch();
 
 		await fm.fetchHandler('http://a.com/', {
 			method: 'POST',
@@ -54,7 +54,7 @@ describe('body matching', () => {
 	});
 
 	it('should not match if body sent doesn’t match expected body', async () => {
-		fm.mock('http://a.com/', 200, { body: { foo: 'bar' } }).catch();
+		fm.mock({ body: { foo: 'bar' } }, 200).catch();
 
 		await fm.fetchHandler('http://a.com/', {
 			method: 'POST',
@@ -65,7 +65,7 @@ describe('body matching', () => {
 	});
 
 	it('should not match if body sent isn’t JSON', async () => {
-		fm.mock('http://a.com/', 200, { body: { foo: 'bar' } }).catch();
+		fm.mock({ body: { foo: 'bar' } }, 200).catch();
 
 		await fm.fetchHandler('http://a.com/', {
 			method: 'POST',
@@ -76,12 +76,15 @@ describe('body matching', () => {
 	});
 
 	it('should ignore the order of the keys in the body', async () => {
-		fm.mock('http://a.com/', 200, {
-			body: {
-				foo: 'bar',
-				baz: 'qux',
+		fm.mock(
+			{
+				body: {
+					foo: 'bar',
+					baz: 'qux',
+				},
 			},
-		}).catch();
+			200
+		).catch();
 
 		await fm.fetchHandler('http://a.com/', {
 			method: 'POST',
@@ -95,12 +98,15 @@ describe('body matching', () => {
 	});
 
 	it('should ignore the body option matcher if request was GET', async () => {
-		fm.mock('http://a.com/', 200, {
-			body: {
-				foo: 'bar',
-				baz: 'qux',
+		fm.mock(
+			{
+				body: {
+					foo: 'bar',
+					baz: 'qux',
+				},
 			},
-		}).catch();
+			200
+		).catch();
 
 		await fm.fetchHandler('http://a.com/');
 		expect(fm.calls(true).length).to.equal(1);

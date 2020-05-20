@@ -1,89 +1,76 @@
 const chai = require('chai');
+const chaiAsPromised = require('chai-as-promised');
 const expect = chai.expect;
+chai.use(chaiAsPromised);
 const { fetchMock } = testGlobals;
+
 describe('client-side only tests', () => {
-	describe('native fetch behaviour', function () {
-		it('should not throw when passing unmatched calls through to native fetch', function () {
-			fetchMock.mock(/a/, 200);
-			expect(function () {
-				fetch('http://www.example.com');
-			}).not.to.throw();
-			fetchMock.restore();
-		});
-
-		// this is because we read the body once when normalising the request and
-		// want to make sure fetch can still use the sullied request
-		it('can still POST a body successfully when spying', async () => {
-			fetchMock.spy();
-			const req = new fetchMock.config.Request(
-				'http://localhost:9876/dummy-file.txt',
-				{ method: 'post', body: JSON.stringify({ prop: 'val' }) }
-			);
-			expect(() => fetch(req)).not.to.throw();
-			fetchMock.restore();
-		});
+	afterEach(() => fetchMock.restore());
+	it('not throw when passing unmatched calls through to native fetch', () => {
+		fetchMock.config.fallbackToNetwork = true;
+		fetchMock.mock();
+		expect(() => fetch('http://a.com')).not.to.throw();
+		fetchMock.config.fallbackToNetwork = false;
 	});
 
-	describe('request types that only work in the browser', function () {
-		it('respond with blob', function (done) {
-			const blob = new Blob();
-			fetchMock.mock('http://it.at.there/', blob, { sendAsJson: false });
-			fetch('http://it.at.there/').then(function (res) {
-				expect(res.status).to.equal(200);
-				res.blob().then(function (blobData) {
-					expect(blobData).to.eql(blob);
-					fetchMock.restore();
-					done();
-				});
-			});
-		});
+	// this is because we read the body once when normalising the request and
+	// want to make sure fetch can still use the sullied request
+	it('can send a body on a Request instance when spying ', async () => {
+		fetchMock.spy();
+		const req = new fetchMock.config.Request(
+			'http://localhost:9876/dummy-file.txt',
+			{ method: 'post', body: JSON.stringify({ prop: 'val' }) }
+		);
+		let response;
+		expect(() => {
+			response = fetch(req);
+		}).not.to.throw();
+		await expect(response).to.not.be.rejected;
 	});
 
-	describe('no real fetch', function () {
-		it('should cope when there is no global fetch defined', function () {
-			const fetchCache = window.fetch;
-			delete window.fetch;
-			const realFetchCache = fetchMock.realFetch;
-			delete fetchMock.realFetch;
-			fetchMock.mock(/a/, 200);
-			expect(function () {
-				fetch('http://www.example.com');
-			}).not.to.throw();
-
-			expect(function () {
-				fetchMock.calls();
-			}).not.to.throw();
-			fetchMock.restore();
-			fetchMock.realFetch = realFetchCache;
-			window.fetch = fetchCache;
-		});
+	it('respond with blob', async () => {
+		const blob = new Blob();
+		fetchMock.mock('*', blob, { sendAsJson: false });
+		const res = await fetch('http://a.com');
+		expect(res.status).to.equal(200);
+		const blobData = await res.blob();
+		expect(blobData).to.eql(blob);
 	});
 
-	describe('service worker', () => {
-		it('should work within a service worker', () => {
-			return (
-				navigator.serviceWorker &&
-				navigator.serviceWorker.register('__sw.js').then((registration) => {
-					return new Promise((resolve, reject) => {
-						if (registration.installing) {
-							registration.installing.onstatechange = function () {
-								if (this.state === 'activated') {
-									resolve();
-								}
-							};
-						} else {
-							reject('No idea what happened');
+	it('should cope when there is no global fetch defined', () => {
+		const originalFetch = window.fetch;
+		delete window.fetch;
+		const originalRealFetch = fetchMock.realFetch;
+		delete fetchMock.realFetch;
+		fetchMock.mock('*', 200);
+		expect(() => {
+			fetch('http://a.com');
+		}).not.to.throw();
+
+		expect(() => {
+			fetchMock.calls();
+		}).not.to.throw();
+		fetchMock.restore();
+		fetchMock.realFetch = originalRealFetch;
+		window.fetch = originalFetch;
+	});
+
+	if (navigator.serviceWorker) {
+		it('should work within a service worker', async () => {
+			const registration = await navigator.serviceWorker.register('__sw.js');
+			await new Promise((resolve, reject) => {
+				if (registration.installing) {
+					registration.installing.onstatechange = function () {
+						if (this.state === 'activated') {
+							resolve();
 						}
-					}).then(() => {
-						expect(true).to.be.true;
-						return navigator.serviceWorker
-							.getRegistration()
-							.then((registration) =>
-								registration ? registration.unregister() : false
-							);
-					});
-				})
-			);
+					};
+				} else {
+					reject('No idea what happened');
+				}
+			});
+
+			await registration.unregister();
 		});
-	});
+	}
 });

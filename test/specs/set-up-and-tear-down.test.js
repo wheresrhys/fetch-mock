@@ -3,19 +3,6 @@ chai.use(require('sinon-chai'));
 const expect = chai.expect;
 const sinon = require('sinon');
 
-const testChainableMethod = (getFetchMock, method, args = []) => {
-	it('is chainable', () => {
-		expect(getFetchMock()[method](...args)).to.equal(getFetchMock());
-	});
-
-	it("has 'this'", () => {
-		sinon.spy(getFetchMock(), method);
-		getFetchMock()[method](...args);
-		expect(getFetchMock()[method].lastCall.thisValue).to.equal(getFetchMock());
-		getFetchMock()[method].restore();
-	});
-};
-
 const { fetchMock } = testGlobals;
 describe('Set up and tear down', () => {
 	let fm;
@@ -25,18 +12,31 @@ describe('Set up and tear down', () => {
 	});
 	afterEach(() => fm.restore());
 
+	const testChainableMethod = (method, ...args) => {
+		it(`${method}() is chainable`, () => {
+			expect(fm[method](...args)).to.equal(fm);
+		});
+
+		it(`${method}() has "this"`, () => {
+			sinon.spy(fm, method);
+			fm[method](...args);
+			expect(fm[method].lastCall.thisValue).to.equal(fm);
+			fm[method].restore();
+		});
+	};
+
 	describe('mock', () => {
-		testChainableMethod(() => fm, 'mock', [/a/, 200]);
+		testChainableMethod('mock', '*', 200);
 
 		it('can be called multiple times', () => {
 			expect(() => {
-				fm.mock('begin:http://route1', 200).mock('begin:http://route2', 200);
+				fm.mock('http://a.com', 200).mock('http://b.com', 200);
 			}).not.to.throw();
 		});
 
 		it('can be called after fetchMock is restored', () => {
 			expect(() => {
-				fm.mock(/a/, 200).restore().mock(/a/, 200);
+				fm.mock('*', 200).restore().mock('*', 200);
 			}).not.to.throw();
 		});
 
@@ -53,7 +53,7 @@ describe('Set up and tear down', () => {
 
 			it('accepts single config object', () => {
 				const config = {
-					matcher: 'http://it.at.there/',
+					url: '*',
 					response: 200,
 				};
 				expect(() => fm.mock(config)).not.to.throw();
@@ -62,20 +62,20 @@ describe('Set up and tear down', () => {
 			});
 
 			it('accepts matcher, route pairs', () => {
-				expect(() => fm.mock('http://it.at.there/', 200)).not.to.throw();
-				expect(fm.compileRoute).calledWith(['http://it.at.there/', 200]);
+				expect(() => fm.mock('*', 200)).not.to.throw();
+				expect(fm.compileRoute).calledWith(['*', 200]);
 				expect(fm._mock).called;
 			});
 
 			it('accepts matcher, response, config triples', () => {
 				expect(() =>
-					fm.mock('http://it.at.there/', 'ok', {
+					fm.mock('*', 'ok', {
 						method: 'PUT',
 						some: 'prop',
 					})
 				).not.to.throw();
 				expect(fm.compileRoute).calledWith([
-					'http://it.at.there/',
+					'*',
 					'ok',
 					{
 						method: 'PUT',
@@ -90,7 +90,7 @@ describe('Set up and tear down', () => {
 			});
 
 			it('expects a response', () => {
-				expect(() => fm.mock('http://it.at.there/')).to.throw();
+				expect(() => fm.mock('*')).to.throw();
 			});
 
 			it('can be called with no parameters', () => {
@@ -99,16 +99,16 @@ describe('Set up and tear down', () => {
 				expect(fm._mock).called;
 			});
 
-			it('REGRESSION: should accept object respones when passing options', () => {
+			it('should accept object responses when also passing options', () => {
 				expect(() =>
-					fm.mock('http://foo.com', { foo: 'bar' }, { method: 'GET' })
+					fm.mock('*', { foo: 'bar' }, { method: 'GET' })
 				).not.to.throw();
 			});
 		});
 	});
 
 	describe('reset', () => {
-		testChainableMethod(() => fm, 'reset');
+		testChainableMethod('reset');
 
 		it('can be called even if no mocks set', () => {
 			expect(() => fm.restore()).not.to.throw();
@@ -122,7 +122,7 @@ describe('Set up and tear down', () => {
 		});
 
 		it('removes all routing', () => {
-			fm.mock(/a/, 200).catch(200);
+			fm.mock('*', 200).catch(200);
 
 			expect(fm.routes.length).to.equal(1);
 			expect(fm.fallbackResponse).to.exist;
@@ -139,14 +139,14 @@ describe('Set up and tear down', () => {
 	});
 
 	describe('resetBehavior', () => {
-		testChainableMethod(() => fm, 'resetBehavior');
+		testChainableMethod('resetBehavior');
 
 		it('can be called even if no mocks set', () => {
 			expect(() => fm.resetBehavior()).not.to.throw();
 		});
 
 		it('removes all routing', () => {
-			fm.mock(/a/, 200).catch(200);
+			fm.mock('*', 200).catch(200);
 
 			expect(fm.routes.length).to.equal(1);
 			expect(fm.fallbackResponse).to.exist;
@@ -159,22 +159,22 @@ describe('Set up and tear down', () => {
 	});
 
 	describe('resetHistory', () => {
-		testChainableMethod(() => fm, 'resetHistory');
+		testChainableMethod('resetHistory');
 
 		it('can be called even if no mocks set', () => {
 			expect(() => fm.resetHistory()).not.to.throw();
 		});
 
 		it('resets call history', async () => {
-			fm.mock(/a/, 200).catch(200);
+			fm.mock('*', 200).catch(200);
 			await fm.fetchHandler('a');
 			await fm.fetchHandler('b');
 			expect(fm.called()).to.be.true;
 
 			fm.resetHistory();
 			expect(fm.called()).to.be.false;
-			expect(fm.called('/a/')).to.be.false;
-			expect(fm.calls('/a/').length).to.equal(0);
+			expect(fm.called('*')).to.be.false;
+			expect(fm.calls('*').length).to.equal(0);
 			expect(fm.calls(true).length).to.equal(0);
 			expect(fm.calls(false).length).to.equal(0);
 			expect(fm.calls().length).to.equal(0);
@@ -182,7 +182,7 @@ describe('Set up and tear down', () => {
 	});
 
 	describe('spy', () => {
-		testChainableMethod(() => fm, 'spy');
+		testChainableMethod('spy');
 
 		it('calls catch()', () => {
 			sinon.spy(fm, 'catch');
@@ -193,6 +193,6 @@ describe('Set up and tear down', () => {
 	});
 
 	describe('catch', () => {
-		testChainableMethod(() => fm, 'catch');
+		testChainableMethod('catch');
 	});
 });

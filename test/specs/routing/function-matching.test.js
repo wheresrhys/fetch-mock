@@ -57,38 +57,28 @@ describe('function matching', () => {
 		expect(fm.calls(true).length).to.equal(1);
 	});
 
-	// Following test works in latest chrome but not in v62 in CI
-	let itInDev = it;
+	it('match using custom function with Request with unusual options', async () => {
+		// as node-fetch does not try to emulate all the WHATWG standards, we can't check for the
+		// same properties in the browser and nodejs
+		const propertyToCheck = new fm.config.Request('http://example.com').cache
+			? 'credentials'
+			: 'timeout';
+		const valueToSet = propertyToCheck === 'credentials' ? 'include' : 2000;
 
-	try {
-		/Chrome\/62/.test(window.navigator.appVersion) && (itInDev = it.skip);
-	} catch (err) {}
+		fm.mock(
+			(url, options, request) => request[propertyToCheck] === valueToSet,
+			200
+		).catch();
 
-	itInDev(
-		'match using custom function with Request with unusual options',
-		async () => {
-			// as node-fetch does not try to emulate all the WHATWG standards, we can't check for the
-			// same properties in the browser and nodejs
-			const propertyToCheck = new fm.config.Request('http://example.com').cache
-				? 'credentials'
-				: 'timeout';
-			const valueToSet = propertyToCheck === 'credentials' ? 'include' : 2000;
-
-			fm.mock(
-				(url, options, request) => request[propertyToCheck] === valueToSet,
-				200
-			).catch();
-
-			await fm.fetchHandler(new fm.config.Request('http://a.com/logged-in'));
-			expect(fm.calls(true).length).to.equal(0);
-			await fm.fetchHandler(
-				new fm.config.Request('http://a.com/logged-in', {
-					[propertyToCheck]: valueToSet,
-				})
-			);
-			expect(fm.calls(true).length).to.equal(1);
-		}
-	);
+		await fm.fetchHandler(new fm.config.Request('http://a.com/logged-in'));
+		expect(fm.calls(true).length).to.equal(0);
+		await fm.fetchHandler(
+			new fm.config.Request('http://a.com/logged-in', {
+				[propertyToCheck]: valueToSet,
+			})
+		);
+		expect(fm.calls(true).length).to.equal(1);
+	});
 
 	it('match using custom function alongside other matchers', async () => {
 		fm.mock('end:profile', 200, {

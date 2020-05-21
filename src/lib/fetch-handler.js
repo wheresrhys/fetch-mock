@@ -98,7 +98,7 @@ FetchMock._asyncFetchHandler = async function (url, options, request, signal) {
 FetchMock._fetchHandler = function (url, options, request, signal) {
 	const { route, callLog } = this.executeRouter(url, options, request);
 
-	this.push(callLog);
+	this.recordCall(callLog);
 
 	// this is used to power the .flush() method
 	let done;
@@ -147,7 +147,9 @@ FetchMock.executeRouter = function (url, options, request) {
 		);
 		return {
 			route: { response: this.getNativeFetch(), responseIsFetch: true },
-			callLog,
+			// BUG - this callLog never used to get sent. Discovered the bug but can't
+			// fix outside a major release as it will potentially cause too much disruption
+			// callLog,
 		};
 	}
 
@@ -246,9 +248,11 @@ FetchMock.getNativeFetch = function () {
 	return func;
 };
 
-FetchMock.push = function (obj) {
+FetchMock.recordCall = function (obj) {
 	debug('Recording fetch call', obj);
-	this._calls.push(obj);
+	if (obj) {
+		this._calls.push(obj);
+	}
 };
 
 module.exports = FetchMock;

@@ -42,7 +42,7 @@ FetchMock.filterCalls = function (nameOrMatcher, options) {
 		);
 		calls = calls.filter(({ identifier }) => identifier === nameOrMatcher);
 	} else {
-		matcher = normalizeUrl(nameOrMatcher);
+		matcher = nameOrMatcher === '*' ? '*' : normalizeUrl(nameOrMatcher);
 		if (this.routes.some(({ identifier }) => identifier === matcher)) {
 			debug(
 				`Filter provided, ${nameOrMatcher}, identifies a route. Returning only calls handled by that route`

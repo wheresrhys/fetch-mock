@@ -81,6 +81,18 @@ describe('repeat and done()', () => {
 		expect(fm.done('http://c.com/')).to.be.false;
 	});
 
+	it("can tell when done if using '*'", () => {
+		fm.mock('*', '200');
+		fm.fetchHandler('http://a.com');
+		expect(fm.done()).to.be.true;
+	});
+
+	it('can tell when done if using begin:', () => {
+		fm.mock('begin:http', '200');
+		fm.fetchHandler('http://a.com');
+		expect(fm.done()).to.be.true;
+	});
+
 	it("won't mock if route already matched enough times", async () => {
 		fm.mock('http://a.com/', 200, { repeat: 1 });
 

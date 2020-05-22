@@ -100,6 +100,11 @@ FetchMock.lastOptions = formatDebug(function (nameOrMatcher, options) {
 	return (this.lastCall(nameOrMatcher, options) || [])[1];
 });
 
+FetchMock.lastResponse = formatDebug(function (nameOrMatcher, options) {
+	debug('retrieving respose of last matching call');
+	return (this.lastCall(nameOrMatcher, options) || []).response;
+});
+
 FetchMock.called = formatDebug(function (nameOrMatcher, options) {
 	debug('checking if matching call was made');
 	return Boolean(this.filterCalls(nameOrMatcher, options).length);

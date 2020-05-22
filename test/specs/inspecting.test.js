@@ -509,5 +509,14 @@ describe('inspecting', () => {
 			expect(await fm.calls()[0].response.text()).to.equal('blah');
 			fm.restore();
 		});
+
+		it('has lastResponse shorthand', async () => {
+			fm.once('*', 200).once('*', 201, { overwriteRoutes: false });
+
+			await fm.fetchHandler('http://a.com/');
+			await fm.fetchHandler('http://a.com/');
+			expect(fm.lastResponse().status).to.equal(201);
+			fm.restore();
+		});
 	});
 });

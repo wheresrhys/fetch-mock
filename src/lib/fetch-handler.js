@@ -197,7 +197,7 @@ FetchMock.generateResponse = async function (
 	url,
 	options,
 	request,
-	callLog
+	callLog = {}
 ) {
 	const debug = getDebug('generateResponse()');
 	const response = await resolve(route, url, options, request);

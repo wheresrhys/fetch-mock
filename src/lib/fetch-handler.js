@@ -61,41 +61,42 @@ const resolve = async (
 	}
 };
 
-FetchMock.fetchHandler = function (url, options, request) {
+FetchMock.needsAsyncBodyExtraction = function ({ request }) {
+	return request && this.routes.some(({ usesBody }) => usesBody);
+};
+
+FetchMock.fetchHandler = function (url, options) {
 	setDebugPhase('handle');
 	const debug = getDebug('fetchHandler()');
 	debug('fetch called with:', url, options);
+
 	const normalizedRequest = requestUtils.normalizeRequest(
 		url,
 		options,
 		this.config.Request
 	);
 
-	({ url, options, request } = normalizedRequest);
-
-	const { signal } = normalizedRequest;
-
 	debug('Request normalised');
-	debug('  url', url);
-	debug('  options', options);
-	debug('  request', request);
-	debug('  signal', signal);
+	debug('  url', normalizedRequest.url);
+	debug('  options', normalizedRequest.options);
+	debug('  request', normalizedRequest.request);
+	debug('  signal', normalizedRequest.signal);
 
-	if (request && this.routes.some(({ usesBody }) => usesBody)) {
+	if (this.needsAsyncBodyExtraction(normalizedRequest)) {
 		debug(
 			'Need to wait for Body to be streamed before calling router: switching to async mode'
 		);
-		return this._asyncFetchHandler(url, options, request, signal);
+		return this._extractBodyThenHandle(normalizedRequest);
 	}
-	return this._fetchHandler(url, options, request, signal);
+	return this._fetchHandler(normalizedRequest);
 };
 
-FetchMock._asyncFetchHandler = async function (url, options, request, signal) {
-	options.body = await options.body;
-	return this._fetchHandler(url, options, request, signal);
+FetchMock._extractBodyThenHandle = async function (normalizedRequest) {
+	normalizedRequest.options.body = await normalizedRequest.options.body;
+	return this._fetchHandler(normalizedRequest);
 };
 
-FetchMock._fetchHandler = function (url, options, request, signal) {
+FetchMock._fetchHandler = function ({ url, options, request, signal }) {
 	const { route, callLog } = this.executeRouter(url, options, request);
 
 	this.recordCall(callLog);
@@ -111,7 +112,9 @@ FetchMock._fetchHandler = function (url, options, request, signal) {
 			debug('signal exists - enabling fetch abort');
 			const abort = () => {
 				debug('aborting fetch');
-				// note that DOMException is not available in node.js; even node-fetch uses a custom error class: https://github.com/bitinn/node-fetch/blob/master/src/abort-error.js
+				// note that DOMException is not available in node.js;
+				// even node-fetch uses a custom error class:
+				// https://github.com/bitinn/node-fetch/blob/master/src/abort-error.js
 				rej(
 					typeof DOMException !== 'undefined'
 						? new DOMException('The operation was aborted.', 'AbortError')
@@ -126,7 +129,7 @@ FetchMock._fetchHandler = function (url, options, request, signal) {
 			signal.addEventListener('abort', abort);
 		}
 
-		this.generateResponse(route, url, options, request, callLog)
+		this.generateResponse({ route, url, options, request, callLog })
 			.then(res, rej)
 			.then(done, done)
 			.then(() => {
@@ -147,8 +150,10 @@ FetchMock.executeRouter = function (url, options, request) {
 		);
 		return {
 			route: { response: this.getNativeFetch(), responseIsFetch: true },
-			// BUG - this callLog never used to get sent. Discovered the bug but can't
-			// fix outside a major release as it will potentially cause too much disruption
+			// BUG - this callLog never used to get sent. Discovered the bug
+			// but can't fix outside a major release as it will potentially
+			// cause too much disruption
+			//
 			// callLog,
 		};
 	}
@@ -192,13 +197,13 @@ FetchMock.executeRouter = function (url, options, request) {
 	};
 };
 
-FetchMock.generateResponse = async function (
+FetchMock.generateResponse = async function ({
 	route,
 	url,
 	options,
 	request,
-	callLog = {}
-) {
+	callLog = {},
+}) {
 	const debug = getDebug('generateResponse()');
 	const response = await resolve(route, url, options, request);
 

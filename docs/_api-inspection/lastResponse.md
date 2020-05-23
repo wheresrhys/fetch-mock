@@ -8,8 +8,7 @@ description: |-
 
   If `.lastResponse()` is called before fetch has been resolved then it will return `undefined`
   {: .warning} 
-  
-  To obtain json/text responses await the `.json()/.text()` methods of the response
-  {: .info} 
----
 
+  To obtain json/text responses await the `.json()/.text()` methods of the response
+  {: .info}
+---

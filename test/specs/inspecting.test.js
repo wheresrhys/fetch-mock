@@ -489,4 +489,34 @@ describe('inspecting', () => {
 			expect(options.signal).to.be.undefined;
 		});
 	});
+
+	describe('retrieving responses', () => {
+		it('exposes responses', async () => {
+			fm.once('*', 200).once('*', 201, { overwriteRoutes: false });
+
+			await fm.fetchHandler('http://a.com/');
+			await fm.fetchHandler('http://a.com/');
+			expect(fm.calls()[0].response.status).to.equal(200);
+			expect(fm.calls()[1].response.status).to.equal(201);
+			fm.restore();
+		});
+
+		it('exposes Responses', async () => {
+			fm.once('*', new fm.config.Response('blah'));
+
+			await fm.fetchHandler('http://a.com/');
+			expect(fm.calls()[0].response.status).to.equal(200);
+			expect(await fm.calls()[0].response.text()).to.equal('blah');
+			fm.restore();
+		});
+
+		it('has lastResponse shorthand', async () => {
+			fm.once('*', 200).once('*', 201, { overwriteRoutes: false });
+
+			await fm.fetchHandler('http://a.com/');
+			await fm.fetchHandler('http://a.com/');
+			expect(fm.lastResponse().status).to.equal(201);
+			fm.restore();
+		});
+	});
 });

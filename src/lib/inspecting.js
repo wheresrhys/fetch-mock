@@ -8,7 +8,9 @@ const filterCallsWithMatcher = function (matcher, options = {}, calls) {
 	matcher = this.generateMatcher(
 		this.sanitizeRoute(Object.assign({ matcher }, options))
 	);
-	return calls.filter(([url, options]) => matcher(normalizeUrl(url), options));
+	return calls.filter(({ url, options }) =>
+		matcher(normalizeUrl(url), options)
+	);
 };
 
 const formatDebug = (func) => {
@@ -18,6 +20,19 @@ const formatDebug = (func) => {
 		setDebugPhase();
 		return result;
 	};
+};
+
+const callObjToArray = (obj) => {
+	if (!obj) {
+		return undefined;
+	}
+	const { url, options, request, identifier, isUnmatched, response } = obj;
+	const arr = [url, options];
+	arr.request = request;
+	arr.identifier = identifier;
+	arr.isUnmatched = isUnmatched;
+	arr.response = response;
+	return arr;
 };
 
 FetchMock.filterCalls = function (nameOrMatcher, options) {
@@ -62,7 +77,7 @@ FetchMock.filterCalls = function (nameOrMatcher, options) {
 		calls = filterCallsWithMatcher.call(this, matcher, options, calls);
 	}
 	debug(`Retrieved ${calls.length} calls`);
-	return calls;
+	return calls.map(callObjToArray);
 };
 
 FetchMock.calls = formatDebug(function (nameOrMatcher, options) {
@@ -83,6 +98,11 @@ FetchMock.lastUrl = formatDebug(function (nameOrMatcher, options) {
 FetchMock.lastOptions = formatDebug(function (nameOrMatcher, options) {
 	debug('retrieving options of last matching call');
 	return (this.lastCall(nameOrMatcher, options) || [])[1];
+});
+
+FetchMock.lastResponse = formatDebug(function (nameOrMatcher, options) {
+	debug('retrieving respose of last matching call');
+	return (this.lastCall(nameOrMatcher, options) || []).response;
 });
 
 FetchMock.called = formatDebug(function (nameOrMatcher, options) {

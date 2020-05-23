@@ -61,42 +61,45 @@ const resolve = async (
 	}
 };
 
-FetchMock.fetchHandler = function (url, options, request) {
+FetchMock.needsAsyncBodyExtraction = function ({ request }) {
+	return request && this.routes.some(({ usesBody }) => usesBody);
+};
+
+FetchMock.fetchHandler = function (url, options) {
 	setDebugPhase('handle');
 	const debug = getDebug('fetchHandler()');
 	debug('fetch called with:', url, options);
+
 	const normalizedRequest = requestUtils.normalizeRequest(
 		url,
 		options,
 		this.config.Request
 	);
 
-	({ url, options, request } = normalizedRequest);
-
-	const { signal } = normalizedRequest;
-
 	debug('Request normalised');
-	debug('  url', url);
-	debug('  options', options);
-	debug('  request', request);
-	debug('  signal', signal);
+	debug('  url', normalizedRequest.url);
+	debug('  options', normalizedRequest.options);
+	debug('  request', normalizedRequest.request);
+	debug('  signal', normalizedRequest.signal);
 
-	if (request && this.routes.some(({ usesBody }) => usesBody)) {
+	if (this.needsAsyncBodyExtraction(normalizedRequest)) {
 		debug(
 			'Need to wait for Body to be streamed before calling router: switching to async mode'
 		);
-		return this._asyncFetchHandler(url, options, request, signal);
+		return this._extractBodyThenHandle(normalizedRequest);
 	}
-	return this._fetchHandler(url, options, request, signal);
+	return this._fetchHandler(normalizedRequest);
 };
 
-FetchMock._asyncFetchHandler = async function (url, options, request, signal) {
-	options.body = await options.body;
-	return this._fetchHandler(url, options, request, signal);
+FetchMock._extractBodyThenHandle = async function (normalizedRequest) {
+	normalizedRequest.options.body = await normalizedRequest.options.body;
+	return this._fetchHandler(normalizedRequest);
 };
 
-FetchMock._fetchHandler = function (url, options, request, signal) {
-	const route = this.executeRouter(url, options, request);
+FetchMock._fetchHandler = function ({ url, options, request, signal }) {
+	const { route, callLog } = this.executeRouter(url, options, request);
+
+	this.recordCall(callLog);
 
 	// this is used to power the .flush() method
 	let done;
@@ -109,7 +112,9 @@ FetchMock._fetchHandler = function (url, options, request, signal) {
 			debug('signal exists - enabling fetch abort');
 			const abort = () => {
 				debug('aborting fetch');
-				// note that DOMException is not available in node.js; even node-fetch uses a custom error class: https://github.com/bitinn/node-fetch/blob/master/src/abort-error.js
+				// note that DOMException is not available in node.js;
+				// even node-fetch uses a custom error class:
+				// https://github.com/bitinn/node-fetch/blob/master/src/abort-error.js
 				rej(
 					typeof DOMException !== 'undefined'
 						? new DOMException('The operation was aborted.', 'AbortError')
@@ -124,7 +129,7 @@ FetchMock._fetchHandler = function (url, options, request, signal) {
 			signal.addEventListener('abort', abort);
 		}
 
-		this.generateResponse(route, url, options, request)
+		this.generateResponse({ route, url, options, request, callLog })
 			.then(res, rej)
 			.then(done, done)
 			.then(() => {
@@ -137,30 +142,44 @@ FetchMock.fetchHandler.isMock = true;
 
 FetchMock.executeRouter = function (url, options, request) {
 	const debug = getDebug('executeRouter()');
+	const callLog = { url, options, request, isUnmatched: true };
 	debug(`Attempting to match request to a route`);
 	if (this.getOption('fallbackToNetwork') === 'always') {
 		debug(
 			'  Configured with fallbackToNetwork=always - passing through to fetch'
 		);
-		return { response: this.getNativeFetch(), responseIsFetch: true };
+		return {
+			route: { response: this.getNativeFetch(), responseIsFetch: true },
+			// BUG - this callLog never used to get sent. Discovered the bug
+			// but can't fix outside a major release as it will potentially
+			// cause too much disruption
+			//
+			// callLog,
+		};
 	}
 
-	const match = this.router(url, options, request);
+	const route = this.router(url, options, request);
 
-	if (match) {
+	if (route) {
 		debug('  Matching route found');
-		return match;
+		return {
+			route,
+			callLog: {
+				url,
+				options,
+				request,
+				identifier: route.identifier,
+			},
+		};
 	}
 
 	if (this.getOption('warnOnFallback')) {
 		console.warn(`Unmatched ${(options && options.method) || 'GET'} to ${url}`); // eslint-disable-line
 	}
 
-	this.push({ url, options, request, isUnmatched: true });
-
 	if (this.fallbackResponse) {
 		debug('  No matching route found - using fallbackResponse');
-		return { response: this.fallbackResponse };
+		return { route: { response: this.fallbackResponse }, callLog };
 	}
 
 	if (!this.getOption('fallbackToNetwork')) {
@@ -172,10 +191,19 @@ FetchMock.executeRouter = function (url, options, request) {
 	}
 
 	debug('  Configured to fallbackToNetwork - passing through to fetch');
-	return { response: this.getNativeFetch(), responseIsFetch: true };
+	return {
+		route: { response: this.getNativeFetch(), responseIsFetch: true },
+		callLog,
+	};
 };
 
-FetchMock.generateResponse = async function (route, url, options, request) {
+FetchMock.generateResponse = async function ({
+	route,
+	url,
+	options,
+	request,
+	callLog = {},
+}) {
 	const debug = getDebug('generateResponse()');
 	const response = await resolve(route, url, options, request);
 
@@ -189,16 +217,21 @@ FetchMock.generateResponse = async function (route, url, options, request) {
 	// If the response is a pre-made Response, respond with it
 	if (this.config.Response.prototype.isPrototypeOf(response)) {
 		debug('response is already a Response instance - returning it');
+		callLog.response = response;
 		return response;
 	}
 
 	// finally, if we need to convert config into a response, we do it
-	return responseBuilder({
+	const finalResponse = responseBuilder({
 		url,
 		responseConfig: response,
 		fetchMock: this,
 		route,
 	});
+
+	callLog.response = finalResponse;
+
+	return finalResponse;
 };
 
 FetchMock.router = function (url, options, request) {
@@ -208,12 +241,6 @@ FetchMock.router = function (url, options, request) {
 	});
 
 	if (route) {
-		this.push({
-			url,
-			options,
-			request,
-			identifier: route.identifier,
-		});
 		return route;
 	}
 };
@@ -228,19 +255,11 @@ FetchMock.getNativeFetch = function () {
 	return func;
 };
 
-FetchMock.push = function ({ url, options, request, isUnmatched, identifier }) {
-	debug('Recording fetch call', {
-		url,
-		options,
-		request,
-		isUnmatched,
-		identifier,
-	});
-	const args = [url, options];
-	args.request = request;
-	args.identifier = identifier;
-	args.isUnmatched = isUnmatched;
-	this._calls.push(args);
+FetchMock.recordCall = function (obj) {
+	debug('Recording fetch call', obj);
+	if (obj) {
+		this._calls.push(obj);
+	}
 };
 
 module.exports = FetchMock;

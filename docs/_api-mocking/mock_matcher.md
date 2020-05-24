@@ -170,10 +170,11 @@ parameters:
           - strings, numbers and booleans are coerced to strings
           - arrays of values are coerced to repetitions of the key
           - all other values, including `undefined`, are coerced to an empty string
-          The request will be matched whichever order keys appear in the query string
+          The request will be matched whichever order keys appear in the query string. 
+          Any query parameters sent in the request which are not included in the keys of the object provided will be ignored.
         examples:
           - |-
-            {"q": "cute+kittenz"} // matches '?q=cute kittenz' or ?q=cute+kittenz'
+            {"q": "cute+kittenz"} // matches '?q=cute kittenz' or ?q=cute+kittenz' or ?q=cute+kittenz&mode=big'
           - |-
             {"tags": ["cute", "kittenz"]} // matches `?q=cute&q=kittenz`
           - |-

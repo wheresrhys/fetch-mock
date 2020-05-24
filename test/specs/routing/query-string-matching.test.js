@@ -70,6 +70,18 @@ describe('query string matching', () => {
 		expect(fm.calls(true).length).to.equal(2);
 	});
 
+	it('ignore irrelevant query strings', async () => {
+		fm.mock(
+			{
+				query: { a: 'b', c: 'd' },
+			},
+			200
+		).catch();
+
+		await fm.fetchHandler('http://a.com?a=b&c=d&e=f');
+		expect(fm.calls(true).length).to.equal(1);
+	});
+
 	it('match an empty query string', async () => {
 		fm.mock(
 			{

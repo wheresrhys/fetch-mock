@@ -62,8 +62,8 @@ describe('function matching', () => {
 		// same properties in the browser and nodejs
 		const propertyToCheck = new fm.config.Request('http://example.com').cache
 			? 'credentials'
-			: 'timeout';
-		const valueToSet = propertyToCheck === 'credentials' ? 'include' : 2000;
+			: 'highWaterMark';
+		const valueToSet = propertyToCheck === 'credentials' ? 'include' : 5000;
 
 		fm.mock(
 			(url, options, request) => request[propertyToCheck] === valueToSet,

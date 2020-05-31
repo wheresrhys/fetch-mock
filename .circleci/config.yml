@@ -96,6 +96,13 @@ jobs:
       - run: npm install node-fetch@1
       - run: FETCH_MOCK_SRC=../cjs/server.js make test
 
+  nodefetch3:
+    <<: *nodejs
+    steps:
+      - *workspace
+      - run: npm install node-fetch@next
+      - run: FETCH_MOCK_SRC=../cjs/server.js make test
+
   es5:
     <<: *node6
     steps:
@@ -172,6 +179,10 @@ workflows:
           <<: *triggerable-by-tag
           requires:
             - build
+      - nodefetch3:
+          <<: *triggerable-by-tag
+          requires:
+            - build
       - es5:
           <<: *triggerable-by-tag
           requires:
@@ -205,6 +216,7 @@ workflows:
           requires:
             - nodefetch1
             - nodefetch2
+            - nodefetch3
             - es5
             - chrome
             - firefox

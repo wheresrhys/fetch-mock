@@ -6,7 +6,11 @@ references:
     filters:
       tags:
         only: /.*/
-
+  require-build: &require-build
+    requires:
+      - test
+      - lint
+      - build
 
   nodejs: &nodejs
     docker:
@@ -169,48 +173,38 @@ workflows:
       - build:
           <<: *triggerable-by-tag
           requires:
-            - lint
-            - test
+            - checkout_code
       - nodefetch1:
           <<: *triggerable-by-tag
-          requires:
-            - build
+          <<: *require-build
       - nodefetch2:
           <<: *triggerable-by-tag
-          requires:
-            - build
+          <<: *require-build
       - nodefetch3:
           <<: *triggerable-by-tag
-          requires:
-            - build
+          <<: *require-build
       - es5:
           <<: *triggerable-by-tag
-          requires:
-            - build
+          <<: *require-build
       # - esm:
       #     <<: *triggerable-by-tag
       #     requires:
       #       - build
       - node10:
           <<: *triggerable-by-tag
-          requires:
-            - build
+          <<: *require-build
       - node13:
           <<: *triggerable-by-tag
-          requires:
-            - build
+          <<: *require-build
       - node14:
           <<: *triggerable-by-tag
-          requires:
-            - build
+          <<: *require-build
       - chrome:
           <<: *triggerable-by-tag
-          requires:
-            - build
+          <<: *require-build
       - firefox:
           <<: *triggerable-by-tag
-          requires:
-            - build
+          <<: *require-build
       - deploy:
           context: wheresrhys-npm-publish
           requires:

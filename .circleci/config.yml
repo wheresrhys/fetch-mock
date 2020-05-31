@@ -162,6 +162,9 @@ workflows:
           <<: *triggerable-by-tag
           requires:
             - checkout_code
+      # could be parallel with build, lint, and unit but it's a slow job
+      # And circlecifree tier only has 3 concurrent jobs, so overall faster
+      # to defer
       - typecheck:
           <<: *triggerable-by-tag
           <<: *build-lint-unit

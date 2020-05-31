@@ -1,5 +1,5 @@
 ---
-title: '.mock(matcher, response, options)'
+title: '.mock(matcher, response, optionsOrName)'
 navTitle: .mock()
 position: 1
 versionAdded: 2.0.0
@@ -30,11 +30,14 @@ parameters:
       - Promise
       - Response
     content: Response to send when a call is matched
-  - name: options
+  - name: optionsOrName
     versionAdded: 2.0.0
     types:
       - Object
-    content: More options to configure matching and responding behaviour
+      - String
+    content: |
+      More options to configure matching and responding behaviour.
+      Alternatively, use this parameter to specify a name for the route in order to make retrieving he calls it handles a little more intuitive
 content_markdown: |-
 
   Alternatively a single parameter, `options`, an Object with `matcher`, `response` and other options defined, can be passed in. 

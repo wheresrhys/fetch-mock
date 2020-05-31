@@ -7,8 +7,11 @@ const isUrlMatcher = (matcher) =>
 
 const isFunctionMatcher = (matcher) => typeof matcher === 'function';
 
+const nameToOptions = (options) =>
+	typeof options === 'string' ? { name: options } : options;
+
 const argsToRoute = (args) => {
-	const [matcher, response, options = {}] = args;
+	let [matcher, response, options = {}] = args;
 
 	const routeConfig = {};
 
@@ -18,11 +21,16 @@ const argsToRoute = (args) => {
 		Object.assign(routeConfig, matcher);
 	}
 
-	if (typeof response !== 'undefined') {
+	options = nameToOptions(options);
+
+	if ('response' in routeConfig) {
+		Object.assign(options, nameToOptions(response));
+	} else if (typeof response !== 'undefined') {
 		routeConfig.response = response;
 	}
 
 	Object.assign(routeConfig, options);
+
 	return routeConfig;
 };
 

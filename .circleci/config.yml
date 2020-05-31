@@ -6,7 +6,11 @@ references:
     filters:
       tags:
         only: /.*/
-
+  build-lint-unit: &build-lint-unit
+    requires:
+      - test
+      - lint
+      - build
 
   nodejs: &nodejs
     docker:
@@ -96,6 +100,13 @@ jobs:
       - run: npm install node-fetch@1
       - run: FETCH_MOCK_SRC=../cjs/server.js make test
 
+  nodefetch3:
+    <<: *nodejs
+    steps:
+      - *workspace
+      - run: npm install node-fetch@next
+      - run: FETCH_MOCK_SRC=../cjs/server.js make test
+
   es5:
     <<: *node6
     steps:
@@ -151,10 +162,12 @@ workflows:
           <<: *triggerable-by-tag
           requires:
             - checkout_code
+      # could be parallel with build, lint, and unit but it's a slow job
+      # And circlecifree tier only has 3 concurrent jobs, so overall faster
+      # to defer
       - typecheck:
           <<: *triggerable-by-tag
-          requires:
-            - checkout_code
+          <<: *build-lint-unit
       - lint:
           <<: *triggerable-by-tag
           requires:
@@ -162,49 +175,44 @@ workflows:
       - build:
           <<: *triggerable-by-tag
           requires:
-            - lint
-            - test
+            - checkout_code
       - nodefetch1:
           <<: *triggerable-by-tag
-          requires:
-            - build
+          <<: *build-lint-unit
       - nodefetch2:
           <<: *triggerable-by-tag
-          requires:
-            - build
+          <<: *build-lint-unit
+      - nodefetch3:
+          <<: *triggerable-by-tag
+          <<: *build-lint-unit
       - es5:
           <<: *triggerable-by-tag
-          requires:
-            - build
+          <<: *build-lint-unit
       # - esm:
       #     <<: *triggerable-by-tag
       #     requires:
       #       - build
       - node10:
           <<: *triggerable-by-tag
-          requires:
-            - build
+          <<: *build-lint-unit
       - node13:
           <<: *triggerable-by-tag
-          requires:
-            - build
+          <<: *build-lint-unit
       - node14:
           <<: *triggerable-by-tag
-          requires:
-            - build
+          <<: *build-lint-unit
       - chrome:
           <<: *triggerable-by-tag
-          requires:
-            - build
+          <<: *build-lint-unit
       - firefox:
           <<: *triggerable-by-tag
-          requires:
-            - build
+          <<: *build-lint-unit
       - deploy:
           context: wheresrhys-npm-publish
           requires:
             - nodefetch1
             - nodefetch2
+            - nodefetch3
             - es5
             - chrome
             - firefox

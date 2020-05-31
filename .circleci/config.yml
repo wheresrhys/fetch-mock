@@ -6,7 +6,7 @@ references:
     filters:
       tags:
         only: /.*/
-  require-build: &require-build
+  build-lint-unit: &build-lint-unit
     requires:
       - test
       - lint
@@ -164,8 +164,7 @@ workflows:
             - checkout_code
       - typecheck:
           <<: *triggerable-by-tag
-          requires:
-            - checkout_code
+          <<: *build-lint-unit
       - lint:
           <<: *triggerable-by-tag
           requires:
@@ -176,35 +175,35 @@ workflows:
             - checkout_code
       - nodefetch1:
           <<: *triggerable-by-tag
-          <<: *require-build
+          <<: *build-lint-unit
       - nodefetch2:
           <<: *triggerable-by-tag
-          <<: *require-build
+          <<: *build-lint-unit
       - nodefetch3:
           <<: *triggerable-by-tag
-          <<: *require-build
+          <<: *build-lint-unit
       - es5:
           <<: *triggerable-by-tag
-          <<: *require-build
+          <<: *build-lint-unit
       # - esm:
       #     <<: *triggerable-by-tag
       #     requires:
       #       - build
       - node10:
           <<: *triggerable-by-tag
-          <<: *require-build
+          <<: *build-lint-unit
       - node13:
           <<: *triggerable-by-tag
-          <<: *require-build
+          <<: *build-lint-unit
       - node14:
           <<: *triggerable-by-tag
-          <<: *require-build
+          <<: *build-lint-unit
       - chrome:
           <<: *triggerable-by-tag
-          <<: *require-build
+          <<: *build-lint-unit
       - firefox:
           <<: *triggerable-by-tag
-          <<: *require-build
+          <<: *build-lint-unit
       - deploy:
           context: wheresrhys-npm-publish
           requires:

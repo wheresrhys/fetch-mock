@@ -519,15 +519,15 @@ describe('inspecting', () => {
 			fm.restore();
 		});
 		it('has readable response', async () => {
-			const respBody = {foo: 'bar'}
-			fm.once('*', {status: 200, body: respBody}).once('*', 201, {
+			const respBody = { foo: 'bar' };
+			fm.once('*', { status: 200, body: respBody }).once('*', 201, {
 				overwriteRoutes: false,
 			});
 
 			const resp = await fm.fetchHandler('http://a.com/');
 
-			await resp.json()
-			expect(await fm.calls()[0].response.json()).to.eql(respBody)
+			await resp.json();
+			expect(await fm.calls()[0].response.json()).to.eql(respBody);
 		});
 	});
 });

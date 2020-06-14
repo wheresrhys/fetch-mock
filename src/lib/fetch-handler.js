@@ -222,14 +222,14 @@ FetchMock.generateResponse = async function ({
 	}
 
 	// finally, if we need to convert config into a response, we do it
-	const finalResponse = responseBuilder({
+	const [realResponse, finalResponse] = responseBuilder({
 		url,
 		responseConfig: response,
 		fetchMock: this,
 		route,
 	});
 
-	callLog.response = finalResponse.clone();
+	callLog.response = realResponse.clone();
 
 	return finalResponse;
 };

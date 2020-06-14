@@ -19,9 +19,13 @@ class ResponseBuilder {
 		this.normalizeResponseConfig();
 		this.constructFetchOpts();
 		this.constructResponseBody();
-		return this.buildObservableResponse(
-			new this.fetchMock.config.Response(this.body, this.options)
+
+		const realResponse = new this.fetchMock.config.Response(
+			this.body,
+			this.options
 		);
+		const proxyResponse = this.buildObservableResponse(realResponse);
+		return [realResponse, proxyResponse];
 	}
 
 	sendAsObject() {
@@ -170,12 +174,6 @@ e.g. {"body": {"status: "registered"}}`);
 				}
 
 				if (typeof originalResponse[name] === 'function') {
-					if (name === 'clone') {
-						return () => {
-							return originalResponse.clone();
-						};
-					}
-
 					this.debug('Wrapping body promises in ES proxies for observability');
 					return new Proxy(originalResponse[name], {
 						apply: (func, thisArg, args) => {

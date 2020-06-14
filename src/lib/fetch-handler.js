@@ -229,7 +229,7 @@ FetchMock.generateResponse = async function ({
 		route,
 	});
 
-	callLog.response = finalResponse;
+	callLog.response = finalResponse.clone();
 
 	return finalResponse;
 };

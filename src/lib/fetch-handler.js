@@ -217,19 +217,19 @@ FetchMock.generateResponse = async function ({
 	// If the response is a pre-made Response, respond with it
 	if (this.config.Response.prototype.isPrototypeOf(response)) {
 		debug('response is already a Response instance - returning it');
-		callLog.response = response;
+		callLog.response = response.clone();
 		return response;
 	}
 
 	// finally, if we need to convert config into a response, we do it
-	const finalResponse = responseBuilder({
+	const [realResponse, finalResponse] = responseBuilder({
 		url,
 		responseConfig: response,
 		fetchMock: this,
 		route,
 	});
 
-	callLog.response = finalResponse;
+	callLog.response = realResponse.clone();
 
 	return finalResponse;
 };

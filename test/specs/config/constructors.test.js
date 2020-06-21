@@ -118,7 +118,10 @@ describe('custom implementations', () => {
 		});
 
 		it('should use the configured Response', async () => {
-			const spiedReplacementResponse = sinon.stub().returns({ isFake: true });
+			const obj = { isFake: true };
+			/** Clone from Response interface is used internally to store copy in call log */
+			obj.clone = () => obj;
+			const spiedReplacementResponse = sinon.stub().returns(obj);
 			fm.config.Response = spiedReplacementResponse;
 
 			fm.mock('*', 'hello');

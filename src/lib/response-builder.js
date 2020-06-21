@@ -19,9 +19,13 @@ class ResponseBuilder {
 		this.normalizeResponseConfig();
 		this.constructFetchOpts();
 		this.constructResponseBody();
-		return this.buildObservableResponse(
-			new this.fetchMock.config.Response(this.body, this.options)
+
+		const realResponse = new this.fetchMock.config.Response(
+			this.body,
+			this.options
 		);
+		const proxyResponse = this.buildObservableResponse(realResponse);
+		return [realResponse, proxyResponse];
 	}
 
 	sendAsObject() {

@@ -231,6 +231,7 @@ declare namespace fetchMock {
         identifier: string;
         isUnmatched: boolean | undefined;
         request: Request | undefined;
+        response: Response | undefined;
     }
 
     interface MockOptionsMethodGet extends MockOptions {

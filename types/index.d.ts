@@ -223,6 +223,11 @@ declare namespace fetchMock {
          * @default true
          */
         includeContentLength?: boolean;
+        
+        /**
+         * Match calls that only partially match a specified body json.
+         */
+        matchPartialBody?: boolean;
     }
 
     interface MockCall extends Array<string | RequestInit | undefined> {

@@ -1,4 +1,4 @@
-const { debug } = require('./debug');
+const { debug } = require('../lib/debug');
 const glob = require('glob-to-regexp');
 const pathToRegexp = require('path-to-regexp');
 const querystring = require('querystring');
@@ -8,7 +8,7 @@ const {
 	getPath,
 	getQuery,
 	normalizeUrl,
-} = require('./request-utils');
+} = require('../lib/request-utils');
 const isEqual = require('lodash.isequal');
 
 const debuggableUrlFunc = (func) => (url) => {
@@ -227,20 +227,12 @@ const getUrlMatcher = (route) => {
 	return getFullUrlMatcher(route, matcherUrl, query);
 };
 
-const FetchMock = {};
-
-FetchMock._matchers = [];
-
-FetchMock.addMatcher = function (matcher) {
-	this._matchers.push(matcher);
-};
-
-FetchMock.addMatcher({ name: 'query', matcher: getQueryStringMatcher });
-FetchMock.addMatcher({ name: 'method', matcher: getMethodMatcher });
-FetchMock.addMatcher({ name: 'headers', matcher: getHeaderMatcher });
-FetchMock.addMatcher({ name: 'params', matcher: getParamsMatcher });
-FetchMock.addMatcher({ name: 'body', matcher: getBodyMatcher, usesBody: true });
-FetchMock.addMatcher({ name: 'functionMatcher', matcher: getFunctionMatcher });
-FetchMock.addMatcher({ name: 'url', matcher: getUrlMatcher });
-
-module.exports = FetchMock;
+module.exports = [
+	{ name: 'query', matcher: getQueryStringMatcher },
+	{ name: 'method', matcher: getMethodMatcher },
+	{ name: 'headers', matcher: getHeaderMatcher },
+	{ name: 'params', matcher: getParamsMatcher },
+	{ name: 'body', matcher: getBodyMatcher, usesBody: true },
+	{ name: 'functionMatcher', matcher: getFunctionMatcher },
+	{ name: 'url', matcher: getUrlMatcher },
+];

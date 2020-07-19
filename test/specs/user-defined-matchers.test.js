@@ -60,13 +60,13 @@ describe('user defined matchers', () => {
 	it('not match on async body property without passing `usesBody: true`', async () => {
 		const fm = fetchMock.createInstance();
 		fm.addMatcher({
-			name: 'bodyMatcher',
+			name: 'asyncBodyMatcher',
 			matcher: (route) => (url, options) =>
-				JSON.parse(options.body)[route.bodyMatcher] === true,
+				JSON.parse(options.body)[route.asyncBodyMatcher] === true,
 		});
 		fm.mock(
 			{
-				bodyMatcher: 'a',
+				asyncBodyMatcher: 'a',
 			},
 			200
 		).catch();

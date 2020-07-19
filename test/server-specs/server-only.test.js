@@ -50,7 +50,8 @@ describe('nodejs only tests', () => {
 			// bug referenced above creeps back in
 			await fm
 				.fetchHandler('http://www.wheresrhys.co.uk/assets/img/chaffinch.jpg')
-				.then((res) => res.blob());
+				// res.blob() woudl make more sense, but not supported by node-fetch@1
+				.then((res) => res.text());
 		});
 	});
 });

@@ -11,15 +11,13 @@ const isUrlMatcher = (matcher) =>
 const isFunctionMatcher = (matcher) => typeof matcher === 'function';
 
 class Route {
-	constructor(args, fetchMock, skipValidation = false) {
+	constructor(args, fetchMock) {
 		this.fetchMock = fetchMock;
 		const debug = getDebug('compileRoute()');
 		debug('Compiling route');
 		this.init(args);
 		this.sanitize();
-		if (!skipValidation) {
-			this.validate();
-		}
+		this.validate();
 		this.generateMatcher();
 		this.limit();
 		this.delayResponse();

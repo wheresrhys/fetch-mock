@@ -102,7 +102,24 @@ FetchMock.lastOptions = formatDebug(function (nameOrMatcher, options) {
 
 FetchMock.lastResponse = formatDebug(function (nameOrMatcher, options) {
 	debug('retrieving respose of last matching call');
-	return (this.lastCall(nameOrMatcher, options) || []).response;
+	console.warn(`When doing all the following:
+- using node-fetch
+- responding with a real network response (using spy() or fallbackToNetwork)
+- using \`fetchMock.LastResponse()\`
+- awaiting the body content
+... the response will hang unless your source code also awaits the response body.
+This is an unavoidable consequence of the nodejs implementation of streams.
+`)
+	const response = (this.lastCall(nameOrMatcher, options) || []).response
+	try {
+		const clonedResponse = response.clone();
+		return clonedResponse;
+	} catch(err) {
+		Object.entries(response._fmResults).forEach(([name, result]) => {
+			response[name] = () => result;
+		})
+		return response;
+	}
 });
 
 FetchMock.called = formatDebug(function (nameOrMatcher, options) {

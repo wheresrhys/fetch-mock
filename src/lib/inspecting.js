@@ -1,13 +1,15 @@
 const { setDebugPhase, setDebugNamespace, debug } = require('./debug');
 const { normalizeUrl } = require('./request-utils');
+const Route = require('../Route');
 const FetchMock = {};
 const isName = (nameOrMatcher) =>
 	typeof nameOrMatcher === 'string' && /^[\da-zA-Z\-]+$/.test(nameOrMatcher);
 
 const filterCallsWithMatcher = function (matcher, options = {}, calls) {
-	matcher = this.generateMatcher(
-		this.sanitizeRoute(Object.assign({ matcher }, options))
-	);
+	({ matcher } = new Route([Object.assign({ matcher }, options)], this, true));
+	// this.generateMatcher(
+	// 	this.sanitizeRoute()
+	// );
 	return calls.filter(({ url, options }) =>
 		matcher(normalizeUrl(url), options)
 	);

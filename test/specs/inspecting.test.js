@@ -518,7 +518,8 @@ describe('inspecting', () => {
 			expect(fm.lastResponse().status).to.equal(201);
 			fm.restore();
 		});
-		it('has readable response', async () => {
+
+		it('has readable response when response already read if using lastResponse', async () => {
 			const respBody = { foo: 'bar' };
 			fm.once('*', { status: 200, body: respBody }).once('*', 201, {
 				overwriteRoutes: false,
@@ -527,7 +528,7 @@ describe('inspecting', () => {
 			const resp = await fm.fetchHandler('http://a.com/');
 
 			await resp.json();
-			expect(await fm.calls()[0].response.json()).to.eql(respBody);
+			expect(await fm.lastResponse().json()).to.eql(respBody);
 		});
 	});
 });

@@ -217,7 +217,7 @@ FetchMock.generateResponse = async function ({
 	// If the response is a pre-made Response, respond with it
 	if (this.config.Response.prototype.isPrototypeOf(response)) {
 		debug('response is already a Response instance - returning it');
-		callLog.response = response.clone();
+		callLog.response = response;
 		return response;
 	}
 
@@ -229,7 +229,7 @@ FetchMock.generateResponse = async function ({
 		route,
 	});
 
-	callLog.response = realResponse.clone();
+	callLog.response = realResponse;
 
 	return finalResponse;
 };

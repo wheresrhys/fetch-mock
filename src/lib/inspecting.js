@@ -109,15 +109,15 @@ FetchMock.lastResponse = formatDebug(function (nameOrMatcher, options) {
 - awaiting the body content
 ... the response will hang unless your source code also awaits the response body.
 This is an unavoidable consequence of the nodejs implementation of streams.
-`)
-	const response = (this.lastCall(nameOrMatcher, options) || []).response
+`);
+	const response = (this.lastCall(nameOrMatcher, options) || []).response;
 	try {
 		const clonedResponse = response.clone();
 		return clonedResponse;
-	} catch(err) {
+	} catch (err) {
 		Object.entries(response._fmResults).forEach(([name, result]) => {
 			response[name] = () => result;
-		})
+		});
 		return response;
 	}
 });

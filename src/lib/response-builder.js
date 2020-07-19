@@ -151,7 +151,7 @@ e.g. {"body": {"status: "registered"}}`);
 
 	buildObservableResponse(response) {
 		const fetchMock = this.fetchMock;
-		response._fmResults = {}
+		response._fmResults = {};
 		// Using a proxy means we can set properties that may not be writable on
 		// the original Response. It also means we can track the resolution of
 		// promises returned by res.json(), res.text() etc

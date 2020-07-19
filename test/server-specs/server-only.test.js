@@ -42,13 +42,15 @@ describe('nodejs only tests', () => {
 
 		// See https://github.com/wheresrhys/fetch-mock/issues/575
 		it('can respond with large bodies from the interweb', async () => {
-			const fm = fetchMock.sandbox()
+			const fm = fetchMock.sandbox();
 			fm.config.fetch = require('node-fetch');
 			fm.config.fallbackToNetwork = true;
-			fm.mock()
+			fm.mock();
 			// this is an adequate test because the response hangs if the
 			// bug referenced above creeps back in
-			await fm.fetchHandler('http://www.wheresrhys.co.uk/assets/img/chaffinch.jpg').then(res => res.blob())
-		})
+			await fm
+				.fetchHandler('http://www.wheresrhys.co.uk/assets/img/chaffinch.jpg')
+				.then((res) => res.blob());
+		});
 	});
 });

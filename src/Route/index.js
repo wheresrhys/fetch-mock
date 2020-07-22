@@ -1,5 +1,4 @@
 const builtInMatchers = require('./matchers');
-const matchers = [];
 
 const { debug, setDebugNamespace, getDebug } = require('../lib/debug');
 
@@ -28,7 +27,7 @@ class Route {
 			throw new Error('fetch-mock: Each route must define a response');
 		}
 
-		if (!matchers.some(({ name }) => name in this)) {
+		if (!Route.registeredMatchers.some(({ name }) => name in this)) {
 			throw new Error(
 				"fetch-mock: Each route must specify some criteria for matching calls to fetch. To match all calls use '*'"
 			);
@@ -82,7 +81,7 @@ class Route {
 		setDebugNamespace('generateMatcher()');
 		debug('Compiling matcher for route');
 
-		const activeMatchers = matchers
+		const activeMatchers = Route.registeredMatchers
 			.map(
 				({ name, matcher, usesBody }) =>
 					this[name] && { matcher: matcher(this, this.fetchMock), usesBody }
@@ -140,9 +139,11 @@ class Route {
 	}
 
 	static addMatcher(matcher) {
-		matchers.push(matcher);
+		Route.registeredMatchers.push(matcher);
 	}
 }
+
+Route.registeredMatchers = [];
 
 builtInMatchers.forEach(Route.addMatcher);
 

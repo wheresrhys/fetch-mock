@@ -24,7 +24,7 @@ class AbortError extends Error {
 const patchNativeFetchForSafari = (nativeFetch) => {
 	// Try to patch fetch only on Safari
 	if (
-		!navigator ||
+		typeof navigator === 'undefined' ||
 		!navigator.vendor ||
 		navigator.vendor !== 'Apple Computer, Inc.'
 	) {

@@ -14,23 +14,22 @@ references:
 
   nodejs: &nodejs
     docker:
-      - image: circleci/node:12.16.3
+      - image: circleci/node:12.18.3
   browsers: &browsers
     docker:
-      - image: circleci/node:12.16.3-browsers
-
+      - image: circleci/node:12.18.3-browsers
   node14: &node14
     docker:
-      - image: circleci/node:14.2.0
+      - image: circleci/node:14.7.0
   node13: &node13
     docker:
       - image: circleci/node:13.14.0
   node10: &node10
     docker:
-      - image: circleci/node:10.20.1
+      - image: circleci/node:10.22.0
   node6: &node6
     docker:
-      - image: circleci/node:6.13.0
+      - image: circleci/node:6.17.1
 
   workspace: &workspace
     attach_workspace:

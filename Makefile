@@ -54,9 +54,6 @@ build: transpile
 docs:
 	cd docs; jekyll serve build --watch
 
-la:
-	@echo $(NPM_PUBLISH_TAG)
-
 publish:
 	echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ${HOME}/.npmrc
 	npm version --no-git-tag-version $(CIRCLE_TAG)

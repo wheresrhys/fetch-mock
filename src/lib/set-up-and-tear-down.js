@@ -1,24 +1,26 @@
 const { debug, setDebugPhase } = require('./debug');
 const FetchMock = {};
 
-
 const Route = require('../Route');
 FetchMock.addMatcher = function (matcher) {
 	Route.addMatcher(matcher);
 };
 
-
 FetchMock.compileRoute = function (config) {
 	return new Route(config);
 };
 
-FetchMock.mock = function (...args) {
+FetchMock.$mock = function (...args) {
 	setDebugPhase('setup');
+	this._mock();
 	if (args.length) {
-		this.addRoute(args);
+		return this.addRoute(args);
 	}
+};
 
-	return this._mock();
+FetchMock.mock = function (...args) {
+	this.$mock(...args)
+	return this;
 };
 
 FetchMock.addRoute = function (uncompiledRoute) {
@@ -52,6 +54,7 @@ FetchMock.addRoute = function (uncompiledRoute) {
 
 	this._uncompiledRoutes.push(uncompiledRoute);
 	this.routes.push(route);
+	return route;
 };
 
 FetchMock._mock = function () {
@@ -84,7 +87,7 @@ FetchMock.spy = function (route) {
 		: this.catch(this.getNativeFetch());
 };
 
-const defineShorthand = (methodName, underlyingMethod, shorthandOptions) => {
+const _defineShorthand = (methodName, underlyingMethod, shorthandOptions) => {
 	FetchMock[methodName] = function (matcher, response, options) {
 		return this[underlyingMethod](
 			matcher,
@@ -94,35 +97,33 @@ const defineShorthand = (methodName, underlyingMethod, shorthandOptions) => {
 	};
 };
 
-const defineGreedyShorthand = (methodName, underlyingMethod) => {
+const defineShorthands = (methodName, underlyingMethod, shorthandOptions) => {
+	_defineShorthand(methodName, underlyingMethod, shorthandOptions)
+	_defineShorthand(`$${methodName}`, `$${underlyingMethod}`, shorthandOptions)
+}
+
+const _defineGreedyShorthand = (methodName, underlyingMethod) => {
 	FetchMock[methodName] = function (response, options) {
 		return this[underlyingMethod]({}, response, options);
 	};
 };
 
-defineShorthand('sticky', 'mock', { sticky: true });
-defineShorthand('once', 'mock', { repeat: 1 });
-defineGreedyShorthand('any', 'mock');
-defineGreedyShorthand('anyOnce', 'once');
+const defineGreedyShorthands = (methodName, underlyingMethod, shorthandOptions) => {
+	_defineGreedyShorthand(methodName, underlyingMethod)
+	_defineGreedyShorthand(`$${methodName}`, `$${underlyingMethod}`)
+}
+
+defineShorthands('sticky', 'mock', { sticky: true });
+defineShorthands('once', 'mock', { repeat: 1 });
+defineGreedyShorthands('any', 'mock');
+defineGreedyShorthands('anyOnce', 'once');
 
 ['get', 'post', 'put', 'delete', 'head', 'patch'].forEach((method) => {
-	defineShorthand(method, 'mock', { method });
-	defineShorthand(`${method}Once`, 'once', { method });
-	defineGreedyShorthand(`${method}Any`, method);
-	defineGreedyShorthand(`${method}AnyOnce`, `${method}Once`);
+	defineShorthands(method, 'mock', { method });
+	defineShorthands(`${method}Once`, 'once', { method });
+	defineGreedyShorthands(`${method}Any`, method);
+	defineGreedyShorthands(`${method}AnyOnce`, `${method}Once`);
 });
-
-// defineShorthand('sticky');
-// defineShorthand('once');
-// defineShorthand('any');
-// defineShorthand('anyOnce');
-
-// ['get', 'post', 'put', 'delete', 'head', 'patch'].forEach((method) => {
-// 	defineShorthand(method);
-// 	defineShorthand(`${method}Once`);
-// 	defineShorthand(`${method}Any`);
-// 	defineShorthand(`${method}AnyOnce`);
-// });
 
 const mochaAsyncHookWorkaround = (options) => {
 	// HACK workaround for this https://github.com/mochajs/mocha/issues/4280

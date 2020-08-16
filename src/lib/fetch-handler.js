@@ -281,7 +281,7 @@ FetchMock.generateResponse = async function ({
 FetchMock.router = function (url, options, request) {
 	const route = this.routes.find((route, i) => {
 		debug(`Trying to match route ${i}`);
-		return route.matcher(url, options, request);
+		return route.matcher(url, options, request, this);
 	});
 
 	if (route) {

@@ -10,8 +10,7 @@ const isUrlMatcher = (matcher) =>
 const isFunctionMatcher = (matcher) => typeof matcher === 'function';
 
 class Route {
-	constructor(args, fetchMock) {
-		this.fetchMock = fetchMock;
+	constructor(args) {
 		const debug = getDebug('compileRoute()');
 		debug('Compiling route');
 		this.init(args);
@@ -84,7 +83,7 @@ class Route {
 		const activeMatchers = Route.registeredMatchers
 			.map(
 				({ name, matcher, usesBody }) =>
-					this[name] && { matcher: matcher(this, this.fetchMock), usesBody }
+					this[name] && { matcher: matcher(this), usesBody }
 			)
 			.filter((matcher) => Boolean(matcher));
 
@@ -92,8 +91,8 @@ class Route {
 
 		debug('Compiled matcher for route');
 		setDebugNamespace();
-		this.matcher = (url, options = {}, request) =>
-			activeMatchers.every(({ matcher }) => matcher(url, options, request));
+		this.matcher = (url, options = {}, request, fetchMock) =>
+			activeMatchers.every(({ matcher }) => matcher(url, options, request, fetchMock));
 	}
 
 	limit() {

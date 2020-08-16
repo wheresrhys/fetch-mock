@@ -1,6 +1,17 @@
 const { debug, setDebugPhase } = require('./debug');
 const FetchMock = {};
 
+
+const Route = require('../Route');
+FetchMock.addMatcher = function (matcher) {
+	Route.addMatcher(matcher);
+};
+
+
+FetchMock.compileRoute = function (config) {
+	return new Route(config);
+};
+
 FetchMock.mock = function (...args) {
 	setDebugPhase('setup');
 	if (args.length) {
@@ -100,6 +111,18 @@ defineGreedyShorthand('anyOnce', 'once');
 	defineGreedyShorthand(`${method}Any`, method);
 	defineGreedyShorthand(`${method}AnyOnce`, `${method}Once`);
 });
+
+// defineShorthand('sticky');
+// defineShorthand('once');
+// defineShorthand('any');
+// defineShorthand('anyOnce');
+
+// ['get', 'post', 'put', 'delete', 'head', 'patch'].forEach((method) => {
+// 	defineShorthand(method);
+// 	defineShorthand(`${method}Once`);
+// 	defineShorthand(`${method}Any`);
+// 	defineShorthand(`${method}AnyOnce`);
+// });
 
 const mochaAsyncHookWorkaround = (options) => {
 	// HACK workaround for this https://github.com/mochajs/mocha/issues/4280

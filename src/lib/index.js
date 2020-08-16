@@ -2,13 +2,10 @@ const { debug } = require('./debug');
 const setUpAndTearDown = require('./set-up-and-tear-down');
 const fetchHandler = require('./fetch-handler');
 const inspecting = require('./inspecting');
-const Route = require('../Route');
+
 
 const FetchMock = Object.assign({}, fetchHandler, setUpAndTearDown, inspecting);
 
-FetchMock.addMatcher = function (matcher) {
-	Route.addMatcher(matcher);
-};
 
 FetchMock.config = {
 	fallbackToNetwork: false,
@@ -33,9 +30,6 @@ FetchMock.createInstance = function () {
 	return instance;
 };
 
-FetchMock.compileRoute = function (config) {
-	return new Route(config, this);
-};
 
 FetchMock.bindMethods = function () {
 	this.fetchHandler = FetchMock.fetchHandler.bind(this);

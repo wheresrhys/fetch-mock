@@ -8,10 +8,9 @@ const isName = (nameOrMatcher) =>
 const filterCallsWithMatcher = function (matcher, options = {}, calls) {
 	({ matcher } = new Route(
 		[Object.assign({ matcher, response: 'ok' }, options)],
-		this
 	));
 	return calls.filter(({ url, options }) =>
-		matcher(normalizeUrl(url), options)
+		matcher(normalizeUrl(url), options, null, this)
 	);
 };
 

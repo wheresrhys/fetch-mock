@@ -11,7 +11,7 @@ Please give me your feedback as github issues/pull requests. It feels like a big
 To keep the library in line with `sinon`, the most popular mocking libarry in the js ecosystem, a few method names & behaviours have been changed
 
 - `reset()` now resets both call history _and_ the mocking behaviour of fetch-mock - It's a complete teardown of the mocks that have been set up. `restore()` has been kept as an alias for this method
-- `resetHistory()` now removes call history. Any previous uses of `reset()` shodul be replaced with `resetHistory()`
+- `resetHistory()` now removes call history. Any previous uses of `reset()` should be replaced with `resetHistory()`
 - `resetBehavior()` is a new method which removes mocking behaviour without resetting call history
 
 ## `throws` option now rejects a Promise

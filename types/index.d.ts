@@ -572,6 +572,28 @@ declare namespace fetchMock {
             options?: InspectionOptions,
         ): MockOptions | undefined;
 
+        /**
+         * Returns the options for the call to fetch matching the given filter.
+         * This is an experimental feature, very difficult to implement well given 
+         * fetch’s very private treatment of response bodies.
+         * When doing all the following:
+           -  using node-fetch
+           -  responding with a real network response (using spy() or fallbackToNetwork)
+           -  using `fetchMock.LastResponse()`
+           -  awaiting the body content
+               … the response will hang unless your source code also awaits the response body. 
+               This is an unavoidable consequence of the nodejs implementation of streams.
+         * @param [filter] Allows filtering of calls to fetch based on various
+         * criteria
+         * @param [options] Either an object compatible with the mocking api or
+         * a string specifying a http method to filter by. This will be used to
+         * filter the list of calls further.
+         */
+        lastResponse(
+            filter?: InspectionFilter,
+            options?: InspectionOptions,
+        ): Response | undefined;
+
         config: {
             /**
              * Convert objects into JSON before delivering as stub responses.

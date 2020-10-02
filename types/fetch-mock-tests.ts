@@ -123,6 +123,15 @@ lastOptions = fetchMock.lastOptions("http://test.com", {
     method: "GET",
 });
 
+let lastResponse: Response = fetchMock.lastResponse();
+lastResponse = fetchMock.lastResponse(true);
+lastResponse = fetchMock.lastResponse("http://test.com");
+lastResponse = fetchMock.lastResponse(/https?:\/\/test.com/);
+lastResponse = fetchMock.lastResponse("http://test.com", "GET");
+lastResponse = fetchMock.lastResponse("http://test.com", {
+    method: "GET",
+});
+
 fetchMock.get("http://test.com", 200);
 fetchMock.getOnce("http://test.com", 200);
 fetchMock.post("http://test.com", 200);

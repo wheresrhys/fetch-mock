@@ -13,11 +13,13 @@ FetchMock.mock = function (...args) {
 FetchMock.addRoute = function (uncompiledRoute) {
 	debug('Adding route', uncompiledRoute);
 	const route = this.compileRoute(uncompiledRoute);
-	const clashes = this.routes.filter(
-		({ identifier, method }) =>
-			identifier === route.identifier &&
-			(!method || !route.method || method === route.method)
-	);
+	const clashes = this.routes.filter(({ identifier, method }) => {
+		const isMatch =
+			typeof identifier === 'function'
+				? identifier === route.identifier
+				: String(identifier) === String(route.identifier);
+		return isMatch && (!method || !route.method || method === route.method);
+	});
 
 	if (this.getOption('overwriteRoutes', route) === false || !clashes.length) {
 		this._uncompiledRoutes.push(uncompiledRoute);

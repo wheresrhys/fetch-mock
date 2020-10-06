@@ -24,6 +24,14 @@ describe('overwriteRoutes', () => {
 		expect(res.status).to.equal(300);
 	});
 
+	it('allow overwriting existing route, regex matcher', async () => {
+		fm.config.overwriteRoutes = true;
+		expect(() => fm.mock(/a\.com/, 200).mock(/a\.com/, 300)).not.to.throw();
+
+		const res = await fm.fetchHandler('http://a.com');
+		expect(res.status).to.equal(300);
+	});
+
 	it('allow adding additional routes with same matcher', async () => {
 		fm.config.overwriteRoutes = false;
 		expect(() =>

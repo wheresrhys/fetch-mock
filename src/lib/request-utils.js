@@ -1,7 +1,8 @@
 let URL;
 // https://stackoverflow.com/a/19709846/308237
-// modified, URL constructor does not support protocol-relative urls
+// split, URL constructor does not support protocol-relative urls
 const absoluteUrlRX = new RegExp('^[a-z]+://', 'i');
+const protocolRelativeUrlRX = new RegExp('^//', 'i');
 
 const headersToArray = (headers) => {
 	// node-fetch 1 Headers
@@ -27,6 +28,9 @@ const normalizeUrl = (url) => {
 	}
 	if (absoluteUrlRX.test(url)) {
 		const u = new URL(url);
+		return u.href;
+	} else if (protocolRelativeUrlRX.test(url)) {
+		const u = new URL(url, 'http://dummy');
 		return u.href;
 	} else {
 		const u = new URL(url, 'http://dummy');

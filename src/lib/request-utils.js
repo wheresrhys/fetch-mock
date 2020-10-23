@@ -1,6 +1,7 @@
 let URL;
 // https://stackoverflow.com/a/19709846/308237
-const absoluteUrlRX = new RegExp('^(?:[a-z]+:)?//', 'i');
+// modified, URL constructor does not support protocol-relative urls
+const absoluteUrlRX = new RegExp('^[a-z]+://', 'i');
 
 const headersToArray = (headers) => {
 	// node-fetch 1 Headers

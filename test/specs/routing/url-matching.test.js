@@ -21,6 +21,9 @@ describe('url matching', () => {
 		expect(fm.calls(true).length).to.equal(0);
 		await fm.fetchHandler('http://a.com/path');
 		expect(fm.calls(true).length).to.equal(1);
+		// gets normalized to http://a.com/path
+		await fm.fetchHandler('//a.com/path');
+		expect(fm.calls(true).length).to.equal(1);
 	});
 
 	it('match exact strings with relative url', async () => {
@@ -127,6 +130,12 @@ describe('url matching', () => {
 			await fm.fetchHandler('http://b.com/');
 			await fm.fetchHandler('http://b.com');
 			expect(fm.calls(true).length).to.equal(4);
+		});
+		it('match protocol-relative urls with catch-all', async () => {
+			fm.any(200).catch();
+
+			await fm.fetchHandler('//a.com/path');
+			expect(fm.calls(true).length).to.equal(1);
 		});
 	});
 });

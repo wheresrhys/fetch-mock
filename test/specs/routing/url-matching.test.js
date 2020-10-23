@@ -20,10 +20,8 @@ describe('url matching', () => {
 		await fm.fetchHandler('http://a.co/path');
 		expect(fm.calls(true).length).to.equal(0);
 		await fm.fetchHandler('http://a.com/path');
-		expect(fm.calls(true).length).to.equal(1);
-		// gets normalized to http://a.com/path
 		await fm.fetchHandler('//a.com/path');
-		expect(fm.calls(true).length).to.equal(1);
+		expect(fm.calls(true).length).to.equal(2);
 	});
 
 	it('match exact strings with relative url', async () => {

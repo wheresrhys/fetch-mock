@@ -18,21 +18,6 @@ module.exports = (karma) =>
 		webpack: {
 			mode: 'development',
 			devtool: 'inline-source-map',
-			module: {
-				rules: [
-					{
-						test: /\.js$/,
-						loader: 'babel-loader',
-						exclude: /node_modules/,
-						query: {
-							babelrc: false, // ignore any .babelrc in project & dependencies
-							cacheDirectory: true,
-							plugins: ['@babel/plugin-transform-runtime'],
-							presets: ['@babel/preset-env'],
-						},
-					},
-				],
-			},
 		},
 		reporters: ['mocha'],
 	});

@@ -21,7 +21,7 @@ references:
       - image: cimg/node:lts
   browsers: &browsers
     docker:
-      - image: cimg/node:lts-browsers
+      - image: cimg/node:lts-browser
   nodenext: &nodenext
     docker:
       - image: cimg/node:current

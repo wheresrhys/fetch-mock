@@ -17,7 +17,7 @@ describe('fallbackToNetwork', () => {
 		fm.config.fallbackToNetwork = true;
 		fm.mock('http://mocked.com', 201);
 		expect(() => fm.fetchHandler('http://unmocked.com')).not.to.throw();
-		delete theGlobal.fetch
+		delete theGlobal.fetch;
 	});
 
 	it('actually falls back to network when configured globally', async () => {
@@ -28,7 +28,7 @@ describe('fallbackToNetwork', () => {
 		expect(res.status).to.equal(202);
 		fetchMock.restore();
 		fetchMock.config.fallbackToNetwork = false;
-		delete theGlobal.fetch
+		delete theGlobal.fetch;
 	});
 
 	it('actually falls back to network when configured in a sandbox properly', async () => {

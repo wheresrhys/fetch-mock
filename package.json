@@ -53,6 +53,7 @@
   "homepage": "http://www.wheresrhys.co.uk/fetch-mock",
   "dependencies": {
     "@babel/runtime": "^7.0.0",
+    "@babel/core": "^7.0.0",
     "core-js": "^3.0.0",
     "debug": "^4.1.1",
     "glob-to-regexp": "^0.4.0",
@@ -74,11 +75,11 @@
     "node": ">=4.0.0"
   },
   "devDependencies": {
-    "abort-controller": "^3.0.0",
     "@babel/cli": "^7.0.0",
-    "babel-loader": "^8.0.0",
     "@babel/plugin-transform-runtime": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
+    "abort-controller": "^3.0.0",
+    "babel-loader": "^8.0.0",
     "bluebird": "^3.4.6",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",

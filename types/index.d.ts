@@ -645,9 +645,11 @@ declare namespace fetchMock {
              * implementation.
              */
             Promise?: new (executor: (
-                resolve: (value: Response | PromiseLike<Response>) => void,
-                reject: () => void,
-            ) => void) => Promise<Response>;
+                // Should be (value?: T | PromiseLike<T>) => void
+                // But not sure if that's compatible with older typescript
+                resolve: (value?: any) => void,
+                reject: (value?: any) => void,
+            ) => void) => Promise<any>;
 
             /**
              * Reference to a custom fetch implementation.

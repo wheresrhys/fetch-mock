@@ -1,4 +1,4 @@
-require('babel-core').transform('code', {
+require('@babel/core').transform('code', {
 	plugins: ['transform-runtime'],
 });
 

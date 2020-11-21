@@ -186,10 +186,10 @@ workflows:
       - es5:
           <<: *triggerable-by-tag
           <<: *build-lint-unit
-      # - esm:
-      #     <<: *triggerable-by-tag
-      #     requires:
-      #       - build
+      - esm:
+          <<: *triggerable-by-tag
+          requires:
+            - build
       - node10:
           <<: *triggerable-by-tag
           <<: *build-lint-unit
@@ -218,8 +218,8 @@ workflows:
             - typecheck
             - node10
             - nodenext
-            - node14
-            # - esm
+            - node12
+            - esm
           filters:
             branches:
               ignore: /.*/

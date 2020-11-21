@@ -12,24 +12,24 @@ references:
       - lint
       - build
 
-  nodejs: &nodejs
+  nodelts: &nodelts
     docker:
-      - image: circleci/node:12.18.3
+      - image: cimg/node:14.7.0
   browsers: &browsers
     docker:
-      - image: circleci/node:12.18.3-browsers
-  node14: &node14
+      - image: cimg/node:14.7.0-browsers
+  nodenext: &nodenext
     docker:
-      - image: circleci/node:14.7.0
-  node13: &node13
+      - image: cimg/node:15.2.1
+  node12: &node12
     docker:
-      - image: circleci/node:13.14.0
+      - image: cimg/node:12.18.3
   node10: &node10
     docker:
-      - image: circleci/node:10.22.0
+      - image: cimg/node:10.22.0
   node6: &node6
     docker:
-      - image: circleci/node:6.17.1
+      - image: cimg/node:6.17.1
 
   workspace: &workspace
     attach_workspace:
@@ -49,7 +49,7 @@ references:
 
 jobs:
   checkout_code:
-    <<: *nodejs
+    <<: *nodelts
     steps:
       - checkout
       - restore_cache:
@@ -62,45 +62,45 @@ jobs:
       - *persist
 
   build:
-    <<: *nodejs
+    <<: *nodelts
     steps:
       - *workspace
       - run: make build
       - *persist
   lint:
-    <<: *nodejs
+    <<: *nodelts
     steps:
       - *workspace
       - run: make lint-ci
 
   typecheck:
-    <<: *nodejs
+    <<: *nodelts
     steps:
       - *workspace
       - run: make typecheck
 
   test:
-    <<: *nodejs
+    <<: *nodelts
     steps:
       - *workspace
       - run: make coverage
 
 
   nodefetch2:
-    <<: *nodejs
+    <<: *nodelts
     steps:
       - *workspace
       - run: FETCH_MOCK_SRC=../cjs/server.js make test
 
   nodefetch1:
-    <<: *nodejs
+    <<: *nodelts
     steps:
       - *workspace
       - run: npm install node-fetch@1
       - run: FETCH_MOCK_SRC=../cjs/server.js make test
 
   nodefetch3:
-    <<: *nodejs
+    <<: *nodelts
     steps:
       - *workspace
       - run: npm install node-fetch@next
@@ -114,21 +114,20 @@ jobs:
       - run: FETCH_MOCK_SRC=../es5/server.js make test-es5
 
   esm:
-    <<: *node14
+    <<: *nodelts
     steps:
       - *workspace
       - run: npm rebuild
       - run: make test-esm
 
+  node12:
+    <<: *node12
+    <<: *rebuild_test
   node10:
     <<: *node10
     <<: *rebuild_test
-  node13:
-    <<: *node13
-    <<: *rebuild_test
-
-  node14:
-    <<: *node14
+  nodenext:
+    <<: *nodenext
     <<: *rebuild_test
 
   chrome:
@@ -146,7 +145,7 @@ jobs:
 
 
   deploy:
-    <<: *nodejs
+    <<: *nodelts
     steps:
       - *workspace
       - run: make publish
@@ -194,10 +193,10 @@ workflows:
       - node10:
           <<: *triggerable-by-tag
           <<: *build-lint-unit
-      - node13:
+      - node12:
           <<: *triggerable-by-tag
           <<: *build-lint-unit
-      - node14:
+      - nodenext:
           <<: *triggerable-by-tag
           <<: *build-lint-unit
       - chrome:
@@ -218,7 +217,7 @@ workflows:
             - build
             - typecheck
             - node10
-            - node13
+            - nodenext
             - node14
             # - esm
           filters:

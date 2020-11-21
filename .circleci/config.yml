@@ -1,4 +1,5 @@
 version: 2.0
+
 orbs:
   browser-tools: circleci/browser-tools@1.1.0
 
@@ -32,7 +33,7 @@ references:
       - image: cimg/node:10.22
   node6: &node6
     docker:
-      - image: cimg/node:6.17
+      - image: circleci/node:6.17.1
 
   workspace: &workspace
     attach_workspace:
@@ -116,12 +117,12 @@ jobs:
       - run: npm rebuild
       - run: FETCH_MOCK_SRC=../es5/server.js make test-es5
 
-  esm:
-    <<: *nodelts
-    steps:
-      - *workspace
-      - run: npm rebuild
-      - run: make test-esm
+  # esm:
+  #   <<: *nodelts
+  #   steps:
+  #     - *workspace
+  #     - run: npm rebuild
+  #     - run: make test-esm
 
   node12:
     <<: *node12
@@ -137,14 +138,14 @@ jobs:
     <<: *browsers
     steps:
       - *workspace
-      - browser-tools/install-browsers
+      - browser-tools/install-chrome
       - run: TEST_BROWSER=Chrome make test-browser
 
   firefox:
     <<: *browsers
     steps:
       - *workspace
-      - browser-tools/install-browsers
+      - browser-tools/install-firefox
       - run: npm install karma-firefox-launcher
       - run: TEST_BROWSER=Firefox make test-browser
 
@@ -190,9 +191,9 @@ workflows:
       - es5:
           <<: *triggerable-by-tag
           <<: *build-lint-unit
-      - esm:
-          <<: *triggerable-by-tag
-          <<: *build-lint-unit
+      # - esm:
+      #     <<: *triggerable-by-tag
+      #     <<: *build-lint-unit
       - node10:
           <<: *triggerable-by-tag
           <<: *build-lint-unit
@@ -222,7 +223,7 @@ workflows:
             - node10
             - nodenext
             - node12
-            - esm
+            # - esm
           filters:
             branches:
               ignore: /.*/

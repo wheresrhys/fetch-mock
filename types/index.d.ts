@@ -645,7 +645,7 @@ declare namespace fetchMock {
              * implementation.
              */
             Promise?: new (executor: (
-                resolve: () => void,
+                resolve: (value: Response | PromiseLike<Response>) => void,
                 reject: () => void,
             ) => void) => Promise<Response>;
 

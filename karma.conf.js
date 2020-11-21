@@ -27,8 +27,8 @@ module.exports = (karma) =>
 						query: {
 							babelrc: false, // ignore any .babelrc in project & dependencies
 							cacheDirectory: true,
-							plugins: ['transform-runtime'],
-							presets: ['env'],
+							plugins: ['@babel/plugin-transform-runtime'],
+							presets: ['@babel/preset-env'],
 						},
 					},
 				],

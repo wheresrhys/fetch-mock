@@ -14,22 +14,22 @@ references:
 
   nodelts: &nodelts
     docker:
-      - image: cimg/node:14.7.0
+      - image: cimg/node:14.15
   browsers: &browsers
     docker:
-      - image: cimg/node:14.7.0-browsers
+      - image: cimg/node:14.15-browsers
   nodenext: &nodenext
     docker:
-      - image: cimg/node:15.2.1
+      - image: cimg/node:15.2
   node12: &node12
     docker:
-      - image: cimg/node:12.18.3
+      - image: cimg/node:12.18
   node10: &node10
     docker:
-      - image: cimg/node:10.22.0
+      - image: cimg/node:10.22
   node6: &node6
     docker:
-      - image: cimg/node:6.17.1
+      - image: cimg/node:6.17
 
   workspace: &workspace
     attach_workspace:
@@ -160,12 +160,6 @@ workflows:
           <<: *triggerable-by-tag
           requires:
             - checkout_code
-      # could be parallel with build, lint, and unit but it's a slow job
-      # And circlecifree tier only has 3 concurrent jobs, so overall faster
-      # to defer
-      - typecheck:
-          <<: *triggerable-by-tag
-          <<: *build-lint-unit
       - lint:
           <<: *triggerable-by-tag
           requires:
@@ -174,6 +168,12 @@ workflows:
           <<: *triggerable-by-tag
           requires:
             - checkout_code
+      # could be parallel with build, lint, and unit but it's a slow job
+      # And circlecifree tier only has 3 concurrent jobs, so overall faster
+      # to defer
+      - typecheck:
+          <<: *triggerable-by-tag
+          <<: *build-lint-unit
       - nodefetch1:
           <<: *triggerable-by-tag
           <<: *build-lint-unit
@@ -188,8 +188,7 @@ workflows:
           <<: *build-lint-unit
       - esm:
           <<: *triggerable-by-tag
-          requires:
-            - build
+          <<: *build-lint-unit
       - node10:
           <<: *triggerable-by-tag
           <<: *build-lint-unit

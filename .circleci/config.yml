@@ -14,13 +14,13 @@ references:
 
   nodelts: &nodelts
     docker:
-      - image: cimg/node:14.15
+      - image: cimg/node:lts
   browsers: &browsers
     docker:
-      - image: cimg/node:14.15-browsers
+      - image: cimg/node:lts-browsers
   nodenext: &nodenext
     docker:
-      - image: cimg/node:15.2
+      - image: cimg/node:current
   node12: &node12
     docker:
       - image: cimg/node:12.18

@@ -4,6 +4,7 @@ const expect = chai.expect;
 const sinon = require('sinon');
 
 const { fetchMock } = testGlobals;
+const { Route } = require('../../src/Route');
 describe('Set up and tear down', () => {
 	let fm;
 	before(() => {
@@ -42,12 +43,12 @@ describe('Set up and tear down', () => {
 
 		describe('parameters', () => {
 			beforeEach(() => {
-				sinon.spy(fm, 'compileRoute');
+				sinon.spy(Route, 'compileRoute');
 				sinon.stub(fm, '_mock').returns(fm);
 			});
 
 			afterEach(() => {
-				fm.compileRoute.restore();
+				Route.compileRoute.restore();
 				fm._mock.restore();
 			});
 
@@ -57,13 +58,13 @@ describe('Set up and tear down', () => {
 					response: 200,
 				};
 				expect(() => fm.mock(config)).not.to.throw();
-				expect(fm.compileRoute).calledWith([config]);
+				expect(Route.compileRoute).calledWith(config);
 				expect(fm._mock).called;
 			});
 
 			it('accepts matcher, route pairs', () => {
 				expect(() => fm.mock('*', 200)).not.to.throw();
-				expect(fm.compileRoute).calledWith(['*', 200]);
+				expect(Route.compileRoute).calledWith('*', 200);
 				expect(fm._mock).called;
 			});
 
@@ -74,14 +75,10 @@ describe('Set up and tear down', () => {
 						some: 'prop',
 					})
 				).not.to.throw();
-				expect(fm.compileRoute).calledWith([
-					'*',
-					'ok',
-					{
-						method: 'PUT',
-						some: 'prop',
-					},
-				]);
+				expect(Route.compileRoute).calledWith('*', 'ok', {
+					method: 'PUT',
+					some: 'prop',
+				});
 				expect(fm._mock).called;
 			});
 
@@ -95,7 +92,7 @@ describe('Set up and tear down', () => {
 
 			it('can be called with no parameters', () => {
 				expect(() => fm.mock()).not.to.throw();
-				expect(fm.compileRoute).not.called;
+				expect(Route.compileRoute).not.called;
 				expect(fm._mock).called;
 			});
 

@@ -2,13 +2,8 @@ const { debug } = require('./debug');
 const setUpAndTearDown = require('./set-up-and-tear-down');
 const fetchHandler = require('./fetch-handler');
 const inspecting = require('./inspecting');
-const Route = require('../Route');
-
+const { Route } = require('../Route');
 const FetchMock = Object.assign({}, fetchHandler, setUpAndTearDown, inspecting);
-
-FetchMock.addMatcher = function (matcher) {
-	Route.addMatcher(matcher);
-};
 
 FetchMock.config = {
 	fallbackToNetwork: false,
@@ -23,7 +18,7 @@ FetchMock.createInstance = function () {
 	const instance = Object.create(FetchMock);
 	instance._uncompiledRoutes = (this._uncompiledRoutes || []).slice();
 	instance.routes = instance._uncompiledRoutes.map((config) =>
-		this.compileRoute(config)
+		Route.compileRoute(...config)
 	);
 	instance.fallbackResponse = this.fallbackResponse || undefined;
 	instance.config = Object.assign({}, this.config || FetchMock.config);
@@ -31,10 +26,6 @@ FetchMock.createInstance = function () {
 	instance._holdingPromises = [];
 	instance.bindMethods();
 	return instance;
-};
-
-FetchMock.compileRoute = function (config) {
-	return new Route(config, this);
 };
 
 FetchMock.bindMethods = function () {

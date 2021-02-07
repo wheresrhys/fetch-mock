@@ -228,6 +228,12 @@ declare namespace fetchMock {
          * Match calls that only partially match a specified body json.
          */
         matchPartialBody?: boolean;
+        
+        /**
+         * Avoids a route being removed when reset(), restore() or resetBehavior() are called.
+         * Note - this does not preserve the history of calls to the route
+         */
+        sticky?: boolean;
     }
 
     interface MockCall extends Array<string | RequestInit | undefined> {

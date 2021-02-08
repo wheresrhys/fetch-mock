@@ -99,7 +99,7 @@ left_code_blocks:
         .mock('*', 'ok')
         .mock('*', 404)
         .mock('*', {results: []})
-        .mock('*', {throw: new Error('Bad kitty')))
+        .mock('*', {throws: new Error('Bad kitty')))
         .mock('*', new Promise(res => setTimeout(res, 1000, 404)))
         .mock('*', (url, opts) => {
           status: 302, 

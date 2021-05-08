@@ -1,6 +1,6 @@
-// https://stackoverflow.com/a/19709846/308237
-// split, URL constructor does not support protocol-relative urls
-const absoluteUrlRX = new RegExp('^[a-z]+://', 'i');
+// https://stackoverflow.com/a/19709846/308237 plus data: scheme
+// split into 2 code paths as URL constructor does not support protocol-relative urls
+const absoluteUrlRX = new RegExp('^[a-z]+://|^data:', 'i');
 const protocolRelativeUrlRX = new RegExp('^//', 'i');
 
 const headersToArray = (headers) => {

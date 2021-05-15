@@ -137,9 +137,12 @@ e.g. {"body": {"status: "registered"}}`);
 
 		// On the server we need to manually construct the readable stream for the
 		// Response object (on the client this done automatically)
-		if (this.Stream) {
+		if (
+			this.fetchMock.Stream &&
+			!(this.body instanceof this.fetchMock.Stream.Readable)
+		) {
 			this.debug('Creating response stream');
-			const stream = new this.Stream.Readable();
+			const stream = new this.fetchMock.Stream.Readable();
 			if (this.body != null) { //eslint-disable-line
 				stream.push(this.body, 'utf-8');
 			}

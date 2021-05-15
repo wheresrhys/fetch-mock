@@ -40,6 +40,28 @@ describe('nodejs only tests', () => {
 			});
 		});
 
+		it('always responds with a readable stream', (done) => {
+			const { Writable } = require('stream');
+			const write = sinon.stub().callsFake((chunk, enc, cb) => {
+				cb();
+			});
+			const writable = new Writable({
+				write,
+			});
+
+			fetchMock.mock(/a/, Buffer.from('response string', 'utf8'), {
+				sendAsJson: false,
+			});
+			fetchMock.fetchHandler('http://a.com').then((res) => {
+				res.body.pipe(writable);
+			});
+
+			writable.on('finish', () => {
+				expect(write.args[0][0].toString('utf8')).to.equal('response string');
+				done();
+			});
+		});
+
 		// See https://github.com/wheresrhys/fetch-mock/issues/575
 		it('can respond with large bodies from the interweb', async () => {
 			const fm = fetchMock.sandbox();

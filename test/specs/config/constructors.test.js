@@ -130,7 +130,7 @@ describe('custom implementations', () => {
 			expect(res.isFake).to.be.true;
 			expect(spiedReplacementResponse.callCount).to.equal(1);
 			const lastCall = spiedReplacementResponse.lastCall.args;
-			expect(lastCall[0]).to.equal('hello');
+			expect(lastCall[0]).to.have.property(Symbol.asyncIterator);
 			expect(lastCall[1].status).to.equal(200);
 			expect(defaultSpies.Response.callCount).to.equal(0);
 		});

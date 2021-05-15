@@ -1,3 +1,5 @@
 exclude_patterns:
 - docs
 - test/specs
+- test/client-specs
+- test/server-specs

@@ -32,10 +32,14 @@ const patchNativeFetchForSafari = (nativeFetch) => {
 	}
 	// It seems the code is working on Safari thus patch native fetch to avoid the error.
 	return async (request) => {
+		// Create Request object from string and RequestInit params.
+		if (typeof request === 'string') {
+			request = new (Request.bind(null, ...params));
+		}
 		const { method } = request;
 		if (!['POST', 'PUT', 'PATCH'].includes(method)) {
 			// No patch is required in this case
-			return nativeFetch(request);
+			return nativeFetch(arguments);
 		}
 		const body = await request.clone().text();
 		const {

@@ -34,12 +34,12 @@ const patchNativeFetchForSafari = (nativeFetch) => {
 	return async (request) => {
 		// Create Request object from string and RequestInit params.
 		if (typeof request === 'string') {
-			request = new (Request.bind(null, ...params));
+			request = new (Request.bind(null, ...arguments));
 		}
 		const { method } = request;
 		if (!['POST', 'PUT', 'PATCH'].includes(method)) {
 			// No patch is required in this case
-			return nativeFetch(arguments);
+			return nativeFetch(...arguments);
 		}
 		const body = await request.clone().text();
 		const {

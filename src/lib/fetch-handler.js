@@ -39,7 +39,7 @@ const patchNativeFetchForSafari = (nativeFetch) => {
 		const { method } = request;
 		if (!['POST', 'PUT', 'PATCH'].includes(method)) {
 			// No patch is required in this case
-			return nativeFetch(...arguments);
+			return nativeFetch(request);
 		}
 		const body = await request.clone().text();
 		const {

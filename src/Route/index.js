@@ -10,11 +10,10 @@ const isUrlMatcher = (matcher) =>
 const isFunctionMatcher = (matcher) => typeof matcher === 'function';
 
 class Route {
-	constructor(args, fetchMock) {
-		this.fetchMock = fetchMock;
+	constructor(...args) {
 		const debug = getDebug('compileRoute()');
 		debug('Compiling route');
-		this.init(args);
+		this.init(...args);
 		this.sanitize();
 		this.validate();
 		this.generateMatcher();
@@ -34,9 +33,7 @@ class Route {
 		}
 	}
 
-	init(args) {
-		const [matcher, response, options = {}] = args;
-
+	init(matcher, response, options = {}) {
 		const routeConfig = {};
 
 		if (isUrlMatcher(matcher) || isFunctionMatcher(matcher)) {
@@ -84,7 +81,7 @@ class Route {
 		const activeMatchers = Route.registeredMatchers
 			.map(
 				({ name, matcher, usesBody }) =>
-					this[name] && { matcher: matcher(this, this.fetchMock), usesBody }
+					this[name] && { matcher: matcher(this), usesBody }
 			)
 			.filter((matcher) => Boolean(matcher));
 
@@ -92,8 +89,10 @@ class Route {
 
 		debug('Compiled matcher for route');
 		setDebugNamespace();
-		this.matcher = (url, options = {}, request) =>
-			activeMatchers.every(({ matcher }) => matcher(url, options, request));
+		this.matcher = (url, options = {}, request, fetchMock) =>
+			activeMatchers.every(({ matcher }) =>
+				matcher(url, options, request, fetchMock)
+			);
 	}
 
 	limit() {
@@ -141,10 +140,14 @@ class Route {
 	static addMatcher(matcher) {
 		Route.registeredMatchers.push(matcher);
 	}
+
+	static compileRoute(...config) {
+		return new Route(...config);
+	}
 }
 
 Route.registeredMatchers = [];
 
 builtInMatchers.forEach(Route.addMatcher);
 
-module.exports = Route;
+module.exports = { Route };

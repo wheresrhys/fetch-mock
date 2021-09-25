@@ -136,4 +136,69 @@ describe('url matching', () => {
 			expect(fm.calls(true).length).to.equal(1);
 		});
 	});
+
+	describe('data: URLs', () => {
+		it('match exact strings', async () => {
+			fm.mock('data:text/plain,path', 200).catch();
+			await fm.fetchHandler('data:text/plain,pat');
+			await fm.fetchHandler('data:text/plain,paths');
+			await fm.fetchHandler('data:text/html,path');
+			expect(fm.calls(true).length).to.equal(0);
+			await fm.fetchHandler('data:text/plain,path');
+			expect(fm.calls(true).length).to.equal(1);
+		});
+		it('match exact string against URL object', async () => {
+			fm.mock('data:text/plain,path', 200).catch();
+			const url = new URL.URL('data:text/plain,path');
+			await fm.fetchHandler(url);
+			expect(fm.calls(true).length).to.equal(1);
+		});
+		it('match using URL object as matcher', async () => {
+			const url = new URL.URL('data:text/plain,path');
+			fm.mock(url, 200).catch();
+			await fm.fetchHandler('data:text/plain,path');
+			expect(fm.calls(true).length).to.equal(1);
+		});
+		it('match begin: keyword', async () => {
+			fm.mock('begin:data:text/plain', 200).catch();
+			await fm.fetchHandler('http://a.com/path');
+			await fm.fetchHandler('data:text/html,path');
+			expect(fm.calls(true).length).to.equal(0);
+			await fm.fetchHandler('data:text/plain,path');
+			await fm.fetchHandler('data:text/plain;base64,cGF0aA');
+			expect(fm.calls(true).length).to.equal(2);
+		});
+		it('match end: keyword', async () => {
+			fm.mock('end:sky', 200).catch();
+			await fm.fetchHandler('data:text/plain,blue lake');
+			await fm.fetchHandler('data:text/plain,blue sky research');
+			expect(fm.calls(true).length).to.equal(0);
+			await fm.fetchHandler('data:text/plain,blue sky');
+			await fm.fetchHandler('data:text/plain,grey sky');
+			expect(fm.calls(true).length).to.equal(2);
+		});
+		it('match glob: keyword', async () => {
+			fm.mock('glob:data:* sky', 200).catch();
+			await fm.fetchHandler('data:text/plain,blue lake');
+			expect(fm.calls(true).length).to.equal(0);
+			await fm.fetchHandler('data:text/plain,blue sky');
+			await fm.fetchHandler('data:text/plain,grey sky');
+			expect(fm.calls(true).length).to.equal(2);
+		});
+		it('match wildcard string', async () => {
+			fm.mock('*', 200);
+			await fm.fetchHandler('data:text/plain,path');
+			expect(fm.calls(true).length).to.equal(1);
+		});
+		it('match regular expressions', async () => {
+			const rx = /data\:text\/plain,\d+/;
+			fm.mock(rx, 200).catch();
+			await fm.fetchHandler('data:text/html,12345');
+			expect(fm.calls(true).length).to.equal(0);
+			await fm.fetchHandler('data:text/plain,12345');
+			expect(fm.calls(true).length).to.equal(1);
+			await fm.fetchHandler('data:text/plain,path');
+			expect(fm.calls(true).length).to.equal(1);
+		});
+	});
 });

@@ -228,7 +228,7 @@ declare namespace fetchMock {
          * Match calls that only partially match a specified body json.
          */
         matchPartialBody?: boolean;
-        
+
         /**
          * Avoids a route being removed when reset(), restore() or resetBehavior() are called.
          * Note - this does not preserve the history of calls to the route
@@ -306,6 +306,18 @@ declare namespace fetchMock {
          * parallel.
          */
         sandbox(): FetchMockSandbox;
+
+        /**
+         * Replaces fetch() with a stub which records its calls, grouped by
+         * route, and optionally returns a mocked Response object or passes the
+         *  call through to fetch(). Shorthand for mock() which creates a route
+         *  that persists even when restore(), reset() or resetbehavior() are called.
+         *  Calls to .sticky() can be chained.
+         * @param matcher Condition for selecting which requests to mock
+         * @param response Configures the http response returned by the mock
+         * @param [options] Additional properties defining the route to mock
+         */
+        sticky(matcher: MockMatcher | MockOptions, response: MockResponse | MockResponseFunction, options?: MockOptions): this;
 
         /**
          * Replaces fetch() with a stub which records its calls, grouped by

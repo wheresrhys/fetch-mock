@@ -186,6 +186,10 @@ sandbox.get("http://test.com", {
     redirectUrl: "http://example.org"
 });
 
+const stickySandbox = fetchMock.sandbox();
+stickySandbox.sticky("http://test.com", 200);
+stickySandbox.mock("http://test.com", 200, { sticky: true });
+
 const response: fetchMock.MockResponseObject = {
     throws: new Error('error'),
 };

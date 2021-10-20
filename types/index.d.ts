@@ -712,4 +712,4 @@ export = fetchMock;
 declare module 'fetch-mock/esm/client' {
   const fetchMock: fetchMock.FetchMockStatic;
   export default fetchMock;
-} 
+}

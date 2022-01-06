@@ -115,8 +115,10 @@ Wrap in an arrow function instead e.g. \`() => fetchMock.restore()\``);
 	}
 };
 
-const getRouteRemover = ({ sticky: removeStickyRoutes }) => (routes) =>
-	removeStickyRoutes ? [] : routes.filter(({ sticky }) => sticky);
+const getRouteRemover =
+	({ sticky: removeStickyRoutes }) =>
+	(routes) =>
+		removeStickyRoutes ? [] : routes.filter(({ sticky }) => sticky);
 
 FetchMock.resetBehavior = function (options = {}) {
 	mochaAsyncHookWorkaround(options);

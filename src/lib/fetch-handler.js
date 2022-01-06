@@ -38,15 +38,8 @@ const patchNativeFetchForSafari = (nativeFetch) => {
 			return nativeFetch(request);
 		}
 		const body = await request.clone().text();
-		const {
-			cache,
-			credentials,
-			headers,
-			integrity,
-			mode,
-			redirect,
-			referrer,
-		} = request;
+		const { cache, credentials, headers, integrity, mode, redirect, referrer } =
+			request;
 		const init = {
 			body,
 			cache,

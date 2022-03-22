@@ -10,7 +10,8 @@ module.exports = {
   },
   "globals": {
     "expect": true,
-    "testGlobals": true
+    "testGlobals": true,
+    "globalThis": true
   },
   "rules": {
     "guard-for-in": 0

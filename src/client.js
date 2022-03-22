@@ -1,6 +1,15 @@
 const FetchMock = require('./lib/index');
 const statusTextMap = require('./lib/status-text');
-const theGlobal = typeof window !== 'undefined' ? window : self;
+const theGlobal =
+	typeof globalThis !== 'undefined'
+		? globalThis
+		: typeof window !== 'undefined'
+		? window
+		: typeof global !== 'undefined'
+		? global
+		: typeof self !== 'undefined'
+		? self
+		: {};
 const { setUrlImplementation } = require('./lib/request-utils');
 setUrlImplementation(theGlobal.URL);
 

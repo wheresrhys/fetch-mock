@@ -80,6 +80,7 @@ module.exports = {
 			return normalizedRequestObject;
 		} else if (
 			typeof url === 'string' ||
+			url instanceof String ||
 			// horrible URL object duck-typing
 			(typeof url === 'object' && 'href' in url)
 		) {

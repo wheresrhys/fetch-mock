@@ -8,9 +8,9 @@ try {
 } catch (e) {
 	fetch = global.fetch || require('node-fetch');
 }
-const Request = fetch.Request;
-const Response = fetch.Response;
-const Headers = fetch.Headers;
+const Request = global.Request || fetch.Request;
+const Response = global.Response || fetch.Response;
+const Headers = global.Headers || fetch.Headers;
 const Stream = require('stream');
 const FetchMock = require('./lib/index');
 const http = require('http');

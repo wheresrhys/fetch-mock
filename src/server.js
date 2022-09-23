@@ -6,7 +6,7 @@ try {
 	// Hence the try/catch
 	fetch = jest.requireActual('node-fetch'); //eslint-disable-line no-undef
 } catch (e) {
-	fetch = require('node-fetch');
+	fetch = global.fetch || require('node-fetch');
 }
 const Request = fetch.Request;
 const Response = fetch.Response;

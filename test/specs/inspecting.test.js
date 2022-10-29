@@ -77,19 +77,27 @@ describe('inspecting', () => {
 
 		const fetchUrls = (...urls) => Promise.all(urls.map(fm.fetchHandler));
 
-		const expectFilteredLength = (...filter) => (length) =>
-			expect(fm.filterCalls(...filter).length).to.equal(length);
+		const expectFilteredLength =
+			(...filter) =>
+			(length) =>
+				expect(fm.filterCalls(...filter).length).to.equal(length);
 
-		const expectFilteredUrl = (...filter) => (url) =>
-			expect(fm.filterCalls(...filter)[0][0]).to.equal(url);
+		const expectFilteredUrl =
+			(...filter) =>
+			(url) =>
+				expect(fm.filterCalls(...filter)[0][0]).to.equal(url);
 
-		const expectSingleUrl = (...filter) => (url) => {
-			expectFilteredLength(...filter)(1);
-			expectFilteredUrl(...filter)(url);
-		};
+		const expectSingleUrl =
+			(...filter) =>
+			(url) => {
+				expectFilteredLength(...filter)(1);
+				expectFilteredUrl(...filter)(url);
+			};
 
-		const expectFilteredResponse = (...filter) => (...response) =>
-			expect(fm.filterCalls(...filter)[0]).to.eql(response);
+		const expectFilteredResponse =
+			(...filter) =>
+			(...response) =>
+				expect(fm.filterCalls(...filter)[0]).to.eql(response);
 
 		it('returns [url, options] pairs', async () => {
 			fm.mock('http://a.com/', 200, { name: 'fetch-mock' });

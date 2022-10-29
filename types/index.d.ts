@@ -27,7 +27,7 @@ declare namespace fetchMock {
     type MockMatcherFunction = (url: string, opts: MockRequest) => boolean;
 
 
-    type MockMatcherUrl = string | RegExp;
+    type MockMatcherUrl = string | RegExp | URL;
 
 
     /**

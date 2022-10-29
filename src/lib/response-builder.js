@@ -86,9 +86,8 @@ e.g. {"body": {"status: "registered"}}`);
 		this.options = this.responseConfig.options || {};
 		this.options.url = this.responseConfig.redirectUrl || this.url;
 		this.options.status = this.validateStatus(this.responseConfig.status);
-		this.options.statusText = this.fetchMock.statusTextMap[
-			String(this.options.status)
-		];
+		this.options.statusText =
+			this.fetchMock.statusTextMap[String(this.options.status)];
 
 		// Set up response headers. The empty object is to cope with
 		// new Headers(undefined) throwing in Chrome
@@ -140,7 +139,8 @@ e.g. {"body": {"status: "registered"}}`);
 		if (this.Stream) {
 			this.debug('Creating response stream');
 			const stream = new this.Stream.Readable();
-			if (this.body != null) { //eslint-disable-line
+			//eslint-disable-next-line
+			if (this.body != null) {
 				stream.push(this.body, 'utf-8');
 			}
 			stream.push(null);

@@ -15,10 +15,9 @@ describe('Set up and tear down', () => {
 		});
 
 		it(`${method}() has "this"`, () => {
-			vi.spyOn(fm, method);
-			fm[method](...args);
-			expect(fm[method].lastCall.thisValue).toEqual(fm);
-			fm[method].restore();
+			vi.spyOn(fm, method).mockReturnThis();
+			expect(fm[method](...args)).toBe(fm);
+			fm[method].mockRestore();
 		});
 	};
 
@@ -44,8 +43,8 @@ describe('Set up and tear down', () => {
 			});
 
 			afterEach(() => {
-				fm.compileRoute.restore();
-				fm._mock.restore();
+				fm.compileRoute.mockRestore();
+				fm._mock.mockRestore();
 			});
 
 			it('accepts single config object', () => {
@@ -54,13 +53,13 @@ describe('Set up and tear down', () => {
 					response: 200,
 				};
 				expect(() => fm.mock(config)).not.toThrow();
-				expect(fm.compileRoute).toHaveBeenCalledWith(config);
+				expect(fm.compileRoute).toHaveBeenCalledWith([config]);
 				expect(fm._mock).toHaveBeenCalled();
 			});
 
 			it('accepts matcher, route pairs', () => {
 				expect(() => fm.mock('*', 200)).not.toThrow();
-				expect(fm.compileRoute).toHaveBeenCalledWith('*', 200);
+				expect(fm.compileRoute).toHaveBeenCalledWith(['*', 200]);
 				expect(fm._mock).toHaveBeenCalled();
 			});
 
@@ -71,14 +70,14 @@ describe('Set up and tear down', () => {
 						some: 'prop',
 					})
 				).not.toThrow();
-				expect(fm.compileRoute).toHaveBeenCalledWith(
+				expect(fm.compileRoute).toHaveBeenCalledWith([
 					'*',
 					'ok',
 					{
 						method: 'PUT',
 						some: 'prop',
 					},
-				);
+				]);
 				expect(fm._mock).toHaveBeenCalled();
 			});
 

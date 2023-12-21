@@ -3,7 +3,6 @@ import { afterEach, beforeEach, describe, expect, it, beforeAll, afterAll } from
 // ... maybe accept method as second argument to calls, called etc
 // consider case where multiple routes match.. make sure only one matcher logs calls
 const chai = require('chai');
-const expect = chai.expect;
 const sinon = require('sinon');
 
 const { fetchMock } = testGlobals;

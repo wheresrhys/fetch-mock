@@ -63,4 +63,7 @@ install:
 	npm i --legacy-peer-deps
 
 vitest:
-	npx vitest
+	TESTING_ENV=server npx vitest ./test/specs
+
+vitest-browser:
+	TESTING_ENV=browser npx vitest ./test/specs

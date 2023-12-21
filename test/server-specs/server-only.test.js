@@ -1,7 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 const chai = require('chai');
 chai.use(require('sinon-chai'));
-const expect = chai.expect;
 const sinon = require('sinon');
 const { fetchMock } = testGlobals;
 describe('nodejs only tests', () => {

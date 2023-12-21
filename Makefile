@@ -58,3 +58,9 @@ publish:
 	echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ${HOME}/.npmrc
 	npm version --no-git-tag-version $(CIRCLE_TAG)
 	npm publish --access public --tag $(NPM_PUBLISH_TAG)
+
+install:
+	npm i --legacy-peer-deps
+
+vitest:
+	npx vitest

@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, beforeAll } from "vitest";
 const chai = require('chai');
 chai.use(require('sinon-chai'));
 const expect = chai.expect;
@@ -24,7 +24,7 @@ describe('shorthands', () => {
 		});
 	};
 
-	before(() => {
+	beforeAll(() => {
 		fm = fetchMock.createInstance();
 		sinon.spy(fm, 'compileRoute');
 		fm.config.warnOnUnmatched = false;

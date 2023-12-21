@@ -1,4 +1,4 @@
-const fetchMock = require('../src/client.js');
+const fetchMock = require('../../src/client.js');
 
 window.testGlobals = {
 	fetchMock,

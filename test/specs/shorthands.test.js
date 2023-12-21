@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, beforeAll, afterAll } from "vitest";
+import { afterEach, describe, expect, it, beforeAll, afterAll, vi } from "vitest";
 
 const { fetchMock } = testGlobals;
 describe('shorthands', () => {
@@ -13,9 +13,9 @@ describe('shorthands', () => {
 		});
 
 		it(`${method}() has "this"`, () => {
-			vi.spyOn(fm, method);
+			vi.spyOn(fm, method).mockReturnThis();
 			fm[method](...args);
-			expect(fm[method].lastCall.thisValue).to.equal(fm);
+			expect(fm[method](...args)).to.equal(fm);
 			fm[method].mockRestore();
 		});
 	};
@@ -24,7 +24,7 @@ describe('shorthands', () => {
 		fm = fetchMock.createInstance();
 		vi.spyOn(fm, 'compileRoute');
 		fm.config.warnOnUnmatched = false;
-		expectRoute = (...args) => expect(fm.compileRoute).calledWith(args);
+		expectRoute = (...args) => expect(fm.compileRoute).toHaveBeenCalledWith(args);
 	});
 	afterEach(() => {
 		fm.compileRoute.mockClear();

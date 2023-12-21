@@ -13,30 +13,30 @@ describe('repeat and done()', () => {
 	it('can expect a route to be called', async () => {
 		fm.mock('http://a.com/', 200);
 
-		expect(fm.done()).to.be.false;
-		expect(fm.done('http://a.com/')).to.be.false;
+		expect(fm.done()).toBe(false);
+		expect(fm.done('http://a.com/')).toBe(false);
 		fm.fetchHandler('http://a.com/');
-		expect(fm.done()).to.be.true;
-		expect(fm.done('http://a.com/')).to.be.true;
+		expect(fm.done()).toBe(true);
+		expect(fm.done('http://a.com/')).toBe(true);
 	});
 
 	it('can expect a route to be called n times', async () => {
 		fm.mock('http://a.com/', 200, { repeat: 2 });
 
 		fm.fetchHandler('http://a.com/');
-		expect(fm.done()).to.be.false;
-		expect(fm.done('http://a.com/')).to.be.false;
+		expect(fm.done()).toBe(false);
+		expect(fm.done('http://a.com/')).toBe(false);
 		fm.fetchHandler('http://a.com/');
-		expect(fm.done()).to.be.true;
-		expect(fm.done('http://a.com/')).to.be.true;
+		expect(fm.done()).toBe(true);
+		expect(fm.done('http://a.com/')).toBe(true);
 	});
 
 	it('regression: can expect an un-normalized url to be called n times', async () => {
 		fm.mock('http://a.com/', 200, { repeat: 2 });
 		fm.fetchHandler('http://a.com/');
-		expect(fm.done()).to.be.false;
+		expect(fm.done()).toBe(false);
 		fm.fetchHandler('http://a.com/');
-		expect(fm.done()).to.be.true;
+		expect(fm.done()).toBe(true);
 	});
 
 	it('can expect multiple routes to have been called', async () => {
@@ -45,21 +45,21 @@ describe('repeat and done()', () => {
 		}).mock('http://b.com/', 200, { repeat: 2 });
 
 		fm.fetchHandler('http://a.com/');
-		expect(fm.done()).to.be.false;
-		expect(fm.done('http://a.com/')).to.be.false;
-		expect(fm.done('http://b.com/')).to.be.false;
+		expect(fm.done()).toBe(false);
+		expect(fm.done('http://a.com/')).toBe(false);
+		expect(fm.done('http://b.com/')).toBe(false);
 		fm.fetchHandler('http://a.com/');
-		expect(fm.done()).to.be.false;
-		expect(fm.done('http://a.com/')).to.be.true;
-		expect(fm.done('http://b.com/')).to.be.false;
+		expect(fm.done()).toBe(false);
+		expect(fm.done('http://a.com/')).toBe(true);
+		expect(fm.done('http://b.com/')).toBe(false);
 		fm.fetchHandler('http://b.com/');
-		expect(fm.done()).to.be.false;
-		expect(fm.done('http://a.com/')).to.be.true;
-		expect(fm.done('http://b.com/')).to.be.false;
+		expect(fm.done()).toBe(false);
+		expect(fm.done('http://a.com/')).toBe(true);
+		expect(fm.done('http://b.com/')).toBe(false);
 		fm.fetchHandler('http://b.com/');
-		expect(fm.done()).to.be.true;
-		expect(fm.done('http://a.com/')).to.be.true;
-		expect(fm.done('http://b.com/')).to.be.true;
+		expect(fm.done()).toBe(true);
+		expect(fm.done('http://a.com/')).toBe(true);
+		expect(fm.done('http://b.com/')).toBe(true);
 	});
 
 	// todo more tests for filtering
@@ -71,23 +71,23 @@ describe('repeat and done()', () => {
 
 		await fm.fetchHandler('http://a.com/');
 		await fm.fetchHandler('http://b.com/');
-		expect(fm.done()).to.be.false;
-		expect(fm.done(true)).to.be.false;
-		expect(fm.done('http://a.com/')).to.be.true;
-		expect(fm.done('http://b.com/')).to.be.true;
-		expect(fm.done('http://c.com/')).to.be.false;
+		expect(fm.done()).toBe(false);
+		expect(fm.done(true)).toBe(false);
+		expect(fm.done('http://a.com/')).toBe(true);
+		expect(fm.done('http://b.com/')).toBe(true);
+		expect(fm.done('http://c.com/')).toBe(false);
 	});
 
 	it("can tell when done if using '*'", () => {
 		fm.mock('*', '200');
 		fm.fetchHandler('http://a.com');
-		expect(fm.done()).to.be.true;
+		expect(fm.done()).toBe(true);
 	});
 
 	it('can tell when done if using begin:', () => {
 		fm.mock('begin:http', '200');
 		fm.fetchHandler('http://a.com');
-		expect(fm.done()).to.be.true;
+		expect(fm.done()).toBe(true);
 	});
 
 	it("won't mock if route already matched enough times", async () => {
@@ -96,7 +96,7 @@ describe('repeat and done()', () => {
 		await fm.fetchHandler('http://a.com/');
 		try {
 			await fm.fetchHandler('http://a.com/');
-			expect(true).to.be.false;
+			expect(true).toBe(false);
 		} catch (err) {}
 	});
 
@@ -115,13 +115,13 @@ describe('repeat and done()', () => {
 	it('resetHistory() resets count', async () => {
 		fm.mock('http://a.com/', 200, { repeat: 1 });
 		await fm.fetchHandler('http://a.com/');
-		expect(fm.done()).to.be.true;
+		expect(fm.done()).toBe(true);
 		fm.resetHistory();
-		expect(fm.done()).to.be.false;
-		expect(fm.done('http://a.com/')).to.be.false;
+		expect(fm.done()).toBe(false);
+		expect(fm.done('http://a.com/')).toBe(false);
 		await fm.fetchHandler('http://a.com/');
-		expect(fm.done()).to.be.true;
-		expect(fm.done('http://a.com/')).to.be.true;
+		expect(fm.done()).toBe(true);
+		expect(fm.done('http://a.com/')).toBe(true);
 	});
 
 	it('logs unmatched calls', () => {
@@ -132,20 +132,19 @@ describe('repeat and done()', () => {
 
 		fm.fetchHandler('http://b.com/');
 		fm.done();
-		expect(console.warn).toHaveBeenCalledWith('Warning: http://a.com/ not called')) //eslint-disable-line
-		expect(
-			console.warn.calledWith(
+		expect(console.warn).toHaveBeenCalledWith('Warning: http://a.com/ not called') //eslint-disable-line
+		expect(console.warn).toHaveBeenCalledWith(
 				'Warning: http://b.com/ only called 1 times, but 2 expected'
-			)
-			).to.be.true; //eslint-disable-line
-			console.warn.resetHistory(); //eslint-disable-line
+			); //eslint-disable-line
+
+		console.warn.mockClear(); //eslint-disable-line
 		fm.done('http://a.com/');
-		expect(console.warn).toHaveBeencalledWith('Warning: http://a.com/ not called')); //eslint-disable-line
+		expect(console.warn).toHaveBeenCalledWith('Warning: http://a.com/ not called'); //eslint-disable-line
 		expect(
-			console.warn).toHaveBeenCalledWith(
+			console.warn).not.toHaveBeenCalledWith(
 				'Warning: http://b.com/ only called 1 times, but 2 expected'
 			)//eslint-disable-line
-			console.warn.restore(); //eslint-disable-line
+			console.warn.mockRestore(); //eslint-disable-line
 	});
 
 	describe('sandbox isolation', () => {
@@ -156,10 +155,10 @@ describe('repeat and done()', () => {
 
 			fm.fetchHandler('http://a.com/');
 
-			expect(fm.done()).to.be.true;
-			expect(sb1.done()).to.be.false;
+			expect(fm.done()).toBe(true);
+			expect(sb1.done()).toBe(false);
 
-			expect(() => sb1.fetchHandler('http://a.com/')).not.to.throw();
+			expect(() => sb1.fetchHandler('http://a.com/')).not.toThrow();
 		});
 
 		it("doesn't propagate to global from children", () => {
@@ -169,10 +168,10 @@ describe('repeat and done()', () => {
 
 			sb1.fetchHandler('http://a.com/');
 
-			expect(fm.done()).to.be.false;
-			expect(sb1.done()).to.be.true;
+			expect(fm.done()).toBe(false);
+			expect(sb1.done()).toBe(true);
 
-			expect(() => fm.fetchHandler('http://a.com/')).not.to.throw();
+			expect(() => fm.fetchHandler('http://a.com/')).not.toThrow();
 		});
 
 		it("doesn't propagate to children of sandbox", () => {
@@ -182,10 +181,10 @@ describe('repeat and done()', () => {
 
 			sb1.fetchHandler('http://a.com/');
 
-			expect(sb1.done()).to.be.true;
-			expect(sb2.done()).to.be.false;
+			expect(sb1.done()).toBe(true);
+			expect(sb2.done()).toBe(false);
 
-			expect(() => sb2.fetchHandler('http://a.com/')).not.to.throw();
+			expect(() => sb2.fetchHandler('http://a.com/')).not.toThrow();
 		});
 
 		it("doesn't propagate to sandbox from children", () => {
@@ -195,10 +194,10 @@ describe('repeat and done()', () => {
 
 			sb2.fetchHandler('http://a.com/');
 
-			expect(sb1.done()).to.be.false;
-			expect(sb2.done()).to.be.true;
+			expect(sb1.done()).toBe(false);
+			expect(sb2.done()).toBe(true);
 
-			expect(() => sb1.fetchHandler('http://a.com/')).not.to.throw();
+			expect(() => sb1.fetchHandler('http://a.com/')).not.toThrow();
 		});
 
 		it('Allow overwriting routes when using multiple function matchers', async () => {
@@ -210,17 +209,17 @@ describe('repeat and done()', () => {
 
 			expect(() =>
 				sb.postOnce(matcher1, 200).postOnce(matcher2, 200)
-			).not.to.throw();
+			).not.toThrow();
 
 			await sb('https://example.com/', { method: 'POST' });
-			expect(sb.done()).to.be.false;
-			expect(sb.done(matcher1)).to.be.true;
-			expect(sb.done(matcher2)).to.be.false;
+			expect(sb.done()).toBe(false);
+			expect(sb.done(matcher1)).toBe(true);
+			expect(sb.done(matcher2)).toBe(false);
 			await sb('https://example.com/', { method: 'POST' });
 
-			expect(sb.done()).to.be.true;
-			expect(sb.done(matcher1)).to.be.true;
-			expect(sb.done(matcher2)).to.be.true;
+			expect(sb.done()).toBe(true);
+			expect(sb.done(matcher1)).toBe(true);
+			expect(sb.done(matcher2)).toBe(true);
 		});
 	});
 });

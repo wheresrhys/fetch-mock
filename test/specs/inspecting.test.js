@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, beforeAll } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, beforeAll, afterAll } from "vitest";
 // cover case where GET, POST etc are differently named routes
 // ... maybe accept method as second argument to calls, called etc
 // consider case where multiple routes match.. make sure only one matcher logs calls
@@ -24,7 +24,7 @@ describe('inspecting', () => {
 					arbitraryOption: true,
 				});
 			});
-			after(() => fm.restore());
+			afterAll(() => fm.restore());
 			it('called() returns boolean', () => {
 				expect(fm.called('http://a.com/')).to.be.true;
 				expect(fm.called('http://b.com/')).to.be.false;
@@ -151,7 +151,7 @@ describe('inspecting', () => {
 			expectSingleUrl('path:/path')('http://a.com/path');
 		});
 
-		context('filtered by method', () => {
+		describe('filtered by method', () => {
 			it('can retrieve all calls', async () => {
 				fm.mock('http://a.com/', 200).catch();
 
@@ -250,7 +250,7 @@ describe('inspecting', () => {
 			});
 		});
 
-		context('filtered by options', () => {
+		describe('filtered by options', () => {
 			it('can retrieve all calls', async () => {
 				fm.mock('http://a.com/', 200).catch();
 
@@ -423,7 +423,7 @@ describe('inspecting', () => {
 			fm.fetchHandler('http://a.com/');
 			fm.fetchHandler('http://a.com/', { method: 'POST' });
 		});
-		after(() => fm.restore());
+		afterAll(() => fm.restore());
 
 		it('calls (call history)', () => {
 			expect(fm.calls()[0]).to.eql(['http://a.com/', undefined]);

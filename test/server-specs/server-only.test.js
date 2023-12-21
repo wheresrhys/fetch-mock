@@ -18,27 +18,29 @@ describe('nodejs only tests', () => {
 				});
 		});
 
-		it('can respond with a readable stream', (done) => {
-			const { Readable, Writable } = require('stream');
-			const readable = new Readable();
-			const write = sinon.stub().callsFake((chunk, enc, cb) => {
-				cb();
-			});
-			const writable = new Writable({
-				write,
-			});
-			readable.push('response string');
-			readable.push(null);
+		it('can respond with a readable stream', () => {
+			return new Promise((res, rej) => {
+				const { Readable, Writable } = require('stream');
+				const readable = new Readable();
+				const write = sinon.stub().callsFake((chunk, enc, cb) => {
+					cb();
+				});
+				const writable = new Writable({
+					write,
+				});
+				readable.push('response string');
+				readable.push(null);
 
-			fetchMock.mock(/a/, readable, { sendAsJson: false });
-			fetchMock.fetchHandler('http://a.com').then((res) => {
-				res.body.pipe(writable);
-			});
+				fetchMock.mock(/a/, readable, { sendAsJson: false });
+				fetchMock.fetchHandler('http://a.com').then((res) => {
+					res.body.pipe(writable);
+				});
 
-			writable.on('finish', () => {
-				expect(write.args[0][0].toString('utf8')).to.equal('response string');
-				done();
-			});
+				writable.on('finish', () => {
+					expect(write.args[0][0].toString('utf8')).to.equal('response string');
+					res();
+				});
+			})
 		});
 
 		// See https://github.com/wheresrhys/fetch-mock/issues/575

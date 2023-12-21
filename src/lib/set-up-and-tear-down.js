@@ -119,7 +119,7 @@ const getRouteRemover = ({ sticky: removeStickyRoutes }) => (routes) =>
 	removeStickyRoutes ? [] : routes.filter(({ sticky }) => sticky);
 
 FetchMock.resetBehavior = function (options = {}) {
-	mochaAsyncHookWorkaround(options);
+	// mochaAsyncHookWorkaround(options);
 	const removeRoutes = getRouteRemover(options);
 
 	this.routes = removeRoutes(this.routes);

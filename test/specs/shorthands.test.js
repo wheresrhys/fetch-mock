@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, beforeAll } from "vitest";
+import { afterEach, describe, expect, it, beforeAll, afterAll } from "vitest";
 const chai = require('chai');
 chai.use(require('sinon-chai'));
 const expect = chai.expect;
@@ -35,7 +35,7 @@ describe('shorthands', () => {
 		fm.restore({ sticky: true });
 	});
 
-	after(() => fm.compileRoute.restore());
+	afterAll(() => fm.compileRoute.restore());
 
 	it('has sticky() shorthand method', () => {
 		fm.sticky('a', 'b');

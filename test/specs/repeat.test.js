@@ -1,7 +1,4 @@
-import { afterEach, describe, expect, it, beforeAll } from "vitest";
-// const chai = require('chai');
-// chai.use(require('sinon-chai'));
-// const sinon = require('sinon');
+import { afterEach, describe, expect, it, beforeAll, vi } from "vitest";
 
 const { fetchMock } = testGlobals;
 describe('repeat and done()', () => {
@@ -128,14 +125,14 @@ describe('repeat and done()', () => {
 	});
 
 	it('logs unmatched calls', () => {
-			sinon.spy(console, 'warn'); //eslint-disable-line
+		vi.spyOn(console, 'warn'); //eslint-disable-line
 		fm.mock('http://a.com/', 200).mock('http://b.com/', 200, {
 			repeat: 2,
 		});
 
 		fm.fetchHandler('http://b.com/');
 		fm.done();
-		expect(console.warn.calledWith('Warning: http://a.com/ not called')).to.be.true; //eslint-disable-line
+		expect(console.warn).toHaveBeenCalledWith('Warning: http://a.com/ not called')) //eslint-disable-line
 		expect(
 			console.warn.calledWith(
 				'Warning: http://b.com/ only called 1 times, but 2 expected'
@@ -143,12 +140,11 @@ describe('repeat and done()', () => {
 			).to.be.true; //eslint-disable-line
 			console.warn.resetHistory(); //eslint-disable-line
 		fm.done('http://a.com/');
-		expect(console.warn.calledWith('Warning: http://a.com/ not called')).to.be.true; //eslint-disable-line
+		expect(console.warn).toHaveBeencalledWith('Warning: http://a.com/ not called')); //eslint-disable-line
 		expect(
-			console.warn.calledWith(
+			console.warn).toHaveBeenCalledWith(
 				'Warning: http://b.com/ only called 1 times, but 2 expected'
-			)
-			).to.be.false; //eslint-disable-line
+			)//eslint-disable-line
 			console.warn.restore(); //eslint-disable-line
 	});
 

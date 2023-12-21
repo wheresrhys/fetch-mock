@@ -1,7 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, beforeAll } from "vitest";
-// const chai = require('chai');
-// chai.use(require('sinon-chai'));
-// const sinon = require('sinon');
+import { afterEach, beforeEach, describe, expect, it, beforeAll, vi } from "vitest";
 
 const { fetchMock } = testGlobals;
 describe('Set up and tear down', () => {
@@ -18,7 +15,7 @@ describe('Set up and tear down', () => {
 		});
 
 		it(`${method}() has "this"`, () => {
-			sinon.spy(fm, method);
+			vi.spyOn(fm, method);
 			fm[method](...args);
 			expect(fm[method].lastCall.thisValue).to.equal(fm);
 			fm[method].restore();
@@ -42,8 +39,8 @@ describe('Set up and tear down', () => {
 
 		describe('parameters', () => {
 			beforeEach(() => {
-				sinon.spy(fm, 'compileRoute');
-				sinon.stub(fm, '_mock').returns(fm);
+				vi.spyOn(fm, 'compileRoute');
+				vi.spyOn(fm, '_mock').mockReturnValue(fm);
 			});
 
 			afterEach(() => {
@@ -115,10 +112,10 @@ describe('Set up and tear down', () => {
 		});
 
 		it('calls resetHistory', () => {
-			sinon.spy(fm, 'resetHistory');
+			vi.spyOn(fm, 'resetHistory');
 			fm.restore();
-			expect(fm.resetHistory).calledOnce;
-			fm.resetHistory.restore();
+			expect(fm.resetHistory).toHaveBeenCalledOnce;
+			fm.resetHistory.mockRestore();
 		});
 
 		it('removes all routing', () => {
@@ -185,10 +182,10 @@ describe('Set up and tear down', () => {
 		testChainableMethod('spy');
 
 		it('calls catch()', () => {
-			sinon.spy(fm, 'catch');
+			vi.spyOn(fm, 'catch');
 			fm.spy();
-			expect(fm.catch).calledOnce;
-			fm.catch.restore();
+			expect(fm.catch).toHaveBeenCalledOnce;
+			fm.catch.mockRestore();
 		});
 	});
 

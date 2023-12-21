@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const BluebirdPromise = require('bluebird');
 const NativePromise = Promise;
@@ -25,14 +25,14 @@ describe('custom implementations', () => {
 
 		it('should allow non-native Promises as responses', async () => {
 			fm.config.Promise = BluebirdPromise;
-			const stub = sinon.spy((fn) =>
+			const stub = vi.fn().mockImplementation((fn) =>
 				fn(BluebirdPromise.resolve(new fm.config.Response('', { status: 200 })))
 			);
 			fm.mock('*', {
 				then: stub,
 			});
 			const { status } = await fm.fetchHandler('http://a.com');
-			expect(stub.calledOnce).to.be.true;
+			expect(stub).toHaveBeenCalledTimes(1)
 			expect(status).to.equal(200);
 		});
 
@@ -119,17 +119,15 @@ describe('custom implementations', () => {
 			const obj = { isFake: true };
 			/** Clone from Response interface is used internally to store copy in call log */
 			obj.clone = () => obj;
-			const spiedReplacementResponse = sinon.stub().returns(obj);
+			const spiedReplacementResponse = vi.fn().mockReturnValue(obj);
 			fm.config.Response = spiedReplacementResponse;
 
 			fm.mock('*', 'hello');
 
 			const res = await fetch('http://a.com');
 			expect(res.isFake).to.be.true;
-			expect(spiedReplacementResponse.callCount).to.equal(1);
-			const lastCall = spiedReplacementResponse.lastCall.args;
-			expect(lastCall[0]).to.equal('hello');
-			expect(lastCall[1].status).to.equal(200);
+			expect(spiedReplacementResponse).toHaveBeenCalledTimes(1);
+			expect(spiedReplacementResponse).toHaveBeenCalledWith('hello', expect.objectContaining({status: 200}))
 			expect(defaultSpies.Response.callCount).to.equal(0);
 		});
 	});

@@ -1,7 +1,4 @@
 import { describe, expect, it } from "vitest";
-// const chai = require('chai');
-// const chaiAsPromised = require('chai-as-promised');
-// chai.use(chaiAsPromised);
 
 const { fetchMock } = testGlobals;
 describe('user defined matchers', () => {

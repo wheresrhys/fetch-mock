@@ -1,7 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
-// const chai = require('chai');
-// chai.use(require('sinon-chai'));
-// const sinon = require('sinon');
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const { fetchMock, theGlobal } = testGlobals;
 
 describe('use with global fetch', () => {
@@ -17,7 +14,7 @@ describe('use with global fetch', () => {
 	};
 
 	beforeEach(() => {
-		originalFetch = theGlobal.fetch = sinon.stub().returns(Promise.resolve());
+		originalFetch = theGlobal.fetch = vi.fn().mockResolvedValue();
 	});
 	afterEach(fetchMock.restore);
 

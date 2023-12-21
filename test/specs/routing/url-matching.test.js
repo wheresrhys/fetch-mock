@@ -1,5 +1,4 @@
 import { afterEach, describe, expect, it, beforeAll } from "vitest";
-// const chai = require('chai');
 const URL = require('whatwg-url');
 
 const { fetchMock } = testGlobals;

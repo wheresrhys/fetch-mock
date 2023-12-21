@@ -1,7 +1,4 @@
 import { afterEach, describe, expect, it, beforeAll, afterAll } from "vitest";
-// const chai = require('chai');
-// chai.use(require('sinon-chai'));
-// const sinon = require('sinon');
 
 const { fetchMock } = testGlobals;
 describe('shorthands', () => {
@@ -16,25 +13,25 @@ describe('shorthands', () => {
 		});
 
 		it(`${method}() has "this"`, () => {
-			sinon.spy(fm, method);
+			vi.spyOn(fm, method);
 			fm[method](...args);
 			expect(fm[method].lastCall.thisValue).to.equal(fm);
-			fm[method].restore();
+			fm[method].mockRestore();
 		});
 	};
 
 	beforeAll(() => {
 		fm = fetchMock.createInstance();
-		sinon.spy(fm, 'compileRoute');
+		vi.spyOn(fm, 'compileRoute');
 		fm.config.warnOnUnmatched = false;
 		expectRoute = (...args) => expect(fm.compileRoute).calledWith(args);
 	});
 	afterEach(() => {
-		fm.compileRoute.resetHistory();
+		fm.compileRoute.mockClear();
 		fm.restore({ sticky: true });
 	});
 
-	afterAll(() => fm.compileRoute.restore());
+	afterAll(() => fm.compileRoute.mockRestore());
 
 	it('has sticky() shorthand method', () => {
 		fm.sticky('a', 'b');

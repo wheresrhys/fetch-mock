@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, beforeAll } from "vitest";
 const chai = require('chai');
 chai.use(require('sinon-chai'));
 const expect = chai.expect;
@@ -7,7 +7,7 @@ const sinon = require('sinon');
 const { fetchMock } = testGlobals;
 describe('Set up and tear down', () => {
 	let fm;
-	before(() => {
+	beforeAll(() => {
 		fm = fetchMock.createInstance();
 		fm.config.warnOnUnmatched = false;
 	});

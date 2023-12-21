@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, beforeAll } from "vitest";
 // cover case where GET, POST etc are differently named routes
 // ... maybe accept method as second argument to calls, called etc
 // consider case where multiple routes match.. make sure only one matcher logs calls
@@ -10,14 +10,14 @@ const { fetchMock } = testGlobals;
 
 describe('inspecting', () => {
 	let fm;
-	before(() => {
+	beforeAll(() => {
 		fm = fetchMock.createInstance();
 		fm.config.warnOnUnmatched = false;
 	});
 
 	describe('api', () => {
 		describe('signatures', () => {
-			before(() => {
+			beforeAll(() => {
 				fm.mock('http://a.com/', 200).mock('http://b.com/', 200);
 				return fm.fetchHandler('http://a.com/', {
 					method: 'post',
@@ -418,7 +418,7 @@ describe('inspecting', () => {
 	});
 
 	describe('retrieving call parameters', () => {
-		before(() => {
+		beforeAll(() => {
 			fm.mock('http://a.com/', 200);
 			fm.fetchHandler('http://a.com/');
 			fm.fetchHandler('http://a.com/', { method: 'POST' });

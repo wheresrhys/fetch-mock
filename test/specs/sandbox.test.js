@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, beforeAll } from "vitest";
 const chai = require('chai');
 chai.use(require('sinon-chai'));
 const expect = chai.expect;
@@ -8,7 +8,7 @@ const { fetchMock, theGlobal } = testGlobals;
 describe('sandbox', () => {
 	let originalFetch;
 
-	before(() => {
+	beforeAll(() => {
 		originalFetch = theGlobal.fetch = sinon
 			.stub()
 			.returns(Promise.resolve('dummy'));

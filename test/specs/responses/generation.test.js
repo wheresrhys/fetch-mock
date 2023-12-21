@@ -1,3 +1,4 @@
+import { afterEach, describe, expect, it } from "vitest";
 const { expect } = require('chai');
 const { fetchMock } = testGlobals;
 

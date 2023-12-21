@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-const chai = require('chai');
-chai.use(require('sinon-chai'));
-const sinon = require('sinon');
+// const chai = require('chai');
+// chai.use(require('sinon-chai'));
+// const sinon = require('sinon');
 
 const { fetchMock, theGlobal } = testGlobals;
 describe('spy()', () => {

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, beforeAll } from "vitest";
-const chai = require('chai');
+// const chai = require('chai');
 
 const { fetchMock } = testGlobals;
 describe('function matching', () => {

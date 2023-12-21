@@ -2,8 +2,9 @@ import { afterEach, beforeEach, describe, expect, it, beforeAll, afterAll } from
 // cover case where GET, POST etc are differently named routes
 // ... maybe accept method as second argument to calls, called etc
 // consider case where multiple routes match.. make sure only one matcher logs calls
-const chai = require('chai');
-const sinon = require('sinon');
+
+// const chai = require('chai');
+// const sinon = require('sinon');
 
 const { fetchMock } = testGlobals;
 

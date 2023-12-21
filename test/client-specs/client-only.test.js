@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from "vitest";
-const chai = require('chai');
-const chaiAsPromised = require('chai-as-promised');
-chai.use(chaiAsPromised);
+// const chai = require('chai');
+// const chaiAsPromised = require('chai-as-promised');
+// chai.use(chaiAsPromised);
 const { fetchMock } = testGlobals;
 
 describe('client-side only tests', () => {

@@ -62,8 +62,7 @@ describe('inspecting', () => {
 				(method) => {
 					it(`${method}() uses the internal filtering method`, () => {
 						fm[method]('name', { an: 'option' });
-						expect(fm.filterCalls.calledWith('name', { an: 'option' })).to.be
-							.true;
+						expect(fm.filterCalls).toHaveBeenCalledWith('name', { an: 'option' })
 					});
 				}
 			);

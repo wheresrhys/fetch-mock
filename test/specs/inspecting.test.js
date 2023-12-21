@@ -529,6 +529,19 @@ describe('inspecting', () => {
 
 			await resp.json();
 			expect(await fm.lastResponse().json()).to.eql(respBody);
+			fm.restore();
 		});
 	});
+
+	describe('regression', () => {
+		it.only('possible to compare 2 identical calls (needed for fetch-mock-jest)', async () => {
+			const respBody = { foo: 'bar' };
+			fm.once('*', { status: 200, body: respBody }).once('*', 201, {
+				overwriteRoutes: false,
+			});
+
+			await fm.fetchHandler('http://a.com/');
+			expect(fm.lastCall()).to.equal(fm.lastCall());
+		})
+	})
 });

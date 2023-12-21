@@ -33,7 +33,7 @@ describe('sandbox', () => {
 		vi.spyOn(sbx, 'fetchHandler');
 
 		sbx('http://a.com');
-		expect(sbx.fetchHandler).toHaveBeenCalledWith('http://a.com');
+		expect(sbx.fetchHandler).toHaveBeenCalledWith('http://a.com', undefined);
 	});
 
 	it("don't interfere with global fetch", () => {

@@ -11,13 +11,13 @@ describe('Set up and tear down', () => {
 
 	const testChainableMethod = (method, ...args) => {
 		it(`${method}() is chainable`, () => {
-			expect(fm[method](...args)).to.equal(fm);
+			expect(fm[method](...args)).toEqual(fm);
 		});
 
 		it(`${method}() has "this"`, () => {
 			vi.spyOn(fm, method);
 			fm[method](...args);
-			expect(fm[method].lastCall.thisValue).to.equal(fm);
+			expect(fm[method].lastCall.thisValue).toEqual(fm);
 			fm[method].restore();
 		});
 	};
@@ -28,13 +28,13 @@ describe('Set up and tear down', () => {
 		it('can be called multiple times', () => {
 			expect(() => {
 				fm.mock('http://a.com', 200).mock('http://b.com', 200);
-			}).not.to.throw();
+			}).not.toThrow();
 		});
 
 		it('can be called after fetchMock is restored', () => {
 			expect(() => {
 				fm.mock('*', 200).restore().mock('*', 200);
-			}).not.to.throw();
+			}).not.toThrow();
 		});
 
 		describe('parameters', () => {
@@ -53,15 +53,15 @@ describe('Set up and tear down', () => {
 					url: '*',
 					response: 200,
 				};
-				expect(() => fm.mock(config)).not.to.throw();
-				expect(fm.compileRoute).calledWith([config]);
-				expect(fm._mock).called;
+				expect(() => fm.mock(config)).not.toThrow();
+				expect(fm.compileRoute).toHaveBeenCalledWith(config);
+				expect(fm._mock).toHaveBeenCalled();
 			});
 
 			it('accepts matcher, route pairs', () => {
-				expect(() => fm.mock('*', 200)).not.to.throw();
-				expect(fm.compileRoute).calledWith(['*', 200]);
-				expect(fm._mock).called;
+				expect(() => fm.mock('*', 200)).not.toThrow();
+				expect(fm.compileRoute).toHaveBeenCalledWith('*', 200);
+				expect(fm._mock).toHaveBeenCalled();
 			});
 
 			it('accepts matcher, response, config triples', () => {
@@ -70,36 +70,36 @@ describe('Set up and tear down', () => {
 						method: 'PUT',
 						some: 'prop',
 					})
-				).not.to.throw();
-				expect(fm.compileRoute).calledWith([
+				).not.toThrow();
+				expect(fm.compileRoute).toHaveBeenCalledWith(
 					'*',
 					'ok',
 					{
 						method: 'PUT',
 						some: 'prop',
 					},
-				]);
-				expect(fm._mock).called;
+				);
+				expect(fm._mock).toHaveBeenCalled();
 			});
 
 			it('expects a matcher', () => {
-				expect(() => fm.mock(null, 'ok')).to.throw();
+				expect(() => fm.mock(null, 'ok')).toThrow();
 			});
 
 			it('expects a response', () => {
-				expect(() => fm.mock('*')).to.throw();
+				expect(() => fm.mock('*')).toThrow();
 			});
 
 			it('can be called with no parameters', () => {
-				expect(() => fm.mock()).not.to.throw();
-				expect(fm.compileRoute).not.called;
-				expect(fm._mock).called;
+				expect(() => fm.mock()).not.toThrow();
+				expect(fm.compileRoute).not.toHaveBeenCalled();
+				expect(fm._mock).toHaveBeenCalled();
 			});
 
 			it('should accept object responses when also passing options', () => {
 				expect(() =>
 					fm.mock('*', { foo: 'bar' }, { method: 'GET' })
-				).not.to.throw();
+				).not.toThrow();
 			});
 		});
 	});
@@ -108,30 +108,30 @@ describe('Set up and tear down', () => {
 		testChainableMethod('reset');
 
 		it('can be called even if no mocks set', () => {
-			expect(() => fm.restore()).not.to.throw();
+			expect(() => fm.restore()).not.toThrow();
 		});
 
 		it('calls resetHistory', () => {
 			vi.spyOn(fm, 'resetHistory');
 			fm.restore();
-			expect(fm.resetHistory).toHaveBeenCalledOnce;
+			expect(fm.resetHistory).toHaveBeenCalledTimes(1);
 			fm.resetHistory.mockRestore();
 		});
 
 		it('removes all routing', () => {
 			fm.mock('*', 200).catch(200);
 
-			expect(fm.routes.length).to.equal(1);
-			expect(fm.fallbackResponse).to.exist;
+			expect(fm.routes.length).toEqual(1);
+			expect(fm.fallbackResponse).toBeDefined();
 
 			fm.restore();
 
-			expect(fm.routes.length).to.equal(0);
-			expect(fm.fallbackResponse).not.to.exist;
+			expect(fm.routes.length).toEqual(0);
+			expect(fm.fallbackResponse).not.toBeDefined();
 		});
 
 		it('restore is an alias for reset', () => {
-			expect(fm.restore).to.equal(fm.reset);
+			expect(fm.restore).toEqual(fm.reset);
 		});
 	});
 
@@ -139,19 +139,19 @@ describe('Set up and tear down', () => {
 		testChainableMethod('resetBehavior');
 
 		it('can be called even if no mocks set', () => {
-			expect(() => fm.resetBehavior()).not.to.throw();
+			expect(() => fm.resetBehavior()).not.toThrow();
 		});
 
 		it('removes all routing', () => {
 			fm.mock('*', 200).catch(200);
 
-			expect(fm.routes.length).to.equal(1);
-			expect(fm.fallbackResponse).to.exist;
+			expect(fm.routes.length).toEqual(1);
+			expect(fm.fallbackResponse).toBeDefined();
 
 			fm.resetBehavior();
 
-			expect(fm.routes.length).to.equal(0);
-			expect(fm.fallbackResponse).not.to.exist;
+			expect(fm.routes.length).toEqual(0);
+			expect(fm.fallbackResponse).not.toBeDefined();
 		});
 	});
 
@@ -159,7 +159,7 @@ describe('Set up and tear down', () => {
 		testChainableMethod('resetHistory');
 
 		it('can be called even if no mocks set', () => {
-			expect(() => fm.resetHistory()).not.to.throw();
+			expect(() => fm.resetHistory()).not.toThrow();
 		});
 
 		it('resets call history', async () => {
@@ -171,10 +171,10 @@ describe('Set up and tear down', () => {
 			fm.resetHistory();
 			expect(fm.called()).to.be.false;
 			expect(fm.called('*')).to.be.false;
-			expect(fm.calls('*').length).to.equal(0);
-			expect(fm.calls(true).length).to.equal(0);
-			expect(fm.calls(false).length).to.equal(0);
-			expect(fm.calls().length).to.equal(0);
+			expect(fm.calls('*').length).toEqual(0);
+			expect(fm.calls(true).length).toEqual(0);
+			expect(fm.calls(false).length).toEqual(0);
+			expect(fm.calls().length).toEqual(0);
 		});
 	});
 
@@ -184,7 +184,7 @@ describe('Set up and tear down', () => {
 		it('calls catch()', () => {
 			vi.spyOn(fm, 'catch');
 			fm.spy();
-			expect(fm.catch).toHaveBeenCalledOnce;
+			expect(fm.catch).toHaveBeenCalledTimes(1);
 			fm.catch.mockRestore();
 		});
 	});

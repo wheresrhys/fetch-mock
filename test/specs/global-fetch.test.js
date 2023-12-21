@@ -47,6 +47,6 @@ describe('use with global fetch', () => {
 		fetchMock.mock('*', 200);
 
 		await theGlobal.fetch('http://a.com');
-		expect(originalFetch).not.called;
+		expect(originalFetch).not.toHaveBeenCalled();
 	});
 });

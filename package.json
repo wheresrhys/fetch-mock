@@ -36,6 +36,7 @@
   "dependencies": {
     "@babel/core": "^7.0.0",
     "@babel/runtime": "^7.0.0",
+    "@vitest/browser": "^1.1.0",
     "core-js": "^3.0.0",
     "debug": "^4.1.1",
     "glob-to-regexp": "^0.4.0",
@@ -93,6 +94,7 @@
     "sinon": "^4.5.0",
     "sinon-chai": "^2.14.0",
     "typescript": "^3.6.4",
+    "webdriverio": "^8.27.0",
     "webpack": "^4.41.2"
   }
 }

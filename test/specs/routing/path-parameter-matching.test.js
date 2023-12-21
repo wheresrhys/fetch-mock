@@ -1,6 +1,5 @@
 import { afterEach, describe, expect, it, beforeAll } from "vitest";
 const chai = require('chai');
-const expect = chai.expect;
 
 const { fetchMock } = testGlobals;
 describe('path parameter matching', () => {

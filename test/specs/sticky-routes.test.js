@@ -1,7 +1,4 @@
-import { afterEach, describe, expect, it, beforeAll } from "vitest";
-// const chai = require('chai');
-// chai.use(require('sinon-chai'));
-// const sinon = require('sinon');
+import { afterEach, describe, expect, it, beforeAll, vi } from "vitest";
 
 const { fetchMock, theGlobal } = testGlobals;
 
@@ -98,7 +95,7 @@ describe('sticky routes', () => {
 	describe('global mocking', () => {
 		let originalFetch;
 		beforeAll(() => {
-			originalFetch = theGlobal.fetch = sinon.stub().returns(Promise.resolve());
+			originalFetch = theGlobal.fetch = vi.fn().mockResolvedValue();
 		});
 		afterEach(() => fetchMock.restore({ sticky: true }));
 

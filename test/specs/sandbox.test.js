@@ -1,16 +1,13 @@
-import { describe, expect, it, beforeAll } from "vitest";
-// const chai = require('chai');
-// chai.use(require('sinon-chai'));
-// const sinon = require('sinon');
+import { describe, expect, it, beforeAll, vi } from "vitest";
 
 const { fetchMock, theGlobal } = testGlobals;
 describe('sandbox', () => {
 	let originalFetch;
 
 	beforeAll(() => {
-		originalFetch = theGlobal.fetch = sinon
-			.stub()
-			.returns(Promise.resolve('dummy'));
+		originalFetch = theGlobal.fetch = vi
+			.fn()
+			.mockResolvedValue('dummy');
 	});
 
 	it('return function', () => {
@@ -33,10 +30,10 @@ describe('sandbox', () => {
 	it('delegate to its own fetch handler', async () => {
 		const sbx = fetchMock.sandbox().mock('http://a.com', 200);
 
-		sinon.stub(sbx, 'fetchHandler');
+		vi.spyOn(sbx, 'fetchHandler');
 
 		sbx('http://a.com');
-		expect(sbx.fetchHandler).calledWith('http://a.com');
+		expect(sbx.fetchHandler).toHaveBeenCalledWith('http://a.com');
 	});
 
 	it("don't interfere with global fetch", () => {

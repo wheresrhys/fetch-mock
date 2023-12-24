@@ -1,6 +1,6 @@
-const { debug, setDebugPhase, getDebug } = require('./debug');
-const responseBuilder = require('./response-builder');
-const requestUtils = require('./request-utils');
+import { debug, setDebugPhase, getDebug } from './debug';
+import responseBuilder from './response-builder';
+import * as requestUtils from './request-utils';
 const FetchMock = {};
 
 // see https://heycam.github.io/webidl/#aborterror for the standardised interface
@@ -38,15 +38,8 @@ const patchNativeFetchForSafari = (nativeFetch) => {
 			return nativeFetch(request);
 		}
 		const body = await request.clone().text();
-		const {
-			cache,
-			credentials,
-			headers,
-			integrity,
-			mode,
-			redirect,
-			referrer,
-		} = request;
+		const { cache, credentials, headers, integrity, mode, redirect, referrer } =
+			request;
 		const init = {
 			body,
 			cache,
@@ -306,4 +299,4 @@ FetchMock.recordCall = function (obj) {
 	}
 };
 
-module.exports = FetchMock;
+export default FetchMock;

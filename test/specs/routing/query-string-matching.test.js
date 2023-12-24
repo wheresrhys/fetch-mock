@@ -1,5 +1,5 @@
-import { afterEach, describe, expect, it, beforeAll } from "vitest";
-const {URL} = require('node:url');
+import { afterEach, describe, expect, it, beforeAll } from 'vitest';
+import { URL } from 'node:url';
 
 const { fetchMock } = testGlobals;
 describe('query string matching', () => {

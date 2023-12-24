@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from 'vitest';
 
 const RESPONSE_DELAY = 10;
 const ABORT_DELAY = 5;

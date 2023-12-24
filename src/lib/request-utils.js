@@ -18,7 +18,7 @@ const headersToArray = (headers) => {
 const zipObject = (entries) =>
 	entries.reduce((obj, [key, val]) => Object.assign(obj, { [key]: val }), {});
 
-const normalizeUrl = (url) => {
+export function normalizeUrl(url) {
 	if (
 		typeof url === 'function' ||
 		url instanceof RegExp ||
@@ -36,7 +36,7 @@ const normalizeUrl = (url) => {
 		const u = new URL(url, 'http://dummy');
 		return u.pathname + u.search;
 	}
-};
+}
 
 const extractBody = async (request) => {
 	try {
@@ -49,87 +49,85 @@ const extractBody = async (request) => {
 	} catch (err) {}
 };
 
-module.exports = {
-	setUrlImplementation: (it) => {
-		URL = it;
-	},
-	normalizeRequest: (url, options, Request) => {
-		if (Request.prototype.isPrototypeOf(url)) {
-			const derivedOptions = {
-				method: url.method,
-			};
+export function setUrlImplementation(it) {
+	URL = it;
+}
 
-			const body = extractBody(url);
+export function normalizeRequest(url, options, Request) {
+	if (Request.prototype.isPrototypeOf(url)) {
+		const derivedOptions = {
+			method: url.method,
+		};
 
-			if (typeof body !== 'undefined') {
-				derivedOptions.body = body;
-			}
+		const body = extractBody(url);
 
-			const normalizedRequestObject = {
-				url: normalizeUrl(url.url),
-				options: Object.assign(derivedOptions, options),
-				request: url,
-				signal: (options && options.signal) || url.signal,
-			};
-
-			const headers = headersToArray(url.headers);
-
-			if (headers.length) {
-				normalizedRequestObject.options.headers = zipObject(headers);
-			}
-			return normalizedRequestObject;
-		} else if (
-			typeof url === 'string' ||
-			// horrible URL object duck-typing
-			(typeof url === 'object' && 'href' in url)
-		) {
-			return {
-				url: normalizeUrl(url),
-				options: options,
-				signal: options && options.signal,
-			};
-		} else if (typeof url === 'object') {
-			throw new TypeError(
-				'fetch-mock: Unrecognised Request object. Read the Config and Installation sections of the docs'
-			);
-		} else {
-			throw new TypeError('fetch-mock: Invalid arguments passed to fetch');
+		if (typeof body !== 'undefined') {
+			derivedOptions.body = body;
 		}
-	},
-	normalizeUrl,
-	getPath: (url) => {
-		const u = absoluteUrlRX.test(url)
-			? new URL(url)
-			: new URL(url, 'http://dummy');
-		return u.pathname;
-	},
 
-	getQuery: (url) => {
-		const u = absoluteUrlRX.test(url)
-			? new URL(url)
-			: new URL(url, 'http://dummy');
-		return u.search ? u.search.substr(1) : '';
-	},
-	headers: {
-		normalize: (headers) => zipObject(headersToArray(headers)),
-		toLowerCase: (headers) =>
-			Object.keys(headers).reduce((obj, k) => {
-				obj[k.toLowerCase()] = headers[k];
-				return obj;
-			}, {}),
-		equal: (actualHeader, expectedHeader) => {
-			actualHeader = Array.isArray(actualHeader)
-				? actualHeader
-				: [actualHeader];
-			expectedHeader = Array.isArray(expectedHeader)
-				? expectedHeader
-				: [expectedHeader];
+		const normalizedRequestObject = {
+			url: normalizeUrl(url.url),
+			options: Object.assign(derivedOptions, options),
+			request: url,
+			signal: (options && options.signal) || url.signal,
+		};
 
-			if (actualHeader.length !== expectedHeader.length) {
-				return false;
-			}
+		const headers = headersToArray(url.headers);
 
-			return actualHeader.every((val, i) => val === expectedHeader[i]);
-		},
+		if (headers.length) {
+			normalizedRequestObject.options.headers = zipObject(headers);
+		}
+		return normalizedRequestObject;
+	} else if (
+		typeof url === 'string' ||
+		// horrible URL object duck-typing
+		(typeof url === 'object' && 'href' in url)
+	) {
+		return {
+			url: normalizeUrl(url),
+			options: options,
+			signal: options && options.signal,
+		};
+	} else if (typeof url === 'object') {
+		throw new TypeError(
+			'fetch-mock: Unrecognised Request object. Read the Config and Installation sections of the docs'
+		);
+	} else {
+		throw new TypeError('fetch-mock: Invalid arguments passed to fetch');
+	}
+}
+
+export function getPath(url) {
+	const u = absoluteUrlRX.test(url)
+		? new URL(url)
+		: new URL(url, 'http://dummy');
+	return u.pathname;
+}
+
+export function getQuery(url) {
+	const u = absoluteUrlRX.test(url)
+		? new URL(url)
+		: new URL(url, 'http://dummy');
+	return u.search ? u.search.substr(1) : '';
+}
+
+export const headers = {
+	normalize: (headers) => zipObject(headersToArray(headers)),
+	toLowerCase: (headers) =>
+		Object.keys(headers).reduce((obj, k) => {
+			obj[k.toLowerCase()] = headers[k];
+			return obj;
+		}, {}),
+	equal: (actualHeader, expectedHeader) => {
+		actualHeader = Array.isArray(actualHeader) ? actualHeader : [actualHeader];
+		expectedHeader = Array.isArray(expectedHeader)
+			? expectedHeader
+			: [expectedHeader];
+
+		if (actualHeader.length !== expectedHeader.length) {
+			return false;
+		}
+
+		return actualHeader.every((val, i) => val === expectedHeader[i]);
 	},
 };

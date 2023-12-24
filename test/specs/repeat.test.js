@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, beforeAll, vi } from "vitest";
+import { afterEach, describe, expect, it, beforeAll, vi } from 'vitest';
 
 const { fetchMock } = testGlobals;
 describe('repeat and done()', () => {
@@ -134,15 +134,14 @@ describe('repeat and done()', () => {
 		fm.done();
 		expect(console.warn).toHaveBeenCalledWith('Warning: http://a.com/ not called') //eslint-disable-line
 		expect(console.warn).toHaveBeenCalledWith(
-				'Warning: http://b.com/ only called 1 times, but 2 expected'
+			'Warning: http://b.com/ only called 1 times, but 2 expected'
 			); //eslint-disable-line
 
 		console.warn.mockClear(); //eslint-disable-line
 		fm.done('http://a.com/');
 		expect(console.warn).toHaveBeenCalledWith('Warning: http://a.com/ not called'); //eslint-disable-line
-		expect(
-			console.warn).not.toHaveBeenCalledWith(
-				'Warning: http://b.com/ only called 1 times, but 2 expected'
+		expect(console.warn).not.toHaveBeenCalledWith(
+			'Warning: http://b.com/ only called 1 times, but 2 expected'
 			)//eslint-disable-line
 			console.warn.mockRestore(); //eslint-disable-line
 	});

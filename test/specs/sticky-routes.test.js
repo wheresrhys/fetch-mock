@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, beforeAll, vi } from "vitest";
+import { afterEach, describe, expect, it, beforeAll, vi } from 'vitest';
 
 const { fetchMock, theGlobal } = testGlobals;
 

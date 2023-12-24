@@ -11,11 +11,12 @@ try {
 const Request = fetch.Request;
 const Response = fetch.Response;
 const Headers = fetch.Headers;
-const Stream = require('stream');
-const FetchMock = require('./lib/index');
-const http = require('http');
-const { setUrlImplementation } = require('./lib/request-utils');
-setUrlImplementation(require('node:url').URL);
+import Stream from 'stream';
+import FetchMock from './lib/index';
+import http from 'http';
+import { setUrlImplementation } from './lib/request-utils';
+import { URL } from 'node:url';
+setUrlImplementation(URL);
 
 FetchMock.global = global;
 FetchMock.statusTextMap = http.STATUS_CODES;
@@ -29,4 +30,4 @@ FetchMock.config = Object.assign(FetchMock.config, {
 	fetch,
 });
 
-module.exports = FetchMock.createInstance();
+export default FetchMock.createInstance();

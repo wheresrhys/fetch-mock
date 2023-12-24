@@ -1,15 +1,15 @@
-const { debug } = require('../lib/debug');
-const glob = require('glob-to-regexp');
-const pathToRegexp = require('path-to-regexp');
-const querystring = require('querystring');
-const isSubset = require('is-subset');
-const {
-	headers: headerUtils,
+import { debug } from '../lib/debug';
+import glob from 'glob-to-regexp';
+import pathToRegexp from 'path-to-regexp';
+import querystring from 'querystring';
+import isSubset from 'is-subset';
+import {
+	headers as headerUtils,
 	getPath,
 	getQuery,
 	normalizeUrl,
-} = require('../lib/request-utils');
-const isEqual = require('lodash.isequal');
+} from '../lib/request-utils';
+import isEqual from 'lodash.isequal';
 
 const debuggableUrlFunc = (func) => (url) => {
 	debug('Actual url:', url);
@@ -227,7 +227,7 @@ const getUrlMatcher = (route) => {
 	return getFullUrlMatcher(route, matcherUrl, query);
 };
 
-module.exports = [
+export default [
 	{ name: 'query', matcher: getQueryStringMatcher },
 	{ name: 'method', matcher: getMethodMatcher },
 	{ name: 'headers', matcher: getHeaderMatcher },

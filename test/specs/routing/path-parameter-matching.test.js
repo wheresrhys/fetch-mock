@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, beforeAll } from "vitest";
+import { afterEach, describe, expect, it, beforeAll } from 'vitest';
 
 const { fetchMock } = testGlobals;
 describe('path parameter matching', () => {

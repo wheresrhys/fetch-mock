@@ -1,6 +1,6 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const BluebirdPromise = require('bluebird');
+import BluebirdPromise from 'bluebird';
 const NativePromise = Promise;
 const { fetchMock } = testGlobals;
 describe('custom implementations', () => {
@@ -25,14 +25,18 @@ describe('custom implementations', () => {
 
 		it('should allow non-native Promises as responses', async () => {
 			fm.config.Promise = BluebirdPromise;
-			const stub = vi.fn().mockImplementation((fn) =>
-				fn(BluebirdPromise.resolve(new fm.config.Response('', { status: 200 })))
-			);
+			const stub = vi
+				.fn()
+				.mockImplementation((fn) =>
+					fn(
+						BluebirdPromise.resolve(new fm.config.Response('', { status: 200 }))
+					)
+				);
 			fm.mock('*', {
 				then: stub,
 			});
 			const { status } = await fm.fetchHandler('http://a.com');
-			expect(stub).toHaveBeenCalledTimes(1)
+			expect(stub).toHaveBeenCalledTimes(1);
 			expect(status).to.equal(200);
 		});
 
@@ -127,7 +131,10 @@ describe('custom implementations', () => {
 			const res = await fetch('http://a.com');
 			expect(res.isFake).to.be.true;
 			expect(spiedReplacementResponse).toHaveBeenCalledTimes(1);
-			expect(spiedReplacementResponse).toHaveBeenCalledWith('hello', expect.objectContaining({status: 200}))
+			expect(spiedReplacementResponse).toHaveBeenCalledWith(
+				'hello',
+				expect.objectContaining({ status: 200 })
+			);
 			expect(defaultSpies.Response.callCount).to.equal(0);
 		});
 	});

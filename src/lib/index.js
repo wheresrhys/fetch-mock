@@ -1,8 +1,8 @@
-const { debug } = require('./debug');
-const setUpAndTearDown = require('./set-up-and-tear-down');
-const fetchHandler = require('./fetch-handler');
-const inspecting = require('./inspecting');
-const Route = require('../Route');
+import { debug } from './debug';
+import setUpAndTearDown from './set-up-and-tear-down';
+import fetchHandler from './fetch-handler';
+import inspecting from './inspecting';
+import Route from '../Route';
 
 const FetchMock = Object.assign({}, fetchHandler, setUpAndTearDown, inspecting);
 
@@ -72,4 +72,4 @@ FetchMock.getOption = function (name, route = {}) {
 	return name in route ? route[name] : this.config[name];
 };
 
-module.exports = FetchMock;
+export default FetchMock;

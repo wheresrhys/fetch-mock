@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from 'vitest';
 // const chai = require('chai');
 // chai.use(require('sinon-chai'));
 // const sinon = require('sinon');
@@ -18,10 +18,10 @@ describe('nodejs only tests', () => {
 		});
 
 		it('can respond with a readable stream', () => {
-			return new Promise((res, rej) => {
+			return new Promise((res) => {
 				const { Readable, Writable } = require('stream');
 				const readable = new Readable();
-				const write = sinon.stub().callsFake((chunk, enc, cb) => {
+				const write = vi.fn().mockImplementation((chunk, enc, cb) => {
 					cb();
 				});
 				const writable = new Writable({
@@ -39,7 +39,7 @@ describe('nodejs only tests', () => {
 					expect(write.args[0][0].toString('utf8')).to.equal('response string');
 					res();
 				});
-			})
+			});
 		});
 
 		// See https://github.com/wheresrhys/fetch-mock/issues/575

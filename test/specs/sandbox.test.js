@@ -1,13 +1,11 @@
-import { describe, expect, it, beforeAll, vi } from "vitest";
+import { describe, expect, it, beforeAll, vi } from 'vitest';
 
 const { fetchMock, theGlobal } = testGlobals;
 describe('sandbox', () => {
 	let originalFetch;
 
 	beforeAll(() => {
-		originalFetch = theGlobal.fetch = vi
-			.fn()
-			.mockResolvedValue('dummy');
+		originalFetch = theGlobal.fetch = vi.fn().mockResolvedValue('dummy');
 	});
 
 	it('return function', () => {

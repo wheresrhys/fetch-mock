@@ -15,7 +15,7 @@ const Stream = require('stream');
 const FetchMock = require('./lib/index');
 const http = require('http');
 const { setUrlImplementation } = require('./lib/request-utils');
-setUrlImplementation(require('whatwg-url').URL);
+setUrlImplementation(require('node:url').URL);
 
 FetchMock.global = global;
 FetchMock.statusTextMap = http.STATUS_CODES;

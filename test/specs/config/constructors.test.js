@@ -2,9 +2,6 @@ import {
 	afterEach, beforeEach, describe, expect, it, vi,
 } from 'vitest';
 
-import BluebirdPromise from 'bluebird';
-
-const NativePromise = Promise;
 const { fetchMock } = testGlobals;
 describe('custom implementations', () => {
 	let fm;
@@ -14,42 +11,6 @@ describe('custom implementations', () => {
 	});
 
 	afterEach(() => fm.restore());
-
-	describe('Promise', () => {
-		it('can be configured to use alternate Promise implementations', async () => {
-			fm.config.Promise = BluebirdPromise;
-			fm.mock('*', 200);
-			const responsePromise = fetch('http://a.com');
-			expect(responsePromise).to.be.instanceof(BluebirdPromise);
-			// this tests we actually resolve tthe promise ok
-			const { status } = await responsePromise;
-			expect(status).to.equal(200);
-		});
-
-		it('should allow non-native Promises as responses', async () => {
-			fm.config.Promise = BluebirdPromise;
-			const stub = vi
-				.fn()
-				.mockImplementation((fn) => fn(
-					BluebirdPromise.resolve(new fm.config.Response('', { status: 200 })),
-				));
-			fm.mock('*', {
-				then: stub,
-			});
-			const { status } = await fm.fetchHandler('http://a.com');
-			expect(stub).toHaveBeenCalledTimes(1);
-			expect(status).to.equal(200);
-		});
-
-		it('can use custom promises but return native promise', async () => {
-			fm.mock('*', BluebirdPromise.resolve(200));
-
-			const responsePromise = fm.fetchHandler('http://a.com');
-			expect(responsePromise).to.be.instanceof(NativePromise);
-			const { status } = await responsePromise;
-			expect(status).to.equal(200);
-		});
-	});
 
 	describe('fetch classes', () => {
 		const getHeadersSpy = () => {

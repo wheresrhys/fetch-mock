@@ -8,10 +8,10 @@ describe('use with global fetch', () => {
 	let originalFetch;
 
 	const expectToBeStubbed = (yes = true) => {
-		expect(theGlobal.fetch).to.equal(
+		expect(theGlobal.fetch).toEqual(
 			yes ? fetchMock.fetchHandler : originalFetch,
 		);
-		expect(theGlobal.fetch).not.to.equal(
+		expect(theGlobal.fetch).not.toEqual(
 			yes ? originalFetch : fetchMock.fetchHandler,
 		);
 	};

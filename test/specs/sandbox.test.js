@@ -17,7 +17,7 @@ describe('sandbox', () => {
 
 	it('inherit settings from parent instance', () => {
 		const sbx = fetchMock.sandbox();
-		expect(sbx.config).to.eql(fetchMock.config);
+		expect(sbx.config).toEqual(fetchMock.config);
 	});
 
 	it('implement full fetch-mock api', () => {
@@ -118,13 +118,13 @@ describe('sandbox', () => {
 	it('error if spy() is called and no fetch defined in config', () => {
 		const fm = fetchMock.sandbox();
 		delete fm.config.fetch;
-		expect(() => fm.spy()).to.throw();
+		expect(() => fm.spy()).toThrow();
 	});
 
 	it("don't error if spy() is called and fetch defined in config", () => {
 		const fm = fetchMock.sandbox();
 		fm.config.fetch = originalFetch;
-		expect(() => fm.spy()).not.to.throw();
+		expect(() => fm.spy()).not.toThrow();
 	});
 
 	it('exports a properly mocked node-fetch module shape', () => {

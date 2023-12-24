@@ -10,14 +10,14 @@ describe('fallbackToNetwork', () => {
 		fm = fetchMock.createInstance();
 	});
 	it('error by default', () => {
-		expect(() => fm.fetchHandler('http://unmocked.com')).to.throw();
+		expect(() => fm.fetchHandler('http://unmocked.com')).toThrow();
 	});
 
 	it('not error when configured globally', () => {
 		theGlobal.fetch = async () => ({ status: 202 }); //eslint-disable-line require-await
 		fm.config.fallbackToNetwork = true;
 		fm.mock('http://mocked.com', 201);
-		expect(() => fm.fetchHandler('http://unmocked.com')).not.to.throw();
+		expect(() => fm.fetchHandler('http://unmocked.com')).not.toThrow();
 		delete theGlobal.fetch;
 	});
 
@@ -26,7 +26,7 @@ describe('fallbackToNetwork', () => {
 		fetchMock.config.fallbackToNetwork = true;
 		fetchMock.mock('http://mocked.com', 201);
 		const res = await fetchMock.fetchHandler('http://unmocked.com');
-		expect(res.status).to.equal(202);
+		expect(res.status).toEqual(202);
 		fetchMock.restore();
 		fetchMock.config.fallbackToNetwork = false;
 		delete theGlobal.fetch;
@@ -38,7 +38,7 @@ describe('fallbackToNetwork', () => {
 		sbx.config.fallbackToNetwork = true;
 		sbx.mock('http://mocked.com', 201);
 		const res = await sbx('http://unmocked.com');
-		expect(res.status).to.equal(202);
+		expect(res.status).toEqual(202);
 	});
 
 	it('calls fetch with original Request object', async () => {
@@ -52,7 +52,7 @@ describe('fallbackToNetwork', () => {
 		sbx.mock('http://mocked.com', 201);
 		const req = new sbx.config.Request('http://unmocked.com');
 		await sbx(req);
-		expect(calledWith).to.equal(req);
+		expect(calledWith).toEqual(req);
 	});
 
 	describe('always', () => {
@@ -62,7 +62,7 @@ describe('fallbackToNetwork', () => {
 
 			fm.mock('http://mocked.com', 201);
 			const res = await fm.fetchHandler('http://unmocked.com');
-			expect(res.status).to.equal(202);
+			expect(res.status).toEqual(202);
 		});
 
 		it('ignores routes that are not matched', async () => {
@@ -72,7 +72,7 @@ describe('fallbackToNetwork', () => {
 
 			fm.mock('http://mocked.com', 201);
 			const res = await fm.fetchHandler('http://unmocked.com');
-			expect(res.status).to.equal(202);
+			expect(res.status).toEqual(202);
 		});
 	});
 

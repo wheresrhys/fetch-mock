@@ -15,9 +15,9 @@ describe('user defined matchers', () => {
 			200,
 		).catch();
 		await fm.fetchHandler('http://b.com');
-		expect(fm.calls(true).length).to.equal(0);
+		expect(fm.calls(true).length).toEqual(0);
 		await fm.fetchHandler('http://a.com');
-		expect(fm.calls(true).length).to.equal(1);
+		expect(fm.calls(true).length).toEqual(1);
 	});
 
 	it('match on async body property', async () => {
@@ -39,7 +39,7 @@ describe('user defined matchers', () => {
 				body: JSON.stringify({ b: true }),
 			}),
 		);
-		expect(fm.calls(true).length).to.equal(0);
+		expect(fm.calls(true).length).toEqual(0);
 		await fm.fetchHandler(
 			new fm.config.Request('http://a.com', {
 				method: 'POST',
@@ -50,7 +50,7 @@ describe('user defined matchers', () => {
 			method: 'POST',
 			body: JSON.stringify({ a: true }),
 		});
-		expect(fm.calls(true).length).to.equal(2);
+		expect(fm.calls(true).length).toEqual(2);
 	});
 
 	it('not match on async body property without passing `usesBody: true`', () => {
@@ -70,6 +70,6 @@ describe('user defined matchers', () => {
 				method: 'POST',
 				body: JSON.stringify({ a: true }),
 			}),
-		)).to.throw();
+		)).toThrow();
 	});
 });

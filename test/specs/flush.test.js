@@ -28,7 +28,7 @@ describe('flushing pending calls', () => {
 		let data;
 		fetch('http://example').then(() => {data = 'done'});
 		await fm.flush();
-		expect(data).to.equal('done');
+		expect(data).toEqual('done');
 	});
 
 	describe('response methods', () => {
@@ -40,7 +40,7 @@ describe('flushing pending calls', () => {
 				.then(() => {data = 'done'});
 
 			await fm.flush(true);
-			expect(data).to.equal('done');
+			expect(data).toEqual('done');
 		});
 
 		it('should resolve after .json() if waitForResponseMethods option passed', async () => {
@@ -51,7 +51,7 @@ describe('flushing pending calls', () => {
 				.catch(() => {data = 'done'});
 
 			await fm.flush(true);
-			expect(data).to.equal('done');
+			expect(data).toEqual('done');
 		});
 
 		it('should resolve after .text() if waitForResponseMethods option passed', async () => {
@@ -62,7 +62,7 @@ describe('flushing pending calls', () => {
 				.then(() => {data = 'done'});
 
 			await fm.flush(true);
-			expect(data).to.equal('done');
+			expect(data).toEqual('done');
 		});
 	});
 
@@ -80,7 +80,7 @@ describe('flushing pending calls', () => {
 
 		await fm.flush();
 		orderedResults.push('flush');
-		expect(orderedResults).to.deep.equal(['not flush', 'flush']);
+		expect(orderedResults).toEqual(['not flush', 'flush']);
 	});
 
 	it('flush resolves on expected error', async () => {

@@ -57,8 +57,8 @@ describe('custom implementations', () => {
 			});
 
 			await fetch('http://a.com');
-			expect(spiedReplacementHeaders.callCount).to.equal(1);
-			expect(defaultSpies.Headers.callCount).to.equal(0);
+			expect(spiedReplacementHeaders.callCount).toEqual(1);
+			expect(defaultSpies.Headers.callCount).toEqual(0);
 		});
 
 		it('should use the configured Request when matching', async () => {
@@ -75,7 +75,7 @@ describe('custom implementations', () => {
 			// matched the request against overridden prototype.
 			await fetch(new ReplacementRequest('http://a.com'));
 
-			expect(() => fetch(new fetchMock.config.Request('http://a.com'))).to.throw('Unrecognised Request object');
+			expect(() => fetch(new fetchMock.config.Request('http://a.com'))).toThrow('Unrecognised Request object');
 		});
 
 		it('should use the configured Response', async () => {
@@ -88,13 +88,13 @@ describe('custom implementations', () => {
 			fm.mock('*', 'hello');
 
 			const res = await fetch('http://a.com');
-			expect(res.isFake).tobe(true);
+			expect(res.isFake).toBe(true);
 			expect(spiedReplacementResponse).toHaveBeenCalledTimes(1);
 			expect(spiedReplacementResponse).toHaveBeenCalledWith(
 				'hello',
 				expect.objectContaining({ status: 200 }),
 			);
-			expect(defaultSpies.Response.callCount).to.equal(0);
+			expect(defaultSpies.Response.callCount).toEqual(0);
 		});
 	});
 });

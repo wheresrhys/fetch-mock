@@ -128,6 +128,7 @@ const getBodyMatcher = (route, fetchMock) => {
 
 	debug('Generating body matcher');
 	return (url, { body, method = 'get' }) => {
+
 		debug('Attempting to match body');
 		if (method.toLowerCase() === 'get') {
 			debug('  GET request - skip matching body');

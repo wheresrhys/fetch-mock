@@ -1,4 +1,4 @@
-const { debug, setDebugPhase } = require('./debug');
+import { debug, setDebugPhase } from './debug';
 const FetchMock = {};
 
 FetchMock.mock = function (...args) {
@@ -103,23 +103,12 @@ defineGreedyShorthand('anyOnce', 'once');
 	defineGreedyShorthand(`${method}AnyOnce`, `${method}Once`);
 });
 
-const mochaAsyncHookWorkaround = (options) => {
-	// HACK workaround for this https://github.com/mochajs/mocha/issues/4280
-	// Note that it doesn't matter that we call it _before_ carrying out all
-	// the things resetBehavior does as everything in there is synchronous
-	if (typeof options === 'function') {
-		console.warn(`Deprecated: Passing fetch-mock reset methods
-directly in as handlers for before/after test runner hooks.
-Wrap in an arrow function instead e.g. \`() => fetchMock.restore()\``);
-		options();
-	}
-};
-
-const getRouteRemover = ({ sticky: removeStickyRoutes }) => (routes) =>
-	removeStickyRoutes ? [] : routes.filter(({ sticky }) => sticky);
+const getRouteRemover =
+	({ sticky: removeStickyRoutes }) =>
+	(routes) =>
+		removeStickyRoutes ? [] : routes.filter(({ sticky }) => sticky);
 
 FetchMock.resetBehavior = function (options = {}) {
-	// mochaAsyncHookWorkaround(options);
 	const removeRoutes = getRouteRemover(options);
 
 	this.routes = removeRoutes(this.routes);
@@ -147,4 +136,4 @@ FetchMock.restore = FetchMock.reset = function (options) {
 	return this;
 };
 
-module.exports = FetchMock;
+export default FetchMock;

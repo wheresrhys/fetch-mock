@@ -1,6 +1,6 @@
-const fetchMock = require(process.env.FETCH_MOCK_SRC || '../../src/server.js');
-const fetch = require('node-fetch');
-const AbortController = require('abort-controller');
+import fetchMock from '../../src/server.js';
+import fetch from 'node-fetch';
+import AbortController from 'abort-controller';
 
 globalThis.testGlobals = {
 	fetchMock,
@@ -8,4 +8,3 @@ globalThis.testGlobals = {
 	fetch,
 	AbortController,
 };
-

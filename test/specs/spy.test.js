@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from 'vitest';
 
 const { fetchMock, theGlobal } = testGlobals;
 describe('spy()', () => {
@@ -11,7 +11,11 @@ describe('spy()', () => {
 		fetchMock.spy();
 
 		await theGlobal.fetch('http://a.com/', { method: 'get' });
-			expect(fetchSpy).toHaveBeenCalledWith('http://a.com/', { method: 'get' }, undefined);
+		expect(fetchSpy).toHaveBeenCalledWith(
+			'http://a.com/',
+			{ method: 'get' },
+			undefined
+		);
 		fetchMock.restore();
 		theGlobal.fetch = originalFetch;
 	});
@@ -24,7 +28,11 @@ describe('spy()', () => {
 
 		fm.spy();
 		await fm.fetchHandler('http://a.com/', { method: 'get' });
-			expect(fetchSpy).toHaveBeenCalledWith('http://a.com/', { method: 'get' }, undefined);
+		expect(fetchSpy).toHaveBeenCalledWith(
+			'http://a.com/',
+			{ method: 'get' },
+			undefined
+		);
 		fm.restore();
 	});
 
@@ -36,11 +44,13 @@ describe('spy()', () => {
 
 		fm.spy({ url: 'http://a.com/', method: 'get' });
 		await fm.fetchHandler('http://a.com/', { method: 'get' });
-		expect(fetchSpy).toHaveBeenCalledWith('http://a.com/', { method: 'get' }, undefined);
+		expect(fetchSpy).toHaveBeenCalledWith(
+			'http://a.com/',
+			{ method: 'get' },
+			undefined
+		);
 
-		expect(() =>
-			fm.fetchHandler('http://b.com/', { method: 'get' })
-		).toThrow();
+		expect(() => fm.fetchHandler('http://b.com/', { method: 'get' })).toThrow();
 		expect(() =>
 			fm.fetchHandler('http://a.com/', { method: 'post' })
 		).toThrow();

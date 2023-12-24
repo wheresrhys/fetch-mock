@@ -2,4 +2,4 @@ require('@babel/core').transform('code', {
 	plugins: ['transform-runtime'],
 });
 
-module.exports = require('./client');
+export default require('./client');

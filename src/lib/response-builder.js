@@ -1,4 +1,4 @@
-const { getDebug } = require('./debug');
+import { getDebug } from './debug';
 const responseConfigProps = [
 	'body',
 	'headers',
@@ -86,9 +86,8 @@ e.g. {"body": {"status: "registered"}}`);
 		this.options = this.responseConfig.options || {};
 		this.options.url = this.responseConfig.redirectUrl || this.url;
 		this.options.status = this.validateStatus(this.responseConfig.status);
-		this.options.statusText = this.fetchMock.statusTextMap[
-			String(this.options.status)
-		];
+		this.options.statusText =
+			this.fetchMock.statusTextMap[String(this.options.status)];
 
 		// Set up response headers. The empty object is to cope with
 		// new Headers(undefined) throwing in Chrome
@@ -194,4 +193,4 @@ e.g. {"body": {"status: "registered"}}`);
 	}
 }
 
-module.exports = (options) => new ResponseBuilder(options).exec();
+export default (options) => new ResponseBuilder(options).exec();

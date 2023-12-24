@@ -1,6 +1,5 @@
-const builtInMatchers = require('./matchers');
-
-const { debug, setDebugNamespace, getDebug } = require('../lib/debug');
+import builtInMatchers from './matchers';
+import { debug, setDebugNamespace, getDebug } from '../lib/debug';
 
 const isUrlMatcher = (matcher) =>
 	matcher instanceof RegExp ||
@@ -147,4 +146,4 @@ Route.registeredMatchers = [];
 
 builtInMatchers.forEach(Route.addMatcher);
 
-module.exports = Route;
+export default Route;

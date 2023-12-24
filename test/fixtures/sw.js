@@ -1,4 +1,4 @@
-const fetchMock = require('../../src/client');
+import fetchMock from '../../src/client';
 
 self.addEventListener('install', ev => {
 	fetchMock.mock(/.*/, 203);

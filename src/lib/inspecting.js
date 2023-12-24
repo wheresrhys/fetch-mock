@@ -1,6 +1,6 @@
-const { setDebugPhase, setDebugNamespace, debug } = require('./debug');
-const { normalizeUrl } = require('./request-utils');
-const Route = require('../Route');
+import { setDebugPhase, setDebugNamespace, debug } from './debug';
+import { normalizeUrl } from './request-utils';
+import Route from '../Route';
 const FetchMock = {};
 const isName = (nameOrMatcher) =>
 	typeof nameOrMatcher === 'string' && /^[\da-zA-Z\-]+$/.test(nameOrMatcher);
@@ -212,4 +212,4 @@ FetchMock.done = formatDebug(function (nameOrMatcher) {
 	return result;
 });
 
-module.exports = FetchMock;
+export default FetchMock;

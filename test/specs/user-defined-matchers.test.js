@@ -12,7 +12,7 @@ describe('user defined matchers', () => {
 			{
 				syncMatcher: 'a',
 			},
-			200
+			200,
 		).catch();
 		await fm.fetchHandler('http://b.com');
 		expect(fm.calls(true).length).to.equal(0);
@@ -24,28 +24,27 @@ describe('user defined matchers', () => {
 		const fm = fetchMock.createInstance();
 		fm.addMatcher({
 			name: 'bodyMatcher',
-			matcher: (route) => (url, options) =>
-				JSON.parse(options.body)[route.bodyMatcher] === true,
+			matcher: (route) => (url, options) => JSON.parse(options.body)[route.bodyMatcher] === true,
 			usesBody: true,
 		});
 		fm.mock(
 			{
 				bodyMatcher: 'a',
 			},
-			200
+			200,
 		).catch();
 		await fm.fetchHandler(
 			new fm.config.Request('http://a.com', {
 				method: 'POST',
 				body: JSON.stringify({ b: true }),
-			})
+			}),
 		);
 		expect(fm.calls(true).length).to.equal(0);
 		await fm.fetchHandler(
 			new fm.config.Request('http://a.com', {
 				method: 'POST',
 				body: JSON.stringify({ a: true }),
-			})
+			}),
 		);
 		await fm.fetchHandler('http://a.com', {
 			method: 'POST',
@@ -54,26 +53,23 @@ describe('user defined matchers', () => {
 		expect(fm.calls(true).length).to.equal(2);
 	});
 
-	it('not match on async body property without passing `usesBody: true`', async () => {
+	it('not match on async body property without passing `usesBody: true`', () => {
 		const fm = fetchMock.createInstance();
 		fm.addMatcher({
 			name: 'asyncBodyMatcher',
-			matcher: (route) => (url, options) =>
-				JSON.parse(options.body)[route.asyncBodyMatcher] === true,
+			matcher: (route) => (url, options) => JSON.parse(options.body)[route.asyncBodyMatcher] === true,
 		});
 		fm.mock(
 			{
 				asyncBodyMatcher: 'a',
 			},
-			200
+			200,
 		).catch();
-		expect(() =>
-			fm.fetchHandler(
-				new fm.config.Request('http://a.com', {
-					method: 'POST',
-					body: JSON.stringify({ a: true }),
-				})
-			)
-		).to.throw();
+		expect(() => fm.fetchHandler(
+			new fm.config.Request('http://a.com', {
+				method: 'POST',
+				body: JSON.stringify({ a: true }),
+			}),
+		)).to.throw();
 	});
 });

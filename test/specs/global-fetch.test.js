@@ -1,4 +1,7 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+	afterEach, beforeEach, describe, expect, it, vi,
+} from 'vitest';
+
 const { fetchMock, theGlobal } = testGlobals;
 
 describe('use with global fetch', () => {
@@ -6,10 +9,10 @@ describe('use with global fetch', () => {
 
 	const expectToBeStubbed = (yes = true) => {
 		expect(theGlobal.fetch).to.equal(
-			yes ? fetchMock.fetchHandler : originalFetch
+			yes ? fetchMock.fetchHandler : originalFetch,
 		);
 		expect(theGlobal.fetch).not.to.equal(
-			yes ? originalFetch : fetchMock.fetchHandler
+			yes ? originalFetch : fetchMock.fetchHandler,
 		);
 	};
 
@@ -39,7 +42,8 @@ describe('use with global fetch', () => {
 	});
 
 	it('restores global fetch after a complex mock', () => {
-		fetchMock.mock('a', 200).mock('b', 200).spy().catch(404).restore();
+		fetchMock.mock('a', 200).mock('b', 200).spy().catch(404)
+			.restore();
 		expectToBeStubbed(false);
 	});
 

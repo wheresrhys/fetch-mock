@@ -1,4 +1,6 @@
-import { afterEach, describe, expect, it, beforeAll } from 'vitest';
+import {
+	afterEach, describe, expect, it, beforeAll,
+} from 'vitest';
 
 const { fetchMock } = testGlobals;
 describe('header matching', () => {
@@ -15,7 +17,7 @@ describe('header matching', () => {
 			{
 				headers: { a: 'b' },
 			},
-			200
+			200,
 		).catch();
 
 		await fm.fetchHandler('http://a.com/');
@@ -27,7 +29,7 @@ describe('header matching', () => {
 			{
 				headers: { a: 'b' },
 			},
-			200
+			200,
 		).catch();
 
 		await fm.fetchHandler('http://a.com/', {
@@ -41,7 +43,7 @@ describe('header matching', () => {
 			{
 				headers: { a: 'b' },
 			},
-			200
+			200,
 		).catch();
 
 		await fm.fetchHandler('http://a.com/', {
@@ -55,7 +57,7 @@ describe('header matching', () => {
 			{
 				headers: { a: 'b' },
 			},
-			200
+			200,
 		).catch();
 
 		await fm.fetchHandler('http://a.com/', {
@@ -69,7 +71,7 @@ describe('header matching', () => {
 			{
 				headers: { a: ['b', 'c'] },
 			},
-			200
+			200,
 		).catch();
 
 		await fm.fetchHandler('http://a.com/', {
@@ -83,7 +85,7 @@ describe('header matching', () => {
 			{
 				headers: { a: ['b', 'c', 'd'] },
 			},
-			200
+			200,
 		).catch();
 
 		await fm.fetchHandler('http://a.com/', {
@@ -97,7 +99,7 @@ describe('header matching', () => {
 			{
 				headers: { a: 'b', c: 'd' },
 			},
-			200
+			200,
 		).catch();
 
 		await fm.fetchHandler('http://a.com/', {
@@ -111,7 +113,7 @@ describe('header matching', () => {
 			{
 				headers: { a: 'b', c: 'd' },
 			},
-			200
+			200,
 		).catch();
 
 		await fm.fetchHandler('http://a.com/', {
@@ -125,7 +127,7 @@ describe('header matching', () => {
 			{
 				headers: { a: 'b' },
 			},
-			200
+			200,
 		).catch();
 
 		await fm.fetchHandler('http://a.com/', {
@@ -140,9 +142,11 @@ describe('header matching', () => {
 			constructor(obj) {
 				this.obj = obj;
 			}
-			*[Symbol.iterator]() {
+
+			* [Symbol.iterator]() {
 				yield ['a', 'b'];
 			}
+
 			has() {
 				return true;
 			}
@@ -153,7 +157,7 @@ describe('header matching', () => {
 				{
 					headers: { a: 'b' },
 				},
-				200
+				200,
 			)
 			.catch();
 

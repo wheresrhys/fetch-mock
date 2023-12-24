@@ -1,4 +1,6 @@
-import { afterEach, describe, expect, it, beforeAll } from 'vitest';
+import {
+	afterEach, describe, expect, it, beforeAll,
+} from 'vitest';
 
 const { fetchMock } = testGlobals;
 describe('method matching', () => {
@@ -50,7 +52,7 @@ describe('method matching', () => {
 				method: 'POST',
 				functionMatcher: (url) => /a\.com/.test(url),
 			},
-			200
+			200,
 		).catch();
 
 		await fm.fetchHandler('http://a.com');

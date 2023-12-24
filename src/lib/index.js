@@ -4,7 +4,7 @@ import fetchHandler from './fetch-handler';
 import inspecting from './inspecting';
 import Route from '../Route';
 
-const FetchMock = Object.assign({}, fetchHandler, setUpAndTearDown, inspecting);
+const FetchMock = { ...fetchHandler, ...setUpAndTearDown, ...inspecting };
 
 FetchMock.addMatcher = function (matcher) {
 	Route.addMatcher(matcher);
@@ -22,11 +22,9 @@ FetchMock.createInstance = function () {
 	debug('Creating fetch-mock instance');
 	const instance = Object.create(FetchMock);
 	instance._uncompiledRoutes = (this._uncompiledRoutes || []).slice();
-	instance.routes = instance._uncompiledRoutes.map((config) =>
-		this.compileRoute(config)
-	);
+	instance.routes = instance._uncompiledRoutes.map((config) => this.compileRoute(config));
 	instance.fallbackResponse = this.fallbackResponse || undefined;
-	instance.config = Object.assign({}, this.config || FetchMock.config);
+	instance.config = { ...this.config || FetchMock.config };
 	instance._calls = [];
 	instance._holdingPromises = [];
 	instance.bindMethods();
@@ -59,7 +57,7 @@ FetchMock.sandbox = function () {
 			Headers: this.config.Headers,
 			Request: this.config.Request,
 			Response: this.config.Response,
-		}
+		},
 	);
 
 	sandbox.bindMethods();

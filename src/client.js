@@ -1,7 +1,8 @@
 import FetchMock from './lib/index';
 import statusTextMap from './lib/status-text';
-const theGlobal = typeof window !== 'undefined' ? window : self;
 import { setUrlImplementation } from './lib/request-utils';
+
+const theGlobal = typeof window !== 'undefined' ? window : self;
 setUrlImplementation(theGlobal.URL);
 
 FetchMock.global = theGlobal;

@@ -1,4 +1,6 @@
-import { afterEach, describe, expect, it, beforeAll } from 'vitest';
+import {
+	afterEach, describe, expect, it, beforeAll,
+} from 'vitest';
 import { URL } from 'node:url';
 
 const { fetchMock } = testGlobals;
@@ -16,7 +18,7 @@ describe('query string matching', () => {
 			{
 				query: { a: 'b', c: 'd' },
 			},
-			200
+			200,
 		).catch();
 
 		await fm.fetchHandler('http://a.com');
@@ -30,7 +32,7 @@ describe('query string matching', () => {
 			{
 				query: { a: 'b', c: 'd' },
 			},
-			200
+			200,
 		).catch();
 		const url = new URL('http://a.com/path');
 		url.searchParams.append('a', 'b');
@@ -44,7 +46,7 @@ describe('query string matching', () => {
 			{
 				query: { a: 'b' },
 			},
-			200
+			200,
 		).catch();
 		const url = '/path?a=b';
 		await fm.fetchHandler(url);
@@ -56,7 +58,7 @@ describe('query string matching', () => {
 			{
 				query: { a: 'b', c: 'd' },
 			},
-			200
+			200,
 		).catch();
 
 		await fm.fetchHandler('http://a.com');
@@ -74,7 +76,7 @@ describe('query string matching', () => {
 			{
 				query: { a: 'b', c: 'd' },
 			},
-			200
+			200,
 		).catch();
 
 		await fm.fetchHandler('http://a.com?a=b&c=d&e=f');
@@ -86,7 +88,7 @@ describe('query string matching', () => {
 			{
 				query: { a: '' },
 			},
-			200
+			200,
 		).catch();
 
 		await fm.fetchHandler('http://a.com');
@@ -96,15 +98,13 @@ describe('query string matching', () => {
 	});
 
 	it('distinguish between query strings that only partially differ', async () => {
-		expect(() =>
-			fm.mock({ query: { a: 'b', c: 'e' } }, 200).mock(
-				{
-					overwriteRoutes: false,
-					query: { a: 'b', c: 'd' },
-				},
-				300
-			)
-		).not.to.throw();
+		expect(() => fm.mock({ query: { a: 'b', c: 'e' } }, 200).mock(
+			{
+				overwriteRoutes: false,
+				query: { a: 'b', c: 'd' },
+			},
+			300,
+		)).not.to.throw();
 		const res = await fm.fetchHandler('http://a.com?a=b&c=d');
 		expect(res.status).to.equal(300);
 	});
@@ -117,7 +117,7 @@ describe('query string matching', () => {
 						a: 1,
 					},
 				},
-				200
+				200,
 			).catch();
 			await fm.fetchHandler('http://a.com');
 			expect(fm.calls(true).length).to.equal(0);
@@ -132,7 +132,7 @@ describe('query string matching', () => {
 						a: 1.2,
 					},
 				},
-				200
+				200,
 			).catch();
 			await fm.fetchHandler('http://a.com');
 			expect(fm.calls(true).length).to.equal(0);
@@ -147,7 +147,7 @@ describe('query string matching', () => {
 						a: true,
 					},
 				},
-				200
+				200,
 			)
 				.mock(
 					{
@@ -156,7 +156,7 @@ describe('query string matching', () => {
 						},
 						overwriteRoutes: false,
 					},
-					200
+					200,
 				)
 				.catch();
 			await fm.fetchHandler('http://a.com');
@@ -174,7 +174,7 @@ describe('query string matching', () => {
 						a: undefined,
 					},
 				},
-				200
+				200,
 			).catch();
 			await fm.fetchHandler('http://a.com');
 			expect(fm.calls(true).length).to.equal(0);
@@ -189,7 +189,7 @@ describe('query string matching', () => {
 						a: null,
 					},
 				},
-				200
+				200,
 			).catch();
 			await fm.fetchHandler('http://a.com');
 			expect(fm.calls(true).length).to.equal(0);
@@ -204,7 +204,7 @@ describe('query string matching', () => {
 						a: { b: 'c' },
 					},
 				},
-				200
+				200,
 			).catch();
 			await fm.fetchHandler('http://a.com');
 			expect(fm.calls(true).length).to.equal(0);
@@ -270,7 +270,7 @@ describe('query string matching', () => {
 		it('match a repeated query string with an empty value', async () => {
 			fm.mock(
 				{ url: 'http://a.com/', query: { a: ['b', undefined] } },
-				200
+				200,
 			).catch();
 
 			await fm.fetchHandler('http://a.com');

@@ -32,8 +32,7 @@ describe('shorthands', () => {
 		fm = fetchMock.createInstance();
 		vi.spyOn(fm, 'compileRoute');
 		fm.config.warnOnUnmatched = false;
-		expectRoute = (...args) =>
-			expect(fm.compileRoute).toHaveBeenCalledWith(args);
+		expectRoute = (...args) => expect(fm.compileRoute).toHaveBeenCalledWith(args);
 	});
 	afterEach(() => {
 		fm.compileRoute.mockClear();
@@ -96,26 +95,26 @@ describe('shorthands', () => {
 					fm[method]('a', 'b');
 					fm[method]('c', 'd', { opt: 'e' });
 					expectRoute('a', 'b', {
-						method: method,
+						method,
 					});
 					expectRoute('c', 'd', {
 						opt: 'e',
-						method: method,
+						method,
 					});
 				});
 
 				testChainableMethod(method);
 
 				it(`has ${method}Once() shorthand`, () => {
-					fm[method + 'Once']('a', 'b');
-					fm[method + 'Once']('c', 'd', { opt: 'e' });
+					fm[`${method}Once`]('a', 'b');
+					fm[`${method}Once`]('c', 'd', { opt: 'e' });
 					expectRoute('a', 'b', {
-						method: method,
+						method,
 						repeat: 1,
 					});
 					expectRoute('c', 'd', {
 						opt: 'e',
-						method: method,
+						method,
 						repeat: 1,
 					});
 				});
@@ -123,20 +122,20 @@ describe('shorthands', () => {
 				testChainableMethod(`${method}Once`);
 
 				it(`has ${method}Any() shorthand`, () => {
-					fm[method + 'Any']('a', { opt: 'b' });
+					fm[`${method}Any`]('a', { opt: 'b' });
 					expectRoute({}, 'a', {
 						opt: 'b',
-						method: method,
+						method,
 					});
 				});
 
 				testChainableMethod(`${method}Any`);
 
 				it(`has ${method}AnyOnce() shorthand`, () => {
-					fm[method + 'AnyOnce']('a', { opt: 'b' });
+					fm[`${method}AnyOnce`]('a', { opt: 'b' });
 					expectRoute({}, 'a', {
 						opt: 'b',
-						method: method,
+						method,
 						repeat: 1,
 					});
 				});

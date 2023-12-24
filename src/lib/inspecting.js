@@ -1,34 +1,32 @@
 import { setDebugPhase, setDebugNamespace, debug } from './debug';
 import { normalizeUrl } from './request-utils';
 import Route from '../Route';
+
 const FetchMock = {};
-const isName = (nameOrMatcher) =>
-	typeof nameOrMatcher === 'string' && /^[\da-zA-Z\-]+$/.test(nameOrMatcher);
+const isName = (nameOrMatcher) => typeof nameOrMatcher === 'string' && /^[\da-zA-Z\-]+$/.test(nameOrMatcher);
 
 const filterCallsWithMatcher = function (matcher, options = {}, calls) {
 	({ matcher } = new Route(
-		[Object.assign({ matcher, response: 'ok' }, options)],
-		this
+		[{ matcher, response: 'ok', ...options }],
+		this,
 	));
-	return calls.filter(({ url, options }) =>
-		matcher(normalizeUrl(url), options)
-	);
+	return calls.filter(({ url, options }) => matcher(normalizeUrl(url), options));
 };
 
-const formatDebug = (func) => {
-	return function (...args) {
-		setDebugPhase('inspect');
-		const result = func.call(this, ...args);
-		setDebugPhase();
-		return result;
-	};
+const formatDebug = (func) => function (...args) {
+	setDebugPhase('inspect');
+	const result = func.call(this, ...args);
+	setDebugPhase();
+	return result;
 };
 
 const callObjToArray = (obj) => {
 	if (!obj) {
 		return undefined;
 	}
-	const { url, options, request, identifier, isUnmatched, response } = obj;
+	const {
+		url, options, request, identifier, isUnmatched, response,
+	} = obj;
 	const arr = [url, options];
 	arr.request = request;
 	arr.identifier = identifier;
@@ -47,22 +45,21 @@ FetchMock.filterCalls = function (nameOrMatcher, options) {
 		calls = calls.filter(({ isUnmatched }) => !isUnmatched);
 	} else if ([false, 'unmatched'].includes(nameOrMatcher)) {
 		debug(
-			`Filter provided is ${nameOrMatcher}. Returning unmatched calls only`
+			`Filter provided is ${nameOrMatcher}. Returning unmatched calls only`,
 		);
 		calls = calls.filter(({ isUnmatched }) => isUnmatched);
 	} else if (typeof nameOrMatcher === 'undefined') {
-		debug(`Filter provided is undefined. Returning all calls`);
-		calls = calls;
+		debug('Filter provided is undefined. Returning all calls');
 	} else if (isName(nameOrMatcher)) {
 		debug(
-			`Filter provided, looks like the name of a named route. Returning only calls handled by that route`
+			'Filter provided, looks like the name of a named route. Returning only calls handled by that route',
 		);
 		calls = calls.filter(({ identifier }) => identifier === nameOrMatcher);
 	} else {
 		matcher = nameOrMatcher === '*' ? '*' : normalizeUrl(nameOrMatcher);
 		if (this.routes.some(({ identifier }) => identifier === matcher)) {
 			debug(
-				`Filter provided, ${nameOrMatcher}, identifies a route. Returning only calls handled by that route`
+				`Filter provided, ${nameOrMatcher}, identifies a route. Returning only calls handled by that route`,
 			);
 			calls = calls.filter((call) => call.identifier === matcher);
 		}
@@ -74,7 +71,7 @@ FetchMock.filterCalls = function (nameOrMatcher, options) {
 		}
 		debug(
 			'Compiling filter and options to route in order to filter all calls',
-			nameOrMatcher
+			nameOrMatcher,
 		);
 		calls = filterCallsWithMatcher.call(this, matcher, options, calls);
 	}
@@ -112,7 +109,7 @@ FetchMock.lastResponse = formatDebug(function (nameOrMatcher, options) {
 ... the response will hang unless your source code also awaits the response body.
 This is an unavoidable consequence of the nodejs implementation of streams.
 `);
-	const response = (this.lastCall(nameOrMatcher, options) || []).response;
+	const { response } = this.lastCall(nameOrMatcher, options) || [];
 	try {
 		const clonedResponse = response.clone();
 		return clonedResponse;
@@ -134,7 +131,7 @@ FetchMock.flush = formatDebug(async function (waitForResponseMethods) {
 	debug(
 		`flushing all fetch calls. ${
 			waitForResponseMethods ? '' : 'Not '
-		}waiting for response bodies to complete download`
+		}waiting for response bodies to complete download`,
 	);
 
 	const queuedPromises = this._holdingPromises;
@@ -142,11 +139,11 @@ FetchMock.flush = formatDebug(async function (waitForResponseMethods) {
 	debug(`${queuedPromises.length} fetch calls to be awaited`);
 
 	await Promise.all(queuedPromises);
-	debug(`All fetch calls have completed`);
+	debug('All fetch calls have completed');
 	if (waitForResponseMethods && this._holdingPromises.length) {
-		debug(`Awaiting all fetch bodies to download`);
+		debug('Awaiting all fetch bodies to download');
 		await this.flush(waitForResponseMethods);
-		debug(`All fetch bodies have completed downloading`);
+		debug('All fetch bodies have completed downloading');
 	}
 	setDebugNamespace();
 });
@@ -160,7 +157,7 @@ FetchMock.done = formatDebug(function (nameOrMatcher) {
 	if (nameOrMatcher && typeof nameOrMatcher !== 'boolean') {
 		debug(
 			'Checking to see if expected calls have been made for single route:',
-			nameOrMatcher
+			nameOrMatcher,
 		);
 		routesToCheck = [{ identifier: nameOrMatcher }];
 	} else {
@@ -185,7 +182,7 @@ FetchMock.done = formatDebug(function (nameOrMatcher) {
 			if (!expectedTimes) {
 				debug(
 					'Route has been called at least once, and no expectation of more set:',
-					identifier
+					identifier,
 				);
 				return true;
 			}
@@ -195,15 +192,14 @@ FetchMock.done = formatDebug(function (nameOrMatcher) {
 			if (expectedTimes > actualTimes) {
 				debug(
 					`Route called ${actualTimes} times, but expected ${expectedTimes}:`,
-					identifier
+					identifier,
 				);
 				console.warn(
-					`Warning: ${identifier} only called ${actualTimes} times, but ${expectedTimes} expected`
+					`Warning: ${identifier} only called ${actualTimes} times, but ${expectedTimes} expected`,
 				); // eslint-disable-line
 				return false;
-			} else {
-				return true;
 			}
+			return true;
 		})
 		.every((isDone) => isDone);
 

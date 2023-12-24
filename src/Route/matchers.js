@@ -1,15 +1,15 @@
-import { debug } from '../lib/debug';
 import glob from 'glob-to-regexp';
 import pathToRegexp from 'path-to-regexp';
 import querystring from 'querystring';
 import isSubset from 'is-subset';
+import isEqual from 'lodash.isequal';
 import {
 	headers as headerUtils,
 	getPath,
 	getQuery,
 	normalizeUrl,
 } from '../lib/request-utils';
-import isEqual from 'lodash.isequal';
+import { debug } from '../lib/debug';
 
 const debuggableUrlFunc = (func) => (url) => {
 	debug('Actual url:', url);
@@ -17,12 +17,10 @@ const debuggableUrlFunc = (func) => (url) => {
 };
 
 const stringMatchers = {
-	begin: (targetString) =>
-		debuggableUrlFunc((url) => url.indexOf(targetString) === 0),
-	end: (targetString) =>
-		debuggableUrlFunc(
-			(url) => url.substr(-targetString.length) === targetString
-		),
+	begin: (targetString) => debuggableUrlFunc((url) => url.indexOf(targetString) === 0),
+	end: (targetString) => debuggableUrlFunc(
+		(url) => url.substr(-targetString.length) === targetString,
+	),
 	glob: (targetString) => {
 		const urlRX = glob(targetString);
 		return debuggableUrlFunc((url) => urlRX.test(url));
@@ -31,8 +29,7 @@ const stringMatchers = {
 		const urlRX = pathToRegexp(targetString);
 		return debuggableUrlFunc((url) => urlRX.test(getPath(url)));
 	},
-	path: (targetString) =>
-		debuggableUrlFunc((url) => getPath(url) === targetString),
+	path: (targetString) => debuggableUrlFunc((url) => getPath(url) === targetString),
 };
 
 const getHeaderMatcher = ({ headers: expectedHeaders }) => {
@@ -46,13 +43,11 @@ const getHeaderMatcher = ({ headers: expectedHeaders }) => {
 	return (url, { headers = {} }) => {
 		debug('Attempting to match headers');
 		const lowerCaseHeaders = headerUtils.toLowerCase(
-			headerUtils.normalize(headers)
+			headerUtils.normalize(headers),
 		);
 		debug('  Expected headers:', expectation);
 		debug('  Actual headers:', lowerCaseHeaders);
-		return Object.keys(expectation).every((headerName) =>
-			headerUtils.equal(lowerCaseHeaders[headerName], expectation[headerName])
-		);
+		return Object.keys(expectation).every((headerName) => headerUtils.equal(lowerCaseHeaders[headerName], expectation[headerName]));
 	};
 };
 
@@ -90,9 +85,8 @@ const getQueryStringMatcher = ({ query: passedQuery }) => {
 			if (Array.isArray(query[key])) {
 				if (!Array.isArray(expectedQuery[key])) {
 					return false;
-				} else {
-					return isEqual(query[key].sort(), expectedQuery[key].sort());
 				}
+				return isEqual(query[key].sort(), expectedQuery[key].sort());
 			}
 			return query[key] === expectedQuery[key];
 		});
@@ -107,7 +101,7 @@ const getParamsMatcher = ({ params: expectedParams, url: matcherUrl }) => {
 	}
 	if (!/express:/.test(matcherUrl)) {
 		throw new Error(
-			'fetch-mock: matching on params is only possible when using an express: matcher'
+			'fetch-mock: matching on params is only possible when using an express: matcher',
 		);
 	}
 	debug('  Expected path parameters:', expectedParams);
@@ -119,9 +113,8 @@ const getParamsMatcher = ({ params: expectedParams, url: matcherUrl }) => {
 		const vals = re.exec(getPath(url)) || [];
 		vals.shift();
 		const params = keys.reduce(
-			(map, { name }, i) =>
-				vals[i] ? Object.assign(map, { [name]: vals[i] }) : map,
-			{}
+			(map, { name }, i) => vals[i] ? Object.assign(map, { [name]: vals[i] }) : map,
+			{},
 		);
 		debug('  Expected path parameters:', expectedParams);
 		debug('  Actual path parameters:', params);
@@ -157,10 +150,10 @@ const getBodyMatcher = (route, fetchMock) => {
 		}
 
 		return (
-			sentBody &&
-			(matchPartialBody
-				? isSubset(sentBody, expectedBody)
-				: isEqual(sentBody, expectedBody))
+			sentBody
+			&& (matchPartialBody
+			  ? isSubset(sentBody, expectedBody)
+			  : isEqual(sentBody, expectedBody))
 		);
 	};
 };
@@ -212,12 +205,12 @@ const getUrlMatcher = (route) => {
 	}
 
 	if (matcherUrl.href) {
-		debug(`  Using URL object to match url`, matcherUrl);
+		debug('  Using URL object to match url', matcherUrl);
 		return getFullUrlMatcher(route, matcherUrl.href, query);
 	}
 
 	for (const shorthand in stringMatchers) {
-		if (matcherUrl.indexOf(shorthand + ':') === 0) {
+		if (matcherUrl.indexOf(`${shorthand}:`) === 0) {
 			debug(`  Using ${shorthand}: pattern to match url`, matcherUrl);
 			const urlFragment = matcherUrl.replace(new RegExp(`^${shorthand}:`), '');
 			return stringMatchers[shorthand](urlFragment);

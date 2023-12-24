@@ -32,8 +32,8 @@ describe('inspecting', () => {
 			});
 			afterAll(() => fm.restore());
 			it('called() returns boolean', () => {
-				expect(fm.called('http://a.com/')).to.be.true;
-				expect(fm.called('http://b.com/')).to.be.false;
+				expect(fm.called('http://a.com/')).toBe(true);
+				expect(fm.called('http://b.com/')).toBe(false);
 			});
 			it('calls() returns array of calls', () => {
 				expect(fm.calls('http://a.com/')).to.eql([
@@ -46,18 +46,18 @@ describe('inspecting', () => {
 					'http://a.com/',
 					{ method: 'post', arbitraryOption: true },
 				]);
-				expect(fm.lastCall('http://b.com/')).to.be.undefined;
+				expect(fm.lastCall('http://b.com/')).toBeUndefined();
 			});
 			it('lastUrl() returns string', () => {
 				expect(fm.lastUrl('http://a.com/')).to.equal('http://a.com/');
-				expect(fm.lastUrl('http://b.com/')).to.be.undefined;
+				expect(fm.lastUrl('http://b.com/')).toBeUndefined();
 			});
 			it('lastOptions() returns object', () => {
 				expect(fm.lastOptions('http://a.com/')).to.eql({
 					method: 'post',
 					arbitraryOption: true,
 				});
-				expect(fm.lastOptions('http://b.com/')).to.be.undefined;
+				expect(fm.lastOptions('http://b.com/')).toBeUndefined();
 			});
 		});
 		describe('applying filters', () => {
@@ -75,7 +75,7 @@ describe('inspecting', () => {
 							an: 'option',
 						});
 					});
-				}
+				},
 			);
 		});
 	});
@@ -85,27 +85,16 @@ describe('inspecting', () => {
 
 		const fetchUrls = (...urls) => Promise.all(urls.map(fm.fetchHandler));
 
-		const expectFilteredLength =
-			(...filter) =>
-			(length) =>
-				expect(fm.filterCalls(...filter).length).to.equal(length);
+		const expectFilteredLength =			(...filter) => (length) => expect(fm.filterCalls(...filter).length).to.equal(length);
 
-		const expectFilteredUrl =
-			(...filter) =>
-			(url) =>
-				expect(fm.filterCalls(...filter)[0][0]).to.equal(url);
+		const expectFilteredUrl =			(...filter) => (url) => expect(fm.filterCalls(...filter)[0][0]).to.equal(url);
 
-		const expectSingleUrl =
-			(...filter) =>
-			(url) => {
-				expectFilteredLength(...filter)(1);
-				expectFilteredUrl(...filter)(url);
-			};
+		const expectSingleUrl =			(...filter) => (url) => {
+			    expectFilteredLength(...filter)(1);
+			    expectFilteredUrl(...filter)(url);
+			  };
 
-		const expectFilteredResponse =
-			(...filter) =>
-			(...response) =>
-				expect(fm.filterCalls(...filter)[0]).to.eql(response);
+		const expectFilteredResponse =			(...filter) => (...response) => expect(fm.filterCalls(...filter)[0]).to.eql(response);
 
 		it('returns [url, options] pairs', async () => {
 			fm.mock('http://a.com/', 200, { name: 'fetch-mock' });
@@ -180,7 +169,7 @@ describe('inspecting', () => {
 					fm
 						.filterCalls(undefined, 'POST')
 						.filter(([, options]) => options.method.toLowerCase() === 'post')
-						.length
+						.length,
 				).to.equal(2);
 			});
 
@@ -281,7 +270,7 @@ describe('inspecting', () => {
 				expect(
 					fm
 						.filterCalls(undefined, { headers: { a: 'z' } })
-						.filter(([, options]) => options.headers['a']).length
+						.filter(([, options]) => options.headers.a).length,
 				).to.equal(2);
 			});
 
@@ -316,7 +305,7 @@ describe('inspecting', () => {
 				expectFilteredLength(false, { headers: { a: 'z' } })(1);
 				expectFilteredResponse(false, { headers: { a: 'z' } })(
 					'http://b.com/',
-					{ headers: { a: 'z' } }
+					{ headers: { a: 'z' } },
 				);
 			});
 
@@ -330,7 +319,7 @@ describe('inspecting', () => {
 				expectFilteredLength('here', { headers: { a: 'z' } })(1);
 				expectFilteredResponse('here', { headers: { a: 'z' } })(
 					'http://a.com/',
-					{ headers: { a: 'z' } }
+					{ headers: { a: 'z' } },
 				);
 			});
 
@@ -358,7 +347,7 @@ describe('inspecting', () => {
 				expectFilteredLength(rx, { headers: { a: 'z' } })(1);
 				expectFilteredResponse(rx, { headers: { a: 'z' } })(
 					'http://b.com/path',
-					{ headers: { a: 'z' } }
+					{ headers: { a: 'z' } },
 				);
 			});
 
@@ -419,7 +408,7 @@ describe('inspecting', () => {
 	});
 
 	describe('call order', () => {
-		it('retrieves calls in correct order', async () => {
+		it('retrieves calls in correct order', () => {
 			fm.mock('http://a.com/', 200).mock('http://b.com/', 200).catch();
 
 			fm.fetchHandler('http://a.com/');
@@ -500,9 +489,9 @@ describe('inspecting', () => {
 			fm.fetchHandler(req);
 			const [, callOptions] = fm.lastCall();
 
-			expect(callOptions.signal).to.be.undefined;
+			expect(callOptions.signal).toBeUndefined();
 			const options = fm.lastOptions();
-			expect(options.signal).to.be.undefined;
+			expect(options.signal).toBeUndefined();
 		});
 	});
 

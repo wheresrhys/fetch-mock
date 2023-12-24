@@ -6,22 +6,6 @@ SHELL := env "PATH=$(PATH)" /bin/bash
 NPM_PUBLISH_TAG := $(shell [[ "$(CIRCLE_TAG)" =~ -[a-z-]+ ]] && echo "pre-release" || echo "latest")
 TEST_BROWSER := $(shell [ -z $(TEST_BROWSER) ] && echo "Chrome" || echo ${TEST_BROWSER})
 
-# intended for local dev
-test:
-	mocha --file test/server-setup.js test/{server-specs,specs}/*.test.js test/specs/**/*.test.js
-
-test-browser:
-	@if [ -z $(CI) ]; \
-		then karma start --browsers=${TEST_BROWSER}; \
-		else karma start --single-run --browsers=${TEST_BROWSER}; \
-	fi
-
-test-es5:
-	node test/es5.js
-
-test-esm:
-	FETCH_MOCK_SRC=../esm/server.js ./node_modules/.bin/mocha test/server.mjs
-
 typecheck:
 	dtslint --expectOnly types
 
@@ -62,8 +46,8 @@ publish:
 install:
 	npm i --legacy-peer-deps
 
-vitest:
+test:
 	TESTING_ENV=server npx vitest ./test/specs
 
-vitest-browser:
+test-browser:
 	TESTING_ENV=browser npx vitest ./test/specs

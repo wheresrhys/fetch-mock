@@ -23,18 +23,6 @@ coverage:
 	nyc --reporter=lcovonly --reporter=text make test
 	cat ./coverage/lcov.info | coveralls
 
-
-transpile:
-	babel src --out-dir es5
-
-build: transpile
-	if [ ! -d "cjs" ]; then mkdir cjs; fi
-	cp -r src/* cjs
-	rollup -c rollup.config.js
-	echo '{"type": "module"}' > esm/package.json
-	cp types/index.d.ts esm/client.d.ts
-	cp types/index.d.ts esm/server.d.ts
-
 docs:
 	cd docs; jekyll serve build --watch
 
@@ -42,9 +30,6 @@ publish:
 	echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ${HOME}/.npmrc
 	npm version --no-git-tag-version $(CIRCLE_TAG)
 	npm publish --access public --tag $(NPM_PUBLISH_TAG)
-
-install:
-	npm i --legacy-peer-deps
 
 test:
 	TESTING_ENV=server npx vitest ./test/specs

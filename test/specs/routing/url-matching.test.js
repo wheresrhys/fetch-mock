@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, beforeAll } from "vitest";
-const URL = require('whatwg-url');
+const {URL} = require('node:url');
 
 const { fetchMock } = testGlobals;
 
@@ -34,13 +34,13 @@ describe('url matching', () => {
 
 	it('match exact string against URL object', async () => {
 		fm.mock('http://a.com/path', 200).catch();
-		const url = new URL.URL('http://a.com/path');
+		const url = new URL('http://a.com/path');
 		await fm.fetchHandler(url);
 		expect(fm.calls(true).length).to.equal(1);
 	});
 
 	it('match using URL object as matcher', async () => {
-		const url = new URL.URL('http://a.com/path');
+		const url = new URL('http://a.com/path');
 		fm.mock(url, 200).catch();
 
 		await fm.fetchHandler('http://a.com/path');

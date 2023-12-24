@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, beforeAll } from "vitest";
-const URL = require('whatwg-url');
+const {URL} = require('node:url');
 
 const { fetchMock } = testGlobals;
 describe('query string matching', () => {
@@ -32,7 +32,7 @@ describe('query string matching', () => {
 			},
 			200
 		).catch();
-		const url = new URL.URL('http://a.com/path');
+		const url = new URL('http://a.com/path');
 		url.searchParams.append('a', 'b');
 		url.searchParams.append('c', 'd');
 		await fm.fetchHandler(url);

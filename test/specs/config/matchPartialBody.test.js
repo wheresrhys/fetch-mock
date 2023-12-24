@@ -15,7 +15,7 @@ describe('matchPartialBody', () => {
 			method: 'POST',
 			body: JSON.stringify({ a: 1, b: 2 }),
 		});
-		expect(status).to.equal(expectedStatus);
+		expect(status).toEqual(expectedStatus);
 	};
 
 	it("don't match partial bodies by default", async () => {

@@ -108,10 +108,10 @@ describe('repeat and done()', () => {
 		}).mock('http://a.com/', 200, { overwriteRoutes: false });
 
 		const res = await fm.fetchHandler('http://a.com/');
-		expect(res.status).to.equal(404);
+		expect(res.status).toEqual(404);
 
 		const res2 = await fm.fetchHandler('http://a.com/');
-		expect(res2.status).to.equal(200);
+		expect(res2.status).toEqual(200);
 	});
 
 	it('resetHistory() resets count', async () => {

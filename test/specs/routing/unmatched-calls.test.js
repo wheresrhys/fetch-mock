@@ -31,7 +31,7 @@ describe('unmatched calls', () => {
 		const res = await fm.fetchHandler('http://1');
 		expect(fm.calls(false).length).toEqual(1);
 		expect(res.status).toEqual(200);
-		expect(await res.json()).to.eql({ iam: 'json' });
+		expect(await res.json()).toEqual({ iam: 'json' });
 	});
 
 	it('can catch unmatched calls with function', async () => {

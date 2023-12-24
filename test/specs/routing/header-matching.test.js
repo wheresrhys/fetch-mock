@@ -21,7 +21,7 @@ describe('header matching', () => {
 		).catch();
 
 		await fm.fetchHandler('http://a.com/');
-		expect(fm.calls(true).length).to.equal(0);
+		expect(fm.calls(true).length).toEqual(0);
 	});
 
 	it("not match when headers don't match", async () => {
@@ -35,7 +35,7 @@ describe('header matching', () => {
 		await fm.fetchHandler('http://a.com/', {
 			headers: { a: 'c' },
 		});
-		expect(fm.calls(true).length).to.equal(0);
+		expect(fm.calls(true).length).toEqual(0);
 	});
 
 	it('match simple headers', async () => {
@@ -49,7 +49,7 @@ describe('header matching', () => {
 		await fm.fetchHandler('http://a.com/', {
 			headers: { a: 'b' },
 		});
-		expect(fm.calls(true).length).to.equal(1);
+		expect(fm.calls(true).length).toEqual(1);
 	});
 
 	it('be case insensitive', async () => {
@@ -63,7 +63,7 @@ describe('header matching', () => {
 		await fm.fetchHandler('http://a.com/', {
 			headers: { A: 'b' },
 		});
-		expect(fm.calls(true).length).to.equal(1);
+		expect(fm.calls(true).length).toEqual(1);
 	});
 
 	it('match multivalue headers', async () => {
@@ -77,7 +77,7 @@ describe('header matching', () => {
 		await fm.fetchHandler('http://a.com/', {
 			headers: { a: ['b', 'c'] },
 		});
-		expect(fm.calls(true).length).to.equal(1);
+		expect(fm.calls(true).length).toEqual(1);
 	});
 
 	it('not match partially satisfied multivalue headers', async () => {
@@ -91,7 +91,7 @@ describe('header matching', () => {
 		await fm.fetchHandler('http://a.com/', {
 			headers: { a: ['b', 'c'] },
 		});
-		expect(fm.calls(true).length).to.equal(0);
+		expect(fm.calls(true).length).toEqual(0);
 	});
 
 	it('match multiple headers', async () => {
@@ -105,7 +105,7 @@ describe('header matching', () => {
 		await fm.fetchHandler('http://a.com/', {
 			headers: { a: 'b', c: 'd' },
 		});
-		expect(fm.calls(true).length).to.equal(1);
+		expect(fm.calls(true).length).toEqual(1);
 	});
 
 	it('not match unsatisfied multiple headers', async () => {
@@ -119,7 +119,7 @@ describe('header matching', () => {
 		await fm.fetchHandler('http://a.com/', {
 			headers: { a: 'b' },
 		});
-		expect(fm.calls(true).length).to.equal(0);
+		expect(fm.calls(true).length).toEqual(0);
 	});
 
 	it('match Headers instance', async () => {
@@ -133,7 +133,7 @@ describe('header matching', () => {
 		await fm.fetchHandler('http://a.com/', {
 			headers: new fm.config.Headers({ a: 'b' }),
 		});
-		expect(fm.calls(true).length).to.equal(1);
+		expect(fm.calls(true).length).toEqual(1);
 	});
 
 	it('match custom Headers instance', async () => {
@@ -164,7 +164,7 @@ describe('header matching', () => {
 		await customHeaderInstance.fetchHandler('http://a.com/', {
 			headers: new customHeaderInstance.config.Headers({ a: 'b' }),
 		});
-		expect(customHeaderInstance.calls(true).length).to.equal(1);
+		expect(customHeaderInstance.calls(true).length).toEqual(1);
 	});
 
 	it('can be used alongside function matchers', async () => {
@@ -173,10 +173,10 @@ describe('header matching', () => {
 		}).catch();
 
 		await fm.fetchHandler('http://domain.com/person');
-		expect(fm.calls(true).length).to.equal(0);
+		expect(fm.calls(true).length).toEqual(0);
 		await fm.fetchHandler('http://domain.com/person', {
 			headers: { a: 'b' },
 		});
-		expect(fm.calls(true).length).to.equal(1);
+		expect(fm.calls(true).length).toEqual(1);
 	});
 });

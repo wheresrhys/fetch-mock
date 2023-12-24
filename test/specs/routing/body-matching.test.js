@@ -18,7 +18,7 @@ describe('body matching', () => {
 		await fm.fetchHandler('http://a.com/', {
 			method: 'POST',
 		});
-		expect(fm.calls(true).length).to.equal(0);
+		expect(fm.calls(true).length).toEqual(0);
 	});
 
 	it('should match if no content type is specified', async () => {
@@ -28,7 +28,7 @@ describe('body matching', () => {
 			method: 'POST',
 			body: JSON.stringify({ foo: 'bar' }),
 		});
-		expect(fm.calls(true).length).to.equal(1);
+		expect(fm.calls(true).length).toEqual(1);
 	});
 
 	it('should match when using Request', async () => {
@@ -40,7 +40,7 @@ describe('body matching', () => {
 				body: JSON.stringify({ foo: 'bar' }),
 			}),
 		);
-		expect(fm.calls(true).length).to.equal(1);
+		expect(fm.calls(true).length).toEqual(1);
 	});
 
 	it('should match if body sent matches expected body', async () => {
@@ -51,7 +51,7 @@ describe('body matching', () => {
 			body: JSON.stringify({ foo: 'bar' }),
 			headers: { 'Content-Type': 'application/json' },
 		});
-		expect(fm.calls(true).length).to.equal(1);
+		expect(fm.calls(true).length).toEqual(1);
 	});
 
 	it('should not match if body sent doesn’t match expected body', async () => {
@@ -62,7 +62,7 @@ describe('body matching', () => {
 			body: JSON.stringify({ foo: 'woah!!!' }),
 			headers: { 'Content-Type': 'application/json' },
 		});
-		expect(fm.calls(true).length).to.equal(0);
+		expect(fm.calls(true).length).toEqual(0);
 	});
 
 	it('should not match if body sent isn’t JSON', async () => {
@@ -73,7 +73,7 @@ describe('body matching', () => {
 			body: new ArrayBuffer(8),
 			headers: { 'Content-Type': 'application/json' },
 		});
-		expect(fm.calls(true).length).to.equal(0);
+		expect(fm.calls(true).length).toEqual(0);
 	});
 
 	it('should ignore the order of the keys in the body', async () => {
@@ -95,7 +95,7 @@ describe('body matching', () => {
 			}),
 			headers: { 'Content-Type': 'application/json' },
 		});
-		expect(fm.calls(true).length).to.equal(1);
+		expect(fm.calls(true).length).toEqual(1);
 	});
 
 	it('should ignore the body option matcher if request was GET', async () => {
@@ -110,7 +110,7 @@ describe('body matching', () => {
 		).catch();
 
 		await fm.fetchHandler('http://a.com/');
-		expect(fm.calls(true).length).to.equal(1);
+		expect(fm.calls(true).length).toEqual(1);
 	});
 
 	describe('partial body matching', () => {
@@ -122,7 +122,7 @@ describe('body matching', () => {
 				method: 'POST',
 				body: JSON.stringify({ ham: 'sandwich', egg: 'mayonaise' }),
 			});
-			expect(res.status).to.equal(200);
+			expect(res.status).toEqual(200);
 		});
 
 		it('match when missing nested properties', async () => {
@@ -136,7 +136,7 @@ describe('body matching', () => {
 					meal: { ham: 'sandwich', egg: 'mayonaise' },
 				}),
 			});
-			expect(res.status).to.equal(200);
+			expect(res.status).toEqual(200);
 		});
 
 		it('not match when properties at wrong indentation', async () => {
@@ -147,7 +147,7 @@ describe('body matching', () => {
 				method: 'POST',
 				body: JSON.stringify({ meal: { ham: 'sandwich' } }),
 			});
-			expect(res.status).to.equal(404);
+			expect(res.status).toEqual(404);
 		});
 
 		it('match when starting subset of array', async () => {
@@ -158,7 +158,7 @@ describe('body matching', () => {
 				method: 'POST',
 				body: JSON.stringify({ ham: [1, 2, 3] }),
 			});
-			expect(res.status).to.equal(200);
+			expect(res.status).toEqual(200);
 		});
 
 		it('not match when not starting subset of array', async () => {
@@ -169,7 +169,7 @@ describe('body matching', () => {
 				method: 'POST',
 				body: JSON.stringify({ ham: [1, 2, 3] }),
 			});
-			expect(res.status).to.equal(404);
+			expect(res.status).toEqual(404);
 		});
 	});
 });

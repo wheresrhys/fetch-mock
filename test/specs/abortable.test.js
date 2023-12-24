@@ -23,10 +23,10 @@ describe('abortable fetch', () => {
 			throw new Error('unexpected');
 		} catch (error) {
 			if (typeof DOMException !== 'undefined') {
-				expect(error instanceof DOMException).to.equal(true);
+				expect(error instanceof DOMException).toEqual(true);
 			}
-			expect(error.name).to.equal('AbortError');
-			expect(error.message).to.equal('The operation was aborted.');
+			expect(error.name).toEqual('AbortError');
+			expect(error.message).toEqual('The operation was aborted.');
 		}
 	};
 

@@ -19,7 +19,7 @@ describe('includeContentLength', () => {
 		fm.config.includeContentLength = false;
 		fm.mock('*', 'content');
 		const res = await fm.fetchHandler('http://it.at.there');
-		expect(res.headers.get('content-length')).toBeUndefined();
+		expect(res.headers.get('content-length')).toBeNull();
 	});
 
 	it('local setting can override to true', async () => {
@@ -33,6 +33,6 @@ describe('includeContentLength', () => {
 		fm.config.includeContentLength = true;
 		fm.mock('*', 'content', { includeContentLength: false });
 		const res = await fm.fetchHandler('http://it.at.there');
-		expect(res.headers.get('content-length')).toBeUndefined();
+		expect(res.headers.get('content-length')).toBeNull();
 	});
 });

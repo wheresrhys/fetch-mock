@@ -23,24 +23,24 @@ describe('function matching', () => {
 		await fm.fetchHandler('http://a.com/12345', {
 			headers: { authorized: true },
 		});
-		expect(fm.calls(true).length).to.equal(0);
+		expect(fm.calls(true).length).toEqual(0);
 		await fm.fetchHandler('http://a.com/logged-in');
-		expect(fm.calls(true).length).to.equal(0);
+		expect(fm.calls(true).length).toEqual(0);
 		await fm.fetchHandler('http://a.com/logged-in', {
 			headers: { authorized: true },
 		});
-		expect(fm.calls(true).length).to.equal(1);
+		expect(fm.calls(true).length).toEqual(1);
 	});
 
 	it('match using custom function using request body', async () => {
 		fm.mock((url, opts) => opts.body === 'a string', 200).catch();
 		await fm.fetchHandler('http://a.com/logged-in');
-		expect(fm.calls(true).length).to.equal(0);
+		expect(fm.calls(true).length).toEqual(0);
 		await fm.fetchHandler('http://a.com/logged-in', {
 			method: 'post',
 			body: 'a string',
 		});
-		expect(fm.calls(true).length).to.equal(1);
+		expect(fm.calls(true).length).toEqual(1);
 	});
 
 	it('match using custom function with Request', async () => {
@@ -51,7 +51,7 @@ describe('function matching', () => {
 				headers: { authorized: 'true' },
 			}),
 		);
-		expect(fm.calls(true).length).to.equal(1);
+		expect(fm.calls(true).length).toEqual(1);
 	});
 
 	it('match using custom function with Request with unusual options', async () => {
@@ -68,13 +68,13 @@ describe('function matching', () => {
 		).catch();
 
 		await fm.fetchHandler(new fm.config.Request('http://a.com/logged-in'));
-		expect(fm.calls(true).length).to.equal(0);
+		expect(fm.calls(true).length).toEqual(0);
 		await fm.fetchHandler(
 			new fm.config.Request('http://a.com/logged-in', {
 				[propertyToCheck]: valueToSet,
 			}),
 		);
-		expect(fm.calls(true).length).to.equal(1);
+		expect(fm.calls(true).length).toEqual(1);
 	});
 
 	it('match using custom function alongside other matchers', async () => {
@@ -83,14 +83,14 @@ describe('function matching', () => {
 		}).catch();
 
 		await fm.fetchHandler('http://a.com/profile');
-		expect(fm.calls(true).length).to.equal(0);
+		expect(fm.calls(true).length).toEqual(0);
 		await fm.fetchHandler('http://a.com/not', {
 			headers: { authorized: true },
 		});
-		expect(fm.calls(true).length).to.equal(0);
+		expect(fm.calls(true).length).toEqual(0);
 		await fm.fetchHandler('http://a.com/profile', {
 			headers: { authorized: true },
 		});
-		expect(fm.calls(true).length).to.equal(1);
+		expect(fm.calls(true).length).toEqual(1);
 	});
 });

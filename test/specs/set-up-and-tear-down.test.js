@@ -130,7 +130,7 @@ describe('Set up and tear down', () => {
 			fm.restore();
 
 			expect(fm.routes.length).toEqual(0);
-			expect(fm.fallbackResponse).not.toBeDefined();
+			expect(fm.fallbackResponse).toBeUndefined();
 		});
 
 		it('restore is an alias for reset', () => {
@@ -154,7 +154,7 @@ describe('Set up and tear down', () => {
 			fm.resetBehavior();
 
 			expect(fm.routes.length).toEqual(0);
-			expect(fm.fallbackResponse).not.toBeDefined();
+			expect(fm.fallbackResponse).toBeUndefined();
 		});
 	});
 

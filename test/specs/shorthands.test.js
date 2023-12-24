@@ -17,13 +17,13 @@ describe('shorthands', () => {
 		const args = fetchMock[method].length === 3 ? ['*', 200] : [200];
 
 		it(`${method}() is chainable`, () => {
-			expect(fm[method](...args)).to.equal(fm);
+			expect(fm[method](...args)).toEqual(fm);
 		});
 
 		it(`${method}() has "this"`, () => {
 			vi.spyOn(fm, method).mockReturnThis();
 			fm[method](...args);
-			expect(fm[method](...args)).to.equal(fm);
+			expect(fm[method](...args)).toEqual(fm);
 			fm[method].mockRestore();
 		});
 	};

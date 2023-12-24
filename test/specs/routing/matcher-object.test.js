@@ -1,4 +1,6 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import {
+	beforeEach, describe, expect, it,
+} from 'vitest';
 
 const { fetchMock } = testGlobals;
 describe('matcher object', () => {
@@ -23,11 +25,9 @@ describe('matcher object', () => {
 		fm.mock(
 			{
 				url: 'end:path',
-				matcher: (url, opts) => {
-					return opts && opts.headers && opts.headers.authorized === true;
-				},
+				matcher: (url, opts) => opts && opts.headers && opts.headers.authorized === true,
 			},
-			200
+			200,
 		).catch();
 
 		await fm.fetchHandler('http://a.com/path');
@@ -49,15 +49,13 @@ describe('matcher object', () => {
 		expect(fm.calls(true).length).to.equal(1);
 	});
 
-	it.skip('deprecated message on using functionMatcher (prefer matcher)', async () => {
+	it.skip('deprecated message on using functionMatcher (prefer matcher)',  () => {
 		fm.mock(
 			{
 				url: 'end:profile',
-				functionMatcher: (url, opts) => {
-					return opts && opts.headers && opts.headers.authorized === true;
-				},
+				functionMatcher: (url, opts) => opts && opts.headers && opts.headers.authorized === true,
 			},
-			200
+			200,
 		).catch();
 	});
 
@@ -119,11 +117,9 @@ describe('matcher object', () => {
 	});
 
 	it('support setting overwrite routes on matcher parameter', async () => {
-		expect(() =>
-			fm
-				.mock('http://a.com', 200)
-				.mock({ url: 'http://a.com', overwriteRoutes: true }, 300)
-		).not.to.throw();
+		expect(() => fm
+			.mock('http://a.com', 200)
+			.mock({ url: 'http://a.com', overwriteRoutes: true }, 300)).not.to.throw();
 
 		const res = await fm.fetchHandler('http://a.com');
 		expect(res.status).to.equal(300);

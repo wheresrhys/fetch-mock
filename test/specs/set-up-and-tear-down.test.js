@@ -72,12 +72,10 @@ describe('Set up and tear down', () => {
 			});
 
 			it('accepts matcher, response, config triples', () => {
-				expect(() =>
-					fm.mock('*', 'ok', {
-						method: 'PUT',
-						some: 'prop',
-					})
-				).not.toThrow();
+				expect(() => fm.mock('*', 'ok', {
+					method: 'PUT',
+					some: 'prop',
+				})).not.toThrow();
 				expect(fm.compileRoute).toHaveBeenCalledWith([
 					'*',
 					'ok',
@@ -104,9 +102,7 @@ describe('Set up and tear down', () => {
 			});
 
 			it('should accept object responses when also passing options', () => {
-				expect(() =>
-					fm.mock('*', { foo: 'bar' }, { method: 'GET' })
-				).not.toThrow();
+				expect(() => fm.mock('*', { foo: 'bar' }, { method: 'GET' })).not.toThrow();
 			});
 		});
 	});
@@ -173,11 +169,11 @@ describe('Set up and tear down', () => {
 			fm.mock('*', 200).catch(200);
 			await fm.fetchHandler('a');
 			await fm.fetchHandler('b');
-			expect(fm.called()).to.be.true;
+			expect(fm.called()).toBe(true);
 
 			fm.resetHistory();
-			expect(fm.called()).to.be.false;
-			expect(fm.called('*')).to.be.false;
+			expect(fm.called()).toBe(false);
+			expect(fm.called('*')).toBe(false);
 			expect(fm.calls('*').length).toEqual(0);
 			expect(fm.calls(true).length).toEqual(0);
 			expect(fm.calls(false).length).toEqual(0);

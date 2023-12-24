@@ -1,11 +1,12 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import {
+	beforeEach, describe, expect, it,
+} from 'vitest';
 
 const RESPONSE_DELAY = 10;
 const ABORT_DELAY = 5;
 
 const { fetchMock, AbortController } = testGlobals;
-const getDelayedOk = () =>
-	new Promise((res) => setTimeout(() => res(200), RESPONSE_DELAY));
+const getDelayedOk = () => new Promise((res) => setTimeout(() => res(200), RESPONSE_DELAY));
 
 const getDelayedAbortController = () => {
 	const controller = new AbortController();
@@ -52,9 +53,9 @@ describe('abortable fetch', () => {
 			return expectAbortError(
 				new fm.config.Request('http://a.com', {
 					signal: getDelayedAbortController().signal,
-				})
+				}),
 			);
-		}
+		},
 	);
 
 	it('error when signal already aborted', () => {
@@ -71,7 +72,7 @@ describe('abortable fetch', () => {
 		await expectAbortError('http://a.com', {
 			signal: getDelayedAbortController().signal,
 		});
-		expect(fm.done()).to.be.true;
+		expect(fm.done()).toBe(true);
 	});
 
 	it('will flush even when aborted', async () => {
@@ -81,6 +82,6 @@ describe('abortable fetch', () => {
 			signal: getDelayedAbortController().signal,
 		});
 		await fm.flush();
-		expect(fm.done()).to.be.true;
+		expect(fm.done()).toBe(true);
 	});
 });

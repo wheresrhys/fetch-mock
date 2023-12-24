@@ -1,4 +1,6 @@
-import { afterEach, describe, expect, it, beforeAll, vi } from 'vitest';
+import {
+	afterEach, describe, expect, it, beforeAll, vi,
+} from 'vitest';
 
 const { fetchMock } = testGlobals;
 describe('repeat and done()', () => {
@@ -10,7 +12,7 @@ describe('repeat and done()', () => {
 
 	afterEach(() => fm.restore());
 
-	it('can expect a route to be called', async () => {
+	it('can expect a route to be called',  () => {
 		fm.mock('http://a.com/', 200);
 
 		expect(fm.done()).toBe(false);
@@ -20,7 +22,7 @@ describe('repeat and done()', () => {
 		expect(fm.done('http://a.com/')).toBe(true);
 	});
 
-	it('can expect a route to be called n times', async () => {
+	it('can expect a route to be called n times',  () => {
 		fm.mock('http://a.com/', 200, { repeat: 2 });
 
 		fm.fetchHandler('http://a.com/');
@@ -31,7 +33,7 @@ describe('repeat and done()', () => {
 		expect(fm.done('http://a.com/')).toBe(true);
 	});
 
-	it('regression: can expect an un-normalized url to be called n times', async () => {
+	it('regression: can expect an un-normalized url to be called n times',  () => {
 		fm.mock('http://a.com/', 200, { repeat: 2 });
 		fm.fetchHandler('http://a.com/');
 		expect(fm.done()).toBe(false);
@@ -39,7 +41,7 @@ describe('repeat and done()', () => {
 		expect(fm.done()).toBe(true);
 	});
 
-	it('can expect multiple routes to have been called', async () => {
+	it('can expect multiple routes to have been called',  () => {
 		fm.mock('http://a.com/', 200, {
 			repeat: 2,
 		}).mock('http://b.com/', 200, { repeat: 2 });
@@ -96,7 +98,7 @@ describe('repeat and done()', () => {
 		await fm.fetchHandler('http://a.com/');
 		try {
 			await fm.fetchHandler('http://a.com/');
-			expect(true).toBe(false);
+			expect.unreachable("Previous line should throw");
 		} catch (err) {}
 	});
 
@@ -134,14 +136,14 @@ describe('repeat and done()', () => {
 		fm.done();
 		expect(console.warn).toHaveBeenCalledWith('Warning: http://a.com/ not called') //eslint-disable-line
 		expect(console.warn).toHaveBeenCalledWith(
-			'Warning: http://b.com/ only called 1 times, but 2 expected'
+			'Warning: http://b.com/ only called 1 times, but 2 expected',
 			); //eslint-disable-line
 
 		console.warn.mockClear(); //eslint-disable-line
 		fm.done('http://a.com/');
 		expect(console.warn).toHaveBeenCalledWith('Warning: http://a.com/ not called'); //eslint-disable-line
 		expect(console.warn).not.toHaveBeenCalledWith(
-			'Warning: http://b.com/ only called 1 times, but 2 expected'
+			'Warning: http://b.com/ only called 1 times, but 2 expected',
 			)//eslint-disable-line
 			console.warn.mockRestore(); //eslint-disable-line
 	});
@@ -206,9 +208,7 @@ describe('repeat and done()', () => {
 
 			const sb = fm.sandbox();
 
-			expect(() =>
-				sb.postOnce(matcher1, 200).postOnce(matcher2, 200)
-			).not.toThrow();
+			expect(() => sb.postOnce(matcher1, 200).postOnce(matcher2, 200)).not.toThrow();
 
 			await sb('https://example.com/', { method: 'POST' });
 			expect(sb.done()).toBe(false);

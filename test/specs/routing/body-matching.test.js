@@ -1,4 +1,6 @@
-import { afterEach, describe, expect, it, beforeAll } from 'vitest';
+import {
+	afterEach, describe, expect, it, beforeAll,
+} from 'vitest';
 
 const { fetchMock } = testGlobals;
 describe('body matching', () => {
@@ -36,7 +38,7 @@ describe('body matching', () => {
 			new fm.config.Request('http://a.com/', {
 				method: 'POST',
 				body: JSON.stringify({ foo: 'bar' }),
-			})
+			}),
 		);
 		expect(fm.calls(true).length).to.equal(1);
 	});
@@ -82,7 +84,7 @@ describe('body matching', () => {
 					baz: 'qux',
 				},
 			},
-			200
+			200,
 		).catch();
 
 		await fm.fetchHandler('http://a.com/', {
@@ -104,7 +106,7 @@ describe('body matching', () => {
 					baz: 'qux',
 				},
 			},
-			200
+			200,
 		).catch();
 
 		await fm.fetchHandler('http://a.com/');
@@ -114,7 +116,7 @@ describe('body matching', () => {
 	describe('partial body matching', () => {
 		it('match when missing properties', async () => {
 			fm.mock({ body: { ham: 'sandwich' }, matchPartialBody: true }, 200).catch(
-				404
+				404,
 			);
 			const res = await fm.fetchHandler('http://a.com', {
 				method: 'POST',
@@ -126,7 +128,7 @@ describe('body matching', () => {
 		it('match when missing nested properties', async () => {
 			fm.mock(
 				{ body: { meal: { ham: 'sandwich' } }, matchPartialBody: true },
-				200
+				200,
 			).catch(404);
 			const res = await fm.fetchHandler('http://a.com', {
 				method: 'POST',
@@ -139,7 +141,7 @@ describe('body matching', () => {
 
 		it('not match when properties at wrong indentation', async () => {
 			fm.mock({ body: { ham: 'sandwich' }, matchPartialBody: true }, 200).catch(
-				404
+				404,
 			);
 			const res = await fm.fetchHandler('http://a.com', {
 				method: 'POST',
@@ -150,7 +152,7 @@ describe('body matching', () => {
 
 		it('match when starting subset of array', async () => {
 			fm.mock({ body: { ham: [1, 2] }, matchPartialBody: true }, 200).catch(
-				404
+				404,
 			);
 			const res = await fm.fetchHandler('http://a.com', {
 				method: 'POST',
@@ -161,7 +163,7 @@ describe('body matching', () => {
 
 		it('not match when not starting subset of array', async () => {
 			fm.mock({ body: { ham: [1, 3] }, matchPartialBody: true }, 200).catch(
-				404
+				404,
 			);
 			const res = await fm.fetchHandler('http://a.com', {
 				method: 'POST',

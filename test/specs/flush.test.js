@@ -1,4 +1,7 @@
-import { afterEach, describe, expect, it, beforeAll } from 'vitest';
+import {
+	afterEach, describe, expect, it, beforeAll,
+} from 'vitest';
+
 const { fetchMock } = testGlobals;
 
 describe('flushing pending calls', () => {
@@ -23,7 +26,7 @@ describe('flushing pending calls', () => {
 	it('should resolve after fetches', async () => {
 		fm.mock('http://example/', 'working!');
 		let data;
-		fetch('http://example').then(() => (data = 'done'));
+		fetch('http://example').then(() => {data = 'done'});
 		await fm.flush();
 		expect(data).to.equal('done');
 	});
@@ -34,7 +37,7 @@ describe('flushing pending calls', () => {
 			let data;
 			fetch('http://example/')
 				.then((res) => res.json())
-				.then(() => (data = 'done'));
+				.then(() => {data = 'done'});
 
 			await fm.flush(true);
 			expect(data).to.equal('done');
@@ -45,7 +48,7 @@ describe('flushing pending calls', () => {
 			let data;
 			fetch('http://example/')
 				.then((res) => res.json())
-				.catch(() => (data = 'done'));
+				.catch(() => {data = 'done'});
 
 			await fm.flush(true);
 			expect(data).to.equal('done');
@@ -56,7 +59,7 @@ describe('flushing pending calls', () => {
 			let data;
 			fetch('http://example/')
 				.then((res) => res.text())
-				.then(() => (data = 'done'));
+				.then(() => {data = 'done'});
 
 			await fm.flush(true);
 			expect(data).to.equal('done');
@@ -66,7 +69,7 @@ describe('flushing pending calls', () => {
 	it('flush waits for unresolved promises', async () => {
 		fm.mock('http://one.com/', 200).mock(
 			'http://two.com/',
-			() => new Promise((res) => setTimeout(() => res(200), 50))
+			() => new Promise((res) => setTimeout(() => res(200), 50)),
 		);
 
 		const orderedResults = [];

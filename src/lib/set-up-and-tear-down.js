@@ -1,4 +1,5 @@
 import { debug, setDebugPhase } from './debug';
+
 const FetchMock = {};
 
 FetchMock.mock = function (...args) {
@@ -14,10 +15,9 @@ FetchMock.addRoute = function (uncompiledRoute) {
 	debug('Adding route', uncompiledRoute);
 	const route = this.compileRoute(uncompiledRoute);
 	const clashes = this.routes.filter(({ identifier, method }) => {
-		const isMatch =
-			typeof identifier === 'function'
-				? identifier === route.identifier
-				: String(identifier) === String(route.identifier);
+		const isMatch =			typeof identifier === 'function'
+			  ? identifier === route.identifier
+			  : String(identifier) === String(route.identifier);
 		return isMatch && (!method || !route.method || method === route.method);
 	});
 
@@ -37,7 +37,7 @@ FetchMock.addRoute = function (uncompiledRoute) {
 
 	if (clashes.length) {
 		throw new Error(
-			'fetch-mock: Adding route with same name or matcher as existing route. See `overwriteRoutes` option.'
+			'fetch-mock: Adding route with same name or matcher as existing route. See `overwriteRoutes` option.',
 		);
 	}
 
@@ -58,7 +58,7 @@ FetchMock._mock = function () {
 FetchMock.catch = function (response) {
 	if (this.fallbackResponse) {
 		console.warn(
-			'calling fetchMock.catch() twice - are you sure you want to overwrite the previous fallback response'
+			'calling fetchMock.catch() twice - are you sure you want to overwrite the previous fallback response',
 		); // eslint-disable-line
 	}
 	this.fallbackResponse = response || 'ok';
@@ -80,7 +80,7 @@ const defineShorthand = (methodName, underlyingMethod, shorthandOptions) => {
 		return this[underlyingMethod](
 			matcher,
 			response,
-			Object.assign(options || {}, shorthandOptions)
+			Object.assign(options || {}, shorthandOptions),
 		);
 	};
 };
@@ -103,10 +103,7 @@ defineGreedyShorthand('anyOnce', 'once');
 	defineGreedyShorthand(`${method}AnyOnce`, `${method}Once`);
 });
 
-const getRouteRemover =
-	({ sticky: removeStickyRoutes }) =>
-	(routes) =>
-		removeStickyRoutes ? [] : routes.filter(({ sticky }) => sticky);
+const getRouteRemover =	({ sticky: removeStickyRoutes }) => (routes) => removeStickyRoutes ? [] : routes.filter(({ sticky }) => sticky);
 
 FetchMock.resetBehavior = function (options = {}) {
 	const removeRoutes = getRouteRemover(options);

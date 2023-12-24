@@ -1,6 +1,9 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+	afterEach, beforeEach, describe, expect, it, vi,
+} from 'vitest';
 
 import BluebirdPromise from 'bluebird';
+
 const NativePromise = Promise;
 const { fetchMock } = testGlobals;
 describe('custom implementations', () => {
@@ -27,11 +30,9 @@ describe('custom implementations', () => {
 			fm.config.Promise = BluebirdPromise;
 			const stub = vi
 				.fn()
-				.mockImplementation((fn) =>
-					fn(
-						BluebirdPromise.resolve(new fm.config.Response('', { status: 200 }))
-					)
-				);
+				.mockImplementation((fn) => fn(
+					BluebirdPromise.resolve(new fm.config.Response('', { status: 200 })),
+				));
 			fm.mock('*', {
 				then: stub,
 			});
@@ -56,9 +57,8 @@ describe('custom implementations', () => {
 				spy.callCount += 1;
 				if (config) {
 					return new fetchMock.config.Headers(config);
-				} else {
-					return new fetchMock.config.Headers();
 				}
+				return new fetchMock.config.Headers();
 			};
 			spy.prototype = fetchMock.config.Headers;
 			spy.callCount = 0;
@@ -114,14 +114,12 @@ describe('custom implementations', () => {
 			// matched the request against overridden prototype.
 			await fetch(new ReplacementRequest('http://a.com'));
 
-			expect(() =>
-				fetch(new fetchMock.config.Request('http://a.com'))
-			).to.throw('Unrecognised Request object');
+			expect(() => fetch(new fetchMock.config.Request('http://a.com'))).to.throw('Unrecognised Request object');
 		});
 
 		it('should use the configured Response', async () => {
 			const obj = { isFake: true };
-			/** Clone from Response interface is used internally to store copy in call log */
+			// Clone from Response interface is used internally to store copy in call log
 			obj.clone = () => obj;
 			const spiedReplacementResponse = vi.fn().mockReturnValue(obj);
 			fm.config.Response = spiedReplacementResponse;
@@ -129,11 +127,11 @@ describe('custom implementations', () => {
 			fm.mock('*', 'hello');
 
 			const res = await fetch('http://a.com');
-			expect(res.isFake).to.be.true;
+			expect(res.isFake).tobe(true);
 			expect(spiedReplacementResponse).toHaveBeenCalledTimes(1);
 			expect(spiedReplacementResponse).toHaveBeenCalledWith(
 				'hello',
-				expect.objectContaining({ status: 200 })
+				expect.objectContaining({ status: 200 }),
 			);
 			expect(defaultSpies.Response.callCount).to.equal(0);
 		});

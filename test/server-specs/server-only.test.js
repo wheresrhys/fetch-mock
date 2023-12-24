@@ -1,4 +1,6 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import {
+	afterEach, describe, expect, it, vi,
+} from 'vitest';
 // const chai = require('chai');
 // chai.use(require('sinon-chai'));
 // const sinon = require('sinon');
@@ -17,30 +19,28 @@ describe('nodejs only tests', () => {
 				});
 		});
 
-		it('can respond with a readable stream', () => {
-			return new Promise((res) => {
-				const { Readable, Writable } = require('stream');
-				const readable = new Readable();
-				const write = vi.fn().mockImplementation((chunk, enc, cb) => {
-					cb();
-				});
-				const writable = new Writable({
-					write,
-				});
-				readable.push('response string');
-				readable.push(null);
-
-				fetchMock.mock(/a/, readable, { sendAsJson: false });
-				fetchMock.fetchHandler('http://a.com').then((res) => {
-					res.body.pipe(writable);
-				});
-
-				writable.on('finish', () => {
-					expect(write.args[0][0].toString('utf8')).to.equal('response string');
-					res();
-				});
+		it('can respond with a readable stream', () => new Promise((res) => {
+			const { Readable, Writable } = require('stream');
+			const readable = new Readable();
+			const write = vi.fn().mockImplementation((chunk, enc, cb) => {
+				cb();
 			});
-		});
+			const writable = new Writable({
+				write,
+			});
+			readable.push('response string');
+			readable.push(null);
+
+			fetchMock.mock(/a/, readable, { sendAsJson: false });
+			fetchMock.fetchHandler('http://a.com').then((res) => {
+				res.body.pipe(writable);
+			});
+
+			writable.on('finish', () => {
+				expect(write.args[0][0].toString('utf8')).to.equal('response string');
+				res();
+			});
+		}));
 
 		// See https://github.com/wheresrhys/fetch-mock/issues/575
 		it('can respond with large bodies from the interweb', async () => {
@@ -52,7 +52,7 @@ describe('nodejs only tests', () => {
 			// bug referenced above creeps back in
 			await fm
 				.fetchHandler('http://www.wheresrhys.co.uk/assets/img/chaffinch.jpg')
-				// res.blob() woudl make more sense, but not supported by node-fetch@1
+			// res.blob() woudl make more sense, but not supported by node-fetch@1
 				.then((res) => res.text());
 		});
 	});

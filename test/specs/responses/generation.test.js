@@ -1,4 +1,7 @@
-import { afterEach, describe, expect, it, beforeAll } from 'vitest';
+import {
+	afterEach, describe, expect, it, beforeAll,
+} from 'vitest';
+
 const { fetchMock } = testGlobals;
 
 describe('response generation', () => {
@@ -22,10 +25,10 @@ describe('response generation', () => {
 			fm.mock('*', { status: 'not number' });
 			try {
 				await fm.fetchHandler('http://a.com');
-				expect(true).to.be.false;
+				expect.unreachable('Line above should throw')
 			} catch (err) {
 				expect(err.message).to.match(
-					/Invalid status not number passed on response object/
+					/Invalid status not number passed on response object/,
 				);
 			}
 		});
@@ -89,13 +92,13 @@ describe('response generation', () => {
 		it('not convert if `headers` property exists', async () => {
 			fm.mock('*', { headers: {} });
 			const res = await fm.fetchHandler('http://a.com/');
-			expect(res.headers.get('content-type')).not.to.exist;
+			expect(res.headers.get('content-type')).not.toBeDefined();
 		});
 
 		it('not convert if `status` property exists', async () => {
 			fm.mock('*', { status: 300 });
 			const res = await fm.fetchHandler('http://a.com/');
-			expect(res.headers.get('content-type')).not.to.exist;
+			expect(res.headers.get('content-type')).not.toBeDefined();
 		});
 
 		// in the browser the fetch spec disallows invoking res.headers on an
@@ -107,7 +110,7 @@ describe('response generation', () => {
 					redirectUrl: 'http://url.to.hit',
 				});
 				const res = await fm.fetchHandler('http://a.com/');
-				expect(res.headers.get('content-type')).not.to.exist;
+				expect(res.headers.get('content-type')).not.toBeDefined();
 			});
 		}
 
@@ -144,7 +147,7 @@ describe('response generation', () => {
 		it('should set the url property on responses when called with Request', async () => {
 			fm.mock('begin:http://foo.com', 200);
 			const res = await fm.fetchHandler(
-				new fm.config.Request('http://foo.com/path?query=string')
+				new fm.config.Request('http://foo.com/path?query=string'),
 			);
 			expect(res.url).to.equal('http://foo.com/path?query=string');
 		});
@@ -176,7 +179,7 @@ describe('response generation', () => {
 			new fm.config.Request('http://a.com', {
 				body: JSON.stringify({ a: 'b' }),
 				method: 'post',
-			})
+			}),
 		);
 		expect(res.status).to.equal(200);
 		expect(await res.text()).to.equal('b');

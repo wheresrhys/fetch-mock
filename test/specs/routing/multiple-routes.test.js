@@ -1,4 +1,6 @@
-import { afterEach, describe, expect, it, beforeAll } from 'vitest';
+import {
+	afterEach, describe, expect, it, beforeAll,
+} from 'vitest';
 
 const { fetchMock } = testGlobals;
 describe('multiple routes', () => {
@@ -28,72 +30,56 @@ describe('multiple routes', () => {
 	});
 
 	describe('duplicate routes', () => {
-		it('error when duplicate route added using explicit route name', async () => {
-			expect(() =>
-				fm
-					.mock('http://a.com/', 200, { name: 'jam' })
-					.mock('begin:http://a.com/', 300, { name: 'jam' })
-			).to.throw();
+		it('error when duplicate route added using explicit route name', () => {
+			expect(() => fm
+				.mock('http://a.com/', 200, { name: 'jam' })
+				.mock('begin:http://a.com/', 300, { name: 'jam' })).to.throw();
 		});
 
-		it('error when duplicate route added using implicit route name', async () => {
-			expect(() =>
-				fm.mock('http://a.com/', 200).mock('http://a.com/', 300)
-			).to.throw();
+		it('error when duplicate route added using implicit route name',  () => {
+			expect(() => fm.mock('http://a.com/', 200).mock('http://a.com/', 300)).to.throw();
 		});
 
-		it("don't error when duplicate route added with non-clashing method", async () => {
-			expect(() =>
-				fm
-					.mock('http://a.com/', 200, { method: 'GET' })
-					.mock('http://a.com/', 300, { method: 'POST' })
-			).not.to.throw();
+		it("don't error when duplicate route added with non-clashing method",  () => {
+			expect(() => fm
+				.mock('http://a.com/', 200, { method: 'GET' })
+				.mock('http://a.com/', 300, { method: 'POST' })).not.to.throw();
 		});
 
-		it('error when duplicate route added with no method', async () => {
-			expect(() =>
-				fm
-					.mock('http://a.com/', 200, { method: 'GET' })
-					.mock('http://a.com/', 300)
-			).to.throw();
+		it('error when duplicate route added with no method',  () => {
+			expect(() => fm
+				.mock('http://a.com/', 200, { method: 'GET' })
+				.mock('http://a.com/', 300)).to.throw();
 		});
 
-		it('error when duplicate route added with clashing method', async () => {
-			expect(() =>
-				fm
-					.mock('http://a.com/', 200, { method: 'GET' })
-					.mock('http://a.com/', 300, { method: 'GET' })
-			).to.throw();
+		it('error when duplicate route added with clashing method',  () => {
+			expect(() => fm
+				.mock('http://a.com/', 200, { method: 'GET' })
+				.mock('http://a.com/', 300, { method: 'GET' })).to.throw();
 		});
 
 		it('allow overwriting existing route', async () => {
-			expect(() =>
-				fm
-					.mock('http://a.com/', 200)
-					.mock('http://a.com/', 300, { overwriteRoutes: true })
-			).not.to.throw();
+			expect(() => fm
+				.mock('http://a.com/', 200)
+				.mock('http://a.com/', 300, { overwriteRoutes: true })).not.to.throw();
 
 			const res = await fm.fetchHandler('http://a.com/');
 			expect(res.status).to.equal(300);
 		});
 
 		it('overwrite correct route', async () => {
-			expect(() =>
-				fm
-					.mock('http://bar.co/', 200)
-					.mock('http://foo.co/', 400)
-					.mock('http://bar.co/', 300, { overwriteRoutes: true })
-			).not.to.throw();
+			expect(() => fm
+				.mock('http://bar.co/', 200)
+				.mock('http://foo.co/', 400)
+				.mock('http://bar.co/', 300, { overwriteRoutes: true })).not.to.throw();
 			const res = await fm.fetchHandler('http://foo.co/');
 			expect(res.status).to.equal(400);
 		});
 
 		it('allow adding additional route with same matcher', async () => {
-			expect(() =>
-				fm
-					.mock('http://a.com/', 200, { repeat: 1 })
-					.mock('http://a.com/', 300, { overwriteRoutes: false })
-			).not.to.throw();
+			expect(() => fm
+				.mock('http://a.com/', 200, { repeat: 1 })
+				.mock('http://a.com/', 300, { overwriteRoutes: false })).not.to.throw();
 
 			const res = await fm.fetchHandler('http://a.com/');
 			expect(res.status).to.equal(200);

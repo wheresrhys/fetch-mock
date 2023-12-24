@@ -1,4 +1,6 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import {
+	beforeEach, describe, expect, it,
+} from 'vitest';
 
 const { fetchMock, theGlobal } = testGlobals;
 
@@ -11,8 +13,8 @@ describe('fallbackToNetwork', () => {
 		expect(() => fm.fetchHandler('http://unmocked.com')).to.throw();
 	});
 
-	it('not error when configured globally', async () => {
-		theGlobal.fetch = async () => ({ status: 202 });
+	it('not error when configured globally', () => {
+		theGlobal.fetch = async () => ({ status: 202 }); //eslint-disable-line require-await
 		fm.config.fallbackToNetwork = true;
 		fm.mock('http://mocked.com', 201);
 		expect(() => fm.fetchHandler('http://unmocked.com')).not.to.throw();
@@ -20,7 +22,7 @@ describe('fallbackToNetwork', () => {
 	});
 
 	it('actually falls back to network when configured globally', async () => {
-		theGlobal.fetch = async () => ({ status: 202 });
+		theGlobal.fetch = async () => ({ status: 202 }); //eslint-disable-line require-await
 		fetchMock.config.fallbackToNetwork = true;
 		fetchMock.mock('http://mocked.com', 201);
 		const res = await fetchMock.fetchHandler('http://unmocked.com');
@@ -32,7 +34,7 @@ describe('fallbackToNetwork', () => {
 
 	it('actually falls back to network when configured in a sandbox properly', async () => {
 		const sbx = fm.sandbox();
-		sbx.config.fetch = async () => ({ status: 202 });
+		sbx.config.fetch = async () => ({ status: 202 }); //eslint-disable-line require-await
 		sbx.config.fallbackToNetwork = true;
 		sbx.mock('http://mocked.com', 201);
 		const res = await sbx('http://unmocked.com');
@@ -42,7 +44,7 @@ describe('fallbackToNetwork', () => {
 	it('calls fetch with original Request object', async () => {
 		const sbx = fm.sandbox();
 		let calledWith;
-		sbx.config.fetch = async (req) => {
+		sbx.config.fetch = async (req) => { //eslint-disable-line require-await
 			calledWith = req;
 			return { status: 202 };
 		};
@@ -55,7 +57,7 @@ describe('fallbackToNetwork', () => {
 
 	describe('always', () => {
 		it('ignores routes that are matched', async () => {
-			fm.realFetch = async () => ({ status: 202 });
+			fm.realFetch = async () => ({ status: 202 }); //eslint-disable-line require-await
 			fm.config.fallbackToNetwork = 'always';
 
 			fm.mock('http://mocked.com', 201);
@@ -64,7 +66,7 @@ describe('fallbackToNetwork', () => {
 		});
 
 		it('ignores routes that are not matched', async () => {
-			fm.realFetch = async () => ({ status: 202 });
+			fm.realFetch = async () => ({ status: 202 }); //eslint-disable-line require-await
 
 			fm.config.fallbackToNetwork = 'always';
 
@@ -75,7 +77,7 @@ describe('fallbackToNetwork', () => {
 	});
 
 	describe.skip('warnOnFallback', () => {
-		it('warn on fallback response by default', async () => {});
-		it("don't warn on fallback response when configured false", async () => {});
+		it('warn on fallback response by default',  () => {}); //eslint-disable-line no-empty-function
+		it("don't warn on fallback response when configured false",  () => {}); //eslint-disable-line no-empty-function
 	});
 });

@@ -1,4 +1,6 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import {
+	afterEach, describe, expect, it,
+} from 'vitest';
 // const chai = require('chai');
 // const chaiAsPromised = require('chai-as-promised');
 // chai.use(chaiAsPromised);
@@ -19,7 +21,7 @@ describe('client-side only tests', () => {
 		fetchMock.spy();
 		const req = new fetchMock.config.Request(
 			'http://localhost:9876/dummy-file.txt',
-			{ method: 'post', body: JSON.stringify({ prop: 'val' }) }
+			{ method: 'post', body: JSON.stringify({ prop: 'val' }) },
 		);
 		let response;
 		expect(() => {

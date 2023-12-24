@@ -1,4 +1,5 @@
 import { getDebug } from './debug';
+
 const responseConfigProps = [
 	'body',
 	'headers',
@@ -22,7 +23,7 @@ class ResponseBuilder {
 
 		const realResponse = new this.fetchMock.config.Response(
 			this.body,
-			this.options
+			this.options,
 		);
 		const proxyResponse = this.buildObservableResponse(realResponse);
 		return [realResponse, proxyResponse];
@@ -31,17 +32,13 @@ class ResponseBuilder {
 	sendAsObject() {
 		if (responseConfigProps.some((prop) => this.responseConfig[prop])) {
 			if (
-				Object.keys(this.responseConfig).every((key) =>
-					responseConfigProps.includes(key)
-				)
+				Object.keys(this.responseConfig).every((key) => responseConfigProps.includes(key))
 			) {
 				return false;
-			} else {
-				return true;
 			}
-		} else {
 			return true;
 		}
+		return true;
 	}
 
 	normalizeResponseConfig() {
@@ -68,10 +65,10 @@ class ResponseBuilder {
 		}
 
 		if (
-			(typeof status === 'number' &&
-				parseInt(status, 10) !== status &&
-				status >= 200) ||
-			status < 600
+			typeof status === 'number'
+				&& parseInt(status, 10) !== status
+				&& status >= 200
+			|| status < 600
 		) {
 			this.debug('Valid status provided', status);
 			return status;
@@ -86,14 +83,13 @@ e.g. {"body": {"status: "registered"}}`);
 		this.options = this.responseConfig.options || {};
 		this.options.url = this.responseConfig.redirectUrl || this.url;
 		this.options.status = this.validateStatus(this.responseConfig.status);
-		this.options.statusText =
-			this.fetchMock.statusTextMap[String(this.options.status)];
+		this.options.statusText =			this.fetchMock.statusTextMap[String(this.options.status)];
 
 		// Set up response headers. The empty object is to cope with
 		// new Headers(undefined) throwing in Chrome
 		// https://code.google.com/p/chromium/issues/detail?id=335871
 		this.options.headers = new this.fetchMock.config.Headers(
-			this.responseConfig.headers || {}
+			this.responseConfig.headers || {},
 		);
 	}
 
@@ -104,8 +100,8 @@ e.g. {"body": {"status: "registered"}}`);
 	convertToJson() {
 		// convert to json if we need to
 		if (
-			this.getOption('sendAsJson') &&
-			this.responseConfig.body != null && //eslint-disable-line
+			this.getOption('sendAsJson')
+			&& this.responseConfig.body != null && //eslint-disable-line
 			typeof this.body === 'object'
 		) {
 			this.debug('Stringifying JSON response body');
@@ -119,9 +115,9 @@ e.g. {"body": {"status: "registered"}}`);
 	setContentLength() {
 		// add a Content-Length header if we need to
 		if (
-			this.getOption('includeContentLength') &&
-			typeof this.body === 'string' &&
-			!this.options.headers.has('Content-Length')
+			this.getOption('includeContentLength')
+			&& typeof this.body === 'string'
+			&& !this.options.headers.has('Content-Length')
 		) {
 			this.debug('Setting content-length header:', this.body.length.toString());
 			this.options.headers.set('Content-Length', this.body.length.toString());
@@ -145,11 +141,10 @@ e.g. {"body": {"status: "registered"}}`);
 			stream.push(null);
 			this.body = stream;
 		}
-		this.body = this.body;
 	}
 
 	buildObservableResponse(response) {
-		const fetchMock = this.fetchMock;
+		const { fetchMock } = this;
 		response._fmResults = {};
 		// Using a proxy means we can set properties that may not be writable on
 		// the original Response. It also means we can track the resolution of
@@ -161,7 +156,7 @@ e.g. {"body": {"status: "registered"}}`);
 					if (name === 'url') {
 						this.debug(
 							'Retrieving redirect url',
-							this.responseConfig.redirectUrl
+							this.responseConfig.redirectUrl,
 						);
 						return this.responseConfig.redirectUrl;
 					}

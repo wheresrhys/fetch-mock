@@ -40,12 +40,14 @@ export function normalizeUrl(url) {
 // function to guarantee a promise is always returned
 const extractBody = async (request) => { //eslint-disable-line require-await
 	try {
-		// node-fetch
+		// fetch and node-fetch@3
+		return request.clone().text();
+
+		// node-fetch@2
 		if ('body' in request) {
 			return request.body.toString();
 		}
-		// fetch
-		return request.clone().text();
+
 	} catch (err) {}
 };
 

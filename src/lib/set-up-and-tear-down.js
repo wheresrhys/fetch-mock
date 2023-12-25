@@ -48,8 +48,8 @@ FetchMock.addRoute = function (uncompiledRoute) {
 FetchMock._mock = function () {
 	if (!this.isSandbox) {
 		// Do this here rather than in the constructor to ensure it's scoped to the test
-		this.realFetch = this.realFetch || this.global.fetch;
-		this.global.fetch = this.fetchHandler;
+		this.realFetch = this.realFetch || globalThis.fetch;
+		globalThis.fetch = this.fetchHandler;
 	}
 	setDebugPhase();
 	return this;
@@ -112,7 +112,7 @@ FetchMock.resetBehavior = function (options = {}) {
 	this._uncompiledRoutes = removeRoutes(this._uncompiledRoutes);
 
 	if (this.realFetch && !this.routes.length) {
-		this.global.fetch = this.realFetch;
+		globalThis.fetch = this.realFetch;
 		this.realFetch = undefined;
 	}
 

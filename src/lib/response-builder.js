@@ -130,18 +130,6 @@ e.g. {"body": {"status: "registered"}}`);
 		this.body = this.responseConfig.body;
 		this.convertToJson();
 		this.setContentLength();
-
-		// On the server we need to manually construct the readable stream for the
-		// Response object (on the client this done automatically)
-		if (this.Stream) {
-			this.debug('Creating response stream');
-			const stream = new this.Stream.Readable();
-			if (this.body != null) { //eslint-disable-line
-				stream.push(this.body, 'utf-8');
-			}
-			stream.push(null);
-			this.body = stream;
-		}
 	}
 
 	buildObservableResponse(response) {

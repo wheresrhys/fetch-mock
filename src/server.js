@@ -1,4 +1,3 @@
-import Stream from 'stream';
 import http from 'http';
 import { URL } from 'node:url';
 import FetchMock from './lib/index.js';
@@ -9,7 +8,6 @@ setUrlImplementation(URL);
 
 FetchMock.global = global;
 FetchMock.statusTextMap = http.STATUS_CODES;
-FetchMock.Stream = Stream;
 
 FetchMock.config = Object.assign(FetchMock.config, {
 	Promise,

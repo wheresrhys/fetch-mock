@@ -1,4 +1,4 @@
-import fetchMock from '../../src/client.js';
+import fetchMock from '../../src/index.js';
 
 globalThis.testGlobals = {
 	fetchMock,

@@ -5,7 +5,7 @@ import {
   Response,
 } from 'node-fetch';
 
-import fetchMock from '../../src/server.js';
+import fetchMock from '../../src/index.js';
 
 fetchMock.config = Object.assign(fetchMock.config, {
 	Promise,

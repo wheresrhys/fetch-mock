@@ -1,5 +1,5 @@
-import builtInMatchers from './matchers';
-import { debug, setDebugNamespace, getDebug } from '../lib/debug';
+import builtInMatchers from './matchers.js';
+import { debug, setDebugNamespace, getDebug } from '../lib/debug.js';
 
 const isUrlMatcher = (matcher) => matcher instanceof RegExp
 	|| typeof matcher === 'string'

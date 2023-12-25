@@ -1,6 +1,6 @@
-import { setDebugPhase, setDebugNamespace, debug } from './debug';
-import { normalizeUrl } from './request-utils';
-import Route from '../Route';
+import { setDebugPhase, setDebugNamespace, debug } from './debug.js';
+import { normalizeUrl } from './request-utils.js';
+import Route from '../Route/index.js';
 
 const FetchMock = {};
 const isName = (nameOrMatcher) => typeof nameOrMatcher === 'string' && /^[\da-zA-Z\-]+$/.test(nameOrMatcher);

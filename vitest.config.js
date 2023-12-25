@@ -20,7 +20,11 @@ const configs = {
 
 	server: {
 		setupFiles: './test/setup/server.js'
+	},
+	['node-fetch']: {
+		setupFiles: './test/setup/node-fetch.js'
 	}
+
 }
 
 export default defineConfig({

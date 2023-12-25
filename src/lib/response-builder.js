@@ -1,4 +1,4 @@
-import { getDebug } from './debug';
+import { getDebug } from './debug.js';
 
 const responseConfigProps = [
 	'body',
@@ -25,6 +25,7 @@ class ResponseBuilder {
 			this.body,
 			this.options,
 		);
+
 		const proxyResponse = this.buildObservableResponse(realResponse);
 		return [realResponse, proxyResponse];
 	}

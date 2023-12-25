@@ -137,7 +137,7 @@ describe('response generation', () => {
 
 	// The fetch spec does not allow for manual url setting
 	// However node-fetch does, so we only run this test on the server
-	if (typeof window === 'undefined') {
+	if (fetchMock.config.Request !== globalThis.Request) {
 		it('should set the url property on responses', async () => {
 			fm.mock('begin:http://foo.com', 200);
 			const res = await fm.fetchHandler('http://foo.com/path?query=string');

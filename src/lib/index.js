@@ -1,8 +1,8 @@
-import { debug } from './debug';
-import setUpAndTearDown from './set-up-and-tear-down';
-import fetchHandler from './fetch-handler';
-import inspecting from './inspecting';
-import Route from '../Route';
+import { debug } from './debug.js';
+import setUpAndTearDown from './set-up-and-tear-down.js';
+import fetchHandler from './fetch-handler.js';
+import inspecting from './inspecting.js';
+import Route from '../Route/index.js';
 
 const FetchMock = { ...fetchHandler, ...setUpAndTearDown, ...inspecting };
 

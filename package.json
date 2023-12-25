@@ -6,6 +6,7 @@
   "browser": "./esm/client.js",
   "module": "./esm/server.js",
   "types": "./types/index.d.ts",
+  "type": "module",
   "scripts": {
     "test": "make lint test",
     "prepublishOnly": "make build"

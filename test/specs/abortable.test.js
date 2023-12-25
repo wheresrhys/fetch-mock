@@ -5,7 +5,7 @@ import {
 const RESPONSE_DELAY = 10;
 const ABORT_DELAY = 5;
 
-const { fetchMock, AbortController } = testGlobals;
+const { fetchMock } = testGlobals;
 const getDelayedOk = () => new Promise((res) => setTimeout(() => res(200), RESPONSE_DELAY));
 
 const getDelayedAbortController = () => {

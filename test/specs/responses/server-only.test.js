@@ -1,9 +1,7 @@
 import {
 	afterEach, describe, expect, it, vi,
 } from 'vitest';
-// const chai = require('chai');
-// chai.use(require('sinon-chai'));
-// const sinon = require('sinon');
+import { Readable, Writable } from 'stream';
 const { fetchMock } = testGlobals;
 describe('nodejs only tests', () => {
 	describe('support for nodejs body types', () => {
@@ -18,9 +16,9 @@ describe('nodejs only tests', () => {
 					expect(txt).to.equal('buffer');
 				});
 		});
+		// only works in node-fetch@2
+		it.skip('can respond with a readable stream', () => new Promise((res) => {
 
-		it('can respond with a readable stream', () => new Promise((res) => {
-			const { Readable, Writable } = require('stream');
 			const readable = new Readable();
 			const write = vi.fn().mockImplementation((chunk, enc, cb) => {
 				cb();
@@ -45,15 +43,13 @@ describe('nodejs only tests', () => {
 		// See https://github.com/wheresrhys/fetch-mock/issues/575
 		it('can respond with large bodies from the interweb', async () => {
 			const fm = fetchMock.sandbox();
-			fm.config.fetch = require('node-fetch');
 			fm.config.fallbackToNetwork = true;
 			fm.mock();
 			// this is an adequate test because the response hangs if the
 			// bug referenced above creeps back in
 			await fm
 				.fetchHandler('http://www.wheresrhys.co.uk/assets/img/chaffinch.jpg')
-			// res.blob() woudl make more sense, but not supported by node-fetch@1
-				.then((res) => res.text());
+				.then((res) => res.blob());
 		});
 	});
 });

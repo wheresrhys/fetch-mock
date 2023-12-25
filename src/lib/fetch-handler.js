@@ -143,11 +143,11 @@ FetchMock._fetchHandler = function ({
 
 	// this is used to power the .flush() method
 	let done;
-	this._holdingPromises.push(new this.config.Promise((res) => {done = res}));
+	this._holdingPromises.push(new Promise((res) => {done = res}));
 
 	// wrapped in this promise to make sure we respect custom Promise
 	// constructors defined by the user
-	return new this.config.Promise((res, rej) => {
+	return new Promise((res, rej) => {
 		if (signal) {
 			debug('signal exists - enabling fetch abort');
 			const abort = () => {

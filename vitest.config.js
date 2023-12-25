@@ -19,7 +19,10 @@ const configs = {
 	},
 
 	server: {
-		setupFiles: './test/setup/server.js'
+		setupFiles: './test/setup/server.js',
+		coverage: {
+      provider: 'istanbul'
+    },
 	},
 	['node-fetch']: {
 		setupFiles: './test/setup/node-fetch.js'

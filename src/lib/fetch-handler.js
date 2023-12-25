@@ -19,44 +19,6 @@ class AbortError extends Error {
 	}
 }
 
-// Patch native fetch to avoid "NotSupportedError:ReadableStream uploading is not supported" in Safari.
-// See also https://github.com/wheresrhys/fetch-mock/issues/584
-// See also https://stackoverflow.com/a/50952018/1273406
-const patchNativeFetchForSafari = (nativeFetch) => {
-	// Try to patch fetch only on Safari
-	if (
-		typeof navigator === 'undefined'
-		|| !navigator.vendor
-		|| navigator.vendor !== 'Apple Computer, Inc.'
-	) {
-		return nativeFetch;
-	}
-	// It seems the code is working on Safari thus patch native fetch to avoid the error.
-	return async (request) => {
-		const { method } = request;
-		if (!['POST', 'PUT', 'PATCH'].includes(method)) {
-			// No patch is required in this case
-			return nativeFetch(request);
-		}
-		const body = await request.clone().text();
-		const {
-			cache, credentials, headers, integrity, mode, redirect, referrer,
-		} =			request;
-		const init = {
-			body,
-			cache,
-			credentials,
-			headers,
-			integrity,
-			mode,
-			redirect,
-			referrer,
-			method,
-		};
-		return nativeFetch(request.url, init);
-	};
-};
-
 const resolve = async (
 	{ response, responseIsFetch = false },
 	url,
@@ -296,7 +258,7 @@ FetchMock.getNativeFetch = function () {
 			'fetch-mock: Falling back to network only available on global fetch-mock, or by setting config.fetch on sandboxed fetch-mock',
 		);
 	}
-	return patchNativeFetchForSafari(func);
+	return func;
 };
 
 FetchMock.recordCall = function (obj) {

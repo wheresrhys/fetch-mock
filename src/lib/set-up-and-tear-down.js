@@ -1,4 +1,4 @@
-import { debug, setDebugPhase } from './debug';
+import { debug, setDebugPhase } from './debug.js';
 
 const FetchMock = {};
 

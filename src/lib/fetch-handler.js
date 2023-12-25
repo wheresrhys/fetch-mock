@@ -1,6 +1,6 @@
-import { debug, setDebugPhase, getDebug } from './debug';
-import responseBuilder from './response-builder';
-import * as requestUtils from './request-utils';
+import { debug, setDebugPhase, getDebug } from './debug.js';
+import responseBuilder from './response-builder.js';
+import * as requestUtils from './request-utils.js';
 
 const FetchMock = {};
 

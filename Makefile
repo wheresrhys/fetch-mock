@@ -34,5 +34,9 @@ publish:
 test:
 	TESTING_ENV=server npx vitest ./test/specs
 
+
+test-node-fetch:
+	TESTING_ENV=node-fetch npx vitest ./test/specs
+
 test-browser:
 	TESTING_ENV=browser npx vitest ./test/specs

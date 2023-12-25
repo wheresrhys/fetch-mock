@@ -1,6 +1,6 @@
-import FetchMock from './lib/index';
-import statusTextMap from './lib/status-text';
-import { setUrlImplementation } from './lib/request-utils';
+import FetchMock from './lib/index.js';
+import statusTextMap from './lib/status-text.js';
+import { setUrlImplementation } from './lib/request-utils.js';
 
 const theGlobal = typeof window !== 'undefined' ? window : self;
 setUrlImplementation(theGlobal.URL);

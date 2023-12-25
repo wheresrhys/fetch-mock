@@ -8,8 +8,8 @@ import {
 	getPath,
 	getQuery,
 	normalizeUrl,
-} from '../lib/request-utils';
-import { debug } from '../lib/debug';
+} from '../lib/request-utils.js';
+import { debug } from '../lib/debug.js';
 
 const debuggableUrlFunc = (func) => (url) => {
 	debug('Actual url:', url);

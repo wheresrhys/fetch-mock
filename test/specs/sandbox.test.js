@@ -2,12 +2,12 @@ import {
 	describe, expect, it, beforeAll, vi,
 } from 'vitest';
 
-const { fetchMock, theGlobal } = testGlobals;
+const { fetchMock } = testGlobals;
 describe('sandbox', () => {
 	let originalFetch;
 
 	beforeAll(() => {
-		originalFetch = theGlobal.fetch = vi.fn().mockResolvedValue('dummy');
+		originalFetch = globalThis.fetch = vi.fn().mockResolvedValue('dummy');
 	});
 
 	it('return function', () => {
@@ -39,8 +39,8 @@ describe('sandbox', () => {
 	it("don't interfere with global fetch", () => {
 		const sbx = fetchMock.sandbox().mock('http://a.com', 200);
 
-		expect(theGlobal.fetch).toEqual(originalFetch);
-		expect(theGlobal.fetch).not.toEqual(sbx);
+		expect(globalThis.fetch).toEqual(originalFetch);
+		expect(globalThis.fetch).not.toEqual(sbx);
 	});
 
 	it("don't interfere with global fetch-mock", async () => {
@@ -48,7 +48,7 @@ describe('sandbox', () => {
 
 		fetchMock.mock('http://b.com', 200).catch(301);
 
-		expect(theGlobal.fetch).toEqual(fetchMock.fetchHandler);
+		expect(globalThis.fetch).toEqual(fetchMock.fetchHandler);
 		expect(fetchMock.fetchHandler).not.toEqual(sbx);
 		expect(fetchMock.fallbackResponse).not.toEqual(sbx.fallbackResponse);
 		expect(fetchMock.routes).not.toEqual(sbx.routes);

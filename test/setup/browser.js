@@ -1,7 +1,6 @@
 import fetchMock from '../../src/client.js';
 
-window.testGlobals = {
+globalThis.testGlobals = {
 	fetchMock,
-	theGlobal: window,
-	fetch: window.fetch,
+	fetch: globalThis.fetch,
 };

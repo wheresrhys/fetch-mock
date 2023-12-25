@@ -2,7 +2,7 @@ import {
 	beforeEach, describe, expect, it,
 } from 'vitest';
 
-const { fetchMock, theGlobal } = testGlobals;
+const { fetchMock } = testGlobals;
 
 describe('fallbackToNetwork', () => {
 	let fm;
@@ -14,22 +14,22 @@ describe('fallbackToNetwork', () => {
 	});
 
 	it('not error when configured globally', () => {
-		theGlobal.fetch = async () => ({ status: 202 }); //eslint-disable-line require-await
+		globalThis.fetch = async () => ({ status: 202 }); //eslint-disable-line require-await
 		fm.config.fallbackToNetwork = true;
 		fm.mock('http://mocked.com', 201);
 		expect(() => fm.fetchHandler('http://unmocked.com')).not.toThrow();
-		delete theGlobal.fetch;
+		delete globalThis.fetch;
 	});
 
 	it('actually falls back to network when configured globally', async () => {
-		theGlobal.fetch = async () => ({ status: 202 }); //eslint-disable-line require-await
+		globalThis.fetch = async () => ({ status: 202 }); //eslint-disable-line require-await
 		fetchMock.config.fallbackToNetwork = true;
 		fetchMock.mock('http://mocked.com', 201);
 		const res = await fetchMock.fetchHandler('http://unmocked.com');
 		expect(res.status).toEqual(202);
 		fetchMock.restore();
 		fetchMock.config.fallbackToNetwork = false;
-		delete theGlobal.fetch;
+		delete globalThis.fetch;
 	});
 
 	it('actually falls back to network when configured in a sandbox properly', async () => {

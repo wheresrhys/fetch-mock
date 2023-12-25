@@ -17,6 +17,5 @@ fetchMock.config = Object.assign(fetchMock.config, {
 
 globalThis.testGlobals = {
 	fetchMock,
-	theGlobal: global,
 	fetch,
 };

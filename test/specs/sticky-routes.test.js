@@ -2,7 +2,7 @@ import {
 	afterEach, describe, expect, it, beforeAll, vi,
 } from 'vitest';
 
-const { fetchMock, theGlobal } = testGlobals;
+const { fetchMock } = testGlobals;
 
 describe('sticky routes', () => {
 	describe('effect on routes', () => {
@@ -97,20 +97,20 @@ describe('sticky routes', () => {
 	describe('global mocking', () => {
 		let originalFetch;
 		beforeAll(() => {
-			originalFetch = theGlobal.fetch = vi.fn().mockResolvedValue();
+			originalFetch = globalThis.fetch = vi.fn().mockResolvedValue();
 		});
 		afterEach(() => fetchMock.restore({ sticky: true }));
 
 		it('global mocking resists resetBehavior calls', () => {
 			fetchMock.mock('*', 200, { sticky: true }).resetBehavior();
-			expect(theGlobal.fetch).not.toEqual(originalFetch);
+			expect(globalThis.fetch).not.toEqual(originalFetch);
 		});
 
 		it('global mocking does not resist resetBehavior calls when sent `sticky: true`', () => {
 			fetchMock
 				.mock('*', 200, { sticky: true })
 				.resetBehavior({ sticky: true });
-			expect(theGlobal.fetch).toEqual(originalFetch);
+			expect(globalThis.fetch).toEqual(originalFetch);
 		});
 	});
 

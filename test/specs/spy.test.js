@@ -2,24 +2,24 @@ import {
 	describe, expect, it, vi,
 } from 'vitest';
 
-const { fetchMock, theGlobal } = testGlobals;
+const { fetchMock } = testGlobals;
 describe('spy()', () => {
 	it('when mocking globally, spy falls through to global fetch', async () => {
-		const originalFetch = theGlobal.fetch;
+		const originalFetch = globalThis.fetch;
 		const fetchSpy = vi.fn().mockResolvedValue('example');
 
-		theGlobal.fetch = fetchSpy;
+		globalThis.fetch = fetchSpy;
 
 		fetchMock.spy();
 
-		await theGlobal.fetch('http://a.com/', { method: 'get' });
+		await globalThis.fetch('http://a.com/', { method: 'get' });
 		expect(fetchSpy).toHaveBeenCalledWith(
 			'http://a.com/',
 			{ method: 'get' },
 			undefined,
 		);
 		fetchMock.restore();
-		theGlobal.fetch = originalFetch;
+		globalThis.fetch = originalFetch;
 	});
 
 	it('when mocking locally, spy falls through to configured fetch', async () => {

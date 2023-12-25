@@ -2,22 +2,22 @@ import {
 	afterEach, beforeEach, describe, expect, it, vi,
 } from 'vitest';
 
-const { fetchMock, theGlobal } = testGlobals;
+const { fetchMock } = testGlobals;
 
 describe('use with global fetch', () => {
 	let originalFetch;
 
 	const expectToBeStubbed = (yes = true) => {
-		expect(theGlobal.fetch).toEqual(
+		expect(globalThis.fetch).toEqual(
 			yes ? fetchMock.fetchHandler : originalFetch,
 		);
-		expect(theGlobal.fetch).not.toEqual(
+		expect(globalThis.fetch).not.toEqual(
 			yes ? originalFetch : fetchMock.fetchHandler,
 		);
 	};
 
 	beforeEach(() => {
-		originalFetch = theGlobal.fetch = vi.fn().mockResolvedValue();
+		originalFetch = globalThis.fetch = vi.fn().mockResolvedValue();
 	});
 	afterEach(fetchMock.restore);
 
@@ -50,7 +50,7 @@ describe('use with global fetch', () => {
 	it('not call default fetch when in mocked mode', async () => {
 		fetchMock.mock('*', 200);
 
-		await theGlobal.fetch('http://a.com');
+		await globalThis.fetch('http://a.com');
 		expect(originalFetch).not.toHaveBeenCalled();
 	});
 });

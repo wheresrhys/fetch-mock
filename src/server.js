@@ -8,7 +8,6 @@ setUrlImplementation(URL);
 FetchMock.statusTextMap = http.STATUS_CODES;
 
 FetchMock.config = Object.assign(FetchMock.config, {
-	Promise,
 	Request: globalThis.Request,
 	Response: globalThis.Response,
 	Headers: globalThis.Headers,

@@ -7,10 +7,10 @@ setUrlImplementation(globalThis.URL);
 FetchMock.statusTextMap = statusTextMap;
 
 FetchMock.config = Object.assign(FetchMock.config, {
-	Promise: globalThis.Promise,
 	Request: globalThis.Request,
 	Response: globalThis.Response,
 	Headers: globalThis.Headers,
+	fetch: globalThis.fetch,
 });
 
 export default FetchMock.createInstance();

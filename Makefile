@@ -34,6 +34,8 @@ publish:
 test:
 	TESTING_ENV=server npx vitest ./test/specs
 
+test-coverage:
+	TESTING_ENV=server npx vitest run --coverage ./test/specs
 
 test-node-fetch:
 	TESTING_ENV=node-fetch npx vitest ./test/specs

@@ -1,4 +1,3 @@
-let URL;
 // https://stackoverflow.com/a/19709846/308237
 // split, URL constructor does not support protocol-relative urls
 const absoluteUrlRX = new RegExp('^[a-z]+://', 'i');
@@ -50,10 +49,6 @@ const extractBody = async (request) => { //eslint-disable-line require-await
 
 	} catch (err) {}
 };
-
-export function setUrlImplementation(it) {
-	URL = it;
-}
 
 export function normalizeRequest(url, options, Request) {
 	if (Request.prototype.isPrototypeOf(url)) {

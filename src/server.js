@@ -3,10 +3,8 @@ import { URL } from 'node:url';
 import FetchMock from './lib/index.js';
 import { setUrlImplementation } from './lib/request-utils.js';
 
-
 setUrlImplementation(URL);
 
-FetchMock.global = global;
 FetchMock.statusTextMap = http.STATUS_CODES;
 
 FetchMock.config = Object.assign(FetchMock.config, {

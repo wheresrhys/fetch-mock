@@ -1,9 +1,6 @@
 import http from 'http';
-import { URL } from 'node:url';
 import FetchMock from './lib/index.js';
 import { setUrlImplementation } from './lib/request-utils.js';
-
-setUrlImplementation(URL);
 
 FetchMock.statusTextMap = http.STATUS_CODES;
 

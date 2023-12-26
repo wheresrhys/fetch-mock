@@ -23,7 +23,6 @@ describe.skip('client-side only tests', () => {
 			'http://example.com',
 			{ method: 'post', body: JSON.stringify({ prop: 'val' }) },
 		);
-		let response;
 		try {
 			await fetch(req);
 		} catch (err) {

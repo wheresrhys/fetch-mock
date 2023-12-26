@@ -1,6 +1,4 @@
-import {
-	describe, expect, it, vi,
-} from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 const { fetchMock } = testGlobals;
 describe('spy()', () => {
@@ -53,7 +51,9 @@ describe('spy()', () => {
 		);
 
 		expect(() => fm.fetchHandler('http://b.com/', { method: 'get' })).toThrow();
-		expect(() => fm.fetchHandler('http://a.com/', { method: 'post' })).toThrow();
+		expect(() =>
+			fm.fetchHandler('http://a.com/', { method: 'post' }),
+		).toThrow();
 		fm.restore();
 	});
 });

@@ -1,6 +1,4 @@
-import {
-	afterEach, describe, expect, it, beforeAll, vi,
-} from 'vitest';
+import { afterEach, describe, expect, it, beforeAll, vi } from 'vitest';
 
 const { fetchMock } = testGlobals;
 describe('repeat and done()', () => {
@@ -12,7 +10,7 @@ describe('repeat and done()', () => {
 
 	afterEach(() => fm.restore());
 
-	it('can expect a route to be called',  () => {
+	it('can expect a route to be called', () => {
 		fm.mock('http://a.com/', 200);
 
 		expect(fm.done()).toBe(false);
@@ -22,7 +20,7 @@ describe('repeat and done()', () => {
 		expect(fm.done('http://a.com/')).toBe(true);
 	});
 
-	it('can expect a route to be called n times',  () => {
+	it('can expect a route to be called n times', () => {
 		fm.mock('http://a.com/', 200, { repeat: 2 });
 
 		fm.fetchHandler('http://a.com/');
@@ -33,7 +31,7 @@ describe('repeat and done()', () => {
 		expect(fm.done('http://a.com/')).toBe(true);
 	});
 
-	it('regression: can expect an un-normalized url to be called n times',  () => {
+	it('regression: can expect an un-normalized url to be called n times', () => {
 		fm.mock('http://a.com/', 200, { repeat: 2 });
 		fm.fetchHandler('http://a.com/');
 		expect(fm.done()).toBe(false);
@@ -41,7 +39,7 @@ describe('repeat and done()', () => {
 		expect(fm.done()).toBe(true);
 	});
 
-	it('can expect multiple routes to have been called',  () => {
+	it('can expect multiple routes to have been called', () => {
 		fm.mock('http://a.com/', 200, {
 			repeat: 2,
 		}).mock('http://b.com/', 200, { repeat: 2 });
@@ -98,7 +96,7 @@ describe('repeat and done()', () => {
 		await fm.fetchHandler('http://a.com/');
 		try {
 			await fm.fetchHandler('http://a.com/');
-			expect.unreachable("Previous line should throw");
+			expect.unreachable('Previous line should throw');
 		} catch (err) {}
 	});
 
@@ -208,7 +206,9 @@ describe('repeat and done()', () => {
 
 			const sb = fm.sandbox();
 
-			expect(() => sb.postOnce(matcher1, 200).postOnce(matcher2, 200)).not.toThrow();
+			expect(() =>
+				sb.postOnce(matcher1, 200).postOnce(matcher2, 200),
+			).not.toThrow();
 
 			await sb('https://example.com/', { method: 'POST' });
 			expect(sb.done()).toBe(false);

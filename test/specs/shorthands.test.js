@@ -32,7 +32,8 @@ describe('shorthands', () => {
 		fm = fetchMock.createInstance();
 		vi.spyOn(fm, 'compileRoute');
 		fm.config.warnOnUnmatched = false;
-		expectRoute = (...args) => expect(fm.compileRoute).toHaveBeenCalledWith(args);
+		expectRoute = (...args) =>
+			expect(fm.compileRoute).toHaveBeenCalledWith(args);
 	});
 	afterEach(() => {
 		fm.compileRoute.mockClear();

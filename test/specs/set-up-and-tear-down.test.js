@@ -72,10 +72,12 @@ describe('Set up and tear down', () => {
 			});
 
 			it('accepts matcher, response, config triples', () => {
-				expect(() => fm.mock('*', 'ok', {
-					method: 'PUT',
-					some: 'prop',
-				})).not.toThrow();
+				expect(() =>
+					fm.mock('*', 'ok', {
+						method: 'PUT',
+						some: 'prop',
+					}),
+				).not.toThrow();
 				expect(fm.compileRoute).toHaveBeenCalledWith([
 					'*',
 					'ok',
@@ -102,7 +104,9 @@ describe('Set up and tear down', () => {
 			});
 
 			it('should accept object responses when also passing options', () => {
-				expect(() => fm.mock('*', { foo: 'bar' }, { method: 'GET' })).not.toThrow();
+				expect(() =>
+					fm.mock('*', { foo: 'bar' }, { method: 'GET' }),
+				).not.toThrow();
 			});
 		});
 	});

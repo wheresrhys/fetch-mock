@@ -1,6 +1,4 @@
-import {
-	afterEach, describe, expect, it,
-} from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 // const chai = require('chai');
 // const chaiAsPromised = require('chai-as-promised');
 // chai.use(chaiAsPromised);
@@ -19,15 +17,15 @@ describe.skip('client-side only tests', () => {
 	// want to make sure fetch can still use the sullied request
 	it.skip('can send a body on a Request instance when spying ', async () => {
 		fetchMock.spy();
-		const req = new fetchMock.config.Request(
-			'http://example.com',
-			{ method: 'post', body: JSON.stringify({ prop: 'val' }) },
-		);
+		const req = new fetchMock.config.Request('http://example.com', {
+			method: 'post',
+			body: JSON.stringify({ prop: 'val' }),
+		});
 		try {
 			await fetch(req);
 		} catch (err) {
-			console.log(err)
-			expect.unreachable('Fetch should not throw or reject')
+			console.log(err);
+			expect.unreachable('Fetch should not throw or reject');
 		}
 	});
 
@@ -60,7 +58,8 @@ describe.skip('client-side only tests', () => {
 
 	if (globalThis.navigator?.serviceWorker) {
 		it('should work within a service worker', async () => {
-			const registration = await globalThis.navigator.serviceWorker.register('__sw.js');
+			const registration =
+				await globalThis.navigator.serviceWorker.register('__sw.js');
 			await new Promise((resolve, reject) => {
 				if (registration.installing) {
 					registration.installing.onstatechange = function () {

@@ -1,6 +1,4 @@
-import {
-	afterEach, describe, expect, it, beforeAll,
-} from 'vitest';
+import { afterEach, describe, expect, it, beforeAll } from 'vitest';
 
 const { fetchMock } = testGlobals;
 describe('body matching', () => {

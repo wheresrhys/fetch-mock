@@ -24,7 +24,8 @@ describe('user defined matchers', () => {
 		const fm = fetchMock.createInstance();
 		fm.addMatcher({
 			name: 'bodyMatcher',
-			matcher: (route) => (url, options) => JSON.parse(options.body)[route.bodyMatcher] === true,
+			matcher: (route) => (url, options) =>
+				JSON.parse(options.body)[route.bodyMatcher] === true,
 			usesBody: true,
 		});
 		fm.mock(
@@ -57,7 +58,8 @@ describe('user defined matchers', () => {
 		const fm = fetchMock.createInstance();
 		fm.addMatcher({
 			name: 'asyncBodyMatcher',
-			matcher: (route) => (url, options) => JSON.parse(options.body)[route.asyncBodyMatcher] === true,
+			matcher: (route) => (url, options) =>
+				JSON.parse(options.body)[route.asyncBodyMatcher] === true,
 		});
 		fm.mock(
 			{
@@ -65,11 +67,13 @@ describe('user defined matchers', () => {
 			},
 			200,
 		).catch();
-		expect(() => fm.fetchHandler(
-			new fm.config.Request('http://a.com', {
-				method: 'POST',
-				body: JSON.stringify({ a: true }),
-			}),
-		)).toThrow();
+		expect(() =>
+			fm.fetchHandler(
+				new fm.config.Request('http://a.com', {
+					method: 'POST',
+					body: JSON.stringify({ a: true }),
+				}),
+			),
+		).toThrow();
 	});
 });

@@ -33,7 +33,9 @@ class ResponseBuilder {
 	sendAsObject() {
 		if (responseConfigProps.some((prop) => this.responseConfig[prop])) {
 			if (
-				Object.keys(this.responseConfig).every((key) => responseConfigProps.includes(key))
+				Object.keys(this.responseConfig).every((key) =>
+					responseConfigProps.includes(key),
+				)
 			) {
 				return false;
 			}
@@ -66,10 +68,10 @@ class ResponseBuilder {
 		}
 
 		if (
-			typeof status === 'number'
-				&& parseInt(status, 10) !== status
-				&& status >= 200
-			|| status < 600
+			(typeof status === 'number' &&
+				parseInt(status, 10) !== status &&
+				status >= 200) ||
+			status < 600
 		) {
 			this.debug('Valid status provided', status);
 			return status;
@@ -84,7 +86,8 @@ e.g. {"body": {"status: "registered"}}`);
 		this.options = this.responseConfig.options || {};
 		this.options.url = this.responseConfig.redirectUrl || this.url;
 		this.options.status = this.validateStatus(this.responseConfig.status);
-		this.options.statusText =	this.fetchMock.statusTextMap[String(this.options.status)];
+		this.options.statusText =
+			this.fetchMock.statusTextMap[String(this.options.status)];
 
 		// Set up response headers. The empty object is to cope with
 		// new Headers(undefined) throwing in Chrome
@@ -101,8 +104,8 @@ e.g. {"body": {"status: "registered"}}`);
 	convertToJson() {
 		// convert to json if we need to
 		if (
-			this.getOption('sendAsJson')
-			&& this.responseConfig.body != null && //eslint-disable-line
+			this.getOption('sendAsJson') &&
+			this.responseConfig.body != null && //eslint-disable-line
 			typeof this.body === 'object'
 		) {
 			this.debug('Stringifying JSON response body');
@@ -116,9 +119,9 @@ e.g. {"body": {"status: "registered"}}`);
 	setContentLength() {
 		// add a Content-Length header if we need to
 		if (
-			this.getOption('includeContentLength')
-			&& typeof this.body === 'string'
-			&& !this.options.headers.has('Content-Length')
+			this.getOption('includeContentLength') &&
+			typeof this.body === 'string' &&
+			!this.options.headers.has('Content-Length')
 		) {
 			this.debug('Setting content-length header:', this.body.length.toString());
 			this.options.headers.set('Content-Length', this.body.length.toString());

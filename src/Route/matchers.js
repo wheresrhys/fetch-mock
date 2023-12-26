@@ -17,10 +17,12 @@ const debuggableUrlFunc = (func) => (url) => {
 };
 
 const stringMatchers = {
-	begin: (targetString) => debuggableUrlFunc((url) => url.indexOf(targetString) === 0),
-	end: (targetString) => debuggableUrlFunc(
-		(url) => url.substr(-targetString.length) === targetString,
-	),
+	begin: (targetString) =>
+		debuggableUrlFunc((url) => url.indexOf(targetString) === 0),
+	end: (targetString) =>
+		debuggableUrlFunc(
+			(url) => url.substr(-targetString.length) === targetString,
+		),
 	glob: (targetString) => {
 		const urlRX = glob(targetString);
 		return debuggableUrlFunc((url) => urlRX.test(url));
@@ -29,7 +31,8 @@ const stringMatchers = {
 		const urlRX = pathToRegexp(targetString);
 		return debuggableUrlFunc((url) => urlRX.test(getPath(url)));
 	},
-	path: (targetString) => debuggableUrlFunc((url) => getPath(url) === targetString),
+	path: (targetString) =>
+		debuggableUrlFunc((url) => getPath(url) === targetString),
 };
 
 const getHeaderMatcher = ({ headers: expectedHeaders }) => {
@@ -47,7 +50,9 @@ const getHeaderMatcher = ({ headers: expectedHeaders }) => {
 		);
 		debug('  Expected headers:', expectation);
 		debug('  Actual headers:', lowerCaseHeaders);
-		return Object.keys(expectation).every((headerName) => headerUtils.equal(lowerCaseHeaders[headerName], expectation[headerName]));
+		return Object.keys(expectation).every((headerName) =>
+			headerUtils.equal(lowerCaseHeaders[headerName], expectation[headerName]),
+		);
 	};
 };
 
@@ -113,7 +118,8 @@ const getParamsMatcher = ({ params: expectedParams, url: matcherUrl }) => {
 		const vals = re.exec(getPath(url)) || [];
 		vals.shift();
 		const params = keys.reduce(
-			(map, { name }, i) => vals[i] ? Object.assign(map, { [name]: vals[i] }) : map,
+			(map, { name }, i) =>
+				vals[i] ? Object.assign(map, { [name]: vals[i] }) : map,
 			{},
 		);
 		debug('  Expected path parameters:', expectedParams);
@@ -128,7 +134,6 @@ const getBodyMatcher = (route, fetchMock) => {
 
 	debug('Generating body matcher');
 	return (url, { body, method = 'get' }) => {
-
 		debug('Attempting to match body');
 		if (method.toLowerCase() === 'get') {
 			debug('  GET request - skip matching body');
@@ -151,10 +156,10 @@ const getBodyMatcher = (route, fetchMock) => {
 		}
 
 		return (
-			sentBody
-			&& (matchPartialBody
-			  ? isSubset(sentBody, expectedBody)
-			  : isEqual(sentBody, expectedBody))
+			sentBody &&
+			(matchPartialBody
+				? isSubset(sentBody, expectedBody)
+				: isEqual(sentBody, expectedBody))
 		);
 	};
 };

@@ -14,33 +14,38 @@ import {
 
 const { fetchMock } = testGlobals;
 
-
 expect.extend({
-  toReturnCalls(callsArray, expectedCalls) {
-    // looks like it does noting, but it makes sure a bunch of irrelevant internals
-    // that are passed in array indexes 2 onwards are dropped
-    const sanitisedCalls = callsArray.map(([url, options]) => ([url, options]))
-    const sanitisedExpectations = expectedCalls.map(([url, options]) => ([url, expect.objectContaining(options)]))
-    const assertion = expect(sanitisedCalls).toEqual(sanitisedExpectations)
-    const passes = Boolean(assertion);
-    return {
-      // do not alter your "pass" based on isNot. Vitest does it for you
-      pass: passes,
-      message: () => passes ? `Calls as expected` : `Calls not as expected`
-    }
-  },
-  toEqualCall(call, expectation) {
-  	const sanitisedCall = call.slice(0, 2);
-    const sanitisedExpectations = [expectation[0], expectation[1] ? expect.objectContaining(expectation[1]) : expectation[1]];
-    const assertion = expect(sanitisedCall).toEqual(sanitisedExpectations)
-    const passes = Boolean(assertion);
-    return {
-      // do not alter your "pass" based on isNot. Vitest does it for you
-      pass: passes,
-      message: () => passes ? `Call as expected` : `Call not as expected`
-    }
-  }
-})
+	toReturnCalls(callsArray, expectedCalls) {
+		// looks like it does noting, but it makes sure a bunch of irrelevant internals
+		// that are passed in array indexes 2 onwards are dropped
+		const sanitisedCalls = callsArray.map(([url, options]) => [url, options]);
+		const sanitisedExpectations = expectedCalls.map(([url, options]) => [
+			url,
+			expect.objectContaining(options),
+		]);
+		const assertion = expect(sanitisedCalls).toEqual(sanitisedExpectations);
+		const passes = Boolean(assertion);
+		return {
+			// do not alter your "pass" based on isNot. Vitest does it for you
+			pass: passes,
+			message: () => (passes ? `Calls as expected` : `Calls not as expected`),
+		};
+	},
+	toEqualCall(call, expectation) {
+		const sanitisedCall = call.slice(0, 2);
+		const sanitisedExpectations = [
+			expectation[0],
+			expectation[1] ? expect.objectContaining(expectation[1]) : expectation[1],
+		];
+		const assertion = expect(sanitisedCall).toEqual(sanitisedExpectations);
+		const passes = Boolean(assertion);
+		return {
+			// do not alter your "pass" based on isNot. Vitest does it for you
+			pass: passes,
+			message: () => (passes ? `Call as expected` : `Call not as expected`),
+		};
+	},
+});
 
 describe('inspecting', () => {
 	let fm;
@@ -113,22 +118,36 @@ describe('inspecting', () => {
 
 		const fetchUrls = (...urls) => Promise.all(urls.map(fm.fetchHandler));
 
-		const expectFilteredLength =			(...filter) => (length) => expect(fm.filterCalls(...filter).length).toEqual(length);
+		const expectFilteredLength =
+			(...filter) =>
+			(length) =>
+				expect(fm.filterCalls(...filter).length).toEqual(length);
 
-		const expectFilteredUrl =			(...filter) => (url) => expect(fm.filterCalls(...filter)[0][0]).toEqual(url);
+		const expectFilteredUrl =
+			(...filter) =>
+			(url) =>
+				expect(fm.filterCalls(...filter)[0][0]).toEqual(url);
 
-		const expectSingleUrl =			(...filter) => (url) => {
-			    expectFilteredLength(...filter)(1);
-			    expectFilteredUrl(...filter)(url);
-			  };
+		const expectSingleUrl =
+			(...filter) =>
+			(url) => {
+				expectFilteredLength(...filter)(1);
+				expectFilteredUrl(...filter)(url);
+			};
 
-		const expectFilteredResponse =			(...filter) => (...response) => expect(fm.filterCalls(...filter)[0]).toEqualCall(response);
+		const expectFilteredResponse =
+			(...filter) =>
+			(...response) =>
+				expect(fm.filterCalls(...filter)[0]).toEqualCall(response);
 
 		it('returns [url, options] pairs', async () => {
 			fm.mock('http://a.com/', 200, { name: 'fetch-mock' });
 
 			await fm.fetchHandler('http://a.com/', { method: 'get' });
-			expect(fm.filterCalls()[0]).toEqualCall(['http://a.com/', { method: 'get' }]);
+			expect(fm.filterCalls()[0]).toEqualCall([
+				'http://a.com/',
+				{ method: 'get' },
+			]);
 		});
 
 		it('can retrieve all calls', async () => {
@@ -496,16 +515,20 @@ describe('inspecting', () => {
 			fm.fetchHandler(req, { arbitraryOption: true });
 			const [url, callOptions] = fm.lastCall();
 			expect(url).toEqual('http://a.com/');
-			expect(callOptions).toEqual(expect.objectContaining({
-				method: 'POST',
-				arbitraryOption: true,
-			}));
+			expect(callOptions).toEqual(
+				expect.objectContaining({
+					method: 'POST',
+					arbitraryOption: true,
+				}),
+			);
 			expect(fm.lastUrl()).toEqual('http://a.com/');
 			const options = fm.lastOptions();
-			expect(options).toEqual(expect.objectContaining({
-				method: 'POST',
-				arbitraryOption: true,
-			}));
+			expect(options).toEqual(
+				expect.objectContaining({
+					method: 'POST',
+					arbitraryOption: true,
+				}),
+			);
 			expect(fm.lastCall().request).toEqual(req);
 		});
 

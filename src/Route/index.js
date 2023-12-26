@@ -1,9 +1,10 @@
 import builtInMatchers from './matchers.js';
 import { debug, setDebugNamespace, getDebug } from '../lib/debug.js';
 
-const isUrlMatcher = (matcher) => matcher instanceof RegExp
-	|| typeof matcher === 'string'
-	|| typeof matcher === 'object' && 'href' in matcher;
+const isUrlMatcher = (matcher) =>
+	matcher instanceof RegExp ||
+	typeof matcher === 'string' ||
+	(typeof matcher === 'object' && 'href' in matcher);
 
 const isFunctionMatcher = (matcher) => typeof matcher === 'function';
 
@@ -81,7 +82,8 @@ class Route {
 
 		const activeMatchers = Route.registeredMatchers
 			.map(
-				({ name, matcher, usesBody }) => this[name] && { matcher: matcher(this, this.fetchMock), usesBody },
+				({ name, matcher, usesBody }) =>
+					this[name] && { matcher: matcher(this, this.fetchMock), usesBody },
 			)
 			.filter((matcher) => Boolean(matcher));
 
@@ -89,7 +91,8 @@ class Route {
 
 		debug('Compiled matcher for route');
 		setDebugNamespace();
-		this.matcher = (url, options = {}, request) => activeMatchers.every(({ matcher }) => matcher(url, options, request));
+		this.matcher = (url, options = {}, request) =>
+			activeMatchers.every(({ matcher }) => matcher(url, options, request));
 	}
 
 	limit() {
@@ -113,7 +116,7 @@ class Route {
 			}
 		};
 		this.reset = () => {
-			timesLeft = this.repeat
+			timesLeft = this.repeat;
 		};
 	}
 
@@ -125,11 +128,13 @@ class Route {
 			const { response } = this;
 			this.response = () => {
 				debug(`Delaying response by ${this.delay} miliseconds`);
-				return new Promise((res) => setTimeout(() => res(response), this.delay));
+				return new Promise((res) =>
+					setTimeout(() => res(response), this.delay),
+				);
 			};
 		} else {
 			debug(
-				'  No delay set on route. Will respond \'immediately\' (but asynchronously)',
+				"  No delay set on route. Will respond 'immediately' (but asynchronously)",
 			);
 		}
 	}

@@ -3,30 +3,29 @@ import { normalizeUrl } from './request-utils.js';
 import Route from '../Route/index.js';
 
 const FetchMock = {};
-const isName = (nameOrMatcher) => typeof nameOrMatcher === 'string' && /^[\da-zA-Z\-]+$/.test(nameOrMatcher);
+const isName = (nameOrMatcher) =>
+	typeof nameOrMatcher === 'string' && /^[\da-zA-Z\-]+$/.test(nameOrMatcher);
 
 const filterCallsWithMatcher = function (matcher, options = {}, calls) {
-	({ matcher } = new Route(
-		[{ matcher, response: 'ok', ...options }],
-		this,
-	));
-	return calls.filter(({ url, options }) => matcher(normalizeUrl(url), options));
+	({ matcher } = new Route([{ matcher, response: 'ok', ...options }], this));
+	return calls.filter(({ url, options }) =>
+		matcher(normalizeUrl(url), options),
+	);
 };
 
-const formatDebug = (func) => function (...args) {
-	setDebugPhase('inspect');
-	const result = func.call(this, ...args);
-	setDebugPhase();
-	return result;
-};
+const formatDebug = (func) =>
+	function (...args) {
+		setDebugPhase('inspect');
+		const result = func.call(this, ...args);
+		setDebugPhase();
+		return result;
+	};
 
 const callObjToArray = (obj) => {
 	if (!obj) {
 		return undefined;
 	}
-	const {
-		url, options, request, identifier, isUnmatched, response,
-	} = obj;
+	const { url, options, request, identifier, isUnmatched, response } = obj;
 	const arr = [url, options];
 	arr.request = request;
 	arr.identifier = identifier;

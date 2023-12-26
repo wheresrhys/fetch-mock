@@ -11,3 +11,4 @@ FetchMock.config = Object.assign(FetchMock.config, {
 });
 
 export default FetchMock.createInstance();
+

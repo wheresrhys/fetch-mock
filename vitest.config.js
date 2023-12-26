@@ -1,5 +1,6 @@
 import { defineConfig } from 'vitest/config'
 
+
 const configs = {
 	browser: {
 	  setupFiles: './test/setup/browser.js' ,
@@ -26,10 +27,15 @@ const configs = {
 	},
 	['node-fetch']: {
 		setupFiles: './test/setup/node-fetch.js'
+	},
+	commonjs: {
+		setupFiles: './test/setup/commonjs.cjs'
 	}
 
 }
 
 export default defineConfig({
-  test: configs[process.env.TESTING_ENV || 'server']
+  test: configs[process.env.TESTING_ENV || 'server'],
+
+
 })

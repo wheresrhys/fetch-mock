@@ -26,6 +26,9 @@ coverage:
 docs:
 	cd docs; jekyll serve build --watch
 
+build:
+	npx rollup -c
+
 publish:
 	echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ${HOME}/.npmrc
 	npm version --no-git-tag-version $(CIRCLE_TAG)
@@ -39,6 +42,9 @@ test-coverage:
 
 test-node-fetch:
 	TESTING_ENV=node-fetch npx vitest ./test/specs
+
+test-commonjs:
+	TESTING_ENV=commonjs npx vitest ./test/specs
 
 test-browser:
 	TESTING_ENV=browser npx vitest ./test/specs

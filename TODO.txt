@@ -1,0 +1,14 @@
+Principles
+- Concentrate on building up a MOCK IMPLEMENTATION - that is core
+- Expect extensions is second (these _can_ export a standalone inspection library, but following vite/jest patterns is the central aim )
+- The actual switching out with real fetch... that is best left to the testing frameworks... but again export an API to do this for peopel who prefer manual control
+
+
+Corollaries:
+- rename 'mock' to something else
+- fallback to fetch... is this best left to jest too
+- Look in the wild to see how people are using it
+- rethink of inspecting API
+- rethink of restore API
+
+e.g vi.spyOn(globalThis, 'fetch').mockImplementation(fetchMock)

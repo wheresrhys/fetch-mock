@@ -54,6 +54,7 @@
     "node": ">=4.0.0"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.7",
     "@vitest/browser": "^1.1.0",
     "@vitest/coverage-istanbul": "^1.1.0",
     "dtslint": "^1.0.2",
@@ -66,6 +67,7 @@
     "jsdom": "^23.0.1",
     "node-fetch": "^3.3.2",
     "prettier": "^3.1.1",
+    "rollup": "^4.9.1",
     "typescript": "^3.6.4",
     "vitest": "^1.1.0",
     "webdriverio": "^8.27.0"

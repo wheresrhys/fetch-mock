@@ -34,33 +34,15 @@ export function normalizeUrl(url) {
 	return u.pathname + u.search;
 }
 
-// Because node-fetch's request.body.toString() is synchronous but
-// native fetch's request.clone().text() is async we wrap in an async
-// function to guarantee a promise is always returned
-const extractBody = async (request) => { //eslint-disable-line require-await
-	try {
-		// fetch and node-fetch@3
-		return request.clone().text();
-
-		// node-fetch@2
-		if ('body' in request) {
-			return request.body.toString();
-		}
-
-	} catch (err) {}
-};
-
 export function normalizeRequest(url, options, Request) {
 	if (Request.prototype.isPrototypeOf(url)) {
 		const derivedOptions = {
 			method: url.method,
 		};
 
-		const body = extractBody(url);
-
-		if (typeof body !== 'undefined') {
-			derivedOptions.body = body;
-		}
+		try {
+			derivedOptions.body = url.clone().text();
+		} catch (err) {}
 
 		const normalizedRequestObject = {
 			url: normalizeUrl(url.url),

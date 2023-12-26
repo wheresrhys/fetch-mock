@@ -1,6 +1,4 @@
-import {
-	afterEach, describe, expect, it, beforeAll,
-} from 'vitest';
+import { afterEach, describe, expect, it, beforeAll } from 'vitest';
 
 const { fetchMock } = testGlobals;
 
@@ -47,7 +45,9 @@ describe('response negotiation', () => {
 		fm.mock('*', 200, { delay: 20 });
 		const req = fm.fetchHandler('http://a.com/');
 		let resolved = false;
-		req.then(() => {resolved = true});
+		req.then(() => {
+			resolved = true;
+		});
 		await new Promise((res) => setTimeout(res, 10));
 		expect(resolved).toBe(false);
 		await new Promise((res) => setTimeout(res, 11));
@@ -63,7 +63,9 @@ describe('response negotiation', () => {
 		});
 		const req = fm.fetchHandler('http://a.com/');
 		let resolved = false;
-		req.then(() => {resolved = true});
+		req.then(() => {
+			resolved = true;
+		});
 		await new Promise((res) => setTimeout(res, 10));
 		expect(resolved).toBe(false);
 		await new Promise((res) => setTimeout(res, 11));
@@ -89,7 +91,9 @@ describe('response negotiation', () => {
 		fm.mock('*', 200, { delay: 20 });
 		const req1 = fm.fetchHandler('http://a.com/');
 		let resolved = false;
-		req1.then(() => {resolved = true});
+		req1.then(() => {
+			resolved = true;
+		});
 		await new Promise((res) => setTimeout(res, 10));
 		expect(resolved).toBe(false);
 		await new Promise((res) => setTimeout(res, 11));
@@ -98,7 +102,9 @@ describe('response negotiation', () => {
 		expect(res1.status).toEqual(200);
 		const req2 = fm.fetchHandler('http://a.com/');
 		resolved = false;
-		req2.then(() => {resolved = true});
+		req2.then(() => {
+			resolved = true;
+		});
 		await new Promise((res) => setTimeout(res, 10));
 		expect(resolved).toBe(false);
 		await new Promise((res) => setTimeout(res, 11));
@@ -135,7 +141,7 @@ describe('response negotiation', () => {
 	});
 
 	describe('rejecting', () => {
-		it('reject if object with `throws` property',  () => {
+		it('reject if object with `throws` property', () => {
 			fm.mock('*', { throws: 'as expected' });
 
 			return fm
@@ -148,7 +154,7 @@ describe('response negotiation', () => {
 				});
 		});
 
-		it('reject if function that returns object with `throws` property',  () => {
+		it('reject if function that returns object with `throws` property', () => {
 			fm.mock('*', () => ({ throws: 'as expected' }));
 
 			return fm

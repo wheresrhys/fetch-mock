@@ -15,9 +15,10 @@ FetchMock.addRoute = function (uncompiledRoute) {
 	debug('Adding route', uncompiledRoute);
 	const route = this.compileRoute(uncompiledRoute);
 	const clashes = this.routes.filter(({ identifier, method }) => {
-		const isMatch =			typeof identifier === 'function'
-			  ? identifier === route.identifier
-			  : String(identifier) === String(route.identifier);
+		const isMatch =
+			typeof identifier === 'function'
+				? identifier === route.identifier
+				: String(identifier) === String(route.identifier);
 		return isMatch && (!method || !route.method || method === route.method);
 	});
 
@@ -103,7 +104,10 @@ defineGreedyShorthand('anyOnce', 'once');
 	defineGreedyShorthand(`${method}AnyOnce`, `${method}Once`);
 });
 
-const getRouteRemover =	({ sticky: removeStickyRoutes }) => (routes) => removeStickyRoutes ? [] : routes.filter(({ sticky }) => sticky);
+const getRouteRemover =
+	({ sticky: removeStickyRoutes }) =>
+	(routes) =>
+		removeStickyRoutes ? [] : routes.filter(({ sticky }) => sticky);
 
 FetchMock.resetBehavior = function (options = {}) {
 	const removeRoutes = getRouteRemover(options);

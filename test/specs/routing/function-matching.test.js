@@ -1,6 +1,4 @@
-import {
-	afterEach, describe, expect, it, beforeAll,
-} from 'vitest';
+import { afterEach, describe, expect, it, beforeAll } from 'vitest';
 
 const { fetchMock } = testGlobals;
 describe('function matching', () => {
@@ -13,12 +11,14 @@ describe('function matching', () => {
 	afterEach(() => fm.restore());
 
 	it('match using custom function', async () => {
-		fm.mock((url, opts) =>
-			url.indexOf('logged-in') > -1
-				&& opts
-				&& opts.headers
-				&& opts.headers.authorized === true
-		, 200).catch();
+		fm.mock(
+			(url, opts) =>
+				url.indexOf('logged-in') > -1 &&
+				opts &&
+				opts.headers &&
+				opts.headers.authorized === true,
+			200,
+		).catch();
 
 		await fm.fetchHandler('http://a.com/12345', {
 			headers: { authorized: true },
@@ -44,7 +44,11 @@ describe('function matching', () => {
 	});
 
 	it('match using custom function with Request', async () => {
-		fm.mock((url, options) => url.indexOf('logged-in') > -1 && options.headers.authorized, 200).catch();
+		fm.mock(
+			(url, options) =>
+				url.indexOf('logged-in') > -1 && options.headers.authorized,
+			200,
+		).catch();
 
 		await fm.fetchHandler(
 			new fm.config.Request('http://a.com/logged-in', {
@@ -79,7 +83,8 @@ describe('function matching', () => {
 
 	it('match using custom function alongside other matchers', async () => {
 		fm.mock('end:profile', 200, {
-			functionMatcher: (url, opts) => opts && opts.headers && opts.headers.authorized === true,
+			functionMatcher: (url, opts) =>
+				opts && opts.headers && opts.headers.authorized === true,
 		}).catch();
 
 		await fm.fetchHandler('http://a.com/profile');

@@ -1,6 +1,4 @@
-import {
-	afterEach, describe, expect, it, beforeAll,
-} from 'vitest';
+import { afterEach, describe, expect, it, beforeAll } from 'vitest';
 
 const { fetchMock } = testGlobals;
 describe('header matching', () => {
@@ -143,7 +141,7 @@ describe('header matching', () => {
 				this.obj = obj;
 			}
 
-			* [Symbol.iterator]() {
+			*[Symbol.iterator]() {
 				yield ['a', 'b'];
 			}
 

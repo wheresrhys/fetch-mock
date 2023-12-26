@@ -1,6 +1,4 @@
-import {
-	afterEach, beforeEach, describe, expect, it, vi,
-} from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const { fetchMock } = testGlobals;
 describe('custom implementations', () => {
@@ -75,7 +73,9 @@ describe('custom implementations', () => {
 			// matched the request against overridden prototype.
 			await fetch(new ReplacementRequest('http://a.com'));
 
-			expect(() => fetch(new fetchMock.config.Request('http://a.com'))).toThrow('Unrecognised Request object');
+			expect(() => fetch(new fetchMock.config.Request('http://a.com'))).toThrow(
+				'Unrecognised Request object',
+			);
 		});
 
 		it('should use the configured Response', async () => {

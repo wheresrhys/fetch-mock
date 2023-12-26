@@ -1,6 +1,4 @@
-import {
-	afterEach, describe, expect, it, beforeAll,
-} from 'vitest';
+import { afterEach, describe, expect, it, beforeAll } from 'vitest';
 
 const { fetchMock } = testGlobals;
 
@@ -25,7 +23,7 @@ describe('response generation', () => {
 			fm.mock('*', { status: 'not number' });
 			try {
 				await fm.fetchHandler('http://a.com');
-				expect.unreachable('Line above should throw')
+				expect.unreachable('Line above should throw');
 			} catch (err) {
 				expect(err.message).toMatch(
 					/Invalid status not number passed on response object/,

@@ -4,7 +4,7 @@ module.exports = {
     es2021: true,
     node: true,
   },
-  extends: ['origami-component', 'prettier'],
+  extends: ['origami-component', "plugin:prettier/recommended"],
   overrides: [
     {
       env: {

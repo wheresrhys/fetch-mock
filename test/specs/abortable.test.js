@@ -1,12 +1,11 @@
-import {
-	beforeEach, describe, expect, it,
-} from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 const RESPONSE_DELAY = 10;
 const ABORT_DELAY = 5;
 
 const { fetchMock } = testGlobals;
-const getDelayedOk = () => new Promise((res) => setTimeout(() => res(200), RESPONSE_DELAY));
+const getDelayedOk = () =>
+	new Promise((res) => setTimeout(() => res(200), RESPONSE_DELAY));
 
 const getDelayedAbortController = () => {
 	const controller = new AbortController();

@@ -34,7 +34,8 @@ const resolve = async (
 	// Because of this we can't safely check for function before Promisey-ness,
 	// or vice versa. So to keep it DRY, and flexible, we keep trying until we
 	// have something that looks like neither Promise nor function
-	while (true) { //eslint-disable-line no-constant-condition
+	//eslint-disable-next-line no-constant-condition
+	while (true) {
 		if (typeof response === 'function') {
 			debug('  Response is a function');
 			// in the case of falling back to the network we need to make sure we're using
@@ -96,16 +97,18 @@ FetchMock._extractBodyThenHandle = async function (normalizedRequest) {
 	return this._fetchHandler(normalizedRequest);
 };
 
-FetchMock._fetchHandler = function ({
-	url, options, request, signal,
-}) {
+FetchMock._fetchHandler = function ({ url, options, request, signal }) {
 	const { route, callLog } = this.executeRouter(url, options, request);
 
 	this.recordCall(callLog);
 
 	// this is used to power the .flush() method
 	let done;
-	this._holdingPromises.push(new Promise((res) => {done = res}));
+	this._holdingPromises.push(
+		new Promise((res) => {
+			done = res;
+		}),
+	);
 
 	// wrapped in this promise to make sure we respect custom Promise
 	// constructors defined by the user
@@ -132,7 +135,11 @@ FetchMock._fetchHandler = function ({
 		}
 
 		this.generateResponse({
-			route, url, options, request, callLog,
+			route,
+			url,
+			options,
+			request,
+			callLog,
 		})
 			.then(res, rej)
 			.then(done, done)
@@ -147,7 +154,10 @@ FetchMock.fetchHandler.isMock = true;
 FetchMock.executeRouter = function (url, options, request) {
 	const debug = getDebug('executeRouter()');
 	const callLog = {
-		url, options, request, isUnmatched: true,
+		url,
+		options,
+		request,
+		isUnmatched: true,
 	};
 	debug('Attempting to match request to a route');
 	if (this.getOption('fallbackToNetwork') === 'always') {
@@ -191,7 +201,7 @@ FetchMock.executeRouter = function (url, options, request) {
 	if (!this.getOption('fallbackToNetwork')) {
 		throw new Error(
 			`fetch-mock: No fallback response defined for ${
-				options && options.method || 'GET'
+				(options && options.method) || 'GET'
 			} to ${url}`,
 		);
 	}
@@ -252,7 +262,7 @@ FetchMock.router = function (url, options, request) {
 };
 
 FetchMock.getNativeFetch = function () {
-	const func = this.realFetch || this.isSandbox && this.config.fetch;
+	const func = this.realFetch || (this.isSandbox && this.config.fetch);
 	if (!func) {
 		throw new Error(
 			'fetch-mock: Falling back to network only available on global fetch-mock, or by setting config.fetch on sandboxed fetch-mock',

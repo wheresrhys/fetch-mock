@@ -1,6 +1,4 @@
-import {
-	beforeEach, describe, expect, it,
-} from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 const { fetchMock } = testGlobals;
 
@@ -44,7 +42,8 @@ describe('fallbackToNetwork', () => {
 	it('calls fetch with original Request object', async () => {
 		const sbx = fm.sandbox();
 		let calledWith;
-		sbx.config.fetch = async (req) => { //eslint-disable-line require-await
+		//eslint-disable-next-line require-await
+		sbx.config.fetch = async (req) => {
 			calledWith = req;
 			return { status: 202 };
 		};
@@ -77,7 +76,7 @@ describe('fallbackToNetwork', () => {
 	});
 
 	describe.skip('warnOnFallback', () => {
-		it('warn on fallback response by default',  () => {}); //eslint-disable-line no-empty-function
-		it("don't warn on fallback response when configured false",  () => {}); //eslint-disable-line no-empty-function
+		it('warn on fallback response by default', () => {}); //eslint-disable-line no-empty-function
+		it("don't warn on fallback response when configured false", () => {}); //eslint-disable-line no-empty-function
 	});
 });

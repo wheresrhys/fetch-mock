@@ -1,6 +1,4 @@
-import {
-	afterEach, describe, expect, it, vi,
-} from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { Readable, Writable } from 'stream';
 const { fetchMock } = testGlobals;
 describe('nodejs only tests', () => {
@@ -17,28 +15,28 @@ describe('nodejs only tests', () => {
 				});
 		});
 		// only works in node-fetch@2
-		it.skip('can respond with a readable stream', () => new Promise((res) => {
+		it.skip('can respond with a readable stream', () =>
+			new Promise((res) => {
+				const readable = new Readable();
+				const write = vi.fn().mockImplementation((chunk, enc, cb) => {
+					cb();
+				});
+				const writable = new Writable({
+					write,
+				});
+				readable.push('response string');
+				readable.push(null);
 
-			const readable = new Readable();
-			const write = vi.fn().mockImplementation((chunk, enc, cb) => {
-				cb();
-			});
-			const writable = new Writable({
-				write,
-			});
-			readable.push('response string');
-			readable.push(null);
+				fetchMock.mock(/a/, readable, { sendAsJson: false });
+				fetchMock.fetchHandler('http://a.com').then((res) => {
+					res.body.pipe(writable);
+				});
 
-			fetchMock.mock(/a/, readable, { sendAsJson: false });
-			fetchMock.fetchHandler('http://a.com').then((res) => {
-				res.body.pipe(writable);
-			});
-
-			writable.on('finish', () => {
-				expect(write.args[0][0].toString('utf8')).to.equal('response string');
-				res();
-			});
-		}));
+				writable.on('finish', () => {
+					expect(write.args[0][0].toString('utf8')).to.equal('response string');
+					res();
+				});
+			}));
 
 		// See https://github.com/wheresrhys/fetch-mock/issues/575
 		it('can respond with large bodies from the interweb', async () => {

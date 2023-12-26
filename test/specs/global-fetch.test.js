@@ -1,6 +1,4 @@
-import {
-	afterEach, beforeEach, describe, expect, it, vi,
-} from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const { fetchMock } = testGlobals;
 
@@ -42,8 +40,7 @@ describe('use with global fetch', () => {
 	});
 
 	it('restores global fetch after a complex mock', () => {
-		fetchMock.mock('a', 200).mock('b', 200).spy().catch(404)
-			.restore();
+		fetchMock.mock('a', 200).mock('b', 200).spy().catch(404).restore();
 		expectToBeStubbed(false);
 	});
 

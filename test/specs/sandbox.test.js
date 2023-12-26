@@ -1,6 +1,4 @@
-import {
-	describe, expect, it, beforeAll, vi,
-} from 'vitest';
+import { describe, expect, it, beforeAll, vi } from 'vitest';
 
 const { fetchMock } = testGlobals;
 describe('sandbox', () => {
@@ -22,7 +20,8 @@ describe('sandbox', () => {
 
 	it('implement full fetch-mock api', () => {
 		const sbx = fetchMock.sandbox();
-		for (const key in fetchMock) { //eslint-disable-line guard-for-in
+		//eslint-disable-next-line guard-for-in
+		for (const key in fetchMock) {
 			expect(typeof sbx[key]).toEqual(typeof fetchMock[key]);
 		}
 	});
@@ -129,9 +128,7 @@ describe('sandbox', () => {
 
 	it('exports a properly mocked node-fetch module shape', () => {
 		// uses node-fetch default require pattern
-		const {
-			default: fetch, Headers, Request, Response,
-		} = fetchMock.sandbox();
+		const { default: fetch, Headers, Request, Response } = fetchMock.sandbox();
 
 		expect(fetch.name).toEqual('fetchMockProxy');
 		expect(new Headers()).toBeInstanceOf(fetchMock.config.Headers);

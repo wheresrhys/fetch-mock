@@ -1,6 +1,4 @@
-import {
-	afterEach, describe, expect, it, beforeAll,
-} from 'vitest';
+import { afterEach, describe, expect, it, beforeAll } from 'vitest';
 import { URL } from 'node:url';
 
 const { fetchMock } = testGlobals;
@@ -98,13 +96,15 @@ describe('query string matching', () => {
 	});
 
 	it('distinguish between query strings that only partially differ', async () => {
-		expect(() => fm.mock({ query: { a: 'b', c: 'e' } }, 200).mock(
-			{
-				overwriteRoutes: false,
-				query: { a: 'b', c: 'd' },
-			},
-			300,
-		)).not.toThrow();
+		expect(() =>
+			fm.mock({ query: { a: 'b', c: 'e' } }, 200).mock(
+				{
+					overwriteRoutes: false,
+					query: { a: 'b', c: 'd' },
+				},
+				300,
+			),
+		).not.toThrow();
 		const res = await fm.fetchHandler('http://a.com?a=b&c=d');
 		expect(res.status).toEqual(300);
 	});

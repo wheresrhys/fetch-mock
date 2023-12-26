@@ -22,9 +22,11 @@ FetchMock.createInstance = function () {
 	debug('Creating fetch-mock instance');
 	const instance = Object.create(FetchMock);
 	instance._uncompiledRoutes = (this._uncompiledRoutes || []).slice();
-	instance.routes = instance._uncompiledRoutes.map((config) => this.compileRoute(config));
+	instance.routes = instance._uncompiledRoutes.map((config) =>
+		this.compileRoute(config),
+	);
 	instance.fallbackResponse = this.fallbackResponse || undefined;
-	instance.config = { ...this.config || FetchMock.config };
+	instance.config = { ...(this.config || FetchMock.config) };
 	instance._calls = [];
 	instance._holdingPromises = [];
 	instance.bindMethods();

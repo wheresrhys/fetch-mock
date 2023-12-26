@@ -640,16 +640,6 @@ declare namespace fetchMock {
              */
             warnOnFallback?: boolean;
 
-            /**
-             * Reference to the Promise constructor of a custom Promise
-             * implementation.
-             */
-            Promise?: new (executor: (
-                // Should be (value?: T | PromiseLike<T>) => void
-                // But not sure if that's compatible with older typescript
-                resolve: (value?: any) => void,
-                reject: (value?: any) => void,
-            ) => void) => Promise<any>;
 
             /**
              * Reference to a custom fetch implementation.

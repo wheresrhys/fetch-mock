@@ -16,21 +16,12 @@ references:
   nodelts: &nodelts
     docker:
       - image: cimg/node:lts
-  browsers: &browsers
-    docker:
-      - image: circleci/node:12.18.3-browsers
-  nodenext: &nodenext
+  # browsers: &browsers
+  #   docker:
+  #     - image: circleci/node:12.18.3-browsers
+  nodecurrent: &nodecurrent
     docker:
       - image: cimg/node:current
-  node12: &node12
-    docker:
-      - image: cimg/node:12.18
-  node10: &node10
-    docker:
-      - image: cimg/node:10.22
-  node6: &node6
-    docker:
-      - image: circleci/node:6.17.1
 
   workspace: &workspace
     attach_workspace:
@@ -84,53 +75,21 @@ jobs:
     <<: *nodelts
     steps:
       - *workspace
-      - run: make coverage
-
-
-  nodefetch2:
-    <<: *nodelts
-    steps:
-      - *workspace
-      - run: FETCH_MOCK_SRC=../cjs/server.js make test
-
-  nodefetch1:
-    <<: *nodelts
-    steps:
-      - *workspace
-      - run: npm install node-fetch@1
-      - run: FETCH_MOCK_SRC=../cjs/server.js make test
+      - run: make test-coverage
 
   nodefetch3:
     <<: *nodelts
     steps:
       - *workspace
-      - run: npm install node-fetch@next
-      - run: FETCH_MOCK_SRC=../cjs/server.js make test
+      - run: npm install node-fetch@3
+      - run: make test-node-fetch
 
-  es5:
-    <<: *node6
+  commonjs:
+    <<: *nodelts
     steps:
       - *workspace
-      - run: npm rebuild
-      - run: FETCH_MOCK_SRC=../es5/server.js make test-es5
-
-  # esm:
-  #   <<: *nodelts
-  #   steps:
-  #     - *workspace
-  #     - run: npm rebuild
-  #     - run: make test-esm
-
-  node12:
-    <<: *node12
-    <<: *rebuild_test
-  node10:
-    <<: *node10
-    <<: *rebuild_test
-  nodenext:
-    <<: *nodenext
-    <<: *rebuild_test
-
+      - run: make build
+      - run: make test-commonjs
   chrome:
     <<: *browsers
     steps:
@@ -148,7 +107,7 @@ jobs:
     <<: *nodelts
     steps:
       - *workspace
-      - run: make publish
+      - run: make build publish
 
 
 workflows:
@@ -174,51 +133,27 @@ workflows:
       - typecheck:
           <<: *triggerable-by-tag
           <<: *build-lint-unit
-      - nodefetch1:
-          <<: *triggerable-by-tag
-          <<: *build-lint-unit
-      - nodefetch2:
-          <<: *triggerable-by-tag
-          <<: *build-lint-unit
       - nodefetch3:
           <<: *triggerable-by-tag
           <<: *build-lint-unit
-      - es5:
+      - commonjs:
           <<: *triggerable-by-tag
           <<: *build-lint-unit
-      # - esm:
+      # - chrome:
       #     <<: *triggerable-by-tag
       #     <<: *build-lint-unit
-      - node10:
-          <<: *triggerable-by-tag
-          <<: *build-lint-unit
-      - node12:
-          <<: *triggerable-by-tag
-          <<: *build-lint-unit
-      - nodenext:
-          <<: *triggerable-by-tag
-          <<: *build-lint-unit
-      - chrome:
-          <<: *triggerable-by-tag
-          <<: *build-lint-unit
-      - firefox:
-          <<: *triggerable-by-tag
-          <<: *build-lint-unit
+      # - firefox:
+      #     <<: *triggerable-by-tag
+      #     <<: *build-lint-unit
       - deploy:
           context: wheresrhys-npm-publish
           requires:
-            - nodefetch1
-            - nodefetch2
             - nodefetch3
-            - es5
             - chrome
             - firefox
             - build
             - typecheck
-            - node10
-            - nodenext
-            - node12
-            # - esm
+            - commonjs
           filters:
             branches:
               ignore: /.*/

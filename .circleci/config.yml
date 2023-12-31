@@ -7,7 +7,7 @@ references:
     filters:
       tags:
         only: /.*/
-  build-lint-unit: &build-lint-unit
+  run-after-first-jobs: &run-after-first-jobs
     requires:
       - test
       - lint
@@ -90,18 +90,18 @@ jobs:
       - *workspace
       - run: make build
       - run: make test-commonjs
-  chrome:
-    <<: *browsers
-    steps:
-      - *workspace
-      - run: TEST_BROWSER=Chrome make test-browser
+  # chrome:
+  #   <<: *browsers
+  #   steps:
+  #     - *workspace
+  #     - run: TEST_BROWSER=Chrome make test-browser
 
-  firefox:
-    <<: *browsers
-    steps:
-      - *workspace
-      - run: npm install karma-firefox-launcher
-      - run: TEST_BROWSER=Firefox make test-browser
+  # firefox:
+  #   <<: *browsers
+  #   steps:
+  #     - *workspace
+  #     - run: npm install karma-firefox-launcher
+  #     - run: TEST_BROWSER=Firefox make test-browser
 
   deploy:
     <<: *nodelts
@@ -132,25 +132,25 @@ workflows:
       # to defer
       - typecheck:
           <<: *triggerable-by-tag
-          <<: *build-lint-unit
+          <<: *run-after-first-jobs
       - nodefetch3:
           <<: *triggerable-by-tag
-          <<: *build-lint-unit
+          <<: *run-after-first-jobs
       - commonjs:
           <<: *triggerable-by-tag
-          <<: *build-lint-unit
+          <<: *run-after-first-jobs
       # - chrome:
       #     <<: *triggerable-by-tag
-      #     <<: *build-lint-unit
+      #     <<: *run-after-first-jobs
       # - firefox:
       #     <<: *triggerable-by-tag
-      #     <<: *build-lint-unit
+      #     <<: *run-after-first-jobs
       - deploy:
           context: wheresrhys-npm-publish
           requires:
             - nodefetch3
-            - chrome
-            - firefox
+            # - chrome
+            # - firefox
             - build
             - typecheck
             - commonjs

@@ -42,9 +42,6 @@
     "path-to-regexp": "^2.2.1",
     "querystring": "^0.2.1"
   },
-  "peerDependencies": {
-    "node-fetch": "*"
-  },
   "peerDependenciesMeta": {
     "node-fetch": {
       "optional": true
@@ -64,7 +61,6 @@
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-prettier": "^5.1.2",
     "jsdom": "^23.0.1",
-    "node-fetch": "^2.7.0",
     "prettier": "^3.1.1",
     "rollup": "^4.9.1",
     "typescript": "^3.6.4",

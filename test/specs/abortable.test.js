@@ -21,9 +21,7 @@ describe('abortable fetch', () => {
 			await fm.fetchHandler(...fetchArgs);
 			throw new Error('unexpected');
 		} catch (error) {
-			if (typeof DOMException !== 'undefined') {
-				expect(error instanceof DOMException).toEqual(true);
-			}
+			expect(error instanceof DOMException).toEqual(true);
 			expect(error.name).toEqual('AbortError');
 			expect(error.message).toEqual('The operation was aborted.');
 		}

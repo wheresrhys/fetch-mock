@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-const RESPONSE_DELAY = 10;
-const ABORT_DELAY = 5;
+const RESPONSE_DELAY = 50;
+const ABORT_DELAY = 10;
 
 const { fetchMock } = testGlobals;
 const getDelayedOk = () =>

@@ -7,7 +7,7 @@ function createCommonJsPackage() {
 	return {
 		name: 'cjs-package',
 		buildEnd: async () => {
-			await mkdir('./dist', { recursive: true })
+			await mkdir('./dist', { recursive: true });
 			await writeFile('./dist/package.json', JSON.stringify(pkg, null, 2));
 		},
 	};

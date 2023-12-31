@@ -54,7 +54,6 @@
     "node": ">=4.0.0"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^25.0.7",
     "@vitest/browser": "^1.1.0",
     "@vitest/coverage-istanbul": "^1.1.0",
     "dtslint": "^1.0.2",

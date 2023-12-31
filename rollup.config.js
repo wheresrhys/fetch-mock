@@ -1,3 +1,5 @@
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
 import { writeFile } from 'fs/promises';
 function createCommonJsPackage() {
 	const pkg = { type: 'commonjs' };
@@ -13,7 +15,6 @@ function createCommonJsPackage() {
 }
 
 export default {
-	minify: false,
 	input: 'src/index.js',
 	output: {
 		dir: 'dist',
@@ -21,8 +22,9 @@ export default {
 		format: 'commonjs',
 	},
 	plugins: [
+		nodeResolve({ preferBuiltins: false }),
 		// resolve({ preferBuiltins: true }),
-		// commonjs(),
+		commonjs(),
 		createCommonJsPackage(),
 		// sourcemaps(),
 		// builtins(),

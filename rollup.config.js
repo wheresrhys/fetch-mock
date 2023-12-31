@@ -1,14 +1,13 @@
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-import { writeFile } from 'fs/promises';
+import { writeFile, mkdir } from 'fs/promises';
 function createCommonJsPackage() {
 	const pkg = { type: 'commonjs' };
 
 	return {
 		name: 'cjs-package',
 		buildEnd: async () => {
-			console.log('oh yeh');
-			// await mkdir('./dist', { recursive: true })
+			await mkdir('./dist', { recursive: true })
 			await writeFile('./dist/package.json', JSON.stringify(pkg, null, 2));
 		},
 	};

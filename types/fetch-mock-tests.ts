@@ -197,7 +197,6 @@ fetchMock.config.fallbackToNetwork = 'always';
 fetchMock.config.overwriteRoutes = true;
 fetchMock.config.overwriteRoutes = undefined;
 fetchMock.config.warnOnFallback = true;
-fetchMock.config.Promise = Promise;
 fetchMock.config.fetch = (): Promise<Response> => new Promise(() => { });
 fetchMock.config.Headers = Headers;
 fetchMock.config.Request = Request;

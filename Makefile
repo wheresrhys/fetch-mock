@@ -10,11 +10,11 @@ typecheck:
 	dtslint --expectOnly types
 
 lint-ci:
-	eslint --ext .js,.mjs --ignore-pattern test/fixtures/* src test
+	eslint --ext .js,.cjs .
 	prettier *.md docs/*.md docs/**/*.md
 
 lint:
-	eslint --cache --fix --ext .js,.mjs --ignore-pattern test/fixtures/* src test
+	eslint --cache --fix --ext .js,.cjs .
 	prettier --cache --write *.md docs/*.md docs/**/*.md
 
 verify: lint

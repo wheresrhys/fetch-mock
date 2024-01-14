@@ -48,3 +48,6 @@ test-commonjs:
 
 test-browser:
 	TESTING_ENV=browser npx vitest ./test/specs
+
+test-jest:
+	npx jest test/framework-compat/jest.spec.js

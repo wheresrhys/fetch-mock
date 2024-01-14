@@ -1,7 +1,12 @@
-const chai = require('chai');
-chai.use(require('sinon-chai'));
-const expect = chai.expect;
-const sinon = require('sinon');
+import {
+	afterEach,
+	describe,
+	expect,
+	it,
+	beforeAll,
+	afterAll,
+	vi,
+} from 'vitest';
 
 const { fetchMock } = testGlobals;
 describe('shorthands', () => {
@@ -12,29 +17,30 @@ describe('shorthands', () => {
 		const args = fetchMock[method].length === 3 ? ['*', 200] : [200];
 
 		it(`${method}() is chainable`, () => {
-			expect(fm[method](...args)).to.equal(fm);
+			expect(fm[method](...args)).toEqual(fm);
 		});
 
 		it(`${method}() has "this"`, () => {
-			sinon.spy(fm, method);
+			vi.spyOn(fm, method).mockReturnThis();
 			fm[method](...args);
-			expect(fm[method].lastCall.thisValue).to.equal(fm);
-			fm[method].restore();
+			expect(fm[method](...args)).toEqual(fm);
+			fm[method].mockRestore();
 		});
 	};
 
-	before(() => {
+	beforeAll(() => {
 		fm = fetchMock.createInstance();
-		sinon.spy(fm, 'compileRoute');
+		vi.spyOn(fm, 'compileRoute');
 		fm.config.warnOnUnmatched = false;
-		expectRoute = (...args) => expect(fm.compileRoute).calledWith(args);
+		expectRoute = (...args) =>
+			expect(fm.compileRoute).toHaveBeenCalledWith(args);
 	});
 	afterEach(() => {
-		fm.compileRoute.resetHistory();
+		fm.compileRoute.mockClear();
 		fm.restore({ sticky: true });
 	});
 
-	after(() => fm.compileRoute.restore());
+	afterAll(() => fm.compileRoute.mockRestore());
 
 	it('has sticky() shorthand method', () => {
 		fm.sticky('a', 'b');
@@ -90,26 +96,26 @@ describe('shorthands', () => {
 					fm[method]('a', 'b');
 					fm[method]('c', 'd', { opt: 'e' });
 					expectRoute('a', 'b', {
-						method: method,
+						method,
 					});
 					expectRoute('c', 'd', {
 						opt: 'e',
-						method: method,
+						method,
 					});
 				});
 
 				testChainableMethod(method);
 
 				it(`has ${method}Once() shorthand`, () => {
-					fm[method + 'Once']('a', 'b');
-					fm[method + 'Once']('c', 'd', { opt: 'e' });
+					fm[`${method}Once`]('a', 'b');
+					fm[`${method}Once`]('c', 'd', { opt: 'e' });
 					expectRoute('a', 'b', {
-						method: method,
+						method,
 						repeat: 1,
 					});
 					expectRoute('c', 'd', {
 						opt: 'e',
-						method: method,
+						method,
 						repeat: 1,
 					});
 				});
@@ -117,20 +123,20 @@ describe('shorthands', () => {
 				testChainableMethod(`${method}Once`);
 
 				it(`has ${method}Any() shorthand`, () => {
-					fm[method + 'Any']('a', { opt: 'b' });
+					fm[`${method}Any`]('a', { opt: 'b' });
 					expectRoute({}, 'a', {
 						opt: 'b',
-						method: method,
+						method,
 					});
 				});
 
 				testChainableMethod(`${method}Any`);
 
 				it(`has ${method}AnyOnce() shorthand`, () => {
-					fm[method + 'AnyOnce']('a', { opt: 'b' });
+					fm[`${method}AnyOnce`]('a', { opt: 'b' });
 					expectRoute({}, 'a', {
 						opt: 'b',
-						method: method,
+						method,
 						repeat: 1,
 					});
 				});

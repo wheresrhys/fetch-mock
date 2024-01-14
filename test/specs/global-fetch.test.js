@@ -1,23 +1,21 @@
-const chai = require('chai');
-chai.use(require('sinon-chai'));
-const expect = chai.expect;
-const sinon = require('sinon');
-const { fetchMock, theGlobal } = testGlobals;
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+const { fetchMock } = testGlobals;
 
 describe('use with global fetch', () => {
 	let originalFetch;
 
 	const expectToBeStubbed = (yes = true) => {
-		expect(theGlobal.fetch).to.equal(
-			yes ? fetchMock.fetchHandler : originalFetch
+		expect(globalThis.fetch).toEqual(
+			yes ? fetchMock.fetchHandler : originalFetch,
 		);
-		expect(theGlobal.fetch).not.to.equal(
-			yes ? originalFetch : fetchMock.fetchHandler
+		expect(globalThis.fetch).not.toEqual(
+			yes ? originalFetch : fetchMock.fetchHandler,
 		);
 	};
 
 	beforeEach(() => {
-		originalFetch = theGlobal.fetch = sinon.stub().returns(Promise.resolve());
+		originalFetch = globalThis.fetch = vi.fn().mockResolvedValue();
 	});
 	afterEach(fetchMock.restore);
 
@@ -49,7 +47,7 @@ describe('use with global fetch', () => {
 	it('not call default fetch when in mocked mode', async () => {
 		fetchMock.mock('*', 200);
 
-		await theGlobal.fetch('http://a.com');
-		expect(originalFetch).not.called;
+		await globalThis.fetch('http://a.com');
+		expect(originalFetch).not.toHaveBeenCalled();
 	});
 });

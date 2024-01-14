@@ -1,6 +1,5 @@
-const builtInMatchers = require('./matchers');
-
-const { debug, setDebugNamespace, getDebug } = require('../lib/debug');
+import builtInMatchers from './matchers.js';
+import { debug, setDebugNamespace, getDebug } from '../lib/debug.js';
 
 const isUrlMatcher = (matcher) =>
 	matcher instanceof RegExp ||
@@ -29,7 +28,7 @@ class Route {
 
 		if (!Route.registeredMatchers.some(({ name }) => name in this)) {
 			throw new Error(
-				"fetch-mock: Each route must specify some criteria for matching calls to fetch. To match all calls use '*'"
+				"fetch-mock: Each route must specify some criteria for matching calls to fetch. To match all calls use '*'",
 			);
 		}
 	}
@@ -84,7 +83,7 @@ class Route {
 		const activeMatchers = Route.registeredMatchers
 			.map(
 				({ name, matcher, usesBody }) =>
-					this[name] && { matcher: matcher(this, this.fetchMock), usesBody }
+					this[name] && { matcher: matcher(this, this.fetchMock), usesBody },
 			)
 			.filter((matcher) => Boolean(matcher));
 
@@ -101,13 +100,13 @@ class Route {
 		debug('Limiting number of requests to handle by route');
 		if (!this.repeat) {
 			debug(
-				'  No `repeat` value set on route. Will match any number of requests'
+				'  No `repeat` value set on route. Will match any number of requests',
 			);
 			return;
 		}
 
 		debug(`  Route set to repeat ${this.repeat} times`);
-		const matcher = this.matcher;
+		const { matcher } = this;
 		let timesLeft = this.repeat;
 		this.matcher = (url, options) => {
 			const match = timesLeft && matcher(url, options);
@@ -116,24 +115,26 @@ class Route {
 				return true;
 			}
 		};
-		this.reset = () => (timesLeft = this.repeat);
+		this.reset = () => {
+			timesLeft = this.repeat;
+		};
 	}
 
 	delayResponse() {
 		const debug = getDebug('delayResponse()');
-		debug(`Applying response delay settings`);
+		debug('Applying response delay settings');
 		if (this.delay) {
 			debug(`  Wrapping response in delay of ${this.delay} miliseconds`);
-			const response = this.response;
+			const { response } = this;
 			this.response = () => {
 				debug(`Delaying response by ${this.delay} miliseconds`);
 				return new Promise((res) =>
-					setTimeout(() => res(response), this.delay)
+					setTimeout(() => res(response), this.delay),
 				);
 			};
 		} else {
 			debug(
-				`  No delay set on route. Will respond 'immediately' (but asynchronously)`
+				"  No delay set on route. Will respond 'immediately' (but asynchronously)",
 			);
 		}
 	}
@@ -147,4 +148,4 @@ Route.registeredMatchers = [];
 
 builtInMatchers.forEach(Route.addMatcher);
 
-module.exports = Route;
+export default Route;

@@ -1,59 +1,32 @@
-import resolve from 'rollup-plugin-node-resolve';
-import commonjs from 'rollup-plugin-commonjs';
-import builtins from 'rollup-plugin-node-builtins';
-import globals from 'rollup-plugin-node-globals';
-import json from 'rollup-plugin-json';
-// import sourcemaps from 'rollup-plugin-sourcemaps';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import { writeFile, mkdir } from 'fs/promises';
+function createCommonJsPackage() {
+	const pkg = { type: 'commonjs' };
 
-export default [
-	{
-		input: 'src/client.js',
-		output: {
-			file: 'esm/client.js',
-			format: 'esm',
+	return {
+		name: 'cjs-package',
+		buildEnd: async () => {
+			await mkdir('./dist', { recursive: true });
+			await writeFile('./dist/package.json', JSON.stringify(pkg, null, 2));
 		},
-		plugins: [
-			resolve({ preferBuiltins: false, browser: true }),
-			commonjs(),
-			builtins(),
-		],
+	};
+}
+
+export default {
+	input: 'src/index.js',
+	output: {
+		dir: 'dist',
+		entryFileNames: 'commonjs.js',
+		format: 'commonjs',
 	},
-	{
-		input: 'src/server.js',
-		output: {
-			file: 'esm/server.js',
-			format: 'esm',
-		},
-		plugins: [
-			resolve({ preferBuiltins: true }),
-			commonjs(),
-			// sourcemaps(),
-			builtins(),
-			globals(),
-		],
-	},
-	{
-		input: 'es5/client-legacy.js',
-		output: {
-			file: 'es5/client-legacy-bundle.js',
-			format: 'umd',
-			name: 'fetchMock',
-		},
-		plugins: [json(), resolve(), commonjs(), builtins(), globals()],
-	},
-	{
-		input: 'es5/client.js',
-		output: {
-			file: 'es5/client-bundle.js',
-			format: 'umd',
-			name: 'fetchMock',
-		},
-		plugins: [
-			json(),
-			resolve({ preferBuiltins: false, browser: true }),
-			commonjs(),
-			builtins(),
-			globals(),
-		],
-	},
-];
+	plugins: [
+		nodeResolve({ preferBuiltins: false }),
+		// resolve({ preferBuiltins: true }),
+		commonjs(),
+		createCommonJsPackage(),
+		// sourcemaps(),
+		// builtins(),
+		// globals(),
+	],
+};

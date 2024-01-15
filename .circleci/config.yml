@@ -90,6 +90,12 @@ jobs:
       - *workspace
       - run: make build
       - run: make test-commonjs
+  jest:
+    <<: *nodelts
+    steps:
+      - *workspace
+      - run: make build
+      - run: make test-jest
   # chrome:
   #   <<: *browsers
   #   steps:
@@ -139,6 +145,9 @@ workflows:
       - commonjs:
           <<: *triggerable-by-tag
           <<: *run-after-first-jobs
+      - jest:
+          <<: *triggerable-by-tag
+          <<: *run-after-first-jobs
       # - chrome:
       #     <<: *triggerable-by-tag
       #     <<: *run-after-first-jobs
@@ -154,6 +163,7 @@ workflows:
             - build
             - typecheck
             - commonjs
+            - jest
           filters:
             branches:
               ignore: /.*/

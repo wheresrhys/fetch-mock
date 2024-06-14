@@ -129,12 +129,12 @@ const getParamsMatcher = ({ params: expectedParams, url: matcherUrl }) => {
 	};
 };
 
-const getBodyMatcher = (route, fetchMock) => {
-	const matchPartialBody = fetchMock.getOption('matchPartialBody', route);
+const getBodyMatcher = (route) => {
 	const { body: expectedBody } = route;
 
 	debug('Generating body matcher');
-	return (url, { body, method = 'get' }) => {
+	return (url, { body, method = 'get' }, request, fetchMock) => {
+		const matchPartialBody = fetchMock.getOption('matchPartialBody', route);
 		debug('Attempting to match body');
 		if (method.toLowerCase() === 'get') {
 			debug('  GET request - skip matching body');

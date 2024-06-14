@@ -4,6 +4,7 @@ const expect = chai.expect;
 const sinon = require('sinon');
 
 const { fetchMock } = testGlobals;
+const { Route } = require('../../src/Route');
 describe('shorthands', () => {
 	let fm;
 	let expectRoute;
@@ -25,16 +26,16 @@ describe('shorthands', () => {
 
 	before(() => {
 		fm = fetchMock.createInstance();
-		sinon.spy(fm, 'compileRoute');
+		sinon.spy(Route, 'compileRoute');
 		fm.config.warnOnUnmatched = false;
-		expectRoute = (...args) => expect(fm.compileRoute).calledWith(args);
+		expectRoute = (...args) => expect(Route.compileRoute).calledWith(...args);
 	});
 	afterEach(() => {
-		fm.compileRoute.resetHistory();
+		Route.compileRoute.resetHistory();
 		fm.restore({ sticky: true });
 	});
 
-	after(() => fm.compileRoute.restore());
+	after(() => Route.compileRoute.restore());
 
 	it('has sticky() shorthand method', () => {
 		fm.sticky('a', 'b');

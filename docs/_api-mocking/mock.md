@@ -37,7 +37,7 @@ parameters:
       - String
     content: |
       More options to configure matching and responding behaviour.
-      Alternatively, use this parameter to specify a name for the route in order to make retrieving he calls it handles a little more intuitive
+      Alternatively, use this parameter to pass a string to use as a name for the route in order to make using the call inspection API easier.
 content_markdown: |-
 
   Alternatively a single parameter, `options`, an Object with `matcher`, `response` and other options defined, can be passed in. 

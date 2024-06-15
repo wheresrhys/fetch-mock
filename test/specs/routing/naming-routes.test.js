@@ -33,10 +33,4 @@ describe('multiple routes', () => {
 		fm.fetchHandler('http://a.com');
 		expect(fm.called('my-name')).toBe(true);
 	});
-
-	it('string in second parameter if only one other parameters supplied', () => {
-		fm.mock({ url: 'http://a.com', response: 200 }, 'my-name');
-		fm.fetchHandler('http://a.com');
-		expect(fm.called('my-name')).toBe(true);
-	});
 });

@@ -46,22 +46,19 @@ class Route {
 			Object.assign(routeConfig, matcher);
 		}
 
-		let options = nameOrOptions;
-
-		if ('response' in routeConfig) {
-			if (args.length === 2 && typeof response === 'string') {
-				options = nameToOptions(response);
-			}
-		} else {
-			if (typeof response !== 'undefined') {
-				routeConfig.response = response;
-			}
-			if (typeof nameOrOptions === 'string') {
-				options = nameToOptions(nameOrOptions);
-			}
+		if (typeof response !== 'undefined') {
+			routeConfig.response = response;
 		}
 
-		Object.assign(routeConfig, options);
+		if (nameOrOptions) {
+			Object.assign(
+				routeConfig,
+				typeof nameOrOptions === 'string'
+					? nameToOptions(nameOrOptions)
+					: nameOrOptions,
+			);
+		}
+
 		Object.assign(this, routeConfig);
 	}
 

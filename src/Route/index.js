@@ -8,6 +8,9 @@ const isUrlMatcher = (matcher) =>
 
 const isFunctionMatcher = (matcher) => typeof matcher === 'function';
 
+const nameToOptions = (options) =>
+	typeof options === 'string' ? { name: options } : options;
+
 class Route {
 	constructor(args, fetchMock) {
 		this.fetchMock = fetchMock;
@@ -34,8 +37,7 @@ class Route {
 	}
 
 	init(args) {
-		const [matcher, response, options = {}] = args;
-
+		const [matcher, response, nameOrOptions = {}] = args;
 		const routeConfig = {};
 
 		if (isUrlMatcher(matcher) || isFunctionMatcher(matcher)) {
@@ -48,7 +50,15 @@ class Route {
 			routeConfig.response = response;
 		}
 
-		Object.assign(routeConfig, options);
+		if (nameOrOptions) {
+			Object.assign(
+				routeConfig,
+				typeof nameOrOptions === 'string'
+					? nameToOptions(nameOrOptions)
+					: nameOrOptions,
+			);
+		}
+
 		Object.assign(this, routeConfig);
 	}
 

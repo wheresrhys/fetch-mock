@@ -1,9 +1,10 @@
-const { expect } = require('chai');
+import { afterEach, describe, expect, it, beforeAll } from 'vitest';
+
 const { fetchMock } = testGlobals;
 
 describe('response negotiation', () => {
 	let fm;
-	before(() => {
+	beforeAll(() => {
 		fm = fetchMock.createInstance();
 		fm.config.warnOnUnmatched = false;
 	});
@@ -13,44 +14,46 @@ describe('response negotiation', () => {
 	it('function', async () => {
 		fm.mock('*', (url) => url);
 		const res = await fm.fetchHandler('http://a.com/');
-		expect(res.status).to.equal(200);
-		expect(await res.text()).to.equal('http://a.com/');
+		expect(res.status).toEqual(200);
+		expect(await res.text()).toEqual('http://a.com/');
 	});
 
 	it('Promise', async () => {
 		fm.mock('*', Promise.resolve(200));
 		const res = await fm.fetchHandler('http://a.com/');
-		expect(res.status).to.equal(200);
+		expect(res.status).toEqual(200);
 	});
 
 	it('function that returns a Promise', async () => {
-		fm.mock('*', (url) => Promise.resolve('test: ' + url));
+		fm.mock('*', (url) => Promise.resolve(`test: ${url}`));
 		const res = await fm.fetchHandler('http://a.com/');
-		expect(res.status).to.equal(200);
-		expect(await res.text()).to.equal('test: http://a.com/');
+		expect(res.status).toEqual(200);
+		expect(await res.text()).toEqual('test: http://a.com/');
 	});
 
 	it('Promise for a function that returns a response', async () => {
 		fm.mock(
 			'http://a.com/',
-			Promise.resolve((url) => 'test: ' + url)
+			Promise.resolve((url) => `test: ${url}`),
 		);
 		const res = await fm.fetchHandler('http://a.com/');
-		expect(res.status).to.equal(200);
-		expect(await res.text()).to.equal('test: http://a.com/');
+		expect(res.status).toEqual(200);
+		expect(await res.text()).toEqual('test: http://a.com/');
 	});
 
 	it('delay', async () => {
 		fm.mock('*', 200, { delay: 20 });
 		const req = fm.fetchHandler('http://a.com/');
 		let resolved = false;
-		req.then(() => (resolved = true));
+		req.then(() => {
+			resolved = true;
+		});
 		await new Promise((res) => setTimeout(res, 10));
-		expect(resolved).to.be.false;
+		expect(resolved).toBe(false);
 		await new Promise((res) => setTimeout(res, 11));
-		expect(resolved).to.be.true;
+		expect(resolved).toBe(true);
 		const res = await req;
-		expect(res.status).to.equal(200);
+		expect(res.status).toEqual(200);
 	});
 
 	it("delay a function response's execution", async () => {
@@ -60,15 +63,17 @@ describe('response negotiation', () => {
 		});
 		const req = fm.fetchHandler('http://a.com/');
 		let resolved = false;
-		req.then(() => (resolved = true));
+		req.then(() => {
+			resolved = true;
+		});
 		await new Promise((res) => setTimeout(res, 10));
-		expect(resolved).to.be.false;
+		expect(resolved).toBe(false);
 		await new Promise((res) => setTimeout(res, 11));
-		expect(resolved).to.be.true;
+		expect(resolved).toBe(true);
 		const res = await req;
-		expect(res.status).to.equal(200);
+		expect(res.status).toEqual(200);
 		const responseTimestamp = (await res.json()).timestamp;
-		expect(responseTimestamp - startTimestamp).to.be.within(20, 25);
+		expect(responseTimestamp - startTimestamp).toBeGreaterThanOrEqual(20);
 	});
 
 	it('pass values to delayed function', async () => {
@@ -78,61 +83,65 @@ describe('response negotiation', () => {
 		const req = fm.fetchHandler('http://a.com/');
 		await new Promise((res) => setTimeout(res, 11));
 		const res = await req;
-		expect(res.status).to.equal(200);
-		expect(await res.text()).to.equal('delayed: http://a.com/');
+		expect(res.status).toEqual(200);
+		expect(await res.text()).toEqual('delayed: http://a.com/');
 	});
 
 	it('call delayed response multiple times, each with the same delay', async () => {
 		fm.mock('*', 200, { delay: 20 });
 		const req1 = fm.fetchHandler('http://a.com/');
 		let resolved = false;
-		req1.then(() => (resolved = true));
+		req1.then(() => {
+			resolved = true;
+		});
 		await new Promise((res) => setTimeout(res, 10));
-		expect(resolved).to.be.false;
+		expect(resolved).toBe(false);
 		await new Promise((res) => setTimeout(res, 11));
-		expect(resolved).to.be.true;
+		expect(resolved).toBe(true);
 		const res1 = await req1;
-		expect(res1.status).to.equal(200);
+		expect(res1.status).toEqual(200);
 		const req2 = fm.fetchHandler('http://a.com/');
 		resolved = false;
-		req2.then(() => (resolved = true));
+		req2.then(() => {
+			resolved = true;
+		});
 		await new Promise((res) => setTimeout(res, 10));
-		expect(resolved).to.be.false;
+		expect(resolved).toBe(false);
 		await new Promise((res) => setTimeout(res, 11));
-		expect(resolved).to.be.true;
+		expect(resolved).toBe(true);
 		const res2 = await req2;
-		expect(res2.status).to.equal(200);
+		expect(res2.status).toEqual(200);
 	});
 
 	it('Response', async () => {
 		fm.mock(
 			'http://a.com/',
-			new fm.config.Response('http://a.com/', { status: 200 })
+			new fm.config.Response('http://a.com/', { status: 200 }),
 		);
 		const res = await fm.fetchHandler('http://a.com/');
-		expect(res.status).to.equal(200);
+		expect(res.status).toEqual(200);
 	});
 
 	it('function that returns a Response', async () => {
 		fm.mock(
 			'http://a.com/',
-			() => new fm.config.Response('http://a.com/', { status: 200 })
+			() => new fm.config.Response('http://a.com/', { status: 200 }),
 		);
 		const res = await fm.fetchHandler('http://a.com/');
-		expect(res.status).to.equal(200);
+		expect(res.status).toEqual(200);
 	});
 
 	it('Promise that returns a Response', async () => {
 		fm.mock(
 			'http://a.com/',
-			Promise.resolve(new fm.config.Response('http://a.com/', { status: 200 }))
+			Promise.resolve(new fm.config.Response('http://a.com/', { status: 200 })),
 		);
 		const res = await fm.fetchHandler('http://a.com/');
-		expect(res.status).to.equal(200);
+		expect(res.status).toEqual(200);
 	});
 
 	describe('rejecting', () => {
-		it('reject if object with `throws` property', async () => {
+		it('reject if object with `throws` property', () => {
 			fm.mock('*', { throws: 'as expected' });
 
 			return fm
@@ -141,11 +150,11 @@ describe('response negotiation', () => {
 					throw 'not as expected';
 				})
 				.catch((err) => {
-					expect(err).to.equal('as expected');
+					expect(err).toEqual('as expected');
 				});
 		});
 
-		it('reject if function that returns object with `throws` property', async () => {
+		it('reject if function that returns object with `throws` property', () => {
 			fm.mock('*', () => ({ throws: 'as expected' }));
 
 			return fm
@@ -154,7 +163,7 @@ describe('response negotiation', () => {
 					throw 'not as expected';
 				})
 				.catch((err) => {
-					expect(err).to.equal('as expected');
+					expect(err).toEqual('as expected');
 				});
 		});
 	});

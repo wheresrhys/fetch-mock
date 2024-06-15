@@ -1,9 +1,9 @@
-const { expect } = require('chai');
+import { beforeEach, describe, expect, it } from 'vitest';
 
-const RESPONSE_DELAY = 10;
-const ABORT_DELAY = 5;
+const RESPONSE_DELAY = 50;
+const ABORT_DELAY = 10;
 
-const { fetchMock, AbortController } = testGlobals;
+const { fetchMock } = testGlobals;
 const getDelayedOk = () =>
 	new Promise((res) => setTimeout(() => res(200), RESPONSE_DELAY));
 
@@ -21,11 +21,9 @@ describe('abortable fetch', () => {
 			await fm.fetchHandler(...fetchArgs);
 			throw new Error('unexpected');
 		} catch (error) {
-			if (typeof DOMException !== 'undefined') {
-				expect(error instanceof DOMException).to.equal(true);
-			}
-			expect(error.name).to.equal('AbortError');
-			expect(error.message).to.equal('The operation was aborted.');
+			expect(error instanceof DOMException).toEqual(true);
+			expect(error.name).toEqual('AbortError');
+			expect(error.message).toEqual('The operation was aborted.');
 		}
 	};
 
@@ -40,22 +38,14 @@ describe('abortable fetch', () => {
 		});
 	});
 
-	const isNodeFetch1 = /^1/.test(require('node-fetch/package.json').version);
-
-	// node-fetch 1 does not support abort signals at all, so when passing
-	// a signal into the Request constructor it just gets ignored. So use of
-	// signals in this way is both unimplementable and untestable in node-fetch@1
-	(isNodeFetch1 ? it.skip : it)(
-		'error on signal abort for request object',
-		() => {
-			fm.mock('*', getDelayedOk());
-			return expectAbortError(
-				new fm.config.Request('http://a.com', {
-					signal: getDelayedAbortController().signal,
-				})
-			);
-		}
-	);
+	it('error on signal abort for request object', () => {
+		fm.mock('*', getDelayedOk());
+		return expectAbortError(
+			new fm.config.Request('http://a.com', {
+				signal: getDelayedAbortController().signal,
+			}),
+		);
+	});
 
 	it('error when signal already aborted', () => {
 		fm.mock('*', 200);
@@ -71,7 +61,7 @@ describe('abortable fetch', () => {
 		await expectAbortError('http://a.com', {
 			signal: getDelayedAbortController().signal,
 		});
-		expect(fm.done()).to.be.true;
+		expect(fm.done()).toBe(true);
 	});
 
 	it('will flush even when aborted', async () => {
@@ -81,6 +71,6 @@ describe('abortable fetch', () => {
 			signal: getDelayedAbortController().signal,
 		});
 		await fm.flush();
-		expect(fm.done()).to.be.true;
+		expect(fm.done()).toBe(true);
 	});
 });

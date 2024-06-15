@@ -1,15 +1,15 @@
-const { debug } = require('./debug');
-const glob = require('glob-to-regexp');
-const pathToRegexp = require('path-to-regexp');
-const querystring = require('querystring');
-const isSubset = require('is-subset');
-const {
-	headers: headerUtils,
+import glob from 'glob-to-regexp';
+import pathToRegexp from 'path-to-regexp';
+import querystring from 'querystring';
+import isSubset from 'is-subset';
+import isEqual from 'lodash.isequal';
+import {
+	headers as headerUtils,
 	getPath,
 	getQuery,
 	normalizeUrl,
-} = require('./request-utils');
-const isEqual = require('lodash.isequal');
+} from '../lib/request-utils.js';
+import { debug } from '../lib/debug.js';
 
 const debuggableUrlFunc = (func) => (url) => {
 	debug('Actual url:', url);
@@ -21,7 +21,7 @@ const stringMatchers = {
 		debuggableUrlFunc((url) => url.indexOf(targetString) === 0),
 	end: (targetString) =>
 		debuggableUrlFunc(
-			(url) => url.substr(-targetString.length) === targetString
+			(url) => url.substr(-targetString.length) === targetString,
 		),
 	glob: (targetString) => {
 		const urlRX = glob(targetString);
@@ -46,12 +46,12 @@ const getHeaderMatcher = ({ headers: expectedHeaders }) => {
 	return (url, { headers = {} }) => {
 		debug('Attempting to match headers');
 		const lowerCaseHeaders = headerUtils.toLowerCase(
-			headerUtils.normalize(headers)
+			headerUtils.normalize(headers),
 		);
 		debug('  Expected headers:', expectation);
 		debug('  Actual headers:', lowerCaseHeaders);
 		return Object.keys(expectation).every((headerName) =>
-			headerUtils.equal(lowerCaseHeaders[headerName], expectation[headerName])
+			headerUtils.equal(lowerCaseHeaders[headerName], expectation[headerName]),
 		);
 	};
 };
@@ -90,9 +90,8 @@ const getQueryStringMatcher = ({ query: passedQuery }) => {
 			if (Array.isArray(query[key])) {
 				if (!Array.isArray(expectedQuery[key])) {
 					return false;
-				} else {
-					return isEqual(query[key].sort(), expectedQuery[key].sort());
 				}
+				return isEqual(query[key].sort(), expectedQuery[key].sort());
 			}
 			return query[key] === expectedQuery[key];
 		});
@@ -107,7 +106,7 @@ const getParamsMatcher = ({ params: expectedParams, url: matcherUrl }) => {
 	}
 	if (!/express:/.test(matcherUrl)) {
 		throw new Error(
-			'fetch-mock: matching on params is only possible when using an express: matcher'
+			'fetch-mock: matching on params is only possible when using an express: matcher',
 		);
 	}
 	debug('  Expected path parameters:', expectedParams);
@@ -121,7 +120,7 @@ const getParamsMatcher = ({ params: expectedParams, url: matcherUrl }) => {
 		const params = keys.reduce(
 			(map, { name }, i) =>
 				vals[i] ? Object.assign(map, { [name]: vals[i] }) : map,
-			{}
+			{},
 		);
 		debug('  Expected path parameters:', expectedParams);
 		debug('  Actual path parameters:', params);
@@ -212,12 +211,12 @@ const getUrlMatcher = (route) => {
 	}
 
 	if (matcherUrl.href) {
-		debug(`  Using URL object to match url`, matcherUrl);
+		debug('  Using URL object to match url', matcherUrl);
 		return getFullUrlMatcher(route, matcherUrl.href, query);
 	}
 
 	for (const shorthand in stringMatchers) {
-		if (matcherUrl.indexOf(shorthand + ':') === 0) {
+		if (matcherUrl.indexOf(`${shorthand}:`) === 0) {
 			debug(`  Using ${shorthand}: pattern to match url`, matcherUrl);
 			const urlFragment = matcherUrl.replace(new RegExp(`^${shorthand}:`), '');
 			return stringMatchers[shorthand](urlFragment);
@@ -227,20 +226,12 @@ const getUrlMatcher = (route) => {
 	return getFullUrlMatcher(route, matcherUrl, query);
 };
 
-const FetchMock = {};
-
-FetchMock._matchers = [];
-
-FetchMock.addMatcher = function (matcher) {
-	this._matchers.push(matcher);
-};
-
-FetchMock.addMatcher({ name: 'query', matcher: getQueryStringMatcher });
-FetchMock.addMatcher({ name: 'method', matcher: getMethodMatcher });
-FetchMock.addMatcher({ name: 'headers', matcher: getHeaderMatcher });
-FetchMock.addMatcher({ name: 'params', matcher: getParamsMatcher });
-FetchMock.addMatcher({ name: 'body', matcher: getBodyMatcher, usesBody: true });
-FetchMock.addMatcher({ name: 'functionMatcher', matcher: getFunctionMatcher });
-FetchMock.addMatcher({ name: 'url', matcher: getUrlMatcher });
-
-module.exports = FetchMock;
+export default [
+	{ name: 'query', matcher: getQueryStringMatcher },
+	{ name: 'method', matcher: getMethodMatcher },
+	{ name: 'headers', matcher: getHeaderMatcher },
+	{ name: 'params', matcher: getParamsMatcher },
+	{ name: 'body', matcher: getBodyMatcher, usesBody: true },
+	{ name: 'functionMatcher', matcher: getFunctionMatcher },
+	{ name: 'url', matcher: getUrlMatcher },
+];

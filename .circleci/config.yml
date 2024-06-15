@@ -1,4 +1,5 @@
 version: 2.0
+
 references:
   triggerable-by-tag: &triggerable-by-tag
     # For a tag push unaffected by any filters, CircleCI skips the job
@@ -6,31 +7,21 @@ references:
     filters:
       tags:
         only: /.*/
-  build-lint-unit: &build-lint-unit
+  run-after-first-jobs: &run-after-first-jobs
     requires:
       - test
       - lint
       - build
 
-  nodejs: &nodejs
+  nodelts: &nodelts
     docker:
-      - image: circleci/node:12.16.3
-  browsers: &browsers
+      - image: cimg/node:lts
+  # browsers: &browsers
+  #   docker:
+  #     - image: circleci/node:12.18.3-browsers
+  nodecurrent: &nodecurrent
     docker:
-      - image: circleci/node:12.16.3-browsers
-
-  node14: &node14
-    docker:
-      - image: circleci/node:14.2.0
-  node13: &node13
-    docker:
-      - image: circleci/node:13.14.0
-  node10: &node10
-    docker:
-      - image: circleci/node:10.20.1
-  node6: &node6
-    docker:
-      - image: circleci/node:6.13.0
+      - image: cimg/node:current
 
   workspace: &workspace
     attach_workspace:
@@ -50,7 +41,7 @@ references:
 
 jobs:
   checkout_code:
-    <<: *nodejs
+    <<: *nodelts
     steps:
       - checkout
       - restore_cache:
@@ -63,94 +54,66 @@ jobs:
       - *persist
 
   build:
-    <<: *nodejs
+    <<: *nodelts
     steps:
       - *workspace
       - run: make build
       - *persist
   lint:
-    <<: *nodejs
+    <<: *nodelts
     steps:
       - *workspace
       - run: make lint-ci
 
   typecheck:
-    <<: *nodejs
+    <<: *nodelts
     steps:
       - *workspace
       - run: make typecheck
 
   test:
-    <<: *nodejs
+    <<: *nodelts
     steps:
       - *workspace
-      - run: make coverage
-
-
-  nodefetch2:
-    <<: *nodejs
-    steps:
-      - *workspace
-      - run: FETCH_MOCK_SRC=../cjs/server.js make test
-
-  nodefetch1:
-    <<: *nodejs
-    steps:
-      - *workspace
-      - run: npm install node-fetch@1
-      - run: FETCH_MOCK_SRC=../cjs/server.js make test
+      - run: make test-coverage
 
   nodefetch3:
-    <<: *nodejs
+    <<: *nodelts
     steps:
       - *workspace
-      - run: npm install node-fetch@next
-      - run: FETCH_MOCK_SRC=../cjs/server.js make test
+      - run: npm install node-fetch@3
+      - run: make test-node-fetch
 
-  es5:
-    <<: *node6
+  commonjs:
+    <<: *nodelts
     steps:
       - *workspace
-      - run: npm rebuild
-      - run: FETCH_MOCK_SRC=../es5/server.js make test-es5
-
-  esm:
-    <<: *node14
+      - run: make build
+      - run: make test-commonjs
+  jest:
+    <<: *nodelts
     steps:
       - *workspace
-      - run: npm rebuild
-      - run: make test-esm
+      - run: make build
+      - run: make test-jest
+  # chrome:
+  #   <<: *browsers
+  #   steps:
+  #     - *workspace
+  #     - run: TEST_BROWSER=Chrome make test-browser
 
-  node10:
-    <<: *node10
-    <<: *rebuild_test
-  node13:
-    <<: *node13
-    <<: *rebuild_test
-
-  node14:
-    <<: *node14
-    <<: *rebuild_test
-
-  chrome:
-    <<: *browsers
-    steps:
-      - *workspace
-      - run: TEST_BROWSER=Chrome make test-browser
-
-  firefox:
-    <<: *browsers
-    steps:
-      - *workspace
-      - run: npm install karma-firefox-launcher
-      - run: TEST_BROWSER=Firefox make test-browser
-
+  # firefox:
+  #   <<: *browsers
+  #   steps:
+  #     - *workspace
+  #     - run: npm install karma-firefox-launcher
+  #     - run: TEST_BROWSER=Firefox make test-browser
 
   deploy:
-    <<: *nodejs
+    <<: *nodelts
     steps:
       - *workspace
-      - run: make publish
+      - run: make build publish
 
 
 workflows:
@@ -162,12 +125,6 @@ workflows:
           <<: *triggerable-by-tag
           requires:
             - checkout_code
-      # could be parallel with build, lint, and unit but it's a slow job
-      # And circlecifree tier only has 3 concurrent jobs, so overall faster
-      # to defer
-      - typecheck:
-          <<: *triggerable-by-tag
-          <<: *build-lint-unit
       - lint:
           <<: *triggerable-by-tag
           requires:
@@ -176,52 +133,37 @@ workflows:
           <<: *triggerable-by-tag
           requires:
             - checkout_code
-      - nodefetch1:
+      # could be parallel with build, lint, and unit but it's a slow job
+      # And circlecifree tier only has 3 concurrent jobs, so overall faster
+      # to defer
+      - typecheck:
           <<: *triggerable-by-tag
-          <<: *build-lint-unit
-      - nodefetch2:
-          <<: *triggerable-by-tag
-          <<: *build-lint-unit
+          <<: *run-after-first-jobs
       - nodefetch3:
           <<: *triggerable-by-tag
-          <<: *build-lint-unit
-      - es5:
+          <<: *run-after-first-jobs
+      - commonjs:
           <<: *triggerable-by-tag
-          <<: *build-lint-unit
-      # - esm:
+          <<: *run-after-first-jobs
+      - jest:
+          <<: *triggerable-by-tag
+          <<: *run-after-first-jobs
+      # - chrome:
       #     <<: *triggerable-by-tag
-      #     requires:
-      #       - build
-      - node10:
-          <<: *triggerable-by-tag
-          <<: *build-lint-unit
-      - node13:
-          <<: *triggerable-by-tag
-          <<: *build-lint-unit
-      - node14:
-          <<: *triggerable-by-tag
-          <<: *build-lint-unit
-      - chrome:
-          <<: *triggerable-by-tag
-          <<: *build-lint-unit
-      - firefox:
-          <<: *triggerable-by-tag
-          <<: *build-lint-unit
+      #     <<: *run-after-first-jobs
+      # - firefox:
+      #     <<: *triggerable-by-tag
+      #     <<: *run-after-first-jobs
       - deploy:
           context: wheresrhys-npm-publish
           requires:
-            - nodefetch1
-            - nodefetch2
             - nodefetch3
-            - es5
-            - chrome
-            - firefox
+            # - chrome
+            # - firefox
             - build
             - typecheck
-            - node10
-            - node13
-            - node14
-            # - esm
+            - commonjs
+            - jest
           filters:
             branches:
               ignore: /.*/

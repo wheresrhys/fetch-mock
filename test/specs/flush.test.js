@@ -1,9 +1,10 @@
-const { expect } = require('chai');
+import { afterEach, describe, expect, it, beforeAll } from 'vitest';
+
 const { fetchMock } = testGlobals;
 
 describe('flushing pending calls', () => {
 	let fm;
-	before(() => {
+	beforeAll(() => {
 		fm = fetchMock.createInstance();
 		fm.config.warnOnUnmatched = false;
 	});
@@ -23,9 +24,11 @@ describe('flushing pending calls', () => {
 	it('should resolve after fetches', async () => {
 		fm.mock('http://example/', 'working!');
 		let data;
-		fetch('http://example').then(() => (data = 'done'));
+		fetch('http://example').then(() => {
+			data = 'done';
+		});
 		await fm.flush();
-		expect(data).to.equal('done');
+		expect(data).toEqual('done');
 	});
 
 	describe('response methods', () => {
@@ -34,10 +37,12 @@ describe('flushing pending calls', () => {
 			let data;
 			fetch('http://example/')
 				.then((res) => res.json())
-				.then(() => (data = 'done'));
+				.then(() => {
+					data = 'done';
+				});
 
 			await fm.flush(true);
-			expect(data).to.equal('done');
+			expect(data).toEqual('done');
 		});
 
 		it('should resolve after .json() if waitForResponseMethods option passed', async () => {
@@ -45,10 +50,12 @@ describe('flushing pending calls', () => {
 			let data;
 			fetch('http://example/')
 				.then((res) => res.json())
-				.catch(() => (data = 'done'));
+				.catch(() => {
+					data = 'done';
+				});
 
 			await fm.flush(true);
-			expect(data).to.equal('done');
+			expect(data).toEqual('done');
 		});
 
 		it('should resolve after .text() if waitForResponseMethods option passed', async () => {
@@ -56,17 +63,19 @@ describe('flushing pending calls', () => {
 			let data;
 			fetch('http://example/')
 				.then((res) => res.text())
-				.then(() => (data = 'done'));
+				.then(() => {
+					data = 'done';
+				});
 
 			await fm.flush(true);
-			expect(data).to.equal('done');
+			expect(data).toEqual('done');
 		});
 	});
 
 	it('flush waits for unresolved promises', async () => {
 		fm.mock('http://one.com/', 200).mock(
 			'http://two.com/',
-			() => new Promise((res) => setTimeout(() => res(200), 50))
+			() => new Promise((res) => setTimeout(() => res(200), 50)),
 		);
 
 		const orderedResults = [];
@@ -77,7 +86,7 @@ describe('flushing pending calls', () => {
 
 		await fm.flush();
 		orderedResults.push('flush');
-		expect(orderedResults).to.deep.equal(['not flush', 'flush']);
+		expect(orderedResults).toEqual(['not flush', 'flush']);
 	});
 
 	it('flush resolves on expected error', async () => {

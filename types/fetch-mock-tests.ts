@@ -123,6 +123,15 @@ lastOptions = fetchMock.lastOptions("http://test.com", {
     method: "GET",
 });
 
+let lastResponse: Response = fetchMock.lastResponse();
+lastResponse = fetchMock.lastResponse(true);
+lastResponse = fetchMock.lastResponse("http://test.com");
+lastResponse = fetchMock.lastResponse(/https?:\/\/test.com/);
+lastResponse = fetchMock.lastResponse("http://test.com", "GET");
+lastResponse = fetchMock.lastResponse("http://test.com", {
+    method: "GET",
+});
+
 fetchMock.get("http://test.com", 200);
 fetchMock.getOnce("http://test.com", 200);
 fetchMock.post("http://test.com", 200);
@@ -177,6 +186,10 @@ sandbox.get("http://test.com", {
     redirectUrl: "http://example.org"
 });
 
+const stickySandbox = fetchMock.sandbox();
+stickySandbox.sticky("http://test.com", 200);
+stickySandbox.mock("http://test.com", 200, { sticky: true });
+
 const response: fetchMock.MockResponseObject = {
     throws: new Error('error'),
 };
@@ -188,7 +201,6 @@ fetchMock.config.fallbackToNetwork = 'always';
 fetchMock.config.overwriteRoutes = true;
 fetchMock.config.overwriteRoutes = undefined;
 fetchMock.config.warnOnFallback = true;
-fetchMock.config.Promise = Promise;
 fetchMock.config.fetch = (): Promise<Response> => new Promise(() => { });
 fetchMock.config.Headers = Headers;
 fetchMock.config.Request = Request;

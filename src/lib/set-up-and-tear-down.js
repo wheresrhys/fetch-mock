@@ -1,4 +1,5 @@
-const { debug, setDebugPhase } = require('./debug');
+import { debug, setDebugPhase } from './debug.js';
+
 const FetchMock = {};
 
 FetchMock.mock = function (...args) {
@@ -13,11 +14,13 @@ FetchMock.mock = function (...args) {
 FetchMock.addRoute = function (uncompiledRoute) {
 	debug('Adding route', uncompiledRoute);
 	const route = this.compileRoute(uncompiledRoute);
-	const clashes = this.routes.filter(
-		({ identifier, method }) =>
-			identifier === route.identifier &&
-			(!method || !route.method || method === route.method)
-	);
+	const clashes = this.routes.filter(({ identifier, method }) => {
+		const isMatch =
+			typeof identifier === 'function'
+				? identifier === route.identifier
+				: String(identifier) === String(route.identifier);
+		return isMatch && (!method || !route.method || method === route.method);
+	});
 
 	if (this.getOption('overwriteRoutes', route) === false || !clashes.length) {
 		this._uncompiledRoutes.push(uncompiledRoute);
@@ -35,7 +38,7 @@ FetchMock.addRoute = function (uncompiledRoute) {
 
 	if (clashes.length) {
 		throw new Error(
-			'fetch-mock: Adding route with same name or matcher as existing route. See `overwriteRoutes` option.'
+			'fetch-mock: Adding route with same name or matcher as existing route. See `overwriteRoutes` option.',
 		);
 	}
 
@@ -46,8 +49,8 @@ FetchMock.addRoute = function (uncompiledRoute) {
 FetchMock._mock = function () {
 	if (!this.isSandbox) {
 		// Do this here rather than in the constructor to ensure it's scoped to the test
-		this.realFetch = this.realFetch || this.global.fetch;
-		this.global.fetch = this.fetchHandler;
+		this.realFetch = this.realFetch || globalThis.fetch;
+		globalThis.fetch = this.fetchHandler;
 	}
 	setDebugPhase();
 	return this;
@@ -56,7 +59,7 @@ FetchMock._mock = function () {
 FetchMock.catch = function (response) {
 	if (this.fallbackResponse) {
 		console.warn(
-			'calling fetchMock.catch() twice - are you sure you want to overwrite the previous fallback response'
+			'calling fetchMock.catch() twice - are you sure you want to overwrite the previous fallback response',
 		); // eslint-disable-line
 	}
 	this.fallbackResponse = response || 'ok';
@@ -78,7 +81,7 @@ const defineShorthand = (methodName, underlyingMethod, shorthandOptions) => {
 		return this[underlyingMethod](
 			matcher,
 			response,
-			Object.assign(options || {}, shorthandOptions)
+			Object.assign(options || {}, shorthandOptions),
 		);
 	};
 };
@@ -101,30 +104,19 @@ defineGreedyShorthand('anyOnce', 'once');
 	defineGreedyShorthand(`${method}AnyOnce`, `${method}Once`);
 });
 
-const mochaAsyncHookWorkaround = (options) => {
-	// HACK workaround for this https://github.com/mochajs/mocha/issues/4280
-	// Note that it doesn't matter that we call it _before_ carrying out all
-	// the things resetBehavior does as everything in there is synchronous
-	if (typeof options === 'function') {
-		console.warn(`Deprecated: Passing fetch-mock reset methods
-directly in as handlers for before/after test runner hooks.
-Wrap in an arrow function instead e.g. \`() => fetchMock.restore()\``);
-		options();
-	}
-};
-
-const getRouteRemover = ({ sticky: removeStickyRoutes }) => (routes) =>
-	removeStickyRoutes ? [] : routes.filter(({ sticky }) => sticky);
+const getRouteRemover =
+	({ sticky: removeStickyRoutes }) =>
+	(routes) =>
+		removeStickyRoutes ? [] : routes.filter(({ sticky }) => sticky);
 
 FetchMock.resetBehavior = function (options = {}) {
-	mochaAsyncHookWorkaround(options);
 	const removeRoutes = getRouteRemover(options);
 
 	this.routes = removeRoutes(this.routes);
 	this._uncompiledRoutes = removeRoutes(this._uncompiledRoutes);
 
 	if (this.realFetch && !this.routes.length) {
-		this.global.fetch = this.realFetch;
+		globalThis.fetch = this.realFetch;
 		this.realFetch = undefined;
 	}
 
@@ -145,4 +137,4 @@ FetchMock.restore = FetchMock.reset = function (options) {
 	return this;
 };
 
-module.exports = FetchMock;
+export default FetchMock;

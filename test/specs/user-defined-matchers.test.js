@@ -1,7 +1,4 @@
-const chai = require('chai');
-const expect = chai.expect;
-const chaiAsPromised = require('chai-as-promised');
-chai.use(chaiAsPromised);
+import { describe, expect, it } from 'vitest';
 
 const { fetchMock } = testGlobals;
 describe('user defined matchers', () => {
@@ -15,12 +12,12 @@ describe('user defined matchers', () => {
 			{
 				syncMatcher: 'a',
 			},
-			200
+			200,
 		).catch();
 		await fm.fetchHandler('http://b.com');
-		expect(fm.calls(true).length).to.equal(0);
+		expect(fm.calls(true).length).toEqual(0);
 		await fm.fetchHandler('http://a.com');
-		expect(fm.calls(true).length).to.equal(1);
+		expect(fm.calls(true).length).toEqual(1);
 	});
 
 	it('match on async body property', async () => {
@@ -35,48 +32,48 @@ describe('user defined matchers', () => {
 			{
 				bodyMatcher: 'a',
 			},
-			200
+			200,
 		).catch();
 		await fm.fetchHandler(
 			new fm.config.Request('http://a.com', {
 				method: 'POST',
 				body: JSON.stringify({ b: true }),
-			})
+			}),
 		);
-		expect(fm.calls(true).length).to.equal(0);
+		expect(fm.calls(true).length).toEqual(0);
 		await fm.fetchHandler(
 			new fm.config.Request('http://a.com', {
 				method: 'POST',
 				body: JSON.stringify({ a: true }),
-			})
+			}),
 		);
 		await fm.fetchHandler('http://a.com', {
 			method: 'POST',
 			body: JSON.stringify({ a: true }),
 		});
-		expect(fm.calls(true).length).to.equal(2);
+		expect(fm.calls(true).length).toEqual(2);
 	});
 
-	it('not match on async body property without passing `usesBody: true`', async () => {
+	it('not match on async body property without passing `usesBody: true`', () => {
 		const fm = fetchMock.createInstance();
 		fm.addMatcher({
-			name: 'bodyMatcher',
+			name: 'asyncBodyMatcher',
 			matcher: (route) => (url, options) =>
-				JSON.parse(options.body)[route.bodyMatcher] === true,
+				JSON.parse(options.body)[route.asyncBodyMatcher] === true,
 		});
 		fm.mock(
 			{
-				bodyMatcher: 'a',
+				asyncBodyMatcher: 'a',
 			},
-			200
+			200,
 		).catch();
 		expect(() =>
 			fm.fetchHandler(
 				new fm.config.Request('http://a.com', {
 					method: 'POST',
 					body: JSON.stringify({ a: true }),
-				})
-			)
-		).to.throw();
+				}),
+			),
+		).toThrow();
 	});
 });

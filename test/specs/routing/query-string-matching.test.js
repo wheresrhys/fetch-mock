@@ -1,11 +1,10 @@
-const chai = require('chai');
-const URL = require('whatwg-url');
-const expect = chai.expect;
+import { afterEach, describe, expect, it, beforeAll } from 'vitest';
+import { URL } from 'node:url';
 
 const { fetchMock } = testGlobals;
 describe('query string matching', () => {
 	let fm;
-	before(() => {
+	beforeAll(() => {
 		fm = fetchMock.createInstance();
 		fm.config.warnOnUnmatched = false;
 	});
@@ -17,13 +16,13 @@ describe('query string matching', () => {
 			{
 				query: { a: 'b', c: 'd' },
 			},
-			200
+			200,
 		).catch();
 
 		await fm.fetchHandler('http://a.com');
-		expect(fm.calls(true).length).to.equal(0);
+		expect(fm.calls(true).length).toEqual(0);
 		await fm.fetchHandler('http://a.com?a=b&c=d');
-		expect(fm.calls(true).length).to.equal(1);
+		expect(fm.calls(true).length).toEqual(1);
 	});
 
 	it('match a query string against a URL object', async () => {
@@ -31,13 +30,13 @@ describe('query string matching', () => {
 			{
 				query: { a: 'b', c: 'd' },
 			},
-			200
+			200,
 		).catch();
-		const url = new URL.URL('http://a.com/path');
+		const url = new URL('http://a.com/path');
 		url.searchParams.append('a', 'b');
 		url.searchParams.append('c', 'd');
 		await fm.fetchHandler(url);
-		expect(fm.calls(true).length).to.equal(1);
+		expect(fm.calls(true).length).toEqual(1);
 	});
 
 	it('match a query string against a relative path', async () => {
@@ -45,11 +44,11 @@ describe('query string matching', () => {
 			{
 				query: { a: 'b' },
 			},
-			200
+			200,
 		).catch();
 		const url = '/path?a=b';
 		await fm.fetchHandler(url);
-		expect(fm.calls(true).length).to.equal(1);
+		expect(fm.calls(true).length).toEqual(1);
 	});
 
 	it('match multiple query strings', async () => {
@@ -57,17 +56,17 @@ describe('query string matching', () => {
 			{
 				query: { a: 'b', c: 'd' },
 			},
-			200
+			200,
 		).catch();
 
 		await fm.fetchHandler('http://a.com');
-		expect(fm.calls(true).length).to.equal(0);
+		expect(fm.calls(true).length).toEqual(0);
 		await fm.fetchHandler('http://a.com?a=b');
-		expect(fm.calls(true).length).to.equal(0);
+		expect(fm.calls(true).length).toEqual(0);
 		await fm.fetchHandler('http://a.com?a=b&c=d');
-		expect(fm.calls(true).length).to.equal(1);
+		expect(fm.calls(true).length).toEqual(1);
 		await fm.fetchHandler('http://a.com?c=d&a=b');
-		expect(fm.calls(true).length).to.equal(2);
+		expect(fm.calls(true).length).toEqual(2);
 	});
 
 	it('ignore irrelevant query strings', async () => {
@@ -75,11 +74,11 @@ describe('query string matching', () => {
 			{
 				query: { a: 'b', c: 'd' },
 			},
-			200
+			200,
 		).catch();
 
 		await fm.fetchHandler('http://a.com?a=b&c=d&e=f');
-		expect(fm.calls(true).length).to.equal(1);
+		expect(fm.calls(true).length).toEqual(1);
 	});
 
 	it('match an empty query string', async () => {
@@ -87,13 +86,13 @@ describe('query string matching', () => {
 			{
 				query: { a: '' },
 			},
-			200
+			200,
 		).catch();
 
 		await fm.fetchHandler('http://a.com');
-		expect(fm.calls(true).length).to.equal(0);
+		expect(fm.calls(true).length).toEqual(0);
 		await fm.fetchHandler('http://a.com?a=');
-		expect(fm.calls(true).length).to.equal(1);
+		expect(fm.calls(true).length).toEqual(1);
 	});
 
 	it('distinguish between query strings that only partially differ', async () => {
@@ -103,11 +102,11 @@ describe('query string matching', () => {
 					overwriteRoutes: false,
 					query: { a: 'b', c: 'd' },
 				},
-				300
-			)
-		).not.to.throw();
+				300,
+			),
+		).not.toThrow();
 		const res = await fm.fetchHandler('http://a.com?a=b&c=d');
-		expect(res.status).to.equal(300);
+		expect(res.status).toEqual(300);
 	});
 
 	describe('value coercion', () => {
@@ -118,12 +117,12 @@ describe('query string matching', () => {
 						a: 1,
 					},
 				},
-				200
+				200,
 			).catch();
 			await fm.fetchHandler('http://a.com');
-			expect(fm.calls(true).length).to.equal(0);
+			expect(fm.calls(true).length).toEqual(0);
 			await fm.fetchHandler('http://a.com?a=1');
-			expect(fm.calls(true).length).to.equal(1);
+			expect(fm.calls(true).length).toEqual(1);
 		});
 
 		it('coerce floats to strings and match', async () => {
@@ -133,12 +132,12 @@ describe('query string matching', () => {
 						a: 1.2,
 					},
 				},
-				200
+				200,
 			).catch();
 			await fm.fetchHandler('http://a.com');
-			expect(fm.calls(true).length).to.equal(0);
+			expect(fm.calls(true).length).toEqual(0);
 			await fm.fetchHandler('http://a.com?a=1.2');
-			expect(fm.calls(true).length).to.equal(1);
+			expect(fm.calls(true).length).toEqual(1);
 		});
 
 		it('coerce booleans to strings and match', async () => {
@@ -148,7 +147,7 @@ describe('query string matching', () => {
 						a: true,
 					},
 				},
-				200
+				200,
 			)
 				.mock(
 					{
@@ -157,15 +156,15 @@ describe('query string matching', () => {
 						},
 						overwriteRoutes: false,
 					},
-					200
+					200,
 				)
 				.catch();
 			await fm.fetchHandler('http://a.com');
-			expect(fm.calls(true).length).to.equal(0);
+			expect(fm.calls(true).length).toEqual(0);
 			await fm.fetchHandler('http://a.com?a=true');
-			expect(fm.calls(true).length).to.equal(1);
+			expect(fm.calls(true).length).toEqual(1);
 			await fm.fetchHandler('http://a.com?b=false');
-			expect(fm.calls(true).length).to.equal(2);
+			expect(fm.calls(true).length).toEqual(2);
 		});
 
 		it('coerce undefined to an empty string and match', async () => {
@@ -175,12 +174,12 @@ describe('query string matching', () => {
 						a: undefined,
 					},
 				},
-				200
+				200,
 			).catch();
 			await fm.fetchHandler('http://a.com');
-			expect(fm.calls(true).length).to.equal(0);
+			expect(fm.calls(true).length).toEqual(0);
 			await fm.fetchHandler('http://a.com?a=');
-			expect(fm.calls(true).length).to.equal(1);
+			expect(fm.calls(true).length).toEqual(1);
 		});
 
 		it('coerce null to an empty string and match', async () => {
@@ -190,12 +189,12 @@ describe('query string matching', () => {
 						a: null,
 					},
 				},
-				200
+				200,
 			).catch();
 			await fm.fetchHandler('http://a.com');
-			expect(fm.calls(true).length).to.equal(0);
+			expect(fm.calls(true).length).toEqual(0);
 			await fm.fetchHandler('http://a.com?a=');
-			expect(fm.calls(true).length).to.equal(1);
+			expect(fm.calls(true).length).toEqual(1);
 		});
 
 		it('coerce an object to an empty string and match', async () => {
@@ -205,12 +204,12 @@ describe('query string matching', () => {
 						a: { b: 'c' },
 					},
 				},
-				200
+				200,
 			).catch();
 			await fm.fetchHandler('http://a.com');
-			expect(fm.calls(true).length).to.equal(0);
+			expect(fm.calls(true).length).toEqual(0);
 			await fm.fetchHandler('http://a.com?a=');
-			expect(fm.calls(true).length).to.equal(1);
+			expect(fm.calls(true).length).toEqual(1);
 		});
 
 		it('can match a query string with different value types', async () => {
@@ -226,9 +225,9 @@ describe('query string matching', () => {
 			}).catch();
 
 			await fm.fetchHandler('http://a.com');
-			expect(fm.calls(true).length).to.equal(0);
+			expect(fm.calls(true).length).toEqual(0);
 			await fm.fetchHandler('http://a.com?t=true&f=false&u=&num=1&arr=a&arr=');
-			expect(fm.calls(true).length).to.equal(1);
+			expect(fm.calls(true).length).toEqual(1);
 		});
 	});
 
@@ -237,49 +236,49 @@ describe('query string matching', () => {
 			fm.mock({ url: 'http://a.com/', query: { a: ['b', 'c'] } }, 200).catch();
 
 			await fm.fetchHandler('http://a.com');
-			expect(fm.calls(true).length).to.equal(0);
+			expect(fm.calls(true).length).toEqual(0);
 			await fm.fetchHandler('http://a.com?a=b');
-			expect(fm.calls(true).length).to.equal(0);
+			expect(fm.calls(true).length).toEqual(0);
 			await fm.fetchHandler('http://a.com?a=b&a=c');
-			expect(fm.calls(true).length).to.equal(1);
+			expect(fm.calls(true).length).toEqual(1);
 			await fm.fetchHandler('http://a.com?a=b&a=c&a=d');
-			expect(fm.calls(true).length).to.equal(1);
+			expect(fm.calls(true).length).toEqual(1);
 		});
 
 		it('match repeated query strings in any order', async () => {
 			fm.mock({ url: 'http://a.com/', query: { a: ['b', 'c'] } }, 200).catch();
 
 			await fm.fetchHandler('http://a.com');
-			expect(fm.calls(true).length).to.equal(0);
+			expect(fm.calls(true).length).toEqual(0);
 			await fm.fetchHandler('http://a.com?a=b&a=c');
-			expect(fm.calls(true).length).to.equal(1);
+			expect(fm.calls(true).length).toEqual(1);
 			await fm.fetchHandler('http://a.com?a=c&a=b');
-			expect(fm.calls(true).length).to.equal(2);
+			expect(fm.calls(true).length).toEqual(2);
 		});
 
 		it('match a query string array of length 1', async () => {
 			fm.mock({ url: 'http://a.com/', query: { a: ['b'] } }, 200).catch();
 
 			await fm.fetchHandler('http://a.com');
-			expect(fm.calls(true).length).to.equal(0);
+			expect(fm.calls(true).length).toEqual(0);
 			await fm.fetchHandler('http://a.com?a=b');
-			expect(fm.calls(true).length).to.equal(1);
+			expect(fm.calls(true).length).toEqual(1);
 			await fm.fetchHandler('http://a.com?a=b&a=c');
-			expect(fm.calls(true).length).to.equal(1);
+			expect(fm.calls(true).length).toEqual(1);
 		});
 
 		it('match a repeated query string with an empty value', async () => {
 			fm.mock(
 				{ url: 'http://a.com/', query: { a: ['b', undefined] } },
-				200
+				200,
 			).catch();
 
 			await fm.fetchHandler('http://a.com');
-			expect(fm.calls(true).length).to.equal(0);
+			expect(fm.calls(true).length).toEqual(0);
 			await fm.fetchHandler('http://a.com?a=b');
-			expect(fm.calls(true).length).to.equal(0);
+			expect(fm.calls(true).length).toEqual(0);
 			await fm.fetchHandler('http://a.com?a=b&a=');
-			expect(fm.calls(true).length).to.equal(1);
+			expect(fm.calls(true).length).toEqual(1);
 		});
 	});
 
@@ -290,11 +289,11 @@ describe('query string matching', () => {
 			}).catch();
 
 			await fm.fetchHandler('http://a.com?c=d');
-			expect(fm.calls(true).length).to.equal(0);
+			expect(fm.calls(true).length).toEqual(0);
 			await fm.fetchHandler('http://a.com?c=d&a=b');
-			expect(fm.calls(true).length).to.equal(1);
+			expect(fm.calls(true).length).toEqual(1);
 			await fm.fetchHandler('http://a.com?a=b&c=d');
-			expect(fm.calls(true).length).to.equal(1);
+			expect(fm.calls(true).length).toEqual(1);
 		});
 
 		it('can be used alongside function matchers', async () => {
@@ -303,9 +302,9 @@ describe('query string matching', () => {
 			}).catch();
 
 			await fm.fetchHandler('http://a.com');
-			expect(fm.calls(true).length).to.equal(0);
+			expect(fm.calls(true).length).toEqual(0);
 			await fm.fetchHandler('http://a.com?a=b');
-			expect(fm.calls(true).length).to.equal(1);
+			expect(fm.calls(true).length).toEqual(1);
 		});
 	});
 });

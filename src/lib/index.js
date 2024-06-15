@@ -1,18 +1,14 @@
-const { debug } = require('./debug');
-const setUpAndTearDown = require('./set-up-and-tear-down');
-const fetchHandler = require('./fetch-handler');
-const inspecting = require('./inspecting');
-const matchers = require('./matchers');
-const compileRoute = require('./compile-route');
+import { debug } from './debug.js';
+import setUpAndTearDown from './set-up-and-tear-down.js';
+import fetchHandler from './fetch-handler.js';
+import inspecting from './inspecting.js';
+import Route from '../Route/index.js';
 
-const FetchMock = Object.assign(
-	{},
-	fetchHandler,
-	setUpAndTearDown,
-	inspecting,
-	compileRoute,
-	matchers
-);
+const FetchMock = { ...fetchHandler, ...setUpAndTearDown, ...inspecting };
+
+FetchMock.addMatcher = function (matcher) {
+	Route.addMatcher(matcher);
+};
 
 FetchMock.config = {
 	fallbackToNetwork: false,
@@ -26,16 +22,19 @@ FetchMock.createInstance = function () {
 	debug('Creating fetch-mock instance');
 	const instance = Object.create(FetchMock);
 	instance._uncompiledRoutes = (this._uncompiledRoutes || []).slice();
-	instance._matchers = this._matchers.slice();
 	instance.routes = instance._uncompiledRoutes.map((config) =>
-		instance.compileRoute(config)
+		this.compileRoute(config),
 	);
 	instance.fallbackResponse = this.fallbackResponse || undefined;
-	instance.config = Object.assign({}, this.config || FetchMock.config);
+	instance.config = { ...(this.config || FetchMock.config) };
 	instance._calls = [];
 	instance._holdingPromises = [];
 	instance.bindMethods();
 	return instance;
+};
+
+FetchMock.compileRoute = function (config) {
+	return new Route(config, this);
 };
 
 FetchMock.bindMethods = function () {
@@ -60,7 +59,7 @@ FetchMock.sandbox = function () {
 			Headers: this.config.Headers,
 			Request: this.config.Request,
 			Response: this.config.Response,
-		}
+		},
 	);
 
 	sandbox.bindMethods();
@@ -73,4 +72,4 @@ FetchMock.getOption = function (name, route = {}) {
 	return name in route ? route[name] : this.config[name];
 };
 
-module.exports = FetchMock;
+export default FetchMock;

@@ -4,21 +4,6 @@ import * as requestUtils from './request-utils.js';
 
 const FetchMock = {};
 
-// see https://heycam.github.io/webidl/#aborterror for the standardised interface
-// Note that this differs slightly from node-fetch
-class AbortError extends Error {
-	constructor() {
-		super(...arguments);
-		this.name = 'AbortError';
-		this.message = 'The operation was aborted.';
-
-		// Do not include this class in the stacktrace
-		if (Error.captureStackTrace) {
-			Error.captureStackTrace(this, this.constructor);
-		}
-	}
-}
-
 const resolve = async (
 	{ response, responseIsFetch = false },
 	url,
@@ -117,14 +102,7 @@ FetchMock._fetchHandler = function ({ url, options, request, signal }) {
 			debug('signal exists - enabling fetch abort');
 			const abort = () => {
 				debug('aborting fetch');
-				// note that DOMException is not available in node.js;
-				// even node-fetch uses a custom error class:
-				// https://github.com/bitinn/node-fetch/blob/master/src/abort-error.js
-				rej(
-					typeof DOMException !== 'undefined'
-						? new DOMException('The operation was aborted.', 'AbortError')
-						: new AbortError(),
-				);
+				rej(new DOMException('The operation was aborted.', 'AbortError'));
 				done();
 			};
 			if (signal.aborted) {

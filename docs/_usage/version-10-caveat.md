@@ -1,5 +1,5 @@
 ---
-title: Versions 
+title: Versions
 position: 1
 content_markdown: |-
   Note that the documentation below refers to **version 9** of the library.

@@ -148,12 +148,12 @@ describe('url matching', () => {
 		});
 		it('match exact string against URL object', async () => {
 			fm.mock('data:text/plain,path', 200).catch();
-			const url = new URL.URL('data:text/plain,path');
+			const url = new URL('data:text/plain,path');
 			await fm.fetchHandler(url);
 			expect(fm.calls(true).length).to.equal(1);
 		});
 		it('match using URL object as matcher', async () => {
-			const url = new URL.URL('data:text/plain,path');
+			const url = new URL('data:text/plain,path');
 			fm.mock(url, 200).catch();
 			await fm.fetchHandler('data:text/plain,path');
 			expect(fm.calls(true).length).to.equal(1);

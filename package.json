@@ -55,7 +55,7 @@
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@vitest/browser": "^1.1.0",
     "@vitest/coverage-istanbul": "^1.1.0",
-    "dtslint": "^1.0.2",
+    "dtslint": "^3.6.8",
     "eslint": "^8.56.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-origami-component": "^2.2.0",

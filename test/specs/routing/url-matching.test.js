@@ -23,6 +23,12 @@ describe('url matching', () => {
 		expect(fm.calls(true).length).toEqual(2);
 	});
 
+	it('match string objects', async () => {
+		fm.mock('http://a.com/path', 200).catch();
+		await fm.fetchHandler(new String('http://a.com/path')); // eslint-disable-line no-new-wrappers
+		expect(fm.calls(true).length).toEqual(1);
+	});
+
 	it('match exact strings with relative url', async () => {
 		fm.mock('/path', 200).catch();
 		await fm.fetchHandler('/pat');

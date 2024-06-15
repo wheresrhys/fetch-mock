@@ -63,6 +63,7 @@ export function normalizeRequest(url, options, Request) {
 	}
 	if (
 		typeof url === 'string' ||
+		url instanceof String ||
 		// horrible URL object duck-typing
 		(typeof url === 'object' && 'href' in url)
 	) {

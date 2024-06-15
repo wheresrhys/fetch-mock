@@ -6,17 +6,6 @@ module.exports = {
 	},
 	extends: ['origami-component', 'plugin:prettier/recommended'],
 	overrides: [
-		// {
-		//   env: {
-		//     node: true,
-		//   },
-		//   files: [
-		//     '.eslintrc.{js,cjs}',
-		//   ],
-		//   parserOptions: {
-		//     sourceType: 'script',
-		//   },
-		// },
 		{
 			files: ['test/**/*.js'],
 			globals: {

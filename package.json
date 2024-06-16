@@ -2,10 +2,13 @@
   "name": "fetch-mock",
   "version": "0.0.0",
   "description": "Mock http requests made using fetch (or isomorphic-fetch)",
-  "main": "./cjs/server.js",
-  "browser": "./esm/client.js",
-  "module": "./esm/server.js",
-  "types": "./types/index.d.ts",
+  "main": "./dist/commonjs.js",
+  "exports": {
+    "types": "./types/index.d.ts",
+    "browser": "./src/index.js",
+    "import": "./src/index.js",
+    "require": "./dist/commonjs.js"
+  },
   "type": "module",
   "scripts": {
     "test": "make lint test",

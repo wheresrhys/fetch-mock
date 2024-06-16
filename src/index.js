@@ -1,7 +1,14 @@
+//@ts-check
+/**
+ * @typedef {import('../types/index.d.ts').FetchMock} FetchMock
+ */
+
+/** @type FetchMock */
 import FetchMock from './lib/index.js';
 import statusTextMap from './lib/status-text.js';
 
 FetchMock.statusTextMap = statusTextMap;
+
 
 FetchMock.config = Object.assign(FetchMock.config, {
 	Request: globalThis.Request,
@@ -11,3 +18,5 @@ FetchMock.config = Object.assign(FetchMock.config, {
 });
 
 export default FetchMock.createInstance();
+
+FetchMock.

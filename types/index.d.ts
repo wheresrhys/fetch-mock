@@ -10,8 +10,8 @@
 //                 Felix Chen <https://github.com/ChenNima>
 //                 Katsuya Hino <https://github.com/dobogo>
 //
-// Please note that I - wheresrys - don't use Typescript
-// These types have ben copied in here as a convenience for (some of)
+// Please note that I - wheresrhys - don't use Typescript
+// These types have been copied in here as a convenience for (some of)
 // fetch-mock's users
 // If you are a Typescript user and find a problem in these types, please
 // submit a PR

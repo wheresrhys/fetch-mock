@@ -5,6 +5,7 @@
             "es6",
             "dom"
         ],
+        "allowJs": true,
         "noImplicitAny": true,
         "noImplicitThis": true,
         "strictNullChecks": false,
@@ -18,7 +19,10 @@
         "forceConsistentCasingInFileNames": true
     },
     "files": [
-        "index.d.ts",
-        "fetch-mock-tests.ts"
+        "types/index.d.ts",
+        "types/fetch-mock-tests.ts",
+    ],
+    "include": [
+        "src/**/*"
     ]
 }

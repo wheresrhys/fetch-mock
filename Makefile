@@ -9,6 +9,9 @@ TEST_BROWSER := $(shell [ -z $(TEST_BROWSER) ] && echo "Chrome" || echo ${TEST_B
 typecheck:
 	dtslint --expectOnly types
 
+typecheck2:
+	tsc --project ./tsconfig.json
+
 lint-ci:
 	eslint --ext .js,.cjs .
 	prettier *.md docs/*.md docs/**/*.md

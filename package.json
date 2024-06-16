@@ -9,6 +9,7 @@
     "import": "./src/index.js",
     "require": "./dist/commonjs.js"
   },
+  "types": "./types/index.d.ts",
   "type": "module",
   "scripts": {
     "test": "make lint test",

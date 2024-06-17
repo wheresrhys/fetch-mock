@@ -696,10 +696,5 @@ declare namespace fetchMock {
     }
 }
 
-declare var fetchMock: fetchMock.FetchMockStatic;
-export = fetchMock;
-
-declare module 'fetch-mock/esm/client' {
-  const fetchMock: fetchMock.FetchMockStatic;
-  export default fetchMock;
-}
+declare const fetchMock: fetchMock.FetchMockStatic;
+export default fetchMock;

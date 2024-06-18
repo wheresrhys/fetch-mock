@@ -18,7 +18,9 @@ describe('abortable fetch', () => {
 
 	const expectAbortError = async (...fetchArgs) => {
 		const result = fm.fetchHandler(...fetchArgs);
-		await expect(result).rejects.toThrowError(new DOMException('The operation was aborted.', 'ABortError'));
+		await expect(result).rejects.toThrowError(
+			new DOMException('The operation was aborted.', 'ABortError'),
+		);
 	};
 
 	beforeEach(() => {

@@ -697,4 +697,4 @@ declare namespace fetchMock {
 }
 
 declare const fetchMock: fetchMock.FetchMockStatic;
-export default fetchMock;
+export = fetchMock;

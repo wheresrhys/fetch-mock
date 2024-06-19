@@ -6,10 +6,10 @@ SHELL := env "PATH=$(PATH)" /bin/bash
 NPM_PUBLISH_TAG := $(shell [[ "$(CIRCLE_TAG)" =~ -[a-z-]+ ]] && echo "pre-release" || echo "latest")
 TEST_BROWSER := $(shell [ -z $(TEST_BROWSER) ] && echo "Chrome" || echo ${TEST_BROWSER})
 
-typecheck:
+typelint:
 	dtslint --expectOnly types
 
-typecheck2:
+typecheck:
 	tsc --project ./tsconfig.json
 
 lint-ci:

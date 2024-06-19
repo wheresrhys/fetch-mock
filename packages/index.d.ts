@@ -118,10 +118,10 @@ declare namespace fetchMock {
      *  is called with and that returns any of the responses listed above
      */
     type MockResponse = Response | Promise<Response>
-                        | number | Promise<number>
-                        | string | Promise<string>
-                        | {} | Promise<{}>
-                        | MockResponseObject | Promise<MockResponseObject>;
+        | number | Promise<number>
+        | string | Promise<string>
+        | {} | Promise<{}>
+        | MockResponseObject | Promise<MockResponseObject>;
 
     /**
      * Mock response function
@@ -269,9 +269,16 @@ declare namespace fetchMock {
         method?: 'HEAD';
     }
 
-    interface FetchMockStatic {
-        MATCHED: true;
-        UNMATCHED: false;
+    interface FetchMockInstance {
+
+        // MATCHED: true;
+        // UNMATCHED: false;
+
+        /**
+         * Also callable as fetch(). Use `typeof fetch` in your code to define
+         * a field that accepts both native fetch or fetchMock.fetch
+         */
+        fetchHandler(input?: string | Request, init?: RequestInit): Promise<Response>;
 
         /**
          * Replaces fetch() with a stub which records its calls, grouped by
@@ -281,7 +288,7 @@ declare namespace fetchMock {
          * @param response Configures the http response returned by the mock
          * @param [options] Additional properties defining the route to mock
          */
-        mock(matcher: MockMatcher | MockOptions, response: MockResponse | MockResponseFunction, options?: MockOptions): this;
+       route(matcher: MockMatcher | MockOptions, response: MockResponse | MockResponseFunction, options?: MockOptions): this;
 
         /**
          * Replaces fetch() with a stub which records its calls, grouped by
@@ -289,7 +296,7 @@ declare namespace fetchMock {
          *  call through to fetch(). Calls to .mock() can be chained.
          * @param options The route to mock
          */
-        mock(options: MockOptions): this;
+       route(options: MockOptions): this;
 
         /**
          * Replaces fetch() with a stub which records its calls, grouped by
@@ -297,20 +304,12 @@ declare namespace fetchMock {
          *  call through to fetch(). Calls to .mock() can be chained.
          * @param options The route to mock
          */
-        mock(): this;
-
-        /**
-         * Returns a drop-in mock for fetch which can be passed to other mocking
-         * libraries. It implements the full fetch-mock api and maintains its
-         * own state independent of other instances, so tests can be run in
-         * parallel.
-         */
-        sandbox(): FetchMockSandbox;
+       route(): this;
 
         /**
          * Replaces fetch() with a stub which records its calls, grouped by
          * route, and optionally returns a mocked Response object or passes the
-         *  call through to fetch(). Shorthand for mock() which creates a route
+         *  call through to fetch(). Shorthand forroute() which creates a route
          *  that persists even when restore(), reset() or resetbehavior() are called.
          *  Calls to .sticky() can be chained.
          * @param matcher Condition for selecting which requests to mock
@@ -322,7 +321,7 @@ declare namespace fetchMock {
         /**
          * Replaces fetch() with a stub which records its calls, grouped by
          * route, and optionally returns a mocked Response object or passes the
-         *  call through to fetch(). Shorthand for mock() limited to being
+         *  call through to fetch(). Shorthand forroute() limited to being
          *  called one time only. Calls to .once() can be chained.
          * @param matcher Condition for selecting which requests to mock
          * @param response Configures the http response returned by the mock
@@ -333,7 +332,7 @@ declare namespace fetchMock {
         /**
          * Replaces fetch() with a stub which records its calls, grouped by
          * route, and optionally returns a mocked Response object or passes the
-         *  call through to fetch(). Shorthand for mock() restricted to the GET
+         *  call through to fetch(). Shorthand forroute() restricted to the GET
          *  method. Calls to .get() can be chained.
          * @param matcher Condition for selecting which requests to mock
          * @param response Configures the http response returned by the mock
@@ -344,7 +343,7 @@ declare namespace fetchMock {
         /**
          * Replaces fetch() with a stub which records its calls, grouped by
          * route, and optionally returns a mocked Response object or passes the
-         *  call through to fetch(). Shorthand for mock() restricted to the GET
+         *  call through to fetch(). Shorthand forroute() restricted to the GET
          *  method and limited to being called one time only. Calls to .getOnce()
          *  can be chained.
          * @param matcher Condition for selecting which requests to mock
@@ -356,7 +355,7 @@ declare namespace fetchMock {
         /**
          * Replaces fetch() with a stub which records its calls, grouped by
          * route, and optionally returns a mocked Response object or passes the
-         *  call through to fetch(). Shorthand for mock() restricted to the POST
+         *  call through to fetch(). Shorthand forroute() restricted to the POST
          *  method. Calls to .post() can be chained.
          * @param matcher Condition for selecting which requests to mock
          * @param response Configures the http response returned by the mock
@@ -367,7 +366,7 @@ declare namespace fetchMock {
         /**
          * Replaces fetch() with a stub which records its calls, grouped by
          * route, and optionally returns a mocked Response object or passes the
-         *  call through to fetch(). Shorthand for mock() restricted to the POST
+         *  call through to fetch(). Shorthand forroute() restricted to the POST
          *  method and limited to being called one time only. Calls to .postOnce()
          *  can be chained.
          * @param matcher Condition for selecting which requests to mock
@@ -379,7 +378,7 @@ declare namespace fetchMock {
         /**
          * Replaces fetch() with a stub which records its calls, grouped by
          * route, and optionally returns a mocked Response object or passes the
-         *  call through to fetch(). Shorthand for mock() restricted to the PUT
+         *  call through to fetch(). Shorthand forroute() restricted to the PUT
          *  method. Calls to .put() can be chained.
          * @param matcher Condition for selecting which requests to mock
          * @param response Configures the http response returned by the mock
@@ -390,7 +389,7 @@ declare namespace fetchMock {
         /**
          * Replaces fetch() with a stub which records its calls, grouped by
          * route, and optionally returns a mocked Response object or passes the
-         *  call through to fetch(). Shorthand for mock() restricted to the PUT
+         *  call through to fetch(). Shorthand forroute() restricted to the PUT
          *  method and limited to being called one time only. Calls to .putOnce()
          *  can be chained.
          * @param matcher Condition for selecting which requests to mock
@@ -402,7 +401,7 @@ declare namespace fetchMock {
         /**
          * Replaces fetch() with a stub which records its calls, grouped by
          * route, and optionally returns a mocked Response object or passes the
-         *  call through to fetch(). Shorthand for mock() restricted to the
+         *  call through to fetch(). Shorthand forroute() restricted to the
          *  DELETE method. Calls to .delete() can be chained.
          * @param matcher Condition for selecting which requests to mock
          * @param response Configures the http response returned by the mock
@@ -413,7 +412,7 @@ declare namespace fetchMock {
         /**
          * Replaces fetch() with a stub which records its calls, grouped by
          * route, and optionally returns a mocked Response object or passes the
-         *  call through to fetch(). Shorthand for mock() restricted to the
+         *  call through to fetch(). Shorthand forroute() restricted to the
          *  DELETE method and limited to being called one time only. Calls to
          *  .deleteOnce() can be chained.
          * @param matcher Condition for selecting which requests to mock
@@ -425,7 +424,7 @@ declare namespace fetchMock {
         /**
          * Replaces fetch() with a stub which records its calls, grouped by
          * route, and optionally returns a mocked Response object or passes the
-         *  call through to fetch(). Shorthand for mock() restricted to the HEAD
+         *  call through to fetch(). Shorthand forroute() restricted to the HEAD
          *  method. Calls to .head() can be chained.
          * @param matcher Condition for selecting which requests to mock
          * @param response Configures the http response returned by the mock
@@ -436,7 +435,7 @@ declare namespace fetchMock {
         /**
          * Replaces fetch() with a stub which records its calls, grouped by
          * route, and optionally returns a mocked Response object or passes the
-         *  call through to fetch(). Shorthand for mock() restricted to the HEAD
+         *  call through to fetch(). Shorthand forroute() restricted to the HEAD
          *  method and limited to being called one time only. Calls to .headOnce()
          *  can be chained.
          * @param matcher Condition for selecting which requests to mock
@@ -448,7 +447,7 @@ declare namespace fetchMock {
         /**
          * Replaces fetch() with a stub which records its calls, grouped by
          * route, and optionally returns a mocked Response object or passes the
-         *  call through to fetch(). Shorthand for mock() restricted to the PATCH
+         *  call through to fetch(). Shorthand forroute() restricted to the PATCH
          *  method. Calls to .patch() can be chained.
          * @param matcher Condition for selecting which requests to mock
          * @param response Configures the http response returned by the mock
@@ -459,7 +458,7 @@ declare namespace fetchMock {
         /**
          * Replaces fetch() with a stub which records its calls, grouped by
          * route, and optionally returns a mocked Response object or passes the
-         *  call through to fetch(). Shorthand for mock() restricted to the PATCH
+         *  call through to fetch(). Shorthand forroute() restricted to the PATCH
          *  method and limited to being called one time only. Calls to .patchOnce()
          *  can be chained.
          * @param matcher Condition for selecting which requests to mock
@@ -479,25 +478,25 @@ declare namespace fetchMock {
          */
         catch(response?: MockResponse | MockResponseFunction): this;
 
-        /**
-         * Chainable method that records the call history of unmatched calls,
-         * but instead of responding with a stubbed response, the request is
-         * passed through to native fetch() and is allowed to communicate
-         * over the network. Similar to catch().
-         */
-        spy(response?: MockResponse | MockResponseFunction): this;
+        // /**
+        //  * Chainable method that records the call history of unmatched calls,
+        //  * but instead of responding with a stubbed response, the request is
+        //  * passed through to native fetch() and is allowed to communicate
+        //  * over the network. Similar to catch().
+        //  */
+        // spy(response?: MockResponse | MockResponseFunction): this;
 
-        /**
-         * Restores fetch() to its unstubbed state and clears all data recorded
-         * for its calls. reset() is an alias for restore().
-         */
-        restore(): this;
+        // /**
+        //  * Restores fetch() to its unstubbed state and clears all data recorded
+        //  * for its calls. reset() is an alias for restore().
+        //  */
+        // restore(): this;
 
-        /**
-         * Restores fetch() to its unstubbed state and clears all data recorded
-         * for its calls. reset() is an alias for restore().
-         */
-        reset(): this;
+        // /**
+        //  * Restores fetch() to its unstubbed state and clears all data recorded
+        //  * for its calls. reset() is an alias for restore().
+        //  */
+        // reset(): this;
 
         /**
          * Clears all data recorded for fetch()’s calls. It will not restore
@@ -510,111 +509,111 @@ declare namespace fetchMock {
          */
         resetBehavior(): this;
 
-        /**
-         * Returns a promise that resolves once all fetches handled by fetch-mock
-         * have resolved.
-         * @param [waitForBody] Wait for all body parsing methods(res.json(),
-         * res.text(), etc.) to resolve too.
-         */
-        flush(waitForBody?: boolean): Promise<MockResponse[]>;
+        // /**
+        //  * Returns a promise that resolves once all fetches handled by fetch-mock
+        //  * have resolved.
+        //  * @param [waitForBody] Wait for all body parsing methods(res.json(),
+        //  * res.text(), etc.) to resolve too.
+        //  */
+        // flush(waitForBody?: boolean): Promise<MockResponse[]>;
 
-        /**
-         * Returns an array of all calls to fetch matching the given filters.
-         * Each call is returned as a [url, options] array. If fetch was called
-         * using a Request instance, this will be available as a request
-         * property on this array.
-         * @param [filter] Allows filtering of calls to fetch based on various
-         * criteria
-         * @param [options] Either an object compatible with the mocking api or
-         * a string specifying a http method to filter by. This will be used to
-         * filter the list of calls further.
-         */
-        calls(filter?: InspectionFilter, options?: InspectionOptions): MockCall[];
+        // /**
+        //  * Returns an array of all calls to fetch matching the given filters.
+        //  * Each call is returned as a [url, options] array. If fetch was called
+        //  * using a Request instance, this will be available as a request
+        //  * property on this array.
+        //  * @param [filter] Allows filtering of calls to fetch based on various
+        //  * criteria
+        //  * @param [options] Either an object compatible with the mocking api or
+        //  * a string specifying a http method to filter by. This will be used to
+        //  * filter the list of calls further.
+        //  */
+        // calls(filter?: InspectionFilter, options?: InspectionOptions): MockCall[];
 
-        /**
-         * Returns a Boolean indicating whether any calls to fetch matched the
-         * given filter.
-         * @param [filter] Allows filtering of calls to fetch based on various
-         * criteria
-         * @param [options] Either an object compatible with the mocking api or
-         * a string specifying a http method to filter by. This will be used to
-         * filter the list of calls further.
-         */
-        called(filter?: InspectionFilter, options?: InspectionOptions): boolean;
+        // /**
+        //  * Returns a Boolean indicating whether any calls to fetch matched the
+        //  * given filter.
+        //  * @param [filter] Allows filtering of calls to fetch based on various
+        //  * criteria
+        //  * @param [options] Either an object compatible with the mocking api or
+        //  * a string specifying a http method to filter by. This will be used to
+        //  * filter the list of calls further.
+        //  */
+        // called(filter?: InspectionFilter, options?: InspectionOptions): boolean;
 
-        /**
-         * Returns a Boolean indicating whether fetch was called the expected
-         * number of times (or has been called at least once if repeat is
-         * undefined for the route).
-         * @param [filter] Rule for matching calls to fetch.
-         */
-        done(filter?: InspectionFilter): boolean;
+        // /**
+        //  * Returns a Boolean indicating whether fetch was called the expected
+        //  * number of times (or has been called at least once if repeat is
+        //  * undefined for the route).
+        //  * @param [filter] Rule for matching calls to fetch.
+        //  */
+        // done(filter?: InspectionFilter): boolean;
 
-        /**
-         * Returns the arguments for the last call to fetch matching the given
-         * filter.
-         * @param [filter] Allows filtering of calls to fetch based on various
-         * criteria
-         * @param [options] Either an object compatible with the mocking api or
-         * a string specifying a http method to filter by. This will be used to
-         * filter the list of calls further.
-         */
-        lastCall(
-            filter?: InspectionFilter,
-            options?: InspectionOptions,
-        ): MockCall | undefined;
+        // /**
+        //  * Returns the arguments for the last call to fetch matching the given
+        //  * filter.
+        //  * @param [filter] Allows filtering of calls to fetch based on various
+        //  * criteria
+        //  * @param [options] Either an object compatible with the mocking api or
+        //  * a string specifying a http method to filter by. This will be used to
+        //  * filter the list of calls further.
+        //  */
+        // lastCall(
+        //     filter?: InspectionFilter,
+        //     options?: InspectionOptions,
+        // ): MockCall | undefined;
 
-        /**
-         * Returns the url for the last call to fetch matching the given
-         * filter. If fetch was last called using a Request instance, the url
-         * will be extracted from this.
-         * @param [filter] Allows filtering of calls to fetch based on various
-         * criteria
-         * @param [options] Either an object compatible with the mocking api or
-         * a string specifying a http method to filter by. This will be used to
-         * filter the list of calls further.
-         */
-        lastUrl(
-            filter?: InspectionFilter,
-            options?: InspectionOptions,
-        ): string | undefined;
+        // /**
+        //  * Returns the url for the last call to fetch matching the given
+        //  * filter. If fetch was last called using a Request instance, the url
+        //  * will be extracted from this.
+        //  * @param [filter] Allows filtering of calls to fetch based on various
+        //  * criteria
+        //  * @param [options] Either an object compatible with the mocking api or
+        //  * a string specifying a http method to filter by. This will be used to
+        //  * filter the list of calls further.
+        //  */
+        // lastUrl(
+        //     filter?: InspectionFilter,
+        //     options?: InspectionOptions,
+        // ): string | undefined;
 
-        /**
-         * Returns the options for the call to fetch matching the given filter.
-         * If fetch was last called using a Request instance, a set of options
-         * inferred from the Request will be returned.
-         * @param [filter] Allows filtering of calls to fetch based on various
-         * criteria
-         * @param [options] Either an object compatible with the mocking api or
-         * a string specifying a http method to filter by. This will be used to
-         * filter the list of calls further.
-         */
-        lastOptions(
-            filter?: InspectionFilter,
-            options?: InspectionOptions,
-        ): MockOptions | undefined;
+        // /**
+        //  * Returns the options for the call to fetch matching the given filter.
+        //  * If fetch was last called using a Request instance, a set of options
+        //  * inferred from the Request will be returned.
+        //  * @param [filter] Allows filtering of calls to fetch based on various
+        //  * criteria
+        //  * @param [options] Either an object compatible with the mocking api or
+        //  * a string specifying a http method to filter by. This will be used to
+        //  * filter the list of calls further.
+        //  */
+        // lastOptions(
+        //     filter?: InspectionFilter,
+        //     options?: InspectionOptions,
+        // ): MockOptions | undefined;
 
-        /**
-         * Returns the options for the call to fetch matching the given filter.
-         * This is an experimental feature, very difficult to implement well given
-         * fetch’s very private treatment of response bodies.
-         * When doing all the following:
-           -  using node-fetch
-           -  responding with a real network response (using spy() or fallbackToNetwork)
-           -  using `fetchMock.LastResponse()`
-           -  awaiting the body content
-               … the response will hang unless your source code also awaits the response body.
-               This is an unavoidable consequence of the nodejs implementation of streams.
-         * @param [filter] Allows filtering of calls to fetch based on various
-         * criteria
-         * @param [options] Either an object compatible with the mocking api or
-         * a string specifying a http method to filter by. This will be used to
-         * filter the list of calls further.
-         */
-        lastResponse(
-            filter?: InspectionFilter,
-            options?: InspectionOptions,
-        ): Response | undefined;
+        // /**
+        //  * Returns the options for the call to fetch matching the given filter.
+        //  * This is an experimental feature, very difficult to implement well given
+        //  * fetch’s very private treatment of response bodies.
+        //  * When doing all the following:
+        //    -  using node-fetch
+        //    -  responding with a real network response (using spy() or fallbackToNetwork)
+        //    -  using `fetchMock.LastResponse()`
+        //    -  awaiting the body content
+        //        … the response will hang unless your source code also awaits the response body.
+        //        This is an unavoidable consequence of the nodejs implementation of streams.
+        //  * @param [filter] Allows filtering of calls to fetch based on various
+        //  * criteria
+        //  * @param [options] Either an object compatible with the mocking api or
+        //  * a string specifying a http method to filter by. This will be used to
+        //  * filter the list of calls further.
+        //  */
+        // lastResponse(
+        //     filter?: InspectionFilter,
+        //     options?: InspectionOptions,
+        // ): Response | undefined;
 
 
         statusTextMap: {
@@ -637,74 +636,61 @@ declare namespace fetchMock {
              */
             includeContentLength?: boolean;
 
-            /**
-             * - true: Unhandled calls fall through to the network
-             * - false: Unhandled calls throw an error
-             * - 'always': All calls fall through to the network, effectively
-             * disabling fetch-mock.
-             * @default false
-             */
-            fallbackToNetwork?: boolean | 'always';
+            // /**
+            //  * - true: Unhandled calls fall through to the network
+            //  * - false: Unhandled calls throw an error
+            //  * - 'always': All calls fall through to the network, effectively
+            //  * disabling fetch-mock.
+            //  * @default false
+            //  */
+            // fallbackToNetwork?: boolean | 'always';
 
-            /**
-             * Determines behaviour if a new route has the same name (or
-             * inferred name) as an existing one
-             * - undefined: An error will be throw when routes clash
-             * - true: Overwrites the existing route
-             * - false: Appends the new route to the list of routes
-             * @default undefined
-             */
-            overwriteRoutes?: boolean;
+            // /**
+            //  * Determines behaviour if a new route has the same name (or
+            //  * inferred name) as an existing one
+            //  * - undefined: An error will be throw when routes clash
+            //  * - true: Overwrites the existing route
+            //  * - false: Appends the new route to the list of routes
+            //  * @default undefined
+            //  */
+            // overwriteRoutes?: boolean;
 
-            /**
-             * Print a warning if any call is caught by a fallback handler (set
-             * using the fallbackToNetwork option or catch())
-             * @default true
-             */
-            warnOnFallback?: boolean;
+            // /**
+            //  * Print a warning if any call is caught by a fallback handler (set
+            //  * using the fallbackToNetwork option or catch())
+            //  * @default true
+            //  */
+            // warnOnFallback?: boolean;
 
 
-            /**
-             * Reference to a custom fetch implementation.
-             */
-            fetch?: (
-                input?: string | Request,
-                init?: RequestInit,
-            ) => Promise<Response>;
+            // // /**
+            // //  * Reference to a custom fetch implementation.
+            // //  */
+            // // fetch?: (
+            // //     input?: string | Request,
+            // //     init?: RequestInit,
+            // // ) => Promise<Response>;
 
-            /**
-             * Reference to the Headers constructor of a custom fetch
-             * implementation.
-             */
-            Headers?: new () => Headers;
+            // /**
+            //  * Reference to the Headers constructor of a custom fetch
+            //  * implementation.
+            //  */
+            // Headers?: new () => Headers;
 
-            /**
-             * Reference to the Request constructor of a custom fetch
-             * implementation.
-             */
-            Request?: new (input: string | Request, init?: RequestInit) => Request;
+            // /**
+            //  * Reference to the Request constructor of a custom fetch
+            //  * implementation.
+            //  */
+            // Request?: new (input: string | Request, init?: RequestInit) => Request;
 
-            /**
-             * Reference to the Response constructor of a custom fetch
-             * implementation.
-             */
-            Response?: new () => Response;
+            // /**
+            //  * Reference to the Response constructor of a custom fetch
+            //  * implementation.
+            //  */
+            // Response?: new () => Response;
         };
     }
-
-    interface FetchMockSandbox extends FetchMockStatic {
-        /**
-         * Also callable as fetch(). Use `typeof fetch` in your code to define
-         * a field that accepts both `fetch()` and a fetch-mock sandbox.
-         */
-        (input?: string | Request , init?: RequestInit): Promise<Response>;
-    }
 }
 
-declare var fetchMock: fetchMock.FetchMockStatic;
-export = fetchMock;
-
-declare module 'fetch-mock/esm/client' {
-  const fetchMock: fetchMock.FetchMockStatic;
-  export default fetchMock;
-}
+declare const fetchMock: fetchMock.FetchMockInstance;
+export default fetchMock;

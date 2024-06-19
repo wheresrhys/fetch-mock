@@ -1,0 +1,5 @@
+{
+    "name": "@fetch-mock/mock",
+    "description": "Utility for creating mock fetch implementation",
+    "exports": "index.js" 
+}

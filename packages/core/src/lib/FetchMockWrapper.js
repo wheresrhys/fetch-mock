@@ -21,28 +21,22 @@ FetchMock.config = {
 
 FetchMock.createInstance = function () {
     const instance = Object.create(FetchMock);
-    instance._uncompiledRoutes = (this._uncompiledRoutes || []).slice();
-    instance.routes = instance._uncompiledRoutes.map((config) =>
-        this.compileRoute(config),
-    );
-    instance.fallbackResponse = this.fallbackResponse || undefined;
-    instance.config = { ...(this.config || FetchMock.config) };
-    instance._calls = [];
-    instance._holdingPromises = [];
-    instance.bindMethods();
-    return instance;
-};
-
-
-FetchMock.bindMethods = function () {
     this.fetchHandler = FetchMock.fetchHandler.bind(this);
-    this.reset = this.restore = FetchMock.reset.bind(this);
-    this.resetHistory = FetchMock.resetHistory.bind(this);
-    this.resetBehavior = FetchMock.resetBehavior.bind(this);
-};
+    instance.router = this.router.clone()
+    instance.callHistory = this.callHistory.clone()
+    return instance;
 
-FetchMock.getOption = function (name, route = {}) {
-    return name in route ? route[name] : this.config[name];
+    // const instance = Object.create(FetchMock);
+    // instance._uncompiledRoutes = (this._uncompiledRoutes || []).slice();
+    // instance.routes = instance._uncompiledRoutes.map((config) =>
+    //     this.compileRoute(config),
+    // );
+    // instance.fallbackResponse = this.fallbackResponse || undefined;
+    // instance.config = { ...(this.config || FetchMock.config) };
+    // instance._calls = [];
+    // instance._holdingPromises = [];
+    // instance.bindMethods();
+    // return instance;
 };
 
 FetchMock.flush = async function (waitForResponseMethods) {

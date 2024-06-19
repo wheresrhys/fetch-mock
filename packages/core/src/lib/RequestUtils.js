@@ -37,24 +37,31 @@ export function normalizeUrl(url) {
     return u.pathname + u.search;
 }
 
-export function normalizeRequest(url, options, Request) {
-    if (Request.prototype.isPrototypeOf(url)) {
+/**
+ * 
+ * @param {string|Request} urlOrRequest
+ * @param {Object} options 
+ * @param {Class} Request 
+ * @returns 
+ */
+export function normalizeRequest(urlOrRequest, options, Request) {
+    if (Request.prototype.isPrototypeOf(urlOrRequest)) {
         const derivedOptions = {
-            method: url.method,
+            method: urlOrRequest.method,
         };
 
         try {
-            derivedOptions.body = url.clone().text();
+            derivedOptions.body = urlOrRequest.clone().text();
         } catch (err) { }
 
         const normalizedRequestObject = {
-            url: normalizeUrl(url.url),
+            url: normalizeUrl(urlOrRequest.url),
             options: Object.assign(derivedOptions, options),
-            request: url,
-            signal: (options && options.signal) || url.signal,
+            request: urlOrRequest,
+            signal: (options && options.signal) || urlOrRequest.signal,
         };
 
-        const headers = headersToArray(url.headers);
+        const headers = headersToArray(urlOrRequest.headers);
 
         if (headers.length) {
             normalizedRequestObject.options.headers = zipObject(headers);
@@ -62,18 +69,18 @@ export function normalizeRequest(url, options, Request) {
         return normalizedRequestObject;
     }
     if (
-        typeof url === 'string' ||
-        url instanceof String ||
+        typeof urlOrRequest === 'string' ||
+        urlOrRequest instanceof String ||
         // horrible URL object duck-typing
-        (typeof url === 'object' && 'href' in url)
+        (typeof urlOrRequest === 'object' && 'href' in urlOrRequest)
     ) {
         return {
-            url: normalizeUrl(url),
+            url: normalizeUrl(urlOrRequest),
             options,
             signal: options && options.signal,
         };
     }
-    if (typeof url === 'object') {
+    if (typeof urlOrRequest === 'object') {
         throw new TypeError(
             'fetch-mock: Unrecognised Request object. Read the Config and Installation sections of the docs',
         );

@@ -1,14 +1,12 @@
+
+import { normalizeUrl } from './request-utils.js';
+import Route from './Route.js/index.js';
+
 FetchHandler.recordCall = function (obj) {
     if (obj) {
         this._calls.push(obj);
     }
 };
-
-
-
-
-import { normalizeUrl } from './request-utils.js';
-import Route from './Route.js/index.js';
 
 const FetchMock = {};
 const isName = (nameOrMatcher) =>

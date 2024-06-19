@@ -98,8 +98,7 @@ const getParamsMatcher = ({ params: expectedParams, url: matcherUrl }) => {
 	};
 };
 
-const getBodyMatcher = (route, fetchMock) => {
-	const matchPartialBody = fetchMock.getOption('matchPartialBody', route);
+const getBodyMatcher = (route) => {
 	const { body: expectedBody } = route;
 
 	return (url, { body, method = 'get' }) => {
@@ -117,7 +116,7 @@ const getBodyMatcher = (route, fetchMock) => {
 
 		return (
 			sentBody &&
-			(matchPartialBody
+			(route.matchPartialBody
 				? isSubset(sentBody, expectedBody)
 				: isEqual(sentBody, expectedBody))
 		);

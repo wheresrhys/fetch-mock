@@ -1,6 +1,14 @@
 import responseBuilder from './response-builder.js';
 import * as requestUtils from './request-utils.js';
 
+/** 
+ * @typedef FetchHandler
+ * An object that contains the fetch handler function - used as the mock for
+ * fetch - and various utilities to help it operate
+ * This object will never be accessed as a separate entity by the end user as it
+ * gets munged with Router and CallHistory objects by FetchMockWrapper
+ * 
+ */
 const FetchHandler = {};
 
 const resolve = async (
@@ -43,7 +51,7 @@ FetchHandler.fetchHandler = async function (url, options) {
         this.config.Request,
     );
 
-    if (this.router.needsAsyncBodyExtraction(normalizedRequest)) {
+    if (this.router.needsToReadBody(normalizedRequest)) {
         options.body = await normalizedRequest.options.body;
     }
 
@@ -59,33 +67,25 @@ FetchHandler.fetchHandler = async function (url, options) {
         }),
     );
 
-    // wrapped in this promise to make sure we respect custom Promise
-    // constructors defined by the user
-    return new Promise((res, rej) => {
-        if (signal) {
-            const abort = () => {
-                rej(new DOMException('The operation was aborted.', 'AbortError'));
-                done();
-            };
-            if (signal.aborted) {
-                abort();
-            }
-            signal.addEventListener('abort', abort);
+    if (signal) {
+        const abort = () => {
+            rej(new DOMException('The operation was aborted.', 'AbortError'));
+            done();
+        };
+        if (signal.aborted) {
+            abort();
         }
+        signal.addEventListener('abort', abort);
+    }
 
-        this.generateResponse({
-            route,
-            url,
-            options,
-            request,
-            callLog,
-        })
-            .then(res, rej)
-            .then(done, done)
-            .then(() => {
-                setDebugPhase();
-            });
-    });
+    return this.generateResponse({
+        route,
+        url,
+        options,
+        request,
+        callLog,
+    })
+        .then(done, done)
 };
 
 FetchHandler.fetchHandler.isMock = true;

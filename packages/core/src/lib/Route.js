@@ -1,4 +1,4 @@
-import builtInMatchers from './Route/matchers.js';
+import builtInMatchers from './Matchers.js';
 
 const isUrlMatcher = (matcher) =>
 	matcher instanceof RegExp ||
@@ -10,17 +10,29 @@ const isFunctionMatcher = (matcher) => typeof matcher === 'function';
 const nameToOptions = (options) =>
 	typeof options === 'string' ? { name: options } : options;
 
+/**
+ * 
+ */
 class Route {
-	constructor(args, fetchMock) {
-		this.fetchMock = fetchMock;
-		this.init(args);
+	/**
+	 * Constructs a route from 
+	 * @param {*} args 
+	 */
+	constructor(args, globalConfig) {
+		// TODO - can avoid having to pass fetchmock around IF all route configs have 
+		// fetch-mock options blended in with them first
+		// As far as I can see it's only needed for the 'matchPartialBody' option, which for
+		// some reason is only availabel globally, not per route. No reason why it should be that way
+		this.init(args, globalConfig);
 		this.sanitize();
 		this.validate();
 		this.generateMatcher();
 		this.limit();
 		this.delayResponse();
 	}
-
+	/**
+	 * 
+	 */
 	validate() {
 		if (!('response' in this)) {
 			throw new Error('fetch-mock: Each route must define a response');
@@ -33,7 +45,8 @@ class Route {
 		}
 	}
 
-	init(args) {
+	init(args, globalConfig) {
+		Object.assign(this, globalConfig)
 		const [matcher, response, nameOrOptions = {}] = args;
 		const routeConfig = {};
 
@@ -69,14 +82,13 @@ class Route {
 		}
 
 		this.functionMatcher = this.matcher || this.functionMatcher;
-		this.identifier = this.name || this.url || this.functionMatcher;
 	}
 
 	generateMatcher() {
 		const activeMatchers = Route.registeredMatchers
 			.map(
 				({ name, matcher, usesBody }) =>
-					this[name] && { matcher: matcher(this, this.fetchMock), usesBody },
+					this[name] && { matcher: matcher(this), usesBody },
 			)
 			.filter((matcher) => Boolean(matcher));
 
@@ -114,13 +126,13 @@ class Route {
 		} 
 	}
 
-	static addMatcher(matcher) {
+	static defineMatcher(matcher) {
 		Route.registeredMatchers.push(matcher);
 	}
 }
 
 Route.registeredMatchers = [];
 
-builtInMatchers.forEach(Route.addMatcher);
+builtInMatchers.forEach(Route.defineMatcher);
 
 export default Route;

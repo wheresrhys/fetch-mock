@@ -45,3 +45,25 @@ FetchMock._mock = function () {
     }
     return this;
 };
+
+if (this.getOption('fallbackToNetwork') === 'always') {
+    return {
+        route: { response: this.getNativeFetch(), responseIsFetch: true },
+        // BUG - this callLog never used to get sent. Discovered the bug
+        // but can't fix outside a major release as it will potentially
+        // cause too much disruption
+        //
+        // callLog,
+    };
+}
+
+  if (!this.getOption('fallbackToNetwork')) {
+        throw new Error(
+            `fetch-mock: No fallback response defined for ${(options && options.method) || 'GET'
+            } to ${url}`,
+        );
+    }
+    return {
+        route: { response: this.getNativeFetch(), responseIsFetch: true },
+        callLog,
+    };

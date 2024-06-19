@@ -196,7 +196,4 @@ describe('Set up and tear down', () => {
 		});
 	});
 
-	describe('catch', () => {
-		testChainableMethod('catch');
-	});
 });

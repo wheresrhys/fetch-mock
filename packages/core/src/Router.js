@@ -1,3 +1,4 @@
+//@type-check
 Router.needsToReadBody = function ({ request }) {
     return request && this.routes.some(({ usesBody }) => usesBody);
 };
@@ -39,8 +40,8 @@ Router.executeRouter = function (url, options, request) {
     );
 };
 
-Router.compileRoute = function (config) {
-    return new Route(config, this.config);
+Router.compileRoute = function (matcher, response, options) {
+    return new Route(matcher, response, options, this.config);
 };
 
 Router.defineMatcher = function (matcher) {
@@ -48,21 +49,25 @@ Router.defineMatcher = function (matcher) {
 };
 
 Router.removeRoutes ({force}) = force ? this.routes = [] : this.routes = this.routes.filter(({ sticky }) => sticky);
-
-Router.route = function(...args) {
-    return this.addRoute(args)
+/**
+ * 
+ * @param {} matcher 
+ * @param {*} response 
+ * @param {*} options 
+ * @returns 
+ */
+Router.route = function(matcher, response, options) {
+    return this.addRoute(matcher, response, options)
 }
 
-Router.addRoute = function (uncompiledRoute) {
-    const route = this.compileRoute(uncompiledRoute);
+Router.addRoute = function (matcher, response, options) {
+    const route = this.compileRoute(matcher, response, options);
     if (route.name && this.routes.some(({ name: existingName }) => name === existingName)) {
         throw new Error(
             'fetch-mock: Adding route with same name as existing route.',
         );
-        
     }
     // is this needed any more?
-    this._uncompiledRoutes.push(uncompiledRoute);
     this.routes.push(route);
 };
 

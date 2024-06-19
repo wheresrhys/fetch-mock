@@ -32,17 +32,30 @@ const nameToOptions = (options) =>
  *  
  */
 class Route {
+
 	/**
 	 * @overload
-	 * @param {[MockOptions, String?]} args 
-	 * @param {FetchMockInstance.config} globalConfig
+	 * @param {MockOptions} matcher 
 	 */
+
 	/**
-	 * @param {[MockMatcher, MockResponse, (MockOptions | String)?]} args 
+	 * @overload
+	 * @param {MockMatcher } matcher 
+	 * @param {MockResponse} response
+	 * @param {MockOptions | string} options
 	 * @param {FetchMockInstance.config} globalConfig
 	 */
-	constructor(args, globalConfig) {
-		this.init(args, globalConfig);
+
+	/**
+	 * @param {MockMatcher | MockOptions} matcher 
+	 * @param {MockResponse} [response]
+	 * @param {MockOptions | string} [options] 
+	 * @param {FetchMockInstance.config} [globalConfig] 
+	 */
+	constructor(matcher, response, options, globalConfig) {
+		Object.assign(this, globalConfig)
+		this.originalInput = { matcher, response, options }
+		this.init();
 		this.sanitize();
 		this.validate();
 		this.generateMatcher();
@@ -50,7 +63,7 @@ class Route {
 		this.delayResponse();
 	}
 	/**
-	 * @returns {Boolean}
+	 * @returns {void}
 	 */
 	validate() {
 		if (!('response' in this)) {
@@ -63,10 +76,11 @@ class Route {
 			);
 		}
 	}
-
-	init(args, globalConfig) {
-		Object.assign(this, globalConfig)
-		const [matcher, response, nameOrOptions = {}] = args;
+	/**
+	 * @returns {void}
+	 */
+	init() {
+		const { matcher, response, options: nameOrOptions } = this.originalInput
 		const routeConfig = {};
 
 		if (isUrlMatcher(matcher) || isFunctionMatcher(matcher)) {
@@ -90,7 +104,9 @@ class Route {
 
 		Object.assign(this, routeConfig);
 	}
-
+	/**
+	 * @returns {void}
+	 */
 	sanitize() {
 		if (this.method) {
 			this.method = this.method.toLowerCase();
@@ -149,7 +165,7 @@ class Route {
 		Route.registeredMatchers.push(matcher);
 	}
 }
-
+/** @type {Array} */
 Route.registeredMatchers = [];
 
 builtInMatchers.forEach(Route.defineMatcher);

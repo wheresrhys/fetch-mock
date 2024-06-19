@@ -1,4 +1,4 @@
-import builtInMatchers from './matchers.js';
+import builtInMatchers from './Route/matchers.js';
 
 const isUrlMatcher = (matcher) =>
 	matcher instanceof RegExp ||

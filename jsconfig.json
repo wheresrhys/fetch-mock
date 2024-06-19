@@ -1,6 +1,5 @@
 {
     "compilerOptions": {
-        "module": "commonjs",
         "lib": [
             "es6",
             "dom"
@@ -12,16 +11,15 @@
         "noImplicitThis": true,
         "strictNullChecks": false,
         "strictFunctionTypes": true,
-        "baseUrl": "../",
-        "typeRoots": [
-            "../"
-        ],
-        "types": [],
+        "types": ["packages/core/types/index.d.ts"],
         "noEmit": true,
         "forceConsistentCasingInFileNames": true
     },
     "include": [
-        "types/**/*",
-        "packages/**/*"
+        "packages/core/src/Route.js"
+        "packages/core/types/index.d.ts"
+    ],
+    "exclude": [
+        "node_modules"
     ]
 }

@@ -16,8 +16,8 @@
 // If you are a Typescript user and find a problem in these types, please
 // submit a PR
 //
-// TypeScript Version: 2.2
 
+// TypeScript Version: 2.2
 
 type MockRequest = Request | RequestInit;
 
@@ -690,4 +690,3 @@ interface FetchMockInstance {
         // Response?: new () => Response;
     };
 }
-

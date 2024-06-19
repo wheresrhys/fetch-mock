@@ -8,7 +8,7 @@ import {
 	getPath,
 	getQuery,
 	normalizeUrl,
-} from '../lib/request-utils.js';
+} from './request-utils.js';
 
 const stringMatchers = {
 	begin: (targetString) =>

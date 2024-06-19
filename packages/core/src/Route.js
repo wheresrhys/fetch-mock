@@ -1,28 +1,47 @@
+//@type-check
+
 import builtInMatchers from './Matchers.js';
 
+/**
+ * 
+ * @param {MockMatcher} matcher 
+ * @returns {Boolean}
+ */
 const isUrlMatcher = (matcher) =>
 	matcher instanceof RegExp ||
 	typeof matcher === 'string' ||
 	(typeof matcher === 'object' && 'href' in matcher);
 
+/**
+ * 
+ * @param {MockMatcher} matcher 
+ * @returns Boolean
+ */
 const isFunctionMatcher = (matcher) => typeof matcher === 'function';
-
-const nameToOptions = (options) =>
-	typeof options === 'string' ? { name: options } : options;
 
 /**
  * 
+ * @param {MockOptions | String} options 
+ * @returns {MockOptions}
+ */
+const nameToOptions = (options) =>
+	typeof options === 'string' ? { name: options } : options;
+
+
+/**
+ *  
  */
 class Route {
 	/**
-	 * Constructs a route from 
-	 * @param {*} args 
+	 * @overload
+	 * @param {[MockOptions, String?]} args 
+	 * @param {FetchMockInstance.config} globalConfig
+	 */
+	/**
+	 * @param {[MockMatcher, MockResponse, (MockOptions | String)?]} args 
+	 * @param {FetchMockInstance.config} globalConfig
 	 */
 	constructor(args, globalConfig) {
-		// TODO - can avoid having to pass fetchmock around IF all route configs have 
-		// fetch-mock options blended in with them first
-		// As far as I can see it's only needed for the 'matchPartialBody' option, which for
-		// some reason is only availabel globally, not per route. No reason why it should be that way
 		this.init(args, globalConfig);
 		this.sanitize();
 		this.validate();
@@ -31,7 +50,7 @@ class Route {
 		this.delayResponse();
 	}
 	/**
-	 * 
+	 * @returns {Boolean}
 	 */
 	validate() {
 		if (!('response' in this)) {

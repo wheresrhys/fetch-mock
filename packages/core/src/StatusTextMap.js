@@ -1,3 +1,6 @@
+/**
+ * @type {Object.<number, string>}
+ */
 const statusTextMap = {
 	100: 'Continue',
 	101: 'Switching Protocols',

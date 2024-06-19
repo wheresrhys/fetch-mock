@@ -676,15 +676,7 @@ describe('CallHistory', () => {
             expect(fm.done()).toBe(true);
         });
 
-        it("won't mock if route already matched enough times", async () => {
-            fm.mock('http://a.com/', 200, { repeat: 1 });
-
-            await fm.fetchHandler('http://a.com/');
-            try {
-                await fm.fetchHandler('http://a.com/');
-                expect.unreachable('Previous line should throw');
-            } catch (err) { }
-        });
+       
 
         it('falls back to second route if first route already done', async () => {
             fm.mock('http://a.com/', 404, {

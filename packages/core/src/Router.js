@@ -11,9 +11,7 @@ Router.executeRouter = function (url, options, request) {
         isUnmatched: true,
     };
 
-    const route = this.routes.find((route, i) => {
-        return route.matcher(url, options, request);
-    });
+    const route = this.routes.find((route) => route.matcher(url, options, request));
 
     if (route) {
         return {

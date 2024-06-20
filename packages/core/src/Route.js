@@ -4,7 +4,7 @@ import builtInMatchers from './Matchers.js';
 
 /**
  * 
- * @param {MockMatcher} matcher 
+ * @param {MockMatcher | MockOptions} matcher 
  * @returns {Boolean}
  */
 const isUrlMatcher = (matcher) =>
@@ -14,7 +14,7 @@ const isUrlMatcher = (matcher) =>
 
 /**
  * 
- * @param {MockMatcher} matcher 
+ * @param {MockMatcher| MockOptions} matcher 
  * @returns Boolean
  */
 const isFunctionMatcher = (matcher) => typeof matcher === 'function';
@@ -28,14 +28,14 @@ const nameToOptions = (options) =>
 	typeof options === 'string' ? { name: options } : options;
 
 
-/**
- *  
- */
 class Route {
 
 	/**
 	 * @overload
 	 * @param {MockOptions} matcher 
+	 * @param {undefined} response
+	 * @param {undefined} options
+	 * @param {FetchMockConfig} globalConfig
 	 */
 
 	/**
@@ -43,14 +43,14 @@ class Route {
 	 * @param {MockMatcher } matcher 
 	 * @param {MockResponse} response
 	 * @param {MockOptions | string} options
-	 * @param {FetchMockInstance.config} globalConfig
+	 * @param {FetchMockConfig} globalConfig
 	 */
 
 	/**
 	 * @param {MockMatcher | MockOptions} matcher 
 	 * @param {MockResponse} [response]
 	 * @param {MockOptions | string} [options] 
-	 * @param {FetchMockInstance.config} [globalConfig] 
+	 * @param {FetchMockConfig} [globalConfig] 
 	 */
 	constructor(matcher, response, options, globalConfig) {
 		Object.assign(this, globalConfig)
@@ -65,7 +65,7 @@ class Route {
 	/**
 	 * @returns {void}
 	 */
-	validate() {
+	#validate() {
 		if (!('response' in this)) {
 			throw new Error('fetch-mock: Each route must define a response');
 		}
@@ -79,7 +79,7 @@ class Route {
 	/**
 	 * @returns {void}
 	 */
-	init() {
+	#init() {
 		const { matcher, response, options: nameOrOptions } = this.originalInput
 		const routeConfig = {};
 
@@ -107,7 +107,7 @@ class Route {
 	/**
 	 * @returns {void}
 	 */
-	sanitize() {
+	#sanitize() {
 		if (this.method) {
 			this.method = this.method.toLowerCase();
 		}
@@ -118,8 +118,10 @@ class Route {
 
 		this.functionMatcher = this.matcher || this.functionMatcher;
 	}
-
-	generateMatcher() {
+	/**
+	 * @returns {void}
+	 */
+	#generateMatcher() {
 		const activeMatchers = Route.registeredMatchers
 			.map(
 				({ name, matcher, usesBody }) =>
@@ -131,8 +133,10 @@ class Route {
 		this.matcher = (url, options = {}, request) =>
 			activeMatchers.every(({ matcher }) => matcher(url, options, request));
 	}
-
-	limit() {
+	/**
+	 * @returns {void}
+	 */
+	#limit() {
 		if (!this.repeat) {
 			return;
 		}
@@ -149,8 +153,10 @@ class Route {
 			timesLeft = this.repeat;
 		};
 	}
-
-	delayResponse() {
+	/**
+	 * @returns {void}
+	 */
+	#delayResponse() {
 		if (this.delay) {
 			const { response } = this;
 			this.response = () => {
@@ -160,12 +166,14 @@ class Route {
 			};
 		} 
 	}
-
+	/**
+	 * @param {MatcherDefinition} matcher 
+	 */
 	static defineMatcher(matcher) {
 		Route.registeredMatchers.push(matcher);
 	}
 }
-/** @type {Array} */
+/** @type {MatcherDefinition[]]} */
 Route.registeredMatchers = [];
 
 builtInMatchers.forEach(Route.defineMatcher);

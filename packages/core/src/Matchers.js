@@ -10,6 +10,9 @@ import {
 	normalizeUrl,
 } from './request-utils.js';
 
+/**
+ * @type {Object.<string, UrlMatcherGenerator>}
+ */
 const stringMatchers = {
 	begin: (targetString) =>
 		(url) => url.indexOf(targetString) === 0,
@@ -28,7 +31,10 @@ const stringMatchers = {
 	path: (targetString) =>
 		(url) => getPath(url) === targetString,
 };
-
+/**
+ * @param {MockOptions} route 
+ * @returns {MockMatcherFunction}
+ */
 const getHeaderMatcher = ({ headers: expectedHeaders }) => {
 	if (!expectedHeaders) {
 		return;
@@ -43,7 +49,10 @@ const getHeaderMatcher = ({ headers: expectedHeaders }) => {
 		);
 	};
 };
-
+/**
+ * @param {MockOptions} route 
+ * @returns {MockMatcherFunction}
+ */
 const getMethodMatcher = ({ method: expectedMethod }) => {
 	if (!expectedMethod) {
 		return;
@@ -53,7 +62,10 @@ const getMethodMatcher = ({ method: expectedMethod }) => {
 		return expectedMethod === actualMethod;
 	};
 };
-
+/**
+ * @param {MockOptions} route 
+ * @returns {MockMatcherFunction}
+ */
 const getQueryStringMatcher = ({ query: passedQuery }) => {
 	if (!passedQuery) {
 		return;
@@ -73,7 +85,10 @@ const getQueryStringMatcher = ({ query: passedQuery }) => {
 		});
 	};
 };
-
+/**
+ * @param {MockOptions} route 
+ * @returns {MockMatcherFunction}
+ */
 const getParamsMatcher = ({ params: expectedParams, url: matcherUrl }) => {
 	if (!expectedParams) {
 		return;
@@ -97,7 +112,10 @@ const getParamsMatcher = ({ params: expectedParams, url: matcherUrl }) => {
 		return expectedKeys.every((key) => params[key] === expectedParams[key]);
 	};
 };
-
+/**
+ * @param {MockOptions} route 
+ * @returns {MockMatcherFunction}
+ */
 const getBodyMatcher = (route) => {
 	const { body: expectedBody } = route;
 
@@ -122,7 +140,13 @@ const getBodyMatcher = (route) => {
 		);
 	};
 };
-
+/**
+ * 
+ * @param {MockOptions} route 
+ * @param {String} matcherUrl 
+ * @param {*} query 
+ * @returns 
+ */
 const getFullUrlMatcher = (route, matcherUrl, query) => {
 	// if none of the special syntaxes apply, it's just a simple string match
 	// but we have to be careful to normalize the url we check and the name
@@ -172,6 +196,7 @@ const getUrlMatcher = (route) => {
 	return getFullUrlMatcher(route, matcherUrl, query);
 };
 
+/** @type {MatcherDefinition[]} */
 export default [
 	{ name: 'query', matcher: getQueryStringMatcher },
 	{ name: 'method', matcher: getMethodMatcher },

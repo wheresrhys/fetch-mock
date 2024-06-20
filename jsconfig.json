@@ -9,15 +9,17 @@
         "strict": true,
         "noImplicitAny": true,
         "noImplicitThis": true,
+        "emitDeclarationOnly": true,
+        "noEmit": false,
         "strictNullChecks": false,
         "strictFunctionTypes": true,
-        "types": ["packages/core/types/index.d.ts"],
-        "noEmit": true,
-        "forceConsistentCasingInFileNames": true
+        "types": ["packages/core/types/*.d.ts"],
+        "forceConsistentCasingInFileNames": true,
+        "declaration": true,
+        "declarationDir": "./packages/core/types"
     },
     "include": [
-        "packages/core/src/Route.js"
-        "packages/core/types/index.d.ts"
+        "packages/core/src/Route.js",
     ],
     "exclude": [
         "node_modules"

@@ -21,11 +21,24 @@
 
 type MockRequest = Request | RequestInit;
 
+
+
+type MatcherDefinition {
+name: string;
+matcher: MatcherGenerator;
+usesBody?: boolean;
+}
+   
 /**
  * Mock matcher function
  */
 type MockMatcherFunction = (url: string, opts: MockRequest) => boolean;
 
+type UrlMatcher = (url: string) => boolean;
+
+type UrlMatcherGenerator = (pattern: string) => UrlMatcher;
+
+type MatcherGenerator = (route: Route) => MockMatcherFunction;
 
 type MockMatcherUrl = string | RegExp | URL;
 
@@ -73,6 +86,68 @@ type InspectionFilter = MockMatcher | boolean;
  * calls further.
  */
 type InspectionOptions = MockOptions | string;
+
+
+interface FetchMockConfig {
+    {
+    /**
+     * Convert objects into JSON before delivering as stub responses.
+     * Can be useful to set to false globally if e.g. dealing with a
+     * lot of array buffers. If true, will also add
+     * content-type: application/json header.
+     * @default true
+     */
+    sendAsJson ?: boolean;
+
+    /**
+     * Automatically sets a content-length header on each response.
+     * @default true
+     */
+    includeContentLength ?: boolean;
+
+    // /**
+    //  * - true: Unhandled calls fall through to the network
+    //  * - false: Unhandled calls throw an error
+    //  * - 'always': All calls fall through to the network, effectively
+    //  * disabling fetch-mock.
+    //  * @default false
+    //  */
+    // fallbackToNetwork?: boolean | 'always';
+
+    /**
+     * Print a warning if any call is caught by a fallback handler (set
+     * using the fallbackToNetwork option or catch())
+     * @default true
+     */
+    warnOnFallback ?: boolean;
+
+    /**
+     * Reference to a custom fetch implementation.
+     */
+    fetch?: (
+        input?: string | Request,
+        init?: RequestInit,
+    ) => Promise<Response>;
+
+    /**
+     * Reference to the Headers constructor of a custom fetch
+     * implementation.
+     */
+    Headers ?: new () => Headers;
+
+    /**
+     * Reference to the Request constructor of a custom fetch
+     * implementation.
+     */
+    Request ?: new (input: string | Request, init ?: RequestInit) => Request;
+
+    /**
+     * Reference to the Response constructor of a custom fetch
+     * implementation.
+     */
+    Response ?: new () => Response;
+}
+}
 
 /**
  * Mock response object
@@ -620,73 +695,5 @@ interface FetchMockInstance {
         [key: number]: string
     }
 
-    config: {
-        /**
-         * Convert objects into JSON before delivering as stub responses.
-         * Can be useful to set to false globally if e.g. dealing with a
-         * lot of array buffers. If true, will also add
-         * content-type: application/json header.
-         * @default true
-         */
-        sendAsJson?: boolean;
-
-        /**
-         * Automatically sets a content-length header on each response.
-         * @default true
-         */
-        includeContentLength?: boolean;
-
-        // /**
-        //  * - true: Unhandled calls fall through to the network
-        //  * - false: Unhandled calls throw an error
-        //  * - 'always': All calls fall through to the network, effectively
-        //  * disabling fetch-mock.
-        //  * @default false
-        //  */
-        // fallbackToNetwork?: boolean | 'always';
-
-        // /**
-        //  * Determines behaviour if a new route has the same name (or
-        //  * inferred name) as an existing one
-        //  * - undefined: An error will be throw when routes clash
-        //  * - true: Overwrites the existing route
-        //  * - false: Appends the new route to the list of routes
-        //  * @default undefined
-        //  */
-        // overwriteRoutes?: boolean;
-
-        // /**
-        //  * Print a warning if any call is caught by a fallback handler (set
-        //  * using the fallbackToNetwork option or catch())
-        //  * @default true
-        //  */
-        // warnOnFallback?: boolean;
-
-
-        // // /**
-        // //  * Reference to a custom fetch implementation.
-        // //  */
-        // // fetch?: (
-        // //     input?: string | Request,
-        // //     init?: RequestInit,
-        // // ) => Promise<Response>;
-
-        // /**
-        //  * Reference to the Headers constructor of a custom fetch
-        //  * implementation.
-        //  */
-        // Headers?: new () => Headers;
-
-        // /**
-        //  * Reference to the Request constructor of a custom fetch
-        //  * implementation.
-        //  */
-        // Request?: new (input: string | Request, init?: RequestInit) => Request;
-
-        // /**
-        //  * Reference to the Response constructor of a custom fetch
-        //  * implementation.
-        //  */
-        // Response?: new () => Response;
-    };
+    config: FetchMockConfig;
 }

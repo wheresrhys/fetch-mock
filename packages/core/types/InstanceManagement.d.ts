@@ -49,11 +49,11 @@ declare interface FetchMockConfig {
     Response?: new () => Response;
 }
 
-declare interface FetchMockInstance {
+declare interface FetchMock {
 
     // MATCHED: true;
     // UNMATCHED: false;
 
-    createInstance: () => FetchMockInstance
+    createInstance: () => FetchMock
     config: FetchMockConfig;
 }

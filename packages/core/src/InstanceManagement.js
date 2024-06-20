@@ -14,13 +14,15 @@ const defaultConfig  = {
     Headers: globalThis.Headers,
     fetch: globalThis.fetch,
 };
-/** @type {FetchMockInstance} */
-const FetchMock = { ...fetchHandler, ...setUpAndTearDown, ...inspecting };
+/** @type {FetchMock} */
+const FetchMock = { 
+    // ...fetchHandler, ...setUpAndTearDown, ...inspecting 
+};
 
 /** @type {FetchMockConfig} */
 FetchMock.config = defaultConfig
 /**
- * @returns {FetchMockInstance}
+ * @returns {FetchMock}
  */
 FetchMock.createInstance = function () {
     const instance = Object.create(FetchMock);

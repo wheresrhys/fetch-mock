@@ -13,12 +13,13 @@
         "strictFunctionTypes": true,
         "types": [
             "packages/core/types/InstanceManagement.d.ts"
+            
         ],
         "noEmit": true,
         "forceConsistentCasingInFileNames": true
     },
     "include": [
-        "packages/core/src/InstanceManagement.js",
+        "packages/core/src/*.js",
         "packages/core/types/InstanceManagement.d.ts"
     ],
     "exclude": [

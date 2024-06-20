@@ -1,8 +1,17 @@
+//@type-check
 import responseBuilder from './response-builder.js';
 import * as requestUtils from './request-utils.js';
 import Route from '../lib/Route.js';
 
-const resolve = async (
+/**
+ * 
+ * @param {Route} route 
+ * @param {string} url 
+ * @param {RequestInit} options 
+ * @param {Request} request 
+ * @returns 
+ */
+const resolveUntilResponseConfig = async (
     { response, responseIsFetch = false },
     url,
     options,
@@ -39,7 +48,11 @@ const resolve = async (
  * 
  * @param {Object} input
  * @param {Route} input.route
- * @returns 
+ * @param {string} input.url
+ * @param {RequestInit} input.options
+ * @param {Request} [input.request]
+ * @param {CallLog} input.callLog
+ * @returns {Promise<Response>}
  */
 const generateResponse = async ({
     route,
@@ -48,7 +61,7 @@ const generateResponse = async ({
     request,
     callLog = {},
 }) => {
-    const response = await resolve(route, url, options, request);
+    const response = await resolveUntilResponseConfig(route, url, options, request);
 
     // If the response says to throw an error, throw it
     // Type checking is to deal with sinon spies having a throws property :-0
@@ -73,11 +86,17 @@ const generateResponse = async ({
 
     return finalResponse;
 };
-
-const fetchHandler = async function (url, options) {
+/**
+ * 
+ * @param {string | Request} requestInput 
+ * @param {RequestInit} [requestInit]
+ * @this {FetchMock}
+ * @returns {Promise<Response>}
+ */
+const fetchHandler = async function (requestInput, requestInit) {
     const { url, options, request, signal } = requestUtils.normalizeRequest(
-        url,
-        options,
+        requestInput,
+        requestInit,
         this.config.Request,
     );
 
@@ -90,8 +109,9 @@ const fetchHandler = async function (url, options) {
     this.callHistory.recordCall(callLog);
 
     // this is used to power the .flush() method
+    /** @type {function(any: PromiseLike<any>)} */
     let done;
-    this._holdingPromises.push(
+    this.callHistory._holdingPromises.push(
         new Promise((res) => {
             done = res;
         }),
@@ -99,8 +119,8 @@ const fetchHandler = async function (url, options) {
 
     if (signal) {
         const abort = () => {
-            rej(new DOMException('The operation was aborted.', 'AbortError'));
             done();
+            throw new DOMException('The operation was aborted.', 'AbortError');
         };
         if (signal.aborted) {
             abort();
@@ -108,14 +128,18 @@ const fetchHandler = async function (url, options) {
         signal.addEventListener('abort', abort);
     }
 
-    return generateResponse({
+    const response = generateResponse({
         route,
         url,
         options,
         request,
         callLog,
     })
-        .then(done, done)
+
+    response.then(done, done)
+
+    return response;
+        
 };
 
 fetchHandler.isMock = true;

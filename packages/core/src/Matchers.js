@@ -9,7 +9,8 @@ import {
 	getPath,
 	getQuery,
 	normalizeUrl,
-} from './request-utils.js';
+} from './RequestUtils.js';
+import Route from './Route.js';
 
 /**
  * @type {Object.<string, UrlMatcherGenerator>}
@@ -33,7 +34,7 @@ const stringMatchers = {
 		(url) => getPath(url) === targetString,
 };
 /**
- * @param {MockOptions} route 
+ * @param {Route} route 
  * @returns {MockMatcherFunction}
  */
 const getHeaderMatcher = ({ headers: expectedHeaders }) => {
@@ -51,7 +52,7 @@ const getHeaderMatcher = ({ headers: expectedHeaders }) => {
 	};
 };
 /**
- * @param {MockOptions} route 
+ * @param {Route} route 
  * @returns {MockMatcherFunction}
  */
 const getMethodMatcher = ({ method: expectedMethod }) => {
@@ -64,7 +65,7 @@ const getMethodMatcher = ({ method: expectedMethod }) => {
 	};
 };
 /**
- * @param {MockOptions} route 
+ * @param {Route} route 
  * @returns {MockMatcherFunction}
  */
 const getQueryStringMatcher = ({ query: passedQuery }) => {
@@ -87,7 +88,7 @@ const getQueryStringMatcher = ({ query: passedQuery }) => {
 	};
 };
 /**
- * @param {MockOptions} route 
+ * @param {Route} route 
  * @returns {MockMatcherFunction}
  */
 const getParamsMatcher = ({ params: expectedParams, url: matcherUrl }) => {
@@ -114,7 +115,7 @@ const getParamsMatcher = ({ params: expectedParams, url: matcherUrl }) => {
 	};
 };
 /**
- * @param {MockOptions} route 
+ * @param {Route} route 
  * @returns {MockMatcherFunction}
  */
 const getBodyMatcher = (route) => {
@@ -143,10 +144,10 @@ const getBodyMatcher = (route) => {
 };
 /**
  * 
- * @param {MockOptions} route 
+ * @param {Route} route 
  * @param {String} matcherUrl 
- * @param {*} query 
- * @returns 
+ * @param {Object.<string,string>} query 
+ * @returns {MockMatcherFunction}
  */
 const getFullUrlMatcher = (route, matcherUrl, query) => {
 	// if none of the special syntaxes apply, it's just a simple string match
@@ -154,8 +155,8 @@ const getFullUrlMatcher = (route, matcherUrl, query) => {
 	// of the route to allow for e.g. http://it.at.there being indistinguishable
 	// from http://it.at.there/ once we start generating Request/Url objects
 	const expectedUrl = normalizeUrl(matcherUrl);
-	if (route.identifier === matcherUrl) {
-		route.identifier = expectedUrl;
+	if (route.url === matcherUrl) {
+		route.url = expectedUrl;
 	}
 
 	return (matcherUrl) => {
@@ -166,12 +167,17 @@ const getFullUrlMatcher = (route, matcherUrl, query) => {
 	};
 };
 
-const getFunctionMatcher = ({ functionMatcher }) => {
-	return (...args) => {
-		return functionMatcher(...args);
-	};
-};
-
+/**
+ * 
+ * @param {Route} param0 
+ * @returns {MockMatcherFunction}
+ */
+const getFunctionMatcher = ({ functionMatcher }) => functionMatcher;
+/**
+ * 
+ * @param {Route} route 
+ * @returns {MockMatcherFunction}
+ */
 const getUrlMatcher = (route) => {
 	const { url: matcherUrl, query } = route;
 

@@ -124,8 +124,11 @@ class Route {
 	#generateMatcher() {
 		const activeMatchers = Route.registeredMatchers
 			.map(
-				({ name, matcher, usesBody }) =>
-					this[name] && { matcher: matcher(this), usesBody },
+				({ name, matcher, usesBody }) => {
+					if (name in this) {
+						return { matcher: matcher(this), usesBody }
+					}
+				}
 			)
 			.filter((matcher) => Boolean(matcher));
 

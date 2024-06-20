@@ -1,7 +1,7 @@
 //@type-check
-import responseBuilder from './response-builder.js';
+// import responseBuilder from './response-builder.js';
 import * as requestUtils from './request-utils.js';
-import Route from '../lib/Route.js';
+// import Route from './Route.js';
 
 /**
  * 
@@ -12,7 +12,7 @@ import Route from '../lib/Route.js';
  * @returns 
  */
 const resolveUntilResponseConfig = async (
-    { response, responseIsFetch = false },
+    { response },
     url,
     options,
     request,
@@ -27,14 +27,6 @@ const resolveUntilResponseConfig = async (
     //eslint-disable-next-line no-constant-condition
     while (true) {
         if (typeof response === 'function') {
-            // in the case of falling back to the network we need to make sure we're using
-            // the original Request instance, not our normalised url + options
-            if (responseIsFetch) {
-                if (request) {
-                    return response(request);
-                }
-                return response(url, options);
-            }
             response = response(url, options, request);
         } else if (typeof response.then === 'function') {
             response = await response; // eslint-disable-line  no-await-in-loop

@@ -33,9 +33,7 @@ const stringMatchers = {
 	path: (targetString) =>
 		(url) => getPath(url) === targetString,
 };
-/**
- * @param {Route} route 
- * @returns {MockMatcherFunction}
+/**@type {MatcherGenerator}
  */
 const getHeaderMatcher = ({ headers: expectedHeaders }) => {
 	if (!expectedHeaders) {
@@ -51,9 +49,7 @@ const getHeaderMatcher = ({ headers: expectedHeaders }) => {
 		);
 	};
 };
-/**
- * @param {Route} route 
- * @returns {MockMatcherFunction}
+/**@type {MatcherGenerator}
  */
 const getMethodMatcher = ({ method: expectedMethod }) => {
 	if (!expectedMethod) {
@@ -64,9 +60,7 @@ const getMethodMatcher = ({ method: expectedMethod }) => {
 		return expectedMethod === actualMethod;
 	};
 };
-/**
- * @param {Route} route 
- * @returns {MockMatcherFunction}
+/**@type {MatcherGenerator}
  */
 const getQueryStringMatcher = ({ query: passedQuery }) => {
 	if (!passedQuery) {
@@ -87,9 +81,7 @@ const getQueryStringMatcher = ({ query: passedQuery }) => {
 		});
 	};
 };
-/**
- * @param {Route} route 
- * @returns {MockMatcherFunction}
+/**@type {MatcherGenerator}
  */
 const getParamsMatcher = ({ params: expectedParams, url: matcherUrl }) => {
 	if (!expectedParams) {
@@ -114,9 +106,7 @@ const getParamsMatcher = ({ params: expectedParams, url: matcherUrl }) => {
 		return expectedKeys.every((key) => params[key] === expectedParams[key]);
 	};
 };
-/**
- * @param {Route} route 
- * @returns {MockMatcherFunction}
+/**@type {MatcherGenerator}
  */
 const getBodyMatcher = (route) => {
 	const { body: expectedBody } = route;
@@ -144,10 +134,10 @@ const getBodyMatcher = (route) => {
 };
 /**
  * 
- * @param {Route} route 
+ * @param {RouteOptions} route 
  * @param {String} matcherUrl 
  * @param {Object.<string,string>} query 
- * @returns {MockMatcherFunction}
+ * @returns {RouteMatcherFunction}
  */
 const getFullUrlMatcher = (route, matcherUrl, query) => {
 	// if none of the special syntaxes apply, it's just a simple string match
@@ -170,13 +160,11 @@ const getFullUrlMatcher = (route, matcherUrl, query) => {
 /**
  * 
  * @param {Route} param0 
- * @returns {MockMatcherFunction}
+ * @returns {RouteMatcherFunction}
  */
 const getFunctionMatcher = ({ functionMatcher }) => functionMatcher;
 /**
- * 
- * @param {Route} route 
- * @returns {MockMatcherFunction}
+ * @type {MatcherGenerator}
  */
 const getUrlMatcher = (route) => {
 	const { url: matcherUrl, query } = route;

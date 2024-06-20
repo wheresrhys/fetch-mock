@@ -4,7 +4,7 @@ import builtInMatchers from './Matchers.js';
 
 /**
  * 
- * @param {MockMatcher | MockOptions} matcher 
+ * @param {RouteMatcher | RouteOptions} matcher 
  * @returns {Boolean}
  */
 const isUrlMatcher = (matcher) =>
@@ -14,15 +14,15 @@ const isUrlMatcher = (matcher) =>
 
 /**
  * 
- * @param {MockMatcher| MockOptions} matcher 
+ * @param {RouteMatcher| RouteOptions} matcher 
  * @returns Boolean
  */
 const isFunctionMatcher = (matcher) => typeof matcher === 'function';
 
 /**
  * 
- * @param {MockOptions | String} options 
- * @returns {MockOptions}
+ * @param {RouteOptions | String} options 
+ * @returns {RouteOptions}
  */
 const nameToOptions = (options) =>
 	typeof options === 'string' ? { name: options } : options;
@@ -32,7 +32,7 @@ class Route {
 
 	/**
 	 * @overload
-	 * @param {MockOptions} matcher 
+	 * @param {RouteOptions} matcher 
 	 * @param {undefined} response
 	 * @param {undefined} options
 	 * @param {FetchMockConfig} globalConfig
@@ -40,16 +40,16 @@ class Route {
 
 	/**
 	 * @overload
-	 * @param {MockMatcher } matcher 
-	 * @param {MockResponse} response
-	 * @param {MockOptions | string} options
+	 * @param {RouteMatcher } matcher 
+	 * @param {RouteResponse} response
+	 * @param {RouteOptions | string} options
 	 * @param {FetchMockConfig} globalConfig
 	 */
 
 	/**
-	 * @param {MockMatcher | MockOptions} matcher 
-	 * @param {MockResponse} [response]
-	 * @param {MockOptions | string} [options] 
+	 * @param {RouteMatcher | RouteOptions} matcher 
+	 * @param {RouteResponse} [response]
+	 * @param {RouteOptions | string} [options] 
 	 * @param {FetchMockConfig} [globalConfig] 
 	 */
 	constructor(matcher, response, options, globalConfig) {
@@ -81,42 +81,42 @@ class Route {
 	 */
 	#init() {
 		const { matcher, response, options: nameOrOptions } = this.originalInput
-		const routeConfig = {};
+		const routeOptions = {};
 
 		if (isUrlMatcher(matcher) || isFunctionMatcher(matcher)) {
-			routeConfig.matcher = matcher;
+			routeOptions.matcher = matcher;
 		} else {
-			Object.assign(routeConfig, matcher);
+			Object.assign(routeOptions, matcher);
 		}
 
 		if (typeof response !== 'undefined') {
-			routeConfig.response = response;
+			routeOptions.response = response;
 		}
 
 		if (nameOrOptions) {
 			Object.assign(
-				routeConfig,
+				routeOptions,
 				typeof nameOrOptions === 'string'
 					? nameToOptions(nameOrOptions)
 					: nameOrOptions,
 			);
 		}
-
-		Object.assign(this, routeConfig);
+		/** @type {RouteOptions} */
+		this.routeOptions = routeOptions
 	}
 	/**
 	 * @returns {void}
 	 */
 	#sanitize() {
-		if (this.method) {
-			this.method = this.method.toLowerCase();
+		if (this.routeOptions.method) {
+			this.routeOptions.method = this.routeOptions.toLowerCase();
 		}
-		if (isUrlMatcher(this.matcher)) {
-			this.url = this.matcher;
-			delete this.matcher;
+		if (isUrlMatcher(this.routeOptions.matcher)) {
+			this.routeOptions.url = this.routeOptions.matcher;
+			delete this.routeOptions.matcher;
 		}
 
-		this.functionMatcher = this.matcher || this.functionMatcher;
+		this.routeOptions.functionMatcher = this.routeOptions.matcher || this.routeOptions.functionMatcher;
 	}
 	/**
 	 * @returns {void}
@@ -125,14 +125,15 @@ class Route {
 		const activeMatchers = Route.registeredMatchers
 			.map(
 				({ name, matcher, usesBody }) => {
-					if (name in this) {
-						return { matcher: matcher(this), usesBody }
+					if (name in this.routeOptions) {
+						return { matcher: matcher(this.routeOptions), usesBody }
 					}
 				}
 			)
 			.filter((matcher) => Boolean(matcher));
 
-		this.usesBody = activeMatchers.some(({ usesBody }) => usesBody);
+		this.routeOptions.usesBody = activeMatchers.some(({ usesBody }) => usesBody);
+		/** @type {RouteMatcherFunction} */
 		this.matcher = (url, options = {}, request) =>
 			activeMatchers.every(({ matcher }) => matcher(url, options, request));
 	}
@@ -140,11 +141,11 @@ class Route {
 	 * @returns {void}
 	 */
 	#limit() {
-		if (!this.repeat) {
+		if (!this.routeOptions.repeat) {
 			return;
 		}
-		const { matcher } = this;
-		let timesLeft = this.repeat;
+		const { matcher } = this.routeOptions;
+		let timesLeft = this.routeOptions.repeat;
 		this.matcher = (url, options) => {
 			const match = timesLeft && matcher(url, options);
 			if (match) {
@@ -153,16 +154,16 @@ class Route {
 			}
 		};
 		this.reset = () => {
-			timesLeft = this.repeat;
+			timesLeft = this.routeOptions.repeat;
 		};
 	}
 	/**
 	 * @returns {void}
 	 */
 	#delayResponse() {
-		if (this.delay) {
-			const { response } = this;
-			this.response = () => {
+		if (this.routeOptions.delay) {
+			const { response } = this.routeOptions;
+			this.routeOptions.response = () => {
 				return new Promise((res) =>
 					setTimeout(() => res(response), this.delay),
 				);

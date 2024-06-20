@@ -1,8 +1,8 @@
 interface NormalizedRequestOptions {
     method: String;
     body?: Promise<String>;
-    headers?: { [key: string]: string | [string]
-};
+    headers?: { [key: string]: string | [string] }
+}
     
 interface NormalizedRequest {
     url: String;

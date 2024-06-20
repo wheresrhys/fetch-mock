@@ -6,22 +6,22 @@ declare class Route {
     static defineMatcher(matcher: any): void;
     /**
      * @overload
-     * @param {MockOptions} matcher
+     * @param {RouteOptions} matcher
      * @param {undefined} response
      * @param {undefined} options
      * @param {FetchMockConfig} globalConfig
      */
     /**
      * @overload
-     * @param {MockMatcher } matcher
-     * @param {MockResponse} response
-     * @param {MockOptions | string} options
+     * @param {RouteMatcher } matcher
+     * @param {RouteResponse} response
+     * @param {RouteOptions | string} options
      * @param {FetchMockConfig} globalConfig
      */
     /**
-     * @param {MockMatcher | MockOptions} matcher
-     * @param {MockResponse} [response]
-     * @param {MockOptions | string} [options]
+     * @param {RouteMatcher | RouteOptions} matcher
+     * @param {RouteResponse} [response]
+     * @param {RouteOptions | string} [options]
      * @param {FetchMockConfig} [globalConfig]
      */
     constructor(matcher: any | any, response?: any, options?: any | string, globalConfig?: any);
@@ -30,11 +30,6 @@ declare class Route {
         response: any;
         options: any;
     };
-    method: any;
-    url: (url: any, options: {}, request: any) => boolean;
-    functionMatcher: any;
-    usesBody: boolean;
-    matcher: (url: any, options: {}, request: any) => boolean;
     reset: () => void;
     response: () => Promise<any>;
     #private;
@@ -49,7 +44,7 @@ type MockRequest = Request | RequestInit;
 /**
  * Mock options object
  */
-interface MockOptions {
+interface RouteOptions {
     /**
      * A unique string naming the route. Used to subsequently retrieve
      * references to the calls, grouped by name.
@@ -90,14 +85,14 @@ interface MockOptions {
     /**
      * A function for arbitrary matching
      */
-    functionMatcher?: MockMatcherFunction;
+    functionMatcher?: RouteMatcherFunction;
 
     /**
      * as specified above
      */
-    matcher?: MockMatcher;
+    matcher?: RouteMatcher;
 
-    url?: MockMatcherUrl;
+    url?: RouteMatcherUrl;
 
     /**
      * This option allows for existing routes in a mock to be overwritten.
@@ -109,7 +104,7 @@ interface MockOptions {
     /**
      * as specified above
      */
-    response?: MockResponse | MockResponseFunction;
+    response?: RouteResponse | RouteResponseFunction;
 
     /**
      * integer, n, limiting the number of times the matcher can be used.

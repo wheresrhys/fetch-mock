@@ -6,7 +6,7 @@
 
 
 
-// type MockMatcherUrl = string | RegExp | URL;
+// type RouteMatcherUrl = string | RegExp | URL;
 
 
 
@@ -24,16 +24,16 @@
 //  *  url and opts fetch() is called with (or, if fetch() was called with one,
 //  *  the Request instance)
 //  */
-// type MockMatcher = MockMatcherUrl | MockMatcherFunction;
+// type RouteMatcher = RouteMatcherUrl | RouteMatcherFunction;
 
 
 type UrlMatcher = (url: string) => boolean;
 
 type UrlMatcherGenerator = (pattern: string) => UrlMatcher;
 
-type MockMatcherFunction = (url: string, opts: MockRequest) => boolean;
+type RouteMatcherFunction = (url: string, opts: MockRequest, request: Request) => boolean;
 
-type MatcherGenerator = (route: Route) => MockMatcherFunction;
+type MatcherGenerator = (route: RouteOptions) => RouteMatcherFunction;
 
 type MatcherDefinition = {
     name: string;

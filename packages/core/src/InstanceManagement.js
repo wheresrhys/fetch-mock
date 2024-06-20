@@ -1,7 +1,9 @@
+//@type-check
 // import setUpAndTearDown from './set-up-and-tear-down.js';
 // import fetchHandler from './fetch-handler.js';
 // import inspecting from './inspecting.js';
 // import Route from './Route.js/index.js';
+
 /** @type {} */
 const defaultConfig  = {
     includeContentLength: true,

@@ -9,14 +9,17 @@
         "strict": true,
         "noImplicitAny": true,
         "noImplicitThis": true,
-        "noEmit": true,
         "strictNullChecks": false,
         "strictFunctionTypes": true,
-        "types": ["./packages/core/types/FetchMockWrapper.d.ts"],
+        "types": [
+            "packages/core/types/InstanceManagement.d.ts"
+        ],
+        "noEmit": true,
         "forceConsistentCasingInFileNames": true
     },
     "include": [
-        "./packages/core/src/*.js",
+        "packages/core/src/InstanceManagement.js",
+        "packages/core/types/InstanceManagement.d.ts"
     ],
     "exclude": [
         "node_modules"

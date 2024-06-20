@@ -54,14 +54,6 @@ declare interface FetchMockInstance {
     // MATCHED: true;
     // UNMATCHED: false;
 
-
-
-    // /**
-    //  * Returns a promise that resolves once all fetches handled by fetch-mock
-    //  * have resolved.
-    //  * @param [waitForBody] Wait for all body parsing methods(res.json(),
-    //  * res.text(), etc.) to resolve too.
-    //  */
-    // flush(waitForBody?: boolean): Promise<MockResponse[]>;
+    createInstance: () => FetchMockInstance
     config: FetchMockConfig;
 }

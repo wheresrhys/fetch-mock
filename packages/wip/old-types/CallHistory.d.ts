@@ -21,6 +21,14 @@ interface MockCall extends Array<string | RequestInit | undefined> {
 
 
 /**
+ * Returns a promise that resolves once all fetches handled by fetch-mock
+ * have resolved.
+ * @param [waitForBody] Wait for all body parsing methods(res.json(),
+ * res.text(), etc.) to resolve too.
+ */
+flush(waitForBody?: boolean): Promise<MockResponse[]>;
+
+/**
  * Inspection filter. Can be one of the following:
  * boolean:
  *   * true retrieves all calls matched by fetch.

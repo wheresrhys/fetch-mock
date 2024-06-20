@@ -32,6 +32,16 @@ const callObjToArray = (obj) => {
     return arr;
 };
 
+FetchMock.flush = async function (waitForResponseMethods) {
+    const queuedPromises = this._holdingPromises;
+    this._holdingPromises = [];
+
+    await Promise.all(queuedPromises);
+    if (waitForResponseMethods && this._holdingPromises.length) {
+        await this.flush(waitForResponseMethods);
+    }
+};
+
 CallHistory.filterCalls = function (nameOrMatcher, options) {
     let calls = this._calls;
     let matcher = '*';

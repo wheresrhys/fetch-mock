@@ -2,16 +2,6 @@ import responseBuilder from './response-builder.js';
 import * as requestUtils from './request-utils.js';
 import Route from '../lib/Route.js';
 
-/** 
- * @typedef FetchHandler
- * An object that contains the fetch handler function - used as the mock for
- * fetch - and various utilities to help it operate
- * This object will never be accessed as a separate entity by the end user as it
- * gets munged with Router and CallHistory objects by FetchMockWrapper
- * 
- */
-const FetchHandler = {};
-
 const resolve = async (
     { response, responseIsFetch = false },
     url,
@@ -45,7 +35,46 @@ const resolve = async (
     }
 };
 
-FetchHandler.fetchHandler = async function (url, options) {
+/**
+ * 
+ * @param {Object} input
+ * @param {Route} input.route
+ * @returns 
+ */
+const generateResponse = async ({
+    route,
+    url,
+    options,
+    request,
+    callLog = {},
+}) => {
+    const response = await resolve(route, url, options, request);
+
+    // If the response says to throw an error, throw it
+    // Type checking is to deal with sinon spies having a throws property :-0
+    if (response.throws && typeof response !== 'function') {
+        throw response.throws;
+    }
+
+    // If the response is a pre-made Response, respond with it
+    if (route.Response.prototype.isPrototypeOf(response)) {
+        callLog.response = response;
+        return response;
+    }
+
+    // finally, if we need to convert config into a response, we do it
+    const [realResponse, finalResponse] = responseBuilder({
+        url,
+        responseConfig: response,
+        route,
+    });
+
+    callLog.response = realResponse;
+
+    return finalResponse;
+};
+
+const fetchHandler = async function (url, options) {
     const { url, options, request, signal } = requestUtils.normalizeRequest(
         url,
         options,
@@ -79,7 +108,7 @@ FetchHandler.fetchHandler = async function (url, options) {
         signal.addEventListener('abort', abort);
     }
 
-    return this.generateResponse({
+    return generateResponse({
         route,
         url,
         options,
@@ -89,45 +118,6 @@ FetchHandler.fetchHandler = async function (url, options) {
         .then(done, done)
 };
 
-FetchHandler.fetchHandler.isMock = true;
-/**
- * 
- * @param {Object} input
- * @param {Route} input.route
- * @returns 
- */
-FetchHandler.generateResponse = async function ({
-    route,
-    url,
-    options,
-    request,
-    callLog = {},
-}) {
-    const response = await resolve(route, url, options, request);
+fetchHandler.isMock = true;
 
-    // If the response says to throw an error, throw it
-    // Type checking is to deal with sinon spies having a throws property :-0
-    if (response.throws && typeof response !== 'function') {
-        throw response.throws;
-    }
-
-    // If the response is a pre-made Response, respond with it
-    if (this.config.Response.prototype.isPrototypeOf(response)) {
-        callLog.response = response;
-        return response;
-    }
-
-    // finally, if we need to convert config into a response, we do it
-    const [realResponse, finalResponse] = responseBuilder({
-        url,
-        responseConfig: response,
-        fetchMock: this,
-        route,
-    });
-
-    callLog.response = realResponse;
-
-    return finalResponse;
-};
-
-export default FetchHandler;
+export default fetchHandler;

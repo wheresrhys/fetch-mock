@@ -1,5 +1,6 @@
 import responseBuilder from './response-builder.js';
 import * as requestUtils from './request-utils.js';
+import Route from '../lib/Route.js';
 
 /** 
  * @typedef FetchHandler
@@ -89,7 +90,12 @@ FetchHandler.fetchHandler = async function (url, options) {
 };
 
 FetchHandler.fetchHandler.isMock = true;
-
+/**
+ * 
+ * @param {Object} input
+ * @param {Route} input.route
+ * @returns 
+ */
 FetchHandler.generateResponse = async function ({
     route,
     url,

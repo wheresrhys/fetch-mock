@@ -9,17 +9,14 @@
         "strict": true,
         "noImplicitAny": true,
         "noImplicitThis": true,
-        "emitDeclarationOnly": true,
-        "noEmit": false,
+        "noEmit": true,
         "strictNullChecks": false,
         "strictFunctionTypes": true,
-        "types": ["packages/core/types/*.d.ts"],
-        "forceConsistentCasingInFileNames": true,
-        "declaration": true,
-        "declarationDir": "./packages/core/types"
+        "types": ["./packages/core/types/FetchMockWrapper.d.ts"],
+        "forceConsistentCasingInFileNames": true
     },
     "include": [
-        "packages/core/src/Route.js",
+        "./packages/core/src/*.js",
     ],
     "exclude": [
         "node_modules"

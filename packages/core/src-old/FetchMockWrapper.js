@@ -1,21 +1,23 @@
-// import setUpAndTearDown from './set-up-and-tear-down.js';
-// import fetchHandler from './fetch-handler.js';
-// import inspecting from './inspecting.js';
-// import Route from './Route.js/index.js';
-/** @type {} */
-const defaultConfig  = {
+
+import setUpAndTearDown from './set-up-and-tear-down.js';
+import fetchHandler from './fetch-handler.js';
+import inspecting from './inspecting.js';
+import Route from './Route.js/index.js';
+
+
+const FetchMock = { ...fetchHandler, ...setUpAndTearDown, ...inspecting };
+
+FetchMock.config = {
+    fallbackToNetwork: false,
     includeContentLength: true,
     sendAsJson: true,
     warnOnFallback: true,
+    overwriteRoutes: undefined,
     Request: globalThis.Request,
     Response: globalThis.Response,
     Headers: globalThis.Headers,
     fetch: globalThis.fetch,
 };
-
-const FetchMock = { ...fetchHandler, ...setUpAndTearDown, ...inspecting };
-
-FetchMock.config = defaultConfig
 
 FetchMock.createInstance = function () {
     const instance = Object.create(FetchMock);

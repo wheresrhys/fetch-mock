@@ -1,3 +1,4 @@
+//@type-check
 import glob from 'glob-to-regexp';
 import pathToRegexp from 'path-to-regexp';
 import querystring from 'querystring';

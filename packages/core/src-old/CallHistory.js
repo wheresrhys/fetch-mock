@@ -8,7 +8,7 @@ FetchHandler.recordCall = function (obj) {
     }
 };
 
-const FetchMock = {};
+const CallHistory = {};
 const isName = (nameOrMatcher) =>
     typeof nameOrMatcher === 'string' && /^[\da-zA-Z\-]+$/.test(nameOrMatcher);
 
@@ -32,7 +32,7 @@ const callObjToArray = (obj) => {
     return arr;
 };
 
-FetchMock.filterCalls = function (nameOrMatcher, options) {
+CallHistory.filterCalls = function (nameOrMatcher, options) {
     let calls = this._calls;
     let matcher = '*';
 
@@ -59,23 +59,23 @@ FetchMock.filterCalls = function (nameOrMatcher, options) {
     return calls.map(callObjToArray);
 };
 
-FetchMock.calls = function (nameOrMatcher, options) {
+CallHistory.calls = function (nameOrMatcher, options) {
     return this.filterCalls(nameOrMatcher, options);
 };
 
-FetchMock.lastCall = function (nameOrMatcher, options) {
+CallHistory.lastCall = function (nameOrMatcher, options) {
     return [...this.filterCalls(nameOrMatcher, options)].pop();
 };
 
-FetchMock.lastUrl = function (nameOrMatcher, options) {
+CallHistory.lastUrl = function (nameOrMatcher, options) {
     return (this.lastCall(nameOrMatcher, options) || [])[0];
 };
 
-FetchMock.lastOptions = function (nameOrMatcher, options) {
+CallHistory.lastOptions = function (nameOrMatcher, options) {
     return (this.lastCall(nameOrMatcher, options) || [])[1];
 }
 
-FetchMock.lastResponse = function (nameOrMatcher, options) {
+CallHistory.lastResponse = function (nameOrMatcher, options) {
     const { response } = this.lastCall(nameOrMatcher, options) || [];
     try {
         const clonedResponse = response.clone();
@@ -88,12 +88,12 @@ FetchMock.lastResponse = function (nameOrMatcher, options) {
     }
 };
 
-FetchMock.called = function (nameOrMatcher, options) {
+CallHistory.called = function (nameOrMatcher, options) {
     return Boolean(this.filterCalls(nameOrMatcher, options).length);
 };
 
 
-FetchMock.done = function (nameOrMatcher) {
+CallHistory.done = function (nameOrMatcher) {
     let routesToCheck;
 
     if (nameOrMatcher && typeof nameOrMatcher !== 'boolean') {
@@ -133,4 +133,4 @@ FetchMock.done = function (nameOrMatcher) {
     return result;
 };
 
-export default FetchMock;
+export default CallHistory;

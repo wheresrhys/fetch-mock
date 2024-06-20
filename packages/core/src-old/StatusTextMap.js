@@ -1,3 +1,4 @@
+//@type-check
 /**
  * @type {Object.<number, string>}
  */

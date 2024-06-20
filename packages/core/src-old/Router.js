@@ -1,4 +1,10 @@
 //@type-check
+
+/**
+ * 
+ * @param {*} param0 
+ * @returns 
+ */
 Router.needsToReadBody = function ({ request }) {
     return request && this.routes.some(({ usesBody }) => usesBody);
 };

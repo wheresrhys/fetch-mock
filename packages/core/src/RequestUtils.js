@@ -36,7 +36,7 @@ export function normalizeUrl(url) {
 /**
  * 
  * @param {string|Request} urlOrRequest 
- * @param {new () => Request} Request 
+ * @param {RequestConstructor} Request 
  * @returns  {urlOrRequest is Request}
  */
 const isRequest = (urlOrRequest, Request) => Request.prototype.isPrototypeOf(urlOrRequest)
@@ -45,7 +45,7 @@ const isRequest = (urlOrRequest, Request) => Request.prototype.isPrototypeOf(url
  * 
  * @param {string|Request} urlOrRequest
  * @param {RequestInit} options 
- * @param {new () => Request} Request 
+ * @param {RequestConstructor} Request 
  * @returns {NormalizedRequest}
  */
 export function normalizeRequest(urlOrRequest, options, Request) {

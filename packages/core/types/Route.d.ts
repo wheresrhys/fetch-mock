@@ -1,4 +1,3 @@
-export default Route;
 declare class Route {
     /**
      * @param {MatcherDefinition} matcher
@@ -30,6 +29,7 @@ declare class Route {
         response: any;
         options: any;
     };
+    routeOptions: RouteOptions;
     reset: () => void;
     response: () => Promise<any>;
     #private;
@@ -48,11 +48,6 @@ interface RouteOptions {
     /**
      * A unique string naming the route. Used to subsequently retrieve
      * references to the calls, grouped by name.
-     * @default matcher.toString()
-     *
-     * Note: If a non-unique name is provided no error will be thrown
-     *  (because names are optional, auto-generated ones may legitimately
-     *  clash)
      */
     name?: string;
 
@@ -69,7 +64,7 @@ interface RouteOptions {
     /**
      * key/value map of query strings to match, in any order
      */
-    query?: object;
+    query?: { [key: string]: string };
 
     /**
      * key/value map of express style path params to match

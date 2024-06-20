@@ -1,8 +1,6 @@
 //@type-check
-// import setUpAndTearDown from './set-up-and-tear-down.js';
-import fetchHandler from './fetch-handler.js';
+import fetchHandler from './FetchHandler.js';
 // import inspecting from './inspecting.js';
-// import Route from './Route.js/index.js';
 
 /** @type {FetchMockConfig} */
 const defaultConfig  = {
@@ -14,22 +12,16 @@ const defaultConfig  = {
     Headers: globalThis.Headers,
     fetch: globalThis.fetch,
 };
-/** @type {FetchMock} */
 const FetchMock = { 
-    // ...fetchHandler, ...setUpAndTearDown, ...inspecting 
-};
-
-/** @type {FetchMockConfig} */
-FetchMock.config = defaultConfig
-/**
- * @returns {FetchMock}
- */
-FetchMock.createInstance = function () {
-    const instance = Object.create(FetchMock);
-    this.fetchHandler = fetchHandler.bind(this);
-    instance.router = this.router.clone()
-    instance.callHistory = this.callHistory.clone()
-    return instance;
+    // ...fetchHandler, ...setUpAndTearDown, ...inspecting
+    config: defaultConfig ,
+    createInstance () {
+        const instance = Object.create(FetchMock);
+        this.fetchHandler = fetchHandler.bind(this);
+        instance.router = this.router.clone()
+        instance.callHistory = this.callHistory.clone()
+        return instance;
+    }
 };
 
 export default FetchMock.createInstance();

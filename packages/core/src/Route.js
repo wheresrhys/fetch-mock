@@ -1,9 +1,7 @@
 //@type-check
-
 import builtInMatchers from './Matchers.js';
 
 /**
- * 
  * @param {RouteMatcher | RouteOptions} matcher 
  * @returns {Boolean}
  */
@@ -26,7 +24,6 @@ const isFunctionMatcher = (matcher) => typeof matcher === 'function';
  */
 const nameToOptions = (options) =>
 	typeof options === 'string' ? { name: options } : options;
-
 
 class Route {
 

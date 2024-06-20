@@ -33,8 +33,9 @@ const stringMatchers = {
 	path: (targetString) =>
 		(url) => getPath(url) === targetString,
 };
-/**@type {MatcherGenerator}
- */
+/**
+ * @type {MatcherGenerator}
+*/
 const getHeaderMatcher = ({ headers: expectedHeaders }) => {
 	if (!expectedHeaders) {
 		return;
@@ -49,7 +50,8 @@ const getHeaderMatcher = ({ headers: expectedHeaders }) => {
 		);
 	};
 };
-/**@type {MatcherGenerator}
+/**
+ * @type {MatcherGenerator}
  */
 const getMethodMatcher = ({ method: expectedMethod }) => {
 	if (!expectedMethod) {
@@ -60,7 +62,8 @@ const getMethodMatcher = ({ method: expectedMethod }) => {
 		return expectedMethod === actualMethod;
 	};
 };
-/**@type {MatcherGenerator}
+/**
+ * @type {MatcherGenerator}
  */
 const getQueryStringMatcher = ({ query: passedQuery }) => {
 	if (!passedQuery) {
@@ -81,7 +84,8 @@ const getQueryStringMatcher = ({ query: passedQuery }) => {
 		});
 	};
 };
-/**@type {MatcherGenerator}
+/**
+ * @type {MatcherGenerator}
  */
 const getParamsMatcher = ({ params: expectedParams, url: matcherUrl }) => {
 	if (!expectedParams) {
@@ -106,7 +110,8 @@ const getParamsMatcher = ({ params: expectedParams, url: matcherUrl }) => {
 		return expectedKeys.every((key) => params[key] === expectedParams[key]);
 	};
 };
-/**@type {MatcherGenerator}
+/**
+ * @type {MatcherGenerator}
  */
 const getBodyMatcher = (route) => {
 	const { body: expectedBody } = route;
@@ -158,9 +163,7 @@ const getFullUrlMatcher = (route, matcherUrl, query) => {
 };
 
 /**
- * 
- * @param {Route} param0 
- * @returns {RouteMatcherFunction}
+ * @type {MatcherGenerator}
  */
 const getFunctionMatcher = ({ functionMatcher }) => functionMatcher;
 /**
@@ -192,7 +195,7 @@ const getUrlMatcher = (route) => {
 };
 
 /** @type {MatcherDefinition[]} */
-export default [
+export default  [
 	{ name: 'query', matcher: getQueryStringMatcher },
 	{ name: 'method', matcher: getMethodMatcher },
 	{ name: 'headers', matcher: getHeaderMatcher },

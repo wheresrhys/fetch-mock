@@ -1,3 +1,5 @@
+type RequestConstructor = new (input: string | Request, init ?: RequestInit) => Request;
+
 declare interface FetchMockConfig {
 
     /**
@@ -40,7 +42,7 @@ declare interface FetchMockConfig {
      * Reference to the Request constructor of a custom fetch
      * implementation.
      */
-    Request?: new (input: string | Request, init?: RequestInit) => Request;
+    Request?: RequestConstructor;
 
     /**
      * Reference to the Response constructor of a custom fetch
@@ -49,11 +51,7 @@ declare interface FetchMockConfig {
     Response?: new () => Response;
 }
 
-declare interface FetchMock {
-
-    // MATCHED: true;
-    // UNMATCHED: false;
-
+declare type FetchMock ={
     createInstance: () => FetchMock
     config: FetchMockConfig;
 }

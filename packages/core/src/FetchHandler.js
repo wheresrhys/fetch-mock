@@ -1,11 +1,10 @@
 //@type-check
+
 // import responseBuilder from './response-builder.js';
-import * as requestUtils from './request-utils.js';
-// import Route from './Route.js';
+import * as requestUtils from './RequestUtils.js';
 
 /**
- * 
- * @param {Route} route 
+ * @param {RouteOptions} route 
  * @param {string} url 
  * @param {RequestInit} options 
  * @param {Request} request 
@@ -53,7 +52,7 @@ const generateResponse = async ({
     request,
     callLog = {},
 }) => {
-    const response = await resolveUntilResponseConfig(route, url, options, request);
+    const response = await resolveUntilResponseConfig(route.routeOptions, url, options, request);
 
     // If the response says to throw an error, throw it
     // Type checking is to deal with sinon spies having a throws property :-0
@@ -92,8 +91,8 @@ const fetchHandler = async function (requestInput, requestInit) {
         this.config.Request,
     );
 
-    if (this.router.needsToReadBody(normalizedRequest)) {
-        options.body = await normalizedRequest.options.body;
+    if (this.router.needsToReadBody(options)) {
+        options.body = await options.body;
     }
 
     const { route, callLog } = this.router.execute(url, options, request);
@@ -101,7 +100,7 @@ const fetchHandler = async function (requestInput, requestInit) {
     this.callHistory.recordCall(callLog);
 
     // this is used to power the .flush() method
-    /** @type {function(any: PromiseLike<any>)} */
+    /** @type {function(any): PromiseLike<any>} */
     let done;
     this.callHistory._holdingPromises.push(
         new Promise((res) => {

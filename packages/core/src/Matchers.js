@@ -1,6 +1,7 @@
 //@type-check
 /** @typedef {import('./Route').RouteOptions} RouteOptions */
 /** @typedef {import('./RequestUtils').NormalizedRequestOptions} NormalizedRequestOptions */
+/** @typedef {import('path-to-regexp').Key} Key */
 import glob from 'glob-to-regexp';
 import pathToRegexp from 'path-to-regexp';
 import querystring from 'querystring';
@@ -101,24 +102,28 @@ const getParamsMatcher = ({ params: expectedParams, url: matcherUrl }) => {
 	if (!expectedParams) {
 		return;
 	}
-	if (!/express:/.test(matcherUrl)) {
-		throw new Error(
-			'fetch-mock: matching on params is only possible when using an express: matcher',
-		);
+	if (typeof matcherUrl === 'string') {	
+		if (!/express:/.test(matcherUrl)) {
+			throw new Error(
+				'fetch-mock: matching on params is only possible when using an express: matcher',
+			);
+		}
+		const expectedKeys = Object.keys(expectedParams);
+		/** @type {Key[]} */
+		const keys = [];
+		const re = pathToRegexp(matcherUrl.replace(/^express:/, ''), keys);
+		return (url) => {
+			const vals = re.exec(getPath(url)) || [];
+			vals.shift();
+			/** @type {Object.<string,string>} */
+			const params = keys.reduce(
+				(map, { name }, i) =>
+					vals[i] ? Object.assign(map, { [name]: vals[i] }) : map,
+				{},
+			);
+			return expectedKeys.every((key) => params[key] === expectedParams[key]);
+		};
 	}
-	const expectedKeys = Object.keys(expectedParams);
-	const keys = [];
-	const re = pathToRegexp(matcherUrl.replace(/^express:/, ''), keys);
-	return (url) => {
-		const vals = re.exec(getPath(url)) || [];
-		vals.shift();
-		const params = keys.reduce(
-			(map, { name }, i) =>
-				vals[i] ? Object.assign(map, { [name]: vals[i] }) : map,
-			{},
-		);
-		return expectedKeys.every((key) => params[key] === expectedParams[key]);
-	};
 };
 /**
  * @type {MatcherGenerator}
@@ -188,19 +193,20 @@ const getUrlMatcher = (route) => {
 	if (matcherUrl instanceof RegExp) {
 		return (url) => matcherUrl.test(url);
 	}
-
-	if (matcherUrl.href) {
-		return getFullUrlMatcher(route, matcherUrl.href, query);
-	}
-
-	for (const shorthand in stringMatchers) {
-		if (matcherUrl.indexOf(`${shorthand}:`) === 0) {
-			const urlFragment = matcherUrl.replace(new RegExp(`^${shorthand}:`), '');
-			return stringMatchers[shorthand](urlFragment);
+	if (matcherUrl instanceof URL) {
+		if (matcherUrl.href) {
+			return getFullUrlMatcher(route, matcherUrl.href, query);
 		}
 	}
-
-	return getFullUrlMatcher(route, matcherUrl, query);
+	if (typeof matcherUrl === 'string') {
+		for (const shorthand in stringMatchers) {
+			if (matcherUrl.indexOf(`${shorthand}:`) === 0) {
+				const urlFragment = matcherUrl.replace(new RegExp(`^${shorthand}:`), '');
+				return stringMatchers[shorthand](urlFragment);
+			}
+		}
+		return getFullUrlMatcher(route, matcherUrl, query);
+	}
 };
 
 /** @type {MatcherDefinition[]} */

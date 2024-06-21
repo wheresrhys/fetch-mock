@@ -74,30 +74,31 @@ const nameToOptions = (options) =>
 class Route {
 	/**
 	 * @overload
-	 * @param {RouteOptions} matcher
-	 * @param {undefined} response
-	 * @param {undefined} options
+	 * @param {Object} originalInput
+	 * @param {RouteOptions} originalInput.matcher
 	 * @param {FetchMockConfig} globalConfig
 	 */
 
 	/**
 	 * @overload
-	 * @param {RouteMatcher } matcher
-	 * @param {RouteResponse} response
-	 * @param {RouteOptions | string} options
+	 * @param {Object} originalInput
+	 * @param {RouteMatcher } originalInput.matcher
+	 * @param {RouteResponse} originalInput.response
+	 * @param {RouteOptions | string} [originalInput.options]
 	 * @param {FetchMockConfig} globalConfig
 	 */
 
 	/**
-	 * @param {RouteMatcher | RouteOptions} matcher
-	 * @param {RouteResponse} [response]
-	 * @param {RouteOptions | string} [options]
-	 * @param {FetchMockConfig} [globalConfig]
+	 * @param {Object} originalInput
+	 * @param {RouteMatcher | RouteOptions} originalInput.matcher
+	 * @param {RouteResponse} [originalInput.response]
+	 * @param {RouteOptions | string} [originalInput.options]
+	 * @param {FetchMockConfig} globalConfig
 	 */
-	constructor(matcher, response, options, globalConfig = {}) {
+	constructor(originalInput, globalConfig) {
 		this.globalConfig = globalConfig;
 		this.routeOptions = this.globalConfig;
-		this.originalInput = { matcher, response, options };
+		this.originalInput = originalInput;
 		this.#init();
 		this.#sanitize();
 		this.#validate();

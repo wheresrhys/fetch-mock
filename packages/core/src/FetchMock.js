@@ -34,12 +34,16 @@ const FetchMock = {
 	 * @type {FetchMockConfig}
 	 */
 	config: defaultConfig,
+
+	router: new Router(defaultConfig),
+	callHistory: new CallHistory(defaultConfig),
 	/**
 	 * @returns {FetchMock}
 	 */
 	createInstance() {
 		const instance = Object.create(FetchMock);
-		instance.router = new Router(this.config, this.router.routes);
+		instance.config = {...this.config};
+		instance.router = new Router(instance.config, this.router.routes);
 		instance.callHistory = new CallHistory(this.config);
 		return instance;
 	},

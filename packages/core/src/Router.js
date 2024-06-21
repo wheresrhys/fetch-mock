@@ -4,9 +4,11 @@ import Route from './Route.js';
 /** @typedef {import('./Route').RouteResponse} RouteResponse */
 /** @typedef {import('./Matchers').RouteMatcher} RouteMatcher */
 /** @typedef {import('./FetchMock').FetchMockConfig} FetchMockConfig */
-/** @typedef {import('./FetchMock').FetchMock} FetchMock */
+/** @typedef {import('./FetchMock')} FetchMock */
 /** @typedef {import('./RequestUtils').NormalizedRequest} NormalizedRequest */
 /** @typedef {import('./CallHistory').CallLog} CallLog */
+/** @typedef {[RouteOptions] | [RouteMatcher, RouteResponse,( RouteOptions | string) | [RouteMatcher, RouteResponse]} RouteArgs */
+
 
 export default class Router {
 	/**
@@ -70,28 +72,14 @@ export default class Router {
 			} to ${url}`,
 		);
 	}
+
 	/**
-	 * @overload
-	 * @param {RouteOptions} matcher
-	 * @param {undefined} response
-	 * @param {undefined} options
+	 * @param {RouteArgs} routeArgs
 	 * @returns {void}
 	 */
-	/**
-	 * @overload
-	 * @param {RouteMatcher } matcher
-	 * @param {RouteResponse} response
-	 * @param {RouteOptions | string} options
-	 * @returns {void}
-	 */
-	/**
-	 * @param {RouteMatcher | RouteOptions} matcher
-	 * @param {RouteResponse} [response]
-	 * @param {RouteOptions | string} [options]
-	 * @returns {void}
-	 */
-	addRoute(matcher, response, options) {
-		const route = new Route(matcher, response, options, this.config);
+	addRoute(...routeArgs) {
+		const [matcher, response, options] = routeArgs;
+		const route = new Route({matcher, response, options}, this.config);
 		if (
 			route.routeOptions.name &&
 			this.routes.some(({ routeOptions: {name: existingName }}) => route.routeOptions.name === existingName)
@@ -111,7 +99,7 @@ export default class Router {
 				'calling fetchMock.catch() twice - are you sure you want to overwrite the previous fallback response',
 			); // eslint-disable-line
 		}
-		this.fallbackRoute = new Route('*', response || 'ok', undefined, this.config)
+		this.fallbackRoute = new Route({matcher: '*', response: response || 'ok'}, this.config)
 	}
 	/**
 	 *

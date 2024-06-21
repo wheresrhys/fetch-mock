@@ -96,22 +96,6 @@ const fetchHandler = async function (requestInput, requestInit) {
 		this.config.Request,
 	);
 	const { url, options, request, signal } = normalizedRequest;
-	if (this.router.needsToReadBody(options)) {
-		options.body = await options.body;
-	}
-
-	const { route, callLog } = this.router.execute(normalizedRequest);
-
-	this.callHistory.recordCall(callLog);
-
-	// this is used to power the .flush() method
-	/** @type {function(any): void} */
-	let done;
-	this.callHistory.addNormalizedRequestOptionsPromise(
-		new Promise((res) => {
-			done = res;
-		}),
-	);
 
 	if (signal) {
 		const abort = () => {
@@ -123,6 +107,27 @@ const fetchHandler = async function (requestInput, requestInit) {
 		}
 		signal.addEventListener('abort', abort);
 	}
+
+	if (this.router.needsToReadBody(options)) {
+		options.body = await options.body;
+	}
+
+	const { route, callLog } = this.router.execute(normalizedRequest);
+	// TODO log the call IMMEDIATELY and then route gradually adds to it
+	this.callHistory.recordCall(callLog);
+
+	
+
+	// this is used to power the .flush() method
+	/** @type {function(any): void} */
+	let done;
+
+	// TODO holding promises should be attached to each callLog
+	this.callHistory.addHoldingPromise(
+		new Promise((res) => {
+			done = res;
+		}),
+	);
 
 	const response = generateResponse({
 		route,

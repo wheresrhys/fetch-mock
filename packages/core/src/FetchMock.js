@@ -30,6 +30,9 @@ const defaultConfig = {
  * @type FetchMock 
  */
 const FetchMock = {
+	/**
+	 * @type {FetchMockConfig}
+	 */
 	config: defaultConfig,
 	/**
 	 * @returns {FetchMock}

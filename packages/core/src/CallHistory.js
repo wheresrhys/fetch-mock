@@ -100,7 +100,7 @@ class CallHistory {
 		} else if (isName(filter)) {
 			calls = calls.filter(({ route: {routeOptions: {name} }}) => name === filter);
 		} else {
-			const { matcher } = new Route(filter, 'ok', {...options});
+			const { matcher } = new Route(filter, 'ok', {...options}, {});
 			calls = calls.filter(({ url, options }) => {
 				const { url: normalizedUrl, options: normalizedOptions, request } = normalizeRequest(
 					url,

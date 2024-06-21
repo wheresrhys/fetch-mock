@@ -53,7 +53,7 @@ const getHeaderMatcher = ({ headers: expectedHeaders }) => {
 	if (!expectedHeaders) {
 		return;
 	}
-	const expectation = headerUtils.toLowerCase(expectedHeaders);
+	const expectation = headerUtils.normalize2(expectedHeaders);
 	return (url, { headers = {} }) => {
 		const lowerCaseHeaders = headerUtils.toLowerCase(
 			headerUtils.normalize(headers),

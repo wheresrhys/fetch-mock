@@ -8,7 +8,7 @@ const protocolRelativeUrlRX = new RegExp('^//', 'i');
  * @typedef DerivedRequestOptions
  * @property  {string} method
  * @property  {Promise<string>} [body]
- * @property  {{ [key: string]: string | [string] }} [headers]
+ * @property  {{ [key: string]: string }} [headers]
  */
 
 /** @typedef {RequestInit | (RequestInit & DerivedRequestOptions) } NormalizedRequestOptions */
@@ -19,17 +19,6 @@ const protocolRelativeUrlRX = new RegExp('^//', 'i');
  * @property  {Request} [request]
  * @property  {AbortSignal} [signal]
  */
-
-/**
- * @param {Headers} headers
- * @returns {[[string,string|[string]]]}
- */
-const headersToArray = (headers) => {
-	if (headers[Symbol.iterator]) {
-		return [...headers];
-	}
-	return Object.entries(headers);
-};
 
 /**
  *
@@ -51,7 +40,7 @@ export function normalizeUrl(url) {
 /**
  *
  * @param {string|Request} urlOrRequest
- * @param {RequestConstructor} Request
+ * @param {typeof Request} Request
  * @returns  {urlOrRequest is Request}
  */
 const isRequest = (urlOrRequest, Request) =>
@@ -61,7 +50,7 @@ const isRequest = (urlOrRequest, Request) =>
  *
  * @param {string|Request} urlOrRequest
  * @param {RequestInit} options
- * @param {RequestConstructor} Request
+ * @param {typeof Request} Request
  * @returns {NormalizedRequest}
  */
 export function normalizeRequest(urlOrRequest, options, Request) {
@@ -75,10 +64,8 @@ export function normalizeRequest(urlOrRequest, options, Request) {
 			derivedOptions.body = urlOrRequest.clone().text();
 		} catch (err) {}
 
-		const headers = headersToArray(urlOrRequest.headers);
-
-		if (headers.length) {
-			derivedOptions.headers = Object.fromEntries(headers);
+		if (urlOrRequest.headers) {
+			derivedOptions.headers = headerUtils.normalize(urlOrRequest.headers);
 		}
 		const normalizedRequestObject = {
 			url: normalizeUrl(urlOrRequest.url),
@@ -130,38 +117,40 @@ export function getQuery(url) {
 	return u.search ? u.search.substr(1) : '';
 }
 
-export const headers = {
+
+// TODO: Headers need sme serious work!!!
+export const headerUtils = {
 	/**
-	 * @param {Headers} headers
-	 * @returns {Object.<string, string|[string]>}
+	 * 
+	 * @param {Headers | Object.<string, string | number>} headers 
+	 * @returns {Object.<string, string>}
 	 */
-	normalize: (headers) => Object.fromEntries(headersToArray(headers)),
-	/**
-	 *
-	 * @param {Object.<string, string|[string]>} headers
-	 * @returns {Object.<string, string|[string]>}
-	 */
-	toLowerCase: (headers) =>
-		Object.fromEntries(
-			Object.entries(headers).map(([key, val]) => [key.toLowerCase(), val]),
+	normalize: (headers) => {
+		const entries = (headers instanceof Headers) ? headers.entries() : Object.entries(headers)
+		return Object.fromEntries(
+			entries.map(([key, val]) => [key.toLowerCase(), val]),
 		),
+	}
+
 
 	/**
 	 *
-	 * @param {string|[string]} actualHeader
-	 * @param {string|[string]} expectedHeader
+	 * @param {string} actualHeader
+	 * @param {string} expectedHeader
 	 * @returns {boolean}
 	 */
 	equal: (actualHeader, expectedHeader) => {
-		actualHeader = Array.isArray(actualHeader) ? actualHeader : [actualHeader];
-		expectedHeader = Array.isArray(expectedHeader)
-			? expectedHeader
-			: [expectedHeader];
+		return actualHeader === expectedHeader;
+		// TODO do something to handle multi value headers
+		// actualHeader = actualHeader.split(',')Array.isArray(actualHeader) ? actualHeader : [actualHeader];
+		// expectedHeader = Array.isArray(expectedHeader)
+		// 	? expectedHeader
+		// 	: [expectedHeader];
 
-		if (actualHeader.length !== expectedHeader.length) {
-			return false;
-		}
+		// if (actualHeader.length !== expectedHeader.length) {
+		// 	return false;
+		// }
 
-		return actualHeader.every((val, i) => val === expectedHeader[i]);
+		// return actualHeader.every((val, i) => val === expectedHeader[i]);
 	},
 };

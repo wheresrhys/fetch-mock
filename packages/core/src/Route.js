@@ -3,6 +3,7 @@ import builtInMatchers from './Matchers.js';
 /** @typedef {import('./Matchers').RouteMatcher} RouteMatcher */
 /** @typedef {import('./Matchers').RouteMatcherFunction} RouteMatcherFunction */
 /** @typedef {import('./Matchers').RouteMatcherUrl} RouteMatcherUrl */
+/** @typedef {import('./FetchMock').FetchMockConfig} FetchMockConfig */
 
 /**
  * @typedef RouteResponseObject {
@@ -24,7 +25,7 @@ import builtInMatchers from './Matchers.js';
  * @typedef RouteOptions
  * @property {RouteName} [name]
  * @property {string} [method]
- * @property {{ [key: string]: string | number }} [headers]
+ * @property {{ [key: string]: string | number  }} [headers]
  * @property {{ [key: string]: string }} [query]
  * @property {{ [key: string]: string }} [params]
  * @property {object} [body]
@@ -97,12 +98,12 @@ class Route {
 		this.globalConfig = globalConfig;
 		this.routeOptions = this.globalConfig;
 		this.originalInput = { matcher, response, options };
-		this.init();
-		this.sanitize();
-		this.validate();
-		this.generateMatcher();
-		this.limit();
-		this.delayResponse();
+		this.#init();
+		this.#sanitize();
+		this.#validate();
+		this.#generateMatcher();
+		this.#limit();
+		this.#delayResponse();
 	}
 	/**
 	 * @param {string} name 

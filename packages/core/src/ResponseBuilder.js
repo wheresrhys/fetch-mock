@@ -1,3 +1,4 @@
+//@type-check
 import statusTextMap from './StatusTextMap.js/index.js';
 
 const responseConfigProps = [
@@ -11,8 +12,9 @@ const responseConfigProps = [
 class ResponseBuilder {
 	// TODO in  asimilar way to for Route, find a way to need less passing  of the fetchMock instance
 	// into here
-	constructor(options) {
+	constructor(options, callHistory) {
 		Object.assign(this, options);
+        this.callHistory = callHistory
 	}
 
 	exec() {
@@ -148,7 +150,7 @@ e.g. {"body": {"status: "registered"}}`);
 						apply: (func, thisArg, args) => {
 							const result = func.apply(response, args);
 							if (result.then) {
-								fetchMock._holdingPromises.push(result.catch(() => null));
+                                this.callHistory.addHoldingPromise(result.catch(() => null));
 								originalResponse._fmResults[name] = result;
 							}
 							return result;

@@ -84,6 +84,9 @@ const FetchMock = {
 	defineMatcher(matcher) {
 		Route.defineMatcher(matcher);
 	},
+	flush(waitForResponseBody) {
+		return this.callHistory.flush(waitForResponseBody);
+	},
 };
 
 const defineShorthand = (methodName, underlyingMethod, shorthandOptions) => {

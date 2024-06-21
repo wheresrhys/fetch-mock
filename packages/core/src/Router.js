@@ -27,13 +27,6 @@ export default class Router {
 	 * @returns {{route: Route, callLog: CallLog}}
 	 */
 	execute({ url, options, request }) {
-		const callLog = {
-			url,
-			options,
-			request,
-			isUnmatched: true,
-		};
-
 		const route = this.routes.find((route) =>
 			route.matcher(url, options, request),
 		);
@@ -45,6 +38,7 @@ export default class Router {
 					url,
 					options,
 					request,
+					route,
 				},
 			};
 		}
@@ -56,7 +50,14 @@ export default class Router {
 		}
 
 		if (this.fallbackResponse) {
-			return { route: { response: this.fallbackResponse }, callLog };
+			return {
+				route: { response: this.fallbackResponse },
+				callLog: {
+					url,
+					options,
+					request,
+				},
+			};
 		}
 
 		throw new Error(

@@ -107,7 +107,7 @@ const fetchHandler = async function (requestInput, requestInit) {
 	// this is used to power the .flush() method
 	/** @type {function(any): PromiseLike<any>} */
 	let done;
-	this.callHistory._holdingPromises.push(
+	this.callHistory.addNormalizedRequestOptionsPromise(
 		new Promise((res) => {
 			done = res;
 		}),

@@ -1,56 +1,74 @@
+//@type-check
 import { normalizeUrl } from './request-utils.js';
-import Route from './Route.js/index.js';
+import Route from './Route.js';
 
+/**
+ * @typedef CallLog
+ * @prop {string} url
+ * @prop {NormalizedRequestOptions} options
+ * @prop {Request} [request]
+ * @prop {Route} [route]
+ */
 
+/** @typedef  {string | RouteMatcher} NameOrMatcher*/
+
+/**
+ *
+ * @param {NameOrMatcher} nameOrMatcher
+ * @returns {boolean}
+ */
 const isName = (nameOrMatcher) =>
 	typeof nameOrMatcher === 'string' && /^[\da-zA-Z\-]+$/.test(nameOrMatcher);
 
-
-
-const callObjToArray = (obj) => {
-	if (!obj) {
-		return undefined;
-	}
-	const { url, options, request, identifier, isUnmatched, response } = obj;
-	const arr = [url, options];
-	arr.request = request;
-	arr.identifier = identifier;
-	arr.isUnmatched = isUnmatched;
-	arr.response = response;
-	return arr;
-};
-
 class CallHistory {
-	constructor ()
-	recordCall (obj) {
-		if (obj) {
-			this.calls.push(obj);
-		}
+	constructor() {
+		this.callLogs = [];
 	}
-	filterCallsWithMatcher (matcher, options = {}, calls) {
-		({ matcher } = new Route([{ matcher, response: 'ok', ...options }], this));
-		return calls.filter(({ url, options }) =>
-			matcher(normalizeUrl(url), options),
-		);
+	/**
+	 *
+	 * @param {CallLog} callLog
+	 */
+	recordCall(callLog) {
+		this.callLogs.push(callLog);
 	}
-	flush async (waitForResponseMethods) {
+
+	/**
+	 * 
+	 * @param {Promise<any>} promise 
+	 */
+	addHoldingPromise (promise) {
+		this.holdingPromises.push(promise)
+	}
+
+	/**
+	 *
+	 * @param {boolean} waitForResponseBody
+	 * @returns {Promise<void>}
+	 */
+	async flush(waitForResponseBody) {
 		const queuedPromises = this.holdingPromises;
 		this.holdingPromises = [];
 
 		await Promise.all(queuedPromises);
-		if (waitForResponseMethods && this.holdingPromises.length) {
-			await this.flush(waitForResponseMethods);
+		if (waitForResponseBody && this.holdingPromises.length) {
+			await this.flush(waitForResponseBody);
 		}
 	}
 
-	filterCalls (nameOrMatcher, options) {
-		let calls = this._calls;
+	/**
+	 *
+	 * @param {NameOrMatcher} nameOrMatcher
+	 * @param {RouteOptions} options
+	 * @returns {CallLog[]}
+	 */
+	filterCalls(nameOrMatcher, options) {
+		let calls = [...this.callLogs];
 		let matcher = '*';
 
 		if ([true, 'matched'].includes(nameOrMatcher)) {
-			calls = calls.filter(({ isUnmatched }) => !isUnmatched);
+			calls = calls.filter(({ route }) => Boolean(route));
 		} else if ([false, 'unmatched'].includes(nameOrMatcher)) {
-			calls = calls.filter(({ isUnmatched }) => isUnmatched);
+			calls = calls.filter(({ route }) => !Boolean(route));
 		} else if (typeof nameOrMatcher === 'undefined') {
 		} else if (isName(nameOrMatcher)) {
 			calls = calls.filter(({ identifier }) => identifier === nameOrMatcher);
@@ -61,28 +79,42 @@ class CallHistory {
 			}
 		}
 
-		if ((options || matcher !== '*') && calls.length) {
-			if (typeof options === 'string') {
-				options = { method: options };
-			}
-			calls = filterCallsWithMatcher.call(this, matcher, options, calls);
-		}
-		return calls.map(callObjToArray);
+		return calls;
 	}
-
-	calls (nameOrMatcher, options) {
+	/**
+	 *
+	 * @param {NameOrMatcher} nameOrMatcher
+	 * @param {RouteOptions} options
+	 * @returns {CallLog[]}
+	 */
+	calls(nameOrMatcher, options) {
 		return this.filterCalls(nameOrMatcher, options);
 	}
-
+	/**
+	 *
+	 * @param {NameOrMatcher} nameOrMatcher
+	 * @param {RouteOptions} options
+	 * @returns {Boolean}
+	 */
 	called(nameOrMatcher, options) {
 		return Boolean(this.calls(nameOrMatcher, options).length);
 	}
-
-	lastCall (nameOrMatcher, options) {
-		return [...this.filterCalls(nameOrMatcher, options)].pop();
+	/**
+	 *
+	 * @param {NameOrMatcher} nameOrMatcher
+	 * @param {RouteOptions} options
+	 * @returns {CallLog}
+	 */
+	lastCall(nameOrMatcher, options) {
+		return this.filterCalls(nameOrMatcher, options).pop();
 	}
-
-	done (nameOrMatcher) {
+	/**
+	 *
+	 * @param {NameOrMatcher} nameOrMatcher
+	 * @param {RouteOptions} options
+	 * @returns {Boolean}
+	 */
+	done(nameOrMatcher) {
 		let routesToCheck;
 
 		if (nameOrMatcher && typeof nameOrMatcher !== 'boolean') {

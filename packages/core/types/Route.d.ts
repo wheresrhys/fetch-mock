@@ -1,29 +1,12 @@
+type RouteArgs = [RouteMatcher, RouteResponse, RouteOptions | string] | [RouteOptions, string?];
+
 declare class Route {
     /**
      * @param {MatcherDefinition} matcher
      */
     static defineMatcher(matcher: any): void;
-    /**
-     * @overload
-     * @param {RouteOptions} matcher
-     * @param {undefined} response
-     * @param {undefined} options
-     * @param {FetchMockConfig} globalConfig
-     */
-    /**
-     * @overload
-     * @param {RouteMatcher } matcher
-     * @param {RouteResponse} response
-     * @param {RouteOptions | string} options
-     * @param {FetchMockConfig} globalConfig
-     */
-    /**
-     * @param {RouteMatcher | RouteOptions} matcher
-     * @param {RouteResponse} [response]
-     * @param {RouteOptions | string} [options]
-     * @param {FetchMockConfig} [globalConfig]
-     */
-    constructor(matcher: any | any, response?: any, options?: any | string, globalConfig?: any);
+   
+    constructor(...args: RouteArgs);
     originalInput: {
         matcher: any;
         response: any;
@@ -32,6 +15,7 @@ declare class Route {
     routeOptions: RouteOptions;
     reset: () => void;
     response: () => Promise<any>;
+    matcher: RouteMatcherFunction;
     #private;
 }
 declare namespace Route {
@@ -39,7 +23,7 @@ declare namespace Route {
 }
 
 
-type MockRequest = Request | RequestInit;
+
 
 /**
  * Mock options object

@@ -23,12 +23,11 @@ type RouteMatcherUrl = string | RegExp | URL;
  */
 type RouteMatcher = RouteMatcherUrl | RouteMatcherFunction;
 
-
 type UrlMatcher = (url: string) => boolean;
 
 type UrlMatcherGenerator = (pattern: string) => UrlMatcher;
 
-type RouteMatcherFunction = (url: string, opts: MockRequest, request: Request) => boolean;
+type RouteMatcherFunction = (url: string, opts: NormalizedRequestOptions, request: Request) => boolean;
 
 type MatcherGenerator = (route: RouteOptions) => RouteMatcherFunction;
 

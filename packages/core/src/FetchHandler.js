@@ -85,17 +85,17 @@ const generateResponse = async ({
  * @returns {Promise<Response>}
  */
 const fetchHandler = async function (requestInput, requestInit) {
-    const { url, options, request, signal } = requestUtils.normalizeRequest(
+    const normalizedRequest = requestUtils.normalizeRequest(
         requestInput,
         requestInit,
         this.config.Request,
     );
-
+const { url, options, request, signal } =normalizedRequest
     if (this.router.needsToReadBody(options)) {
         options.body = await options.body;
     }
 
-    const { route, callLog } = this.router.execute(url, options, request);
+    const { route, callLog } = this.router.execute(normalizedRequest);
 
     this.callHistory.recordCall(callLog);
 

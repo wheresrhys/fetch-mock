@@ -1,35 +1,33 @@
 
 
-
-
-
-
-interface MockOptionsMethodGet extends MockOptions {
+interface RouteOptionsMethodGet extends RouteOptions {
     method?: 'GET';
 }
 
-interface MockOptionsMethodPost extends MockOptions {
+interface RouteOptionsMethodPost extends RouteOptions {
     method?: 'POST';
 }
 
-interface MockOptionsMethodPut extends MockOptions {
+interface RouteOptionsMethodPut extends RouteOptions {
     method?: 'PUT';
 }
 
-interface MockOptionsMethodDelete extends MockOptions {
+interface RouteOptionsMethodDelete extends RouteOptions {
     method?: 'DELETE';
 }
 
-interface MockOptionsMethodPatch extends MockOptions {
+interface RouteOptionsMethodPatch extends RouteOptions {
     method?: 'PATCH';
 }
 
-interface MockOptionsMethodHead extends MockOptions {
+interface RouteOptionsMethodHead extends RouteOptions {
     method?: 'HEAD';
 }
 
-
-
+interface Router {
+    routes: [Route];
+execute(NormalizedRequest): ({route: Route, callLog: CallLog});
+    needsToReadBody(NormalizedRequest): Boolean;
 /**
  * Replaces fetch() with a stub which records its calls, grouped by
  * route, and optionally returns a mocked Response object or passes the
@@ -38,7 +36,7 @@ interface MockOptionsMethodHead extends MockOptions {
  * @param response Configures the http response returned by the mock
  * @param [options] Additional properties defining the route to mock
  */
-route(matcher: MockMatcher | MockOptions, response: MockResponse | MockResponseFunction, options ?: MockOptions): this;
+route(matcher: RouteMatcher | RouteOptions, response: MockResponse | MockResponseFunction, options ?: RouteOptions): this;
 
 /**
  * Replaces fetch() with a stub which records its calls, grouped by
@@ -46,7 +44,7 @@ route(matcher: MockMatcher | MockOptions, response: MockResponse | MockResponseF
  *  call through to fetch(). Calls to .mock() can be chained.
  * @param options The route to mock
  */
-route(options: MockOptions): this;
+route(options: RouteOptions): this;
 
 /**
  * Replaces fetch() with a stub which records its calls, grouped by
@@ -58,7 +56,7 @@ route(options: MockOptions): this;
  * @param response Configures the http response returned by the mock
  * @param [options] Additional properties defining the route to mock
  */
-sticky(matcher: MockMatcher | MockOptions, response: MockResponse | MockResponseFunction, options ?: MockOptions): this;
+sticky(matcher: RouteMatcher | RouteOptions, response: MockResponse | MockResponseFunction, options ?: RouteOptions): this;
 
 /**
  * Replaces fetch() with a stub which records its calls, grouped by
@@ -69,7 +67,7 @@ sticky(matcher: MockMatcher | MockOptions, response: MockResponse | MockResponse
  * @param response Configures the http response returned by the mock
  * @param [options] Optional additional properties defining the route to mock
  */
-once(matcher: MockMatcher | MockOptions, response: MockResponse | MockResponseFunction, options ?: MockOptions): this;
+once(matcher: RouteMatcher | RouteOptions, response: MockResponse | MockResponseFunction, options ?: RouteOptions): this;
 
 /**
  * Replaces fetch() with a stub which records its calls, grouped by
@@ -80,7 +78,7 @@ once(matcher: MockMatcher | MockOptions, response: MockResponse | MockResponseFu
  * @param response Configures the http response returned by the mock
  * @param [options] Additional properties defining the route to mock
  */
-get(matcher: MockMatcher | MockOptionsMethodGet, response: MockResponse | MockResponseFunction, options ?: MockOptionsMethodGet): this;
+get(matcher: RouteMatcher | RouteOptionsMethodGet, response: MockResponse | MockResponseFunction, options ?: RouteOptionsMethodGet): this;
 
 /**
  * Replaces fetch() with a stub which records its calls, grouped by
@@ -92,7 +90,7 @@ get(matcher: MockMatcher | MockOptionsMethodGet, response: MockResponse | MockRe
  * @param response Configures the http response returned by the mock
  * @param [options] Additional properties defining the route to mock
  */
-getOnce(matcher: MockMatcher | MockOptionsMethodGet, response: MockResponse | MockResponseFunction, options ?: MockOptionsMethodGet): this;
+getOnce(matcher: RouteMatcher | RouteOptionsMethodGet, response: MockResponse | MockResponseFunction, options ?: RouteOptionsMethodGet): this;
 
 /**
  * Replaces fetch() with a stub which records its calls, grouped by
@@ -103,7 +101,7 @@ getOnce(matcher: MockMatcher | MockOptionsMethodGet, response: MockResponse | Mo
  * @param response Configures the http response returned by the mock
  * @param [options] Additional properties defining the route to mock
  */
-post(matcher: MockMatcher | MockOptionsMethodPost, response: MockResponse | MockResponseFunction, options ?: MockOptionsMethodPost): this;
+post(matcher: RouteMatcher | RouteOptionsMethodPost, response: MockResponse | MockResponseFunction, options ?: RouteOptionsMethodPost): this;
 
 /**
  * Replaces fetch() with a stub which records its calls, grouped by
@@ -115,7 +113,7 @@ post(matcher: MockMatcher | MockOptionsMethodPost, response: MockResponse | Mock
  * @param response Configures the http response returned by the mock
  * @param [options] Additional properties defining the route to mock
  */
-postOnce(matcher: MockMatcher | MockOptionsMethodPost, response: MockResponse | MockResponseFunction, options ?: MockOptionsMethodPost): this;
+postOnce(matcher: RouteMatcher | RouteOptionsMethodPost, response: MockResponse | MockResponseFunction, options ?: RouteOptionsMethodPost): this;
 
 /**
  * Replaces fetch() with a stub which records its calls, grouped by
@@ -126,7 +124,7 @@ postOnce(matcher: MockMatcher | MockOptionsMethodPost, response: MockResponse | 
  * @param response Configures the http response returned by the mock
  * @param [options] Additional properties defining the route to mock
  */
-put(matcher: MockMatcher | MockOptionsMethodPut, response: MockResponse | MockResponseFunction, options ?: MockOptionsMethodPut): this;
+put(matcher: RouteMatcher | RouteOptionsMethodPut, response: MockResponse | MockResponseFunction, options ?: RouteOptionsMethodPut): this;
 
 /**
  * Replaces fetch() with a stub which records its calls, grouped by
@@ -138,7 +136,7 @@ put(matcher: MockMatcher | MockOptionsMethodPut, response: MockResponse | MockRe
  * @param response Configures the http response returned by the mock
  * @param [options] Additional properties defining the route to mock
  */
-putOnce(matcher: MockMatcher | MockOptionsMethodPut, response: MockResponse | MockResponseFunction, options ?: MockOptionsMethodPut): this;
+putOnce(matcher: RouteMatcher | RouteOptionsMethodPut, response: MockResponse | MockResponseFunction, options ?: RouteOptionsMethodPut): this;
 
 /**
  * Replaces fetch() with a stub which records its calls, grouped by
@@ -149,7 +147,7 @@ putOnce(matcher: MockMatcher | MockOptionsMethodPut, response: MockResponse | Mo
  * @param response Configures the http response returned by the mock
  * @param [options] Additional properties defining the route to mock
  */
-delete (matcher: MockMatcher | MockOptionsMethodDelete, response: MockResponse | MockResponseFunction, options ?: MockOptionsMethodDelete): this;
+delete (matcher: RouteMatcher | RouteOptionsMethodDelete, response: MockResponse | MockResponseFunction, options ?: RouteOptionsMethodDelete): this;
 
 /**
  * Replaces fetch() with a stub which records its calls, grouped by
@@ -161,7 +159,7 @@ delete (matcher: MockMatcher | MockOptionsMethodDelete, response: MockResponse |
  * @param response Configures the http response returned by the mock
  * @param [options] Additional properties defining the route to mock
  */
-deleteOnce(matcher: MockMatcher | MockOptionsMethodDelete, response: MockResponse | MockResponseFunction, options ?: MockOptionsMethodDelete): this;
+deleteOnce(matcher: RouteMatcher | RouteOptionsMethodDelete, response: MockResponse | MockResponseFunction, options ?: RouteOptionsMethodDelete): this;
 
 /**
  * Replaces fetch() with a stub which records its calls, grouped by
@@ -172,7 +170,7 @@ deleteOnce(matcher: MockMatcher | MockOptionsMethodDelete, response: MockRespons
  * @param response Configures the http response returned by the mock
  * @param [options] Additional properties defining the route to mock
  */
-head(matcher: MockMatcher | MockOptionsMethodHead, response: MockResponse | MockResponseFunction, options ?: MockOptionsMethodHead): this;
+head(matcher: RouteMatcher | RouteOptionsMethodHead, response: MockResponse | MockResponseFunction, options ?: RouteOptionsMethodHead): this;
 
 /**
  * Replaces fetch() with a stub which records its calls, grouped by
@@ -184,7 +182,7 @@ head(matcher: MockMatcher | MockOptionsMethodHead, response: MockResponse | Mock
  * @param response Configures the http response returned by the mock
  * @param [options] Additional properties defining the route to mock
  */
-headOnce(matcher: MockMatcher | MockOptionsMethodHead, response: MockResponse | MockResponseFunction, options ?: MockOptionsMethodHead): this;
+headOnce(matcher: RouteMatcher | RouteOptionsMethodHead, response: MockResponse | MockResponseFunction, options ?: RouteOptionsMethodHead): this;
 
 /**
  * Replaces fetch() with a stub which records its calls, grouped by
@@ -195,7 +193,7 @@ headOnce(matcher: MockMatcher | MockOptionsMethodHead, response: MockResponse | 
  * @param response Configures the http response returned by the mock
  * @param [options] Additional properties defining the route to mock
  */
-patch(matcher: MockMatcher | MockOptionsMethodPatch, response: MockResponse | MockResponseFunction, options ?: MockOptionsMethodPatch): this;
+patch(matcher: RouteMatcher | RouteOptionsMethodPatch, response: MockResponse | MockResponseFunction, options ?: RouteOptionsMethodPatch): this;
 
 /**
  * Replaces fetch() with a stub which records its calls, grouped by
@@ -207,7 +205,7 @@ patch(matcher: MockMatcher | MockOptionsMethodPatch, response: MockResponse | Mo
  * @param response Configures the http response returned by the mock
  * @param [options] Additional properties defining the route to mock
  */
-patchOnce(matcher: MockMatcher | MockOptionsMethodPatch, response: MockResponse | MockResponseFunction, options ?: MockOptionsMethodPatch): this;
+patchOnce(matcher: RouteMatcher | RouteOptionsMethodPatch, response: MockResponse | MockResponseFunction, options ?: RouteOptionsMethodPatch): this;
 
     /**
      * Chainable method that defines how to respond to calls to fetch that
@@ -219,8 +217,6 @@ patchOnce(matcher: MockMatcher | MockOptionsMethodPatch, response: MockResponse 
      * @param [response] Configures the http response returned by the mock
      */
     catch (response?: MockResponse | MockResponseFunction): this;
-
-
-declare var routes: any;
-declare function defineShorthand(methodName: any, underlyingMethod: any, shorthandOptions: any): void;
-declare function defineGreedyShorthand(methodName: any, underlyingMethod: any): void;
+    compileRoute: (...args: RouteArgs) => Route;
+    addRoute: (...args: RouteArgs) => void;
+}

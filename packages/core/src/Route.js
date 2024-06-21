@@ -15,7 +15,7 @@ import builtInMatchers from './Matchers.js';
 
 /** @typedef {Response| RouteResponseObject | number| string | Object }  RouteResponseData */
 /** @typedef {Promise<RouteResponseData>}  RouteResponsePromise */
-/** @typedef {function(string, RequestInit): (RouteResponseData|RouteResponsePromise)} RouteResponseFunction */
+/** @typedef {function(string, RequestInit, Request=): (RouteResponseData|RouteResponsePromise)} RouteResponseFunction */
 /** @typedef {RouteResponseData | RouteResponsePromise | RouteResponseFunction} RouteResponse*/
 
 /** @typedef {string} RouteName */
@@ -66,6 +66,10 @@ const isFunctionMatcher = (matcher) => typeof matcher === 'function';
 const nameToOptions = (options) =>
 	typeof options === 'string' ? { name: options } : options;
 
+/** 
+ * @class Route 
+ * @prop {RouteOptions} routeOptions
+ */
 class Route {
 	/**
 	 * @overload

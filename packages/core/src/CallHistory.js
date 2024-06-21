@@ -13,6 +13,7 @@ import Route from './Route.js';
  * @prop {NormalizedRequestOptions} options
  * @prop {Request} [request]
  * @prop {Route} [route]
+ * @prop {Response} [response]
  */
 
 /** @typedef {'matched'} Matched */

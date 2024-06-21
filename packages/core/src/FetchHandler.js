@@ -1,7 +1,19 @@
 //@type-check
+/** @typedef {import('./Route')} Route */
+/** @typedef {import('./CallHistory').CallLog} CallLog */
+/** @typedef {import('./FetchMock')} FetchMock */
+/** @typedef {import('./Route').RouteOptions} RouteOptions */
+/** @typedef {import('./Route').RouteResponse} RouteResponse */
+/** @typedef {import('./Route').RouteResponseFunction} RouteResponseFunction */
 
-// import responseBuilder from './response-builder.js';
+import {buildResponse} from './ResponseBuilder.js';
 import * as requestUtils from './RequestUtils.js';
+/**
+ * 
+ * @param {RouteResponse} response 
+ * @returns {RouteResponse is RouteResponseFunction}
+ */
+const isPromise = response => typeof /** @type {Promise<any>} */(response).then === 'function'
 
 /**
  * @param {RouteOptions} route
@@ -27,7 +39,7 @@ const resolveUntilResponseConfig = async (
 	while (true) {
 		if (typeof response === 'function') {
 			response = response(url, options, request);
-		} else if (typeof response.then === 'function') {
+		} else if (isPromise(response)) {
 			response = await response; // eslint-disable-line  no-await-in-loop
 		} else {
 			return response;
@@ -50,7 +62,7 @@ const generateResponse = async ({
 	url,
 	options,
 	request,
-	callLog = {},
+	callLog,
 }) => {
 	const response = await resolveUntilResponseConfig(
 		route.routeOptions,
@@ -59,20 +71,8 @@ const generateResponse = async ({
 		request,
 	);
 
-	// If the response says to throw an error, throw it
-	// Type checking is to deal with sinon spies having a throws property :-0
-	if (response.throws && typeof response !== 'function') {
-		throw response.throws;
-	}
-
-	// If the response is a pre-made Response, respond with it
-	if (route.Response.prototype.isPrototypeOf(response)) {
-		callLog.response = response;
-		return response;
-	}
-
 	// finally, if we need to convert config into a response, we do it
-	const [realResponse, finalResponse] = responseBuilder({
+	const [realResponse, finalResponse] = buildResponse({
 		url,
 		responseConfig: response,
 		route,
@@ -105,7 +105,7 @@ const fetchHandler = async function (requestInput, requestInit) {
 	this.callHistory.recordCall(callLog);
 
 	// this is used to power the .flush() method
-	/** @type {function(any): PromiseLike<any>} */
+	/** @type {function(any): void} */
 	let done;
 	this.callHistory.addNormalizedRequestOptionsPromise(
 		new Promise((res) => {

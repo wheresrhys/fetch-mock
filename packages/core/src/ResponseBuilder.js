@@ -18,6 +18,16 @@ class ResponseBuilder {
 	}
 
 	exec() {
+		// If the response says to throw an error, throw it
+		if (this.responseConfig.throws) {
+			throw this.responseConfig.throws;
+		}
+
+		// If the response is a pre-made Response, respond with it
+		if (route.Response.prototype.isPrototypeOf(this.responseConfig)) {
+			callLog.response = this.responseConfig;
+			return this.responseConfig;
+		}
 		this.normalizeResponseConfig();
 		this.constructFetchOpts();
 		this.constructResponseBody();
@@ -164,4 +174,4 @@ e.g. {"body": {"status: "registered"}}`);
 	}
 }
 
-export default (options) => new ResponseBuilder(options).exec();
+export function buildResponse (options) {return new ResponseBuilder(options).exec()};

@@ -26,7 +26,9 @@ const defaultConfig = {
 	fetch: globalThis.fetch,
 };
 
-/** @typedef {Object} FetchMock */
+/** 
+ * @type FetchMock 
+ */
 const FetchMock = {
 	config: defaultConfig,
 	/**

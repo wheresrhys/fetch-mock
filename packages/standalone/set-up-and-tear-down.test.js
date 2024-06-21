@@ -195,5 +195,4 @@ describe('Set up and tear down', () => {
 			fm.catch.mockRestore();
 		});
 	});
-
 });

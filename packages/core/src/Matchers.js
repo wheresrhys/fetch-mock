@@ -12,10 +12,6 @@ import {
 } from './RequestUtils.js';
 import Route from './Route.js';
 
-
-
-
-
 /** @typedef {string | RegExp | URL} RouteMatcherUrl */
 /** @typedef {function(url: string): boolean} UrlMatcher */
 /** @typedef {function(pattern: string): UrlMatcher} UrlMatcherGenerator */
@@ -25,23 +21,19 @@ import Route from './Route.js';
 
 /**
  * @typedef MatcherDefinition
- * 
- * @prop {string} name
- * @prop {MatcherGenerator} matcher
- * @prop  {boolean} [usesBody]
-*/
-
+ * @property {string} name
+ * @property {MatcherGenerator} matcher
+ * @property  {boolean} [usesBody]
+ */
 
 /**
  * @type {Object.<string, UrlMatcherGenerator>}
  */
 const stringMatchers = {
-	begin: (targetString) =>
-		(url) => url.indexOf(targetString) === 0,
-	end: (targetString) =>
-		
-			(url) => url.substr(-targetString.length) === targetString,
-		
+	begin: (targetString) => (url) => url.indexOf(targetString) === 0,
+	end: (targetString) => (url) =>
+		url.substr(-targetString.length) === targetString,
+
 	glob: (targetString) => {
 		const urlRX = glob(targetString);
 		return (url) => urlRX.test(url);
@@ -50,12 +42,11 @@ const stringMatchers = {
 		const urlRX = pathToRegexp(targetString);
 		return (url) => urlRX.test(getPath(url));
 	},
-	path: (targetString) =>
-		(url) => getPath(url) === targetString,
+	path: (targetString) => (url) => getPath(url) === targetString,
 };
 /**
  * @type {MatcherGenerator}
-*/
+ */
 const getHeaderMatcher = ({ headers: expectedHeaders }) => {
 	if (!expectedHeaders) {
 		return;
@@ -146,8 +137,7 @@ const getBodyMatcher = (route) => {
 
 		try {
 			sentBody = JSON.parse(body);
-		} catch (err) {
-		}
+		} catch (err) {}
 
 		return (
 			sentBody &&
@@ -158,10 +148,10 @@ const getBodyMatcher = (route) => {
 	};
 };
 /**
- * 
- * @param {RouteOptions} route 
- * @param {String} matcherUrl 
- * @param {Object.<string,string>} query 
+ *
+ * @param {RouteOptions} route
+ * @param {string} matcherUrl
+ * @param {Object.<string,string>} query
  * @returns {RouteMatcherFunction}
  */
 const getFullUrlMatcher = (route, matcherUrl, query) => {
@@ -215,7 +205,7 @@ const getUrlMatcher = (route) => {
 };
 
 /** @type {MatcherDefinition[]} */
-export default  [
+export default [
 	{ name: 'query', matcher: getQueryStringMatcher },
 	{ name: 'method', matcher: getMethodMatcher },
 	{ name: 'headers', matcher: getHeaderMatcher },

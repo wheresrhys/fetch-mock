@@ -3,7 +3,6 @@ import statusTextMap from './lib/status-text.js';
 
 FetchMock.statusTextMap = statusTextMap;
 
-
 FetchMock.config = Object.assign(FetchMock.config, {
 	Request: globalThis.Request,
 	Response: globalThis.Response,

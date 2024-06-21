@@ -1,146 +1,144 @@
-
 import { normalizeUrl } from './request-utils.js';
 import Route from './Route.js/index.js';
 
 FetchHandler.recordCall = function (obj) {
-    if (obj) {
-        this._calls.push(obj);
-    }
+	if (obj) {
+		this._calls.push(obj);
+	}
 };
 
 const CallHistory = {};
 const isName = (nameOrMatcher) =>
-    typeof nameOrMatcher === 'string' && /^[\da-zA-Z\-]+$/.test(nameOrMatcher);
+	typeof nameOrMatcher === 'string' && /^[\da-zA-Z\-]+$/.test(nameOrMatcher);
 
 const filterCallsWithMatcher = function (matcher, options = {}, calls) {
-    ({ matcher } = new Route([{ matcher, response: 'ok', ...options }], this));
-    return calls.filter(({ url, options }) =>
-        matcher(normalizeUrl(url), options),
-    );
+	({ matcher } = new Route([{ matcher, response: 'ok', ...options }], this));
+	return calls.filter(({ url, options }) =>
+		matcher(normalizeUrl(url), options),
+	);
 };
 
 const callObjToArray = (obj) => {
-    if (!obj) {
-        return undefined;
-    }
-    const { url, options, request, identifier, isUnmatched, response } = obj;
-    const arr = [url, options];
-    arr.request = request;
-    arr.identifier = identifier;
-    arr.isUnmatched = isUnmatched;
-    arr.response = response;
-    return arr;
+	if (!obj) {
+		return undefined;
+	}
+	const { url, options, request, identifier, isUnmatched, response } = obj;
+	const arr = [url, options];
+	arr.request = request;
+	arr.identifier = identifier;
+	arr.isUnmatched = isUnmatched;
+	arr.response = response;
+	return arr;
 };
 
 FetchMock.flush = async function (waitForResponseMethods) {
-    const queuedPromises = this._holdingPromises;
-    this._holdingPromises = [];
+	const queuedPromises = this._holdingPromises;
+	this._holdingPromises = [];
 
-    await Promise.all(queuedPromises);
-    if (waitForResponseMethods && this._holdingPromises.length) {
-        await this.flush(waitForResponseMethods);
-    }
+	await Promise.all(queuedPromises);
+	if (waitForResponseMethods && this._holdingPromises.length) {
+		await this.flush(waitForResponseMethods);
+	}
 };
 
 CallHistory.filterCalls = function (nameOrMatcher, options) {
-    let calls = this._calls;
-    let matcher = '*';
+	let calls = this._calls;
+	let matcher = '*';
 
-    if ([true, 'matched'].includes(nameOrMatcher)) {
-        calls = calls.filter(({ isUnmatched }) => !isUnmatched);
-    } else if ([false, 'unmatched'].includes(nameOrMatcher)) {
-        calls = calls.filter(({ isUnmatched }) => isUnmatched);
-    } else if (typeof nameOrMatcher === 'undefined') {
-    } else if (isName(nameOrMatcher)) {
-        calls = calls.filter(({ identifier }) => identifier === nameOrMatcher);
-    } else {
-        matcher = nameOrMatcher === '*' ? '*' : normalizeUrl(nameOrMatcher);
-        if (this.routes.some(({ identifier }) => identifier === matcher)) {
-            calls = calls.filter((call) => call.identifier === matcher);
-        }
-    }
+	if ([true, 'matched'].includes(nameOrMatcher)) {
+		calls = calls.filter(({ isUnmatched }) => !isUnmatched);
+	} else if ([false, 'unmatched'].includes(nameOrMatcher)) {
+		calls = calls.filter(({ isUnmatched }) => isUnmatched);
+	} else if (typeof nameOrMatcher === 'undefined') {
+	} else if (isName(nameOrMatcher)) {
+		calls = calls.filter(({ identifier }) => identifier === nameOrMatcher);
+	} else {
+		matcher = nameOrMatcher === '*' ? '*' : normalizeUrl(nameOrMatcher);
+		if (this.routes.some(({ identifier }) => identifier === matcher)) {
+			calls = calls.filter((call) => call.identifier === matcher);
+		}
+	}
 
-    if ((options || matcher !== '*') && calls.length) {
-        if (typeof options === 'string') {
-            options = { method: options };
-        }
-        calls = filterCallsWithMatcher.call(this, matcher, options, calls);
-    }
-    return calls.map(callObjToArray);
+	if ((options || matcher !== '*') && calls.length) {
+		if (typeof options === 'string') {
+			options = { method: options };
+		}
+		calls = filterCallsWithMatcher.call(this, matcher, options, calls);
+	}
+	return calls.map(callObjToArray);
 };
 
 CallHistory.calls = function (nameOrMatcher, options) {
-    return this.filterCalls(nameOrMatcher, options);
+	return this.filterCalls(nameOrMatcher, options);
 };
 
 CallHistory.lastCall = function (nameOrMatcher, options) {
-    return [...this.filterCalls(nameOrMatcher, options)].pop();
+	return [...this.filterCalls(nameOrMatcher, options)].pop();
 };
 
 CallHistory.lastUrl = function (nameOrMatcher, options) {
-    return (this.lastCall(nameOrMatcher, options) || [])[0];
+	return (this.lastCall(nameOrMatcher, options) || [])[0];
 };
 
 CallHistory.lastOptions = function (nameOrMatcher, options) {
-    return (this.lastCall(nameOrMatcher, options) || [])[1];
-}
+	return (this.lastCall(nameOrMatcher, options) || [])[1];
+};
 
 CallHistory.lastResponse = function (nameOrMatcher, options) {
-    const { response } = this.lastCall(nameOrMatcher, options) || [];
-    try {
-        const clonedResponse = response.clone();
-        return clonedResponse;
-    } catch (err) {
-        Object.entries(response._fmResults).forEach(([name, result]) => {
-            response[name] = () => result;
-        });
-        return response;
-    }
+	const { response } = this.lastCall(nameOrMatcher, options) || [];
+	try {
+		const clonedResponse = response.clone();
+		return clonedResponse;
+	} catch (err) {
+		Object.entries(response._fmResults).forEach(([name, result]) => {
+			response[name] = () => result;
+		});
+		return response;
+	}
 };
 
 CallHistory.called = function (nameOrMatcher, options) {
-    return Boolean(this.filterCalls(nameOrMatcher, options).length);
+	return Boolean(this.filterCalls(nameOrMatcher, options).length);
 };
 
-
 CallHistory.done = function (nameOrMatcher) {
-    let routesToCheck;
+	let routesToCheck;
 
-    if (nameOrMatcher && typeof nameOrMatcher !== 'boolean') {
-        routesToCheck = [{ identifier: nameOrMatcher }];
-    } else {
-        routesToCheck = this.routes;
-    }
+	if (nameOrMatcher && typeof nameOrMatcher !== 'boolean') {
+		routesToCheck = [{ identifier: nameOrMatcher }];
+	} else {
+		routesToCheck = this.routes;
+	}
 
-    // Can't use array.every because would exit after first failure, which would
-    // break the logging
-    const result = routesToCheck
-        .map(({ identifier }) => {
-            if (!this.called(identifier)) {
+	// Can't use array.every because would exit after first failure, which would
+	// break the logging
+	const result = routesToCheck
+		.map(({ identifier }) => {
+			if (!this.called(identifier)) {
                 console.warn(`Warning: ${identifier} not called`); // eslint-disable-line
-                return false;
-            }
+				return false;
+			}
 
-            const expectedTimes = (
-                this.routes.find((r) => r.identifier === identifier) || {}
-            ).repeat;
+			const expectedTimes = (
+				this.routes.find((r) => r.identifier === identifier) || {}
+			).repeat;
 
-            if (!expectedTimes) {
-                return true;
-            }
-            const actualTimes = this.filterCalls(identifier).length;
+			if (!expectedTimes) {
+				return true;
+			}
+			const actualTimes = this.filterCalls(identifier).length;
 
-            if (expectedTimes > actualTimes) {
-                console.warn(
-                    `Warning: ${identifier} only called ${actualTimes} times, but ${expectedTimes} expected`,
+			if (expectedTimes > actualTimes) {
+				console.warn(
+					`Warning: ${identifier} only called ${actualTimes} times, but ${expectedTimes} expected`,
                 ); // eslint-disable-line
-                return false;
-            }
-            return true;
-        })
-        .every((isDone) => isDone);
+				return false;
+			}
+			return true;
+		})
+		.every((isDone) => isDone);
 
-    return result;
+	return result;
 };
 
 export default CallHistory;

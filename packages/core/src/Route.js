@@ -1,18 +1,31 @@
 //@type-check
 import builtInMatchers from './Matchers.js';
+/**
+ * @typedef RouteResponseObject {
+ * @property {string | {}} [body]
+ * @property {number} [status]
+ * @property {{ [key: string]: string }} [headers]
+ * @property {Error} [throws]
+ * @property {string} [redirectUrl]
+ */
+
+/** @typedef {Response| RouteResponseObject | number| string | Object }  RouteReponseData */
+/** @typedef {Promise<RouteReponseData>}  RouteResponsePromise */
+/** @typedef  {function(url: string, opts: RouteRequest): (RouteResponseData|RouteResponsePromise)} RouteResponseFunction */
+/** @typedef {RouteResponseData | RouteResponsePromise | RouteResponseFunction} RouteResponse*/
 
 /**
- * @typedef RouteOptions 
- * @prop {string} [name]
- * @prop {string} [method]
- * @prop {{ [key: string]: string | number }} [headers]
- * @prop {{ [key: string]: string }} [query]
- * @prop {{ [key: string]: string }} [params]
- * @prop {object} [body]
- * @prop {RouteMatcherFunction} [functionMatcher]
- * @prop {RouteMatcher} [matcher]
- * @prop {RouteMatcherUrl} [url]
- * @prop {boolean} [overwriteRoutes]
+ * @typedef RouteOptions
+ * @property {string} [name]
+ * @property {string} [method]
+ * @property {{ [key: string]: string | number }} [headers]
+ * @property {{ [key: string]: string }} [query]
+ * @property {{ [key: string]: string }} [params]
+ * @property {object} [body]
+ * @property {RouteMatcherFunction} [functionMatcher]
+ * @property {RouteMatcher} [matcher]
+ * @property {RouteMatcherUrl} [url]
+ * @property {boolean} [overwriteRoutes]
  * @prop {RouteResponse | RouteResponseFunction} [response]
  * @prop {number} [repeat]
  * @prop {number} [delay]
@@ -20,11 +33,11 @@ import builtInMatchers from './Matchers.js';
  * @prop {boolean} [includeContentLength]
  * @prop {boolean} [matchPartialBody]
  * @prop {boolean} [sticky]
-*/
+ */
 
 /**
- * @param {RouteMatcher | RouteOptions} matcher 
- * @returns {Boolean}
+ * @param {RouteMatcher | RouteOptions} matcher
+ * @returns {boolean}
  */
 const isUrlMatcher = (matcher) =>
 	matcher instanceof RegExp ||
@@ -32,25 +45,24 @@ const isUrlMatcher = (matcher) =>
 	(typeof matcher === 'object' && 'href' in matcher);
 
 /**
- * 
- * @param {RouteMatcher| RouteOptions} matcher 
+ *
+ * @param {RouteMatcher| RouteOptions} matcher
  * @returns Boolean
  */
 const isFunctionMatcher = (matcher) => typeof matcher === 'function';
 
 /**
- * 
- * @param {RouteOptions | String} options 
+ *
+ * @param {RouteOptions | string} options
  * @returns {RouteOptions}
  */
 const nameToOptions = (options) =>
 	typeof options === 'string' ? { name: options } : options;
 
 class Route {
-
 	/**
 	 * @overload
-	 * @param {RouteOptions} matcher 
+	 * @param {RouteOptions} matcher
 	 * @param {undefined} response
 	 * @param {undefined} options
 	 * @param {FetchMockConfig} globalConfig
@@ -58,21 +70,21 @@ class Route {
 
 	/**
 	 * @overload
-	 * @param {RouteMatcher } matcher 
+	 * @param {RouteMatcher } matcher
 	 * @param {RouteResponse} response
 	 * @param {RouteOptions | string} options
 	 * @param {FetchMockConfig} globalConfig
 	 */
 
 	/**
-	 * @param {RouteMatcher | RouteOptions} matcher 
+	 * @param {RouteMatcher | RouteOptions} matcher
 	 * @param {RouteResponse} [response]
-	 * @param {RouteOptions | string} [options] 
-	 * @param {FetchMockConfig} [globalConfig] 
+	 * @param {RouteOptions | string} [options]
+	 * @param {FetchMockConfig} [globalConfig]
 	 */
 	constructor(matcher, response, options, globalConfig) {
-		Object.assign(this, globalConfig)
-		this.originalInput = { matcher, response, options }
+		Object.assign(this, globalConfig);
+		this.originalInput = { matcher, response, options };
 		this.init();
 		this.sanitize();
 		this.validate();
@@ -98,7 +110,7 @@ class Route {
 	 * @returns {void}
 	 */
 	#init() {
-		const { matcher, response, options: nameOrOptions } = this.originalInput
+		const { matcher, response, options: nameOrOptions } = this.originalInput;
 		const routeOptions = {};
 
 		if (isUrlMatcher(matcher) || isFunctionMatcher(matcher)) {
@@ -120,7 +132,7 @@ class Route {
 			);
 		}
 		/** @type {RouteOptions} */
-		this.routeOptions = routeOptions
+		this.routeOptions = routeOptions;
 	}
 	/**
 	 * @returns {void}
@@ -134,23 +146,24 @@ class Route {
 			delete this.routeOptions.matcher;
 		}
 
-		this.routeOptions.functionMatcher = this.routeOptions.matcher || this.routeOptions.functionMatcher;
+		this.routeOptions.functionMatcher =
+			this.routeOptions.matcher || this.routeOptions.functionMatcher;
 	}
 	/**
 	 * @returns {void}
 	 */
 	#generateMatcher() {
 		const activeMatchers = Route.registeredMatchers
-			.map(
-				({ name, matcher, usesBody }) => {
-					if (name in this.routeOptions) {
-						return { matcher: matcher(this.routeOptions), usesBody }
-					}
+			.map(({ name, matcher, usesBody }) => {
+				if (name in this.routeOptions) {
+					return { matcher: matcher(this.routeOptions), usesBody };
 				}
-			)
+			})
 			.filter((matcher) => Boolean(matcher));
 
-		this.routeOptions.usesBody = activeMatchers.some(({ usesBody }) => usesBody);
+		this.routeOptions.usesBody = activeMatchers.some(
+			({ usesBody }) => usesBody,
+		);
 		/** @type {RouteMatcherFunction} */
 		this.matcher = (url, options = {}, request) =>
 			activeMatchers.every(({ matcher }) => matcher(url, options, request));
@@ -186,10 +199,10 @@ class Route {
 					setTimeout(() => res(response), this.delay),
 				);
 			};
-		} 
+		}
 	}
 	/**
-	 * @param {MatcherDefinition} matcher 
+	 * @param {MatcherDefinition} matcher
 	 */
 	static defineMatcher(matcher) {
 		Route.registeredMatchers.push(matcher);

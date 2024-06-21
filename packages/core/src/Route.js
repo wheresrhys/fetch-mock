@@ -33,6 +33,7 @@ import builtInMatchers from './Matchers.js';
  * @prop {boolean} [includeContentLength]
  * @prop {boolean} [matchPartialBody]
  * @prop {boolean} [sticky]
+ * @prop {boolean} [usesBody]
  */
 
 /**
@@ -83,7 +84,8 @@ class Route {
 	 * @param {FetchMockConfig} [globalConfig]
 	 */
 	constructor(matcher, response, options, globalConfig) {
-		Object.assign(this, globalConfig);
+		this.globalConfig = globalConfig;
+		this.routeOptions = this.globalConfig;
 		this.originalInput = { matcher, response, options };
 		this.init();
 		this.sanitize();
@@ -91,6 +93,13 @@ class Route {
 		this.generateMatcher();
 		this.limit();
 		this.delayResponse();
+	}
+	/**
+	 * @param {string} name 
+	 * @returns 
+	 */
+	getOption (name) {
+		return this.routeOptions[name]
 	}
 	/**
 	 * @returns {void}
@@ -132,7 +141,8 @@ class Route {
 			);
 		}
 		/** @type {RouteOptions} */
-		this.routeOptions = routeOptions;
+		this.routeOptions = {
+			...this.globalConfig, routeOptions};
 	}
 	/**
 	 * @returns {void}

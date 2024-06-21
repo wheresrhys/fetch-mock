@@ -1,10 +1,17 @@
 //@type-check
+import Route from './Route.js';
+/** @typedef {import('./Route').RouteOptions} RouteOptions */
+/** @typedef {import('./Route').RouteResponse} RouteResponse */
+/** @typedef {import('./Matchers').RouteMatcher} RouteMatcher */
+/** @typedef {import('./FetchMock').FetchMockConfig} FetchMockConfig */
+/** @typedef {import('./FetchMock').FetchMock} FetchMock */
+/** @typedef {import('./RequestUtils').NormalizedRequest} NormalizedRequest */
+/** @typedef {import('./CallHistory').CallLog} CallLog */
 
 export default class Router {
 	/**
-	 *
-	 * @param {FetchMockConfig} options.fetchMockConfig
-	 * @param {Route[]} [options.routes]
+	 * @param {FetchMockConfig} fetchMockConfig
+	 * @param {Route[]} [routes]
 	 */
 	constructor(fetchMockConfig, routes = []) {
 		this.routes = routes; // TODO deep clone this
@@ -16,15 +23,12 @@ export default class Router {
 	 * @returns {Boolean}
 	 */
 	needsToReadBody({ request }) {
-		return Boolean(request && this.routes.some(({ usesBody }) => usesBody));
+		return Boolean(request && this.routes.some(route => route.getOption('usesBody')));
 	}
 
 	/**
-	 *
 	 * @param {NormalizedRequest} normalizedRequest
-	 * @this {FetchMock}
-	 *
-	 * @returns {{route: Route, callLog: CallLog}}
+	 * @returns {{route: Route , callLog: CallLog}}
 	 */
 	execute({ url, options, request }) {
 		const route = this.routes.find((route) =>
@@ -49,9 +53,9 @@ export default class Router {
 			); // eslint-disable-line
 		}
 
-		if (this.fallbackResponse) {
+		if (this.fallbackRoute) {
 			return {
-				route: { response: this.fallbackResponse },
+				route: this.fallbackRoute,
 				callLog: {
 					url,
 					options,
@@ -71,23 +75,26 @@ export default class Router {
 	 * @param {RouteOptions} matcher
 	 * @param {undefined} response
 	 * @param {undefined} options
+	 * @returns {void}
 	 */
 	/**
 	 * @overload
 	 * @param {RouteMatcher } matcher
 	 * @param {RouteResponse} response
 	 * @param {RouteOptions | string} options
+	 * @returns {void}
 	 */
 	/**
 	 * @param {RouteMatcher | RouteOptions} matcher
 	 * @param {RouteResponse} [response]
 	 * @param {RouteOptions | string} [options]
+	 * @returns {void}
 	 */
 	addRoute(matcher, response, options) {
 		const route = new Route(matcher, response, options, this.config);
 		if (
-			route.name &&
-			this.routes.some(({ name: existingName }) => route.name === existingName)
+			route.routeOptions.name &&
+			this.routes.some(({ routeOptions: {name: existingName }}) => route.routeOptions.name === existingName)
 		) {
 			throw new Error(
 				'fetch-mock: Adding route with same name as existing route.',
@@ -99,12 +106,12 @@ export default class Router {
 	 * @param {RouteResponse} [response]
 	 */
 	setFallback(response) {
-		if (this.fallbackResponse) {
+		if (this.fallbackRoute) {
 			console.warn(
 				'calling fetchMock.catch() twice - are you sure you want to overwrite the previous fallback response',
 			); // eslint-disable-line
 		}
-		this.fallbackResponse = response || 'ok';
+		this.fallbackRoute = new Route('*', response || 'ok', undefined, this.config)
 	}
 	/**
 	 *
@@ -113,6 +120,6 @@ export default class Router {
 	removeRoutes({ force }) {
 		force
 			? (this.routes = [])
-			: (this.routes = this.routes.filter(({ sticky }) => sticky));
+			: (this.routes = this.routes.filter(({ routeOptions: {sticky }}) => sticky));
 	}
 }

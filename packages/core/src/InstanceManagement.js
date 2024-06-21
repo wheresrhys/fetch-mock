@@ -1,6 +1,7 @@
 //@type-check
 import fetchHandler from './FetchHandler.js';
 import Router from './Router.js';
+import Route from './Route.js';
 // import inspecting from './inspecting.js';
 
 /**
@@ -49,10 +50,21 @@ const FetchMock = {
     },
 
     /**
-     * @param {RouteMatcher} matcher 
-     * @param {RouteResponse} response 
-     * @param {RouteOptions} options 
-     * @return {FetchMock}
+     * @overload
+     * @param {RouteOptions} matcher
+     * @param {undefined} response
+     * @param {undefined} options
+     */
+    /**
+     * @overload
+     * @param {RouteMatcher } matcher
+     * @param {RouteResponse} response
+     * @param {RouteOptions | string} options
+     */
+    /**
+     * @param {RouteMatcher | RouteOptions} matcher
+     * @param {RouteResponse} [response]
+     * @param {RouteOptions | string} [options]
      */
     route(matcher, response, options) {
         this.router.addRoute(matcher, response, options)
@@ -66,6 +78,13 @@ const FetchMock = {
         this.router.setFallback(response)
         return this;
     },
+    /**
+     * 
+     * @param {MatcherDefinition} matcher 
+     */
+    defineMatcher(matcher) {
+        Route.defineMatcher(matcher);
+    }
 };
 
 

@@ -25,9 +25,7 @@ interface RouteOptionsMethodHead extends RouteOptions {
 }
 
 interface Router {
-    routes: [Route];
-execute(NormalizedRequest): ({route: Route, callLog: CallLog});
-    needsToReadBody(NormalizedRequest): Boolean;
+
 /**
  * Replaces fetch() with a stub which records its calls, grouped by
  * route, and optionally returns a mocked Response object or passes the
@@ -218,40 +216,4 @@ patchOnce(matcher: RouteMatcher | RouteOptionsMethodPatch, response: MockRespons
      */
     catch (response?: MockResponse | MockResponseFunction): this;
 
-    /**
-     * @overload
-     * @param {RouteOptions} matcher
-     * @param {undefined} response
-     * @param {undefined} options
-     */
-    /**
-     * @overload
-     * @param {RouteMatcher } matcher
-     * @param {RouteResponse} response
-     * @param {RouteOptions | string} options
-     */
-    /**
-     * @param {RouteMatcher | RouteOptions} matcher
-     * @param {RouteResponse} [response]
-     * @param {RouteOptions | string} [options]
-     */
-    compileRoute(matcher: any | any, response?: any, options?: any | string);
-    /**
-     * @overload
-     * @param {RouteOptions} matcher
-     * @param {undefined} response
-     * @param {undefined} options
-     */
-    /**
-     * @overload
-     * @param {RouteMatcher } matcher
-     * @param {RouteResponse} response
-     * @param {RouteOptions | string} options
-     */
-    /**
-     * @param {RouteMatcher | RouteOptions} matcher
-     * @param {RouteResponse} [response]
-     * @param {RouteOptions | string} [options]
-     */
-    addRoute: (...args: RouteArgs) => void;
 }

@@ -61,22 +61,35 @@ export default class Router {
             } to ${url}`,
         );
     }
-
     /**
-     * 
-     * @param {*} matcher 
-     * @param {*} response 
-     * @param {*} options 
-     * @returns 
+     * @overload
+     * @param {RouteOptions} matcher
+     * @param {undefined} response
+     * @param {undefined} options
      */
-    compileRoute (matcher, response, options) {
-            return new Route(matcher, response, options, this.config);
+    /**
+     * @overload
+     * @param {RouteMatcher } matcher
+     * @param {RouteResponse} response
+     * @param {RouteOptions | string} options
+     */
+    /**
+     * @param {RouteMatcher | RouteOptions} matcher
+     * @param {RouteResponse} [response]
+     * @param {RouteOptions | string} [options]
+     */
+    addRoute(matcher, response, options) {
+        const route = new Route(matcher, response, options, this.config);
+        if (route.name && this.routes.some(({ name: existingName }) => route.name === existingName)) {
+            throw new Error(
+                'fetch-mock: Adding route with same name as existing route.',
+            );
         }
-
-    defineMatcher (matcher) {
-            Route.defineMatcher(matcher);
-        }
-
+        this.routes.push(route);
+    };
+    /**
+     * @param {RouteResponse} [response]
+     */
     setFallback(response) {
         if (this.fallbackResponse) {
             console.warn(
@@ -84,24 +97,14 @@ export default class Router {
             ); // eslint-disable-line
         }
         this.fallbackResponse = response || 'ok';
-        return this
     }
-
+    /**
+     * 
+     * @param {{force: boolean}} options 
+     */
     removeRoutes ({ force }) {
          force? this.routes = [] : this.routes = this.routes.filter(({ sticky }) => sticky);
     }
-
-    addRoute (matcher, response, options) {
-        const route = this.compileRoute(matcher, response, options);
-        if (route.name && this.routes.some(({ name: existingName }) => name === existingName)) {
-            throw new Error(
-                'fetch-mock: Adding route with same name as existing route.',
-            );
-        }
-        // is this needed any more?
-        this.routes.push(route);
-    };
-
 }
 
 

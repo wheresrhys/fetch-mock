@@ -10,7 +10,7 @@ const responseConfigProps = [
 ];
 
 class ResponseBuilder {
-	// TODO in  asimilar way to for Route, find a way to need less passing  of the fetchMock instance
+	// TODO in a similar way to for Route, find a way to need less passing  of the fetchMock instance
 	// into here
 	constructor(options, callHistory) {
 		Object.assign(this, options);
@@ -173,5 +173,9 @@ e.g. {"body": {"status: "registered"}}`);
 		});
 	}
 }
-
+/**
+ * 
+ * @param {*} options 
+ * @returns 
+ */
 export function buildResponse (options) {return new ResponseBuilder(options).exec()};

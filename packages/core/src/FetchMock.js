@@ -96,7 +96,12 @@ const FetchMock = {
 		return this.callHistory.done(this.router.routes, routeNames)
 	}
 };
-
+/**
+ * 
+ * @param {string} methodName 
+ * @param {string} underlyingMethod 
+ * @param {RouteOptions} shorthandOptions 
+ */
 const defineShorthand = (methodName, underlyingMethod, shorthandOptions) => {
 	FetchMock[methodName] = function (matcher, response, options) {
 		return this[underlyingMethod](
@@ -106,7 +111,11 @@ const defineShorthand = (methodName, underlyingMethod, shorthandOptions) => {
 		);
 	};
 };
-
+/**
+ * 
+ * @param {string} methodName 
+ * @param {string} underlyingMethod 
+ */
 const defineGreedyShorthand = (methodName, underlyingMethod) => {
 	FetchMock[methodName] = function (response, options) {
 		return this[underlyingMethod]({}, response, options);

@@ -65,7 +65,7 @@ export function normalizeRequest(urlOrRequest, options, Request) {
 		} catch (err) {}
 
 		if (urlOrRequest.headers) {
-			derivedOptions.headers = headerUtils.normalize(urlOrRequest.headers);
+			derivedOptions.headers = normalizeHeaders(urlOrRequest.headers);
 		}
 		const normalizedRequestObject = {
 			url: normalizeUrl(urlOrRequest.url),
@@ -119,38 +119,16 @@ export function getQuery(url) {
 
 
 // TODO: Headers need sme serious work!!!
-export const headerUtils = {
-	/**
+/**
 	 * 
 	 * @param {Headers | Object.<string, string | number>} headers 
 	 * @returns {Object.<string, string>}
 	 */
-	normalize: (headers) => {
-		const entries = (headers instanceof Headers) ? headers.entries() : Object.entries(headers)
+export const normalizeHeaders = (headers) => {
+		const entries = (headers instanceof Headers) ? [...headers.entries()] : Object.entries(headers)
 		return Object.fromEntries(
-			entries.map(([key, val]) => [key.toLowerCase(), val]),
-		),
+			entries.map(([key, val]) => [key.toLowerCase(), String(val).valueOf()]),
+		)
 	}
+	
 
-
-	/**
-	 *
-	 * @param {string} actualHeader
-	 * @param {string} expectedHeader
-	 * @returns {boolean}
-	 */
-	equal: (actualHeader, expectedHeader) => {
-		return actualHeader === expectedHeader;
-		// TODO do something to handle multi value headers
-		// actualHeader = actualHeader.split(',')Array.isArray(actualHeader) ? actualHeader : [actualHeader];
-		// expectedHeader = Array.isArray(expectedHeader)
-		// 	? expectedHeader
-		// 	: [expectedHeader];
-
-		// if (actualHeader.length !== expectedHeader.length) {
-		// 	return false;
-		// }
-
-		// return actualHeader.every((val, i) => val === expectedHeader[i]);
-	},
-};

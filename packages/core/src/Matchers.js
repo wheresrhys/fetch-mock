@@ -7,7 +7,7 @@ import querystring from 'querystring';
 import isSubset from 'is-subset';
 import isEqual from 'lodash.isequal';
 import {
-	headers as headerUtils,
+	normalizeHeaders,
 	getPath,
 	getQuery,
 	normalizeUrl,
@@ -53,14 +53,11 @@ const getHeaderMatcher = ({ headers: expectedHeaders }) => {
 	if (!expectedHeaders) {
 		return;
 	}
-	const expectation = headerUtils.normalize2(expectedHeaders);
+	const expectation = normalizeHeaders(expectedHeaders);
 	return (url, { headers = {} }) => {
-		const lowerCaseHeaders = headerUtils.toLowerCase(
-			headerUtils.normalize(headers),
-		);
-		return Object.keys(expectation).every((headerName) =>
-			headerUtils.equal(lowerCaseHeaders[headerName], expectation[headerName]),
-		);
+		// TODO do something to handle multi value headers
+		const lowerCaseHeaders = normalizeHeaders(headers)
+		return Object.keys(expectation).every((headerName) => lowerCaseHeaders[headerName] === expectation[headerName]);
 	};
 };
 /**

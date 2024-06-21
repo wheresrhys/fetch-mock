@@ -2,7 +2,7 @@
 import fetchHandler from './FetchHandler.js';
 import Router from './Router.js';
 import Route from './Route.js';
-// import inspecting from './inspecting.js';
+import CallHistory from './CallHistory.js';
 
 /**
  * @typedef FetchMockConfig
@@ -35,7 +35,7 @@ const FetchMock = {
 	createInstance() {
 		const instance = Object.create(FetchMock);
 		instance.router = new Router(this.config, this.router.routes);
-		instance.callHistory = this.callHistory.clone();
+		instance.callHistory = new CallHistory();
 		return instance;
 	},
 	/**

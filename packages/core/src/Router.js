@@ -6,8 +6,8 @@ export default class Router {
      * @param {FetchMockConfig} options.fetchMockConfig
      * @param {Route[]} [options.routes]
      */
-    constructor({fetchMockConfig, routes = []}) {
-        this.routes = routes;
+    constructor(fetchMockConfig, routes = []) {
+        this.routes = routes; // TODO deep clone this
         this.config = fetchMockConfig
     }
     /**
@@ -62,6 +62,13 @@ export default class Router {
         );
     }
 
+    /**
+     * 
+     * @param {*} matcher 
+     * @param {*} response 
+     * @param {*} options 
+     * @returns 
+     */
     compileRoute (matcher, response, options) {
             return new Route(matcher, response, options, this.config);
         }

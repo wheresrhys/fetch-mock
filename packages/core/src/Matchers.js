@@ -12,6 +12,26 @@ import {
 } from './RequestUtils.js';
 import Route from './Route.js';
 
+
+
+
+
+/** @typedef {string | RegExp | URL} RouteMatcherUrl */
+/** @typedef {function(url: string): boolean} UrlMatcher */
+/** @typedef {function(pattern: string): UrlMatcher} UrlMatcherGenerator */
+/** @typedef {function(url: string, opts: NormalizedRequestOptions, request: Request): boolean} RouteMatcherFunction */
+/** @typedef {function(route: RouteOptions): RouteMatcherFunction} MatcherGenerator */
+/** @typedef {RouteMatcherUrl | RouteMatcherFunction} RouteMatcher */
+
+/**
+ * @typedef MatcherDefinition
+ * 
+ * @prop {string} name
+ * @prop {MatcherGenerator} matcher
+ * @prop  {boolean} [usesBody]
+*/
+
+
 /**
  * @type {Object.<string, UrlMatcherGenerator>}
  */

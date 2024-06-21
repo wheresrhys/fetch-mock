@@ -4,6 +4,24 @@
 const absoluteUrlRX = new RegExp('^[a-z]+://|^data:', 'i');
 const protocolRelativeUrlRX = new RegExp('^//', 'i');
 
+
+/** 
+ * @typedef DerivedRequestOptions 
+ * @prop  {string} method
+ * @prop  {Promise<string>} [body]
+ * @prop  {{ [key: string]: string | [string] }} [headers]
+*/
+
+/** @typedef {RequestInit | (RequestInit & DerivedRequestOptions) } NormalizedRequestOptions */
+/** 
+ * @typedef NormalizedRequest 
+ * @prop  {string} url
+ * @prop  {NormalizedRequestOptions} options
+ * @prop  {Request} [request]
+ * @prop  {AbortSignal} [signal]
+*/
+
+
 /**
  * @param {Headers} headers 
  * @returns {[[string,string|[string]]]}

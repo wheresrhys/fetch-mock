@@ -2,6 +2,27 @@
 import builtInMatchers from './Matchers.js';
 
 /**
+ * @typedef RouteOptions 
+ * @prop {string} [name]
+ * @prop {string} [method]
+ * @prop {{ [key: string]: string | number }} [headers]
+ * @prop {{ [key: string]: string }} [query]
+ * @prop {{ [key: string]: string }} [params]
+ * @prop {object} [body]
+ * @prop {RouteMatcherFunction} [functionMatcher]
+ * @prop {RouteMatcher} [matcher]
+ * @prop {RouteMatcherUrl} [url]
+ * @prop {boolean} [overwriteRoutes]
+ * @prop {RouteResponse | RouteResponseFunction} [response]
+ * @prop {number} [repeat]
+ * @prop {number} [delay]
+ * @prop {boolean} [sendAsJson]
+ * @prop {boolean} [includeContentLength]
+ * @prop {boolean} [matchPartialBody]
+ * @prop {boolean} [sticky]
+*/
+
+/**
  * @param {RouteMatcher | RouteOptions} matcher 
  * @returns {Boolean}
  */
@@ -173,9 +194,9 @@ class Route {
 	static defineMatcher(matcher) {
 		Route.registeredMatchers.push(matcher);
 	}
+	/** @type {MatcherDefinition[]]} */
+	static registeredMatchers = [];
 }
-/** @type {MatcherDefinition[]]} */
-Route.registeredMatchers = [];
 
 builtInMatchers.forEach(Route.defineMatcher);
 

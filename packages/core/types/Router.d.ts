@@ -217,6 +217,41 @@ patchOnce(matcher: RouteMatcher | RouteOptionsMethodPatch, response: MockRespons
      * @param [response] Configures the http response returned by the mock
      */
     catch (response?: MockResponse | MockResponseFunction): this;
-    compileRoute: (...args: RouteArgs) => Route;
+
+    /**
+     * @overload
+     * @param {RouteOptions} matcher
+     * @param {undefined} response
+     * @param {undefined} options
+     */
+    /**
+     * @overload
+     * @param {RouteMatcher } matcher
+     * @param {RouteResponse} response
+     * @param {RouteOptions | string} options
+     */
+    /**
+     * @param {RouteMatcher | RouteOptions} matcher
+     * @param {RouteResponse} [response]
+     * @param {RouteOptions | string} [options]
+     */
+    compileRoute(matcher: any | any, response?: any, options?: any | string);
+    /**
+     * @overload
+     * @param {RouteOptions} matcher
+     * @param {undefined} response
+     * @param {undefined} options
+     */
+    /**
+     * @overload
+     * @param {RouteMatcher } matcher
+     * @param {RouteResponse} response
+     * @param {RouteOptions | string} options
+     */
+    /**
+     * @param {RouteMatcher | RouteOptions} matcher
+     * @param {RouteResponse} [response]
+     * @param {RouteOptions | string} [options]
+     */
     addRoute: (...args: RouteArgs) => void;
 }

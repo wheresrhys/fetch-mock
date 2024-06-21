@@ -11,19 +11,12 @@
         "noImplicitThis": true,
         "strictNullChecks": false,
         "strictFunctionTypes": true,
-        "types": [
-            "packages/core/types/InstanceManagement.d.ts",
-            "packages/core/types/RequestUtils.d.ts",
-            "packages/core/types/Route.d.ts",
-            "packages/core/types/Router.d.ts",
-            "packages/core/types/Matchers.d.ts"
-        ],
+        "types": [        ],
         "noEmit": true,
         "forceConsistentCasingInFileNames": true
     },
     "include": [
         "packages/core/src/*.js",
-        "packages/core/types/*.ts"
     ],
     "exclude": [
         "node_modules"

@@ -1,6 +1,19 @@
 //@type-check
 import fetchHandler from './FetchHandler.js';
+import Router from './Router.js';
 // import inspecting from './inspecting.js';
+
+/**
+ * @typedef FetchMockConfig
+ * 
+ * @prop {boolean} [sendAsJson]
+ * @prop {boolean} [includeContentLength]
+ * @prop {boolean} [warnOnFallback]
+ * @prop {function(string | Request, RequestInit): Promise<Response>} [fetch]
+ * @prop {new () => Headers} [Headers]
+ * @prop {typeof Request} [Request]
+ * @prop {new () => Response} [Response]
+ */
 
 /** @type {FetchMockConfig} */
 const defaultConfig  = {
@@ -12,35 +25,53 @@ const defaultConfig  = {
     Headers: globalThis.Headers,
     fetch: globalThis.fetch,
 };
+
+/** @typedef {Object} FetchMock */
 const FetchMock = { 
-    // ...fetchHandler, ...setUpAndTearDown, ...inspecting
     config: defaultConfig ,
+    /**
+     * @returns {FetchMock}
+     */
     createInstance () {
         const instance = Object.create(FetchMock);
-        this.fetchHandler = fetchHandler.bind(this);
-        instance.router = this.router.clone()
+        instance.router = new Router(this.config, this.router.routes);
         instance.callHistory = this.callHistory.clone()
         return instance;
-    }
+    },
+    /**
+     * 
+     * @param {string | Request} requestInput 
+     * @param {RequestInit} [requestInit]
+     * @returns {Promise<Response>}
+     */
+    fetchHandler(requestInput, requestInit) {
+        return fetchHandler.call(this, requestInput, requestInit)
+    },
+
+    /**
+     * @param {RouteMatcher} matcher 
+     * @param {RouteResponse} response 
+     * @param {RouteOptions} options 
+     * @return {FetchMock}
+     */
+    route(matcher, response, options) {
+        this.router.addRoute(matcher, response, options)
+        return this;
+    },
+    /**
+    * @param {RouteResponse} response 
+    * @return {FetchMock}
+    */
+    catch(response) {
+        this.router.setFallback(response)
+        return this;
+    },
 };
 
 
-/**
- * 
- * @param {RouteMatcher} matcher 
- * @param {RouteResponse} response 
- * @param {RouteOptions} options 
- * @returns 
- */
-Router.route = function (matcher, response, options) {
-    return this.router.addRoute(matcher, response, options)
-}
-Router.catch = function (response) {
-    this.router.setFallback(response)
-};
 
 const defineShorthand = (methodName, underlyingMethod, shorthandOptions) => {
-    Router[methodName] = function (matcher, response, options) {
+    FetchMock[methodName] = function (matcher, response, options) {
         return this[underlyingMethod](
             matcher,
             response,
@@ -50,7 +81,7 @@ const defineShorthand = (methodName, underlyingMethod, shorthandOptions) => {
 };
 
 const defineGreedyShorthand = (methodName, underlyingMethod) => {
-    Router[methodName] = function (response, options) {
+    FetchMock[methodName] = function (response, options) {
         return this[underlyingMethod]({}, response, options);
     };
 };

@@ -143,38 +143,38 @@ class CallHistory {
 	/**
 	 *
 	 * @param {RouteName[]} [routeNames]
+	 * @param {Route[]} allRoutes
 	 * @returns {Boolean}
 	 */
-	done(routeNames, allRoutes) {
-		const routesToCheck = routeNames ? allRoutes.filter(({ routeOptions: name }) => routeNames.includes(name)):  allRoutes;
+	done(allRoutes, routeNames) {
+		const routesToCheck = routeNames ? allRoutes.filter(({ routeOptions: {name} }) => routeNames.includes(name)):  allRoutes;
 		// TODO when checking all routes needs to check against all calls
 		// Can't use array.every because would exit after first failure, which would
 		// break the logging
 		const result = routesToCheck
-			.map(({ name }) => {
-				if (!this.called(name)) {
+			.map(/** @type {function(Route):boolean}*/(route) => {
+				const calls = this.callLogs.filter(({route: routeApplied}) => routeApplied === route);
+				if (!calls.length) {
 					console.warn(`Warning: ${name} not called`); // eslint-disable-line
 					return false;
 				}
 
-				const expectedTimes = (
-					allRoutes.find((r) => r.name === name) || {}
-				).repeat;
+				const expectedTimes = route.routeOptions.repeat;
 
 				if (!expectedTimes) {
 					return true;
 				}
-				const actualTimes = this.filterCalls(name).length;
+				const actualTimes = calls.length;
 
 				if (expectedTimes > actualTimes) {
 					console.warn(
-						`Warning: ${name} only called ${actualTimes} times, but ${expectedTimes} expected`,
+						`Warning: ${route.routeOptions.name} only called ${actualTimes} times, but ${expectedTimes} expected`,
 					); // eslint-disable-line
 					return false;
 				}
 				return true;
 			})
-			.every((isDone) => isDone);
+			.every(isDone => isDone);
 
 		return result;
 	}

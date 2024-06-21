@@ -88,7 +88,7 @@ const FetchMock = {
 		return this.callHistory.flush(waitForResponseBody);
 	},
 	done(routeNames) {
-		return this.callHistory.done(routeNames, this.router.routes)
+		return this.callHistory.done(this.router.routes, routeNames)
 	}
 };
 

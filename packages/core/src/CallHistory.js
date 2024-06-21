@@ -1,5 +1,10 @@
 //@type-check
-import { normalizeUrl } from './request-utils.js';
+/** @typedef {import('./Route').RouteOptions} RouteOptions */
+/** @typedef {import('./Route').RouteName} RouteName */
+/** @typedef {import('./RequestUtils').NormalizedRequestOptions} NormalizedRequestOptions */
+/** @typedef {import('./Matchers').RouteMatcher} RouteMatcher */
+/** @typedef {import('./FetchMock').FetchMockConfig} FetchMockConfig */
+import { normalizeRequest } from './RequestUtils.js';
 import Route from './Route.js';
 
 /**
@@ -10,19 +15,38 @@ import Route from './Route.js';
  * @prop {Route} [route]
  */
 
-/** @typedef  {string | RouteMatcher} NameOrMatcher*/
+/** @typedef {'matched'} Matched */
+/** @typedef {'unmatched'} Unmatched */
+/** @typedef  {RouteName | Matched| Unmatched| boolean | RouteMatcher } CallHistoryFilter*/
 
 /**
  *
- * @param {NameOrMatcher} nameOrMatcher
- * @returns {boolean}
+ * @param {CallHistoryFilter} filter
+ * @returns {filter is RouteName}
  */
-const isName = (nameOrMatcher) =>
-	typeof nameOrMatcher === 'string' && /^[\da-zA-Z\-]+$/.test(nameOrMatcher);
+const isName = (filter) =>
+	typeof filter === 'string' && /^[\da-zA-Z\-]+$/.test(filter);
+
+
+/**
+ *
+ * @param {CallHistoryFilter} filter
+ * @returns {filter is (Matched| Unmatched| boolean)}
+ */
+const isMatchedOrUnmatched = (filter) =>
+	typeof filter === 'boolean' || /** @type {CallHistoryFilter[]}*/(['matched', 'unmatched']).includes(filter)
 
 class CallHistory {
-	constructor() {
+	/**
+	 * 
+	 * @param {FetchMockConfig} globalConfig 
+	 */
+	constructor(globalConfig) {
+		/** @type {CallLog[]} */
 		this.callLogs = [];
+		/** @type {Promise<any>[]} */
+		this.holdingPromises = []
+		this.config = globalConfig;
 	}
 	/**
 	 *
@@ -57,93 +81,94 @@ class CallHistory {
 
 	/**
 	 *
-	 * @param {NameOrMatcher} nameOrMatcher
+	 * @param {CallHistoryFilter} filter
 	 * @param {RouteOptions} options
 	 * @returns {CallLog[]}
 	 */
-	filterCalls(nameOrMatcher, options) {
+	filterCalls(filter, options) {
 		let calls = [...this.callLogs];
 		let matcher = '*';
 
-		if ([true, 'matched'].includes(nameOrMatcher)) {
-			calls = calls.filter(({ route }) => Boolean(route));
-		} else if ([false, 'unmatched'].includes(nameOrMatcher)) {
-			calls = calls.filter(({ route }) => !Boolean(route));
-		} else if (typeof nameOrMatcher === 'undefined') {
-		} else if (isName(nameOrMatcher)) {
-			calls = calls.filter(({ identifier }) => identifier === nameOrMatcher);
-		} else {
-			matcher = nameOrMatcher === '*' ? '*' : normalizeUrl(nameOrMatcher);
-			if (this.routes.some(({ identifier }) => identifier === matcher)) {
-				calls = calls.filter((call) => call.identifier === matcher);
+		if (isMatchedOrUnmatched(filter)) {
+
+			if (/** @type {CallHistoryFilter[]} */([true, 'matched']).includes(filter)) {
+				calls = calls.filter(({ route }) => Boolean(route));
+			} else if (/** @type {CallHistoryFilter[]} */([false, 'unmatched']).includes(filter)) {
+				calls = calls.filter(({ route }) => !Boolean(route));
 			}
+		} else if (isName(filter)) {
+			calls = calls.filter(({ route: {routeOptions: {name} }}) => name === filter);
+		} else {
+			const { matcher } = new Route(filter, 'ok', {...options});
+			calls = calls.filter(({ url, options }) => {
+				const { url: normalizedUrl, options: normalizedOptions, request } = normalizeRequest(
+					url,
+					options,
+					this.config.Request,
+				)
+				matcher(normalizedUrl, normalizedOptions, request)
+			}
+			);
 		}
 
 		return calls;
 	}
 	/**
 	 *
-	 * @param {NameOrMatcher} nameOrMatcher
+	 * @param {CallHistoryFilter} filter
 	 * @param {RouteOptions} options
 	 * @returns {CallLog[]}
 	 */
-	calls(nameOrMatcher, options) {
-		return this.filterCalls(nameOrMatcher, options);
+	calls(filter, options) {
+		return this.filterCalls(filter, options);
 	}
 	/**
 	 *
-	 * @param {NameOrMatcher} nameOrMatcher
+	 * @param {CallHistoryFilter} filter
 	 * @param {RouteOptions} options
 	 * @returns {Boolean}
 	 */
-	called(nameOrMatcher, options) {
-		return Boolean(this.calls(nameOrMatcher, options).length);
+	called(filter, options) {
+		return Boolean(this.calls(filter, options).length);
 	}
 	/**
 	 *
-	 * @param {NameOrMatcher} nameOrMatcher
+	 * @param {CallHistoryFilter} filter
 	 * @param {RouteOptions} options
 	 * @returns {CallLog}
 	 */
-	lastCall(nameOrMatcher, options) {
-		return this.filterCalls(nameOrMatcher, options).pop();
+	lastCall(filter, options) {
+		return this.filterCalls(filter, options).pop();
 	}
 	/**
 	 *
-	 * @param {NameOrMatcher} nameOrMatcher
-	 * @param {RouteOptions} options
+	 * @param {RouteName[]} [routeNames]
 	 * @returns {Boolean}
 	 */
-	done(nameOrMatcher) {
-		let routesToCheck;
-
-		if (nameOrMatcher && typeof nameOrMatcher !== 'boolean') {
-			routesToCheck = [{ identifier: nameOrMatcher }];
-		} else {
-			routesToCheck = this.routes;
-		}
-
+	done(routeNames, allRoutes) {
+		const routesToCheck = routeNames ? allRoutes.filter(({ routeOptions: name }) => routeNames.includes(name)):  allRoutes;
+		// TODO when checking all routes needs to check against all calls
 		// Can't use array.every because would exit after first failure, which would
 		// break the logging
 		const result = routesToCheck
-			.map(({ identifier }) => {
-				if (!this.called(identifier)) {
-					console.warn(`Warning: ${identifier} not called`); // eslint-disable-line
+			.map(({ name }) => {
+				if (!this.called(name)) {
+					console.warn(`Warning: ${name} not called`); // eslint-disable-line
 					return false;
 				}
 
 				const expectedTimes = (
-					this.routes.find((r) => r.identifier === identifier) || {}
+					allRoutes.find((r) => r.name === name) || {}
 				).repeat;
 
 				if (!expectedTimes) {
 					return true;
 				}
-				const actualTimes = this.filterCalls(identifier).length;
+				const actualTimes = this.filterCalls(name).length;
 
 				if (expectedTimes > actualTimes) {
 					console.warn(
-						`Warning: ${identifier} only called ${actualTimes} times, but ${expectedTimes} expected`,
+						`Warning: ${name} only called ${actualTimes} times, but ${expectedTimes} expected`,
 					); // eslint-disable-line
 					return false;
 				}

@@ -1,4 +1,6 @@
 //@type-check
+/** @typedef {import('./Route').RouteOptions} RouteOptions */
+/** @typedef {import('./RequestUtils').NormalizedRequestOptions} NormalizedRequestOptions */
 import glob from 'glob-to-regexp';
 import pathToRegexp from 'path-to-regexp';
 import querystring from 'querystring';
@@ -13,10 +15,10 @@ import {
 import Route from './Route.js';
 
 /** @typedef {string | RegExp | URL} RouteMatcherUrl */
-/** @typedef {function(url: string): boolean} UrlMatcher */
-/** @typedef {function(pattern: string): UrlMatcher} UrlMatcherGenerator */
-/** @typedef {function(url: string, opts: NormalizedRequestOptions, request: Request): boolean} RouteMatcherFunction */
-/** @typedef {function(route: RouteOptions): RouteMatcherFunction} MatcherGenerator */
+/** @typedef {function(string): boolean} UrlMatcher */
+/** @typedef {function(string): UrlMatcher} UrlMatcherGenerator */
+/** @typedef {function(string, NormalizedRequestOptions, Request): boolean} RouteMatcherFunction */
+/** @typedef {function(RouteOptions): RouteMatcherFunction} MatcherGenerator */
 /** @typedef {RouteMatcherUrl | RouteMatcherFunction} RouteMatcher */
 
 /**

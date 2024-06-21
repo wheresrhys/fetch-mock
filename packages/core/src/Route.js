@@ -1,5 +1,9 @@
 //@type-check
 import builtInMatchers from './Matchers.js';
+/** @typedef {import('./Matchers').RouteMatcher} RouteMatcher */
+/** @typedef {import('./Matchers').RouteMatcherFunction} RouteMatcherFunction */
+/** @typedef {import('./Matchers').RouteMatcherUrl} RouteMatcherUrl */
+
 /**
  * @typedef RouteResponseObject {
  * @property {string | {}} [body]
@@ -9,14 +13,16 @@ import builtInMatchers from './Matchers.js';
  * @property {string} [redirectUrl]
  */
 
-/** @typedef {Response| RouteResponseObject | number| string | Object }  RouteReponseData */
-/** @typedef {Promise<RouteReponseData>}  RouteResponsePromise */
-/** @typedef  {function(url: string, opts: RouteRequest): (RouteResponseData|RouteResponsePromise)} RouteResponseFunction */
+/** @typedef {Response| RouteResponseObject | number| string | Object }  RouteResponseData */
+/** @typedef {Promise<RouteResponseData>}  RouteResponsePromise */
+/** @typedef {function(string, RequestInit): (RouteResponseData|RouteResponsePromise)} RouteResponseFunction */
 /** @typedef {RouteResponseData | RouteResponsePromise | RouteResponseFunction} RouteResponse*/
+
+/** @typedef {string} RouteName */
 
 /**
  * @typedef RouteOptions
- * @property {string} [name]
+ * @property {RouteName} [name]
  * @property {string} [method]
  * @property {{ [key: string]: string | number }} [headers]
  * @property {{ [key: string]: string }} [query]
@@ -83,7 +89,7 @@ class Route {
 	 * @param {RouteOptions | string} [options]
 	 * @param {FetchMockConfig} [globalConfig]
 	 */
-	constructor(matcher, response, options, globalConfig) {
+	constructor(matcher, response, options, globalConfig = {}) {
 		this.globalConfig = globalConfig;
 		this.routeOptions = this.globalConfig;
 		this.originalInput = { matcher, response, options };

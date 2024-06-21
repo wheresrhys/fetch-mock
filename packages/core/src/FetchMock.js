@@ -35,7 +35,7 @@ const FetchMock = {
 	createInstance() {
 		const instance = Object.create(FetchMock);
 		instance.router = new Router(this.config, this.router.routes);
-		instance.callHistory = new CallHistory();
+		instance.callHistory = new CallHistory(this.config);
 		return instance;
 	},
 	/**
@@ -87,6 +87,9 @@ const FetchMock = {
 	flush(waitForResponseBody) {
 		return this.callHistory.flush(waitForResponseBody);
 	},
+	done(routeNames) {
+		return this.callHistory.done(routeNames, this.router.routes)
+	}
 };
 
 const defineShorthand = (methodName, underlyingMethod, shorthandOptions) => {

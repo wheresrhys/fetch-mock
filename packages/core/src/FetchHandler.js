@@ -2,6 +2,7 @@
 /** @typedef {import('./Route')} Route */
 /** @typedef {import('./CallHistory').CallLog} CallLog */
 /** @typedef {import('./FetchMock')} FetchMock */
+/** @typedef {import('./FetchMock').FetchHandler} FetchHandler */
 /** @typedef {import('./Route').RouteOptions} RouteOptions */
 /** @typedef {import('./Route').RouteResponse} RouteResponse */
 /** @typedef {import('./Route').RouteResponseFunction} RouteResponseFunction */
@@ -83,12 +84,8 @@ const generateResponse = async ({
 	return finalResponse;
 };
 /**
- *
- * @param {string | Request} requestInput
- * @param {RequestInit} [requestInit]
- * @this {FetchMock}
- * @returns {Promise<Response>}
- */
+ * @type {FetchHandler}
+*/
 const fetchHandler = async function (requestInput, requestInit) {
 	const normalizedRequest = requestUtils.normalizeRequest(
 		requestInput,

@@ -74,11 +74,23 @@ export default class Router {
 	}
 
 	/**
-	 * @param {RouteArgs} routeArgs
-	 * @returns {void}
+	 * @overload
+	 * @param {RouteOptions} matcher
 	 */
-	addRoute(...routeArgs) {
-		const [matcher, response, options] = routeArgs;
+
+	/**
+	 * @overload
+	 * @param {RouteMatcher } matcher
+	 * @param {RouteResponse} response
+	 * @param {RouteOptions | string} [options]
+	 */
+
+	/**
+	 * @param {RouteMatcher | RouteOptions} matcher
+	 * @param {RouteResponse} [response]
+	 * @param {RouteOptions | string} [options]
+	 */
+	addRoute(matcher, response, options) {
 		const route = new Route({matcher, response, options}, this.config);
 		if (
 			route.routeOptions.name &&

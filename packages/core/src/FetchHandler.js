@@ -84,8 +84,12 @@ const generateResponse = async ({
 	return finalResponse;
 };
 /**
- * @type {FetchHandler}
-*/
+ *
+ * @param {string | Request} requestInput
+ * @param {RequestInit} [requestInit]
+ * @this {FetchMock}
+ * @returns {Promise<Response>}
+ */
 const fetchHandler = async function (requestInput, requestInit) {
 	const normalizedRequest = requestUtils.normalizeRequest(
 		requestInput,

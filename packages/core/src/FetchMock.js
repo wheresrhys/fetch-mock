@@ -3,7 +3,10 @@ import fetchHandler from './FetchHandler.js';
 import Router from './Router.js';
 import Route from './Route.js';
 import CallHistory from './CallHistory.js';
-/** @typedef {import('./Router').RouteArgs} RouteArgs */
+/** @typedef {import('./Router').RouteMatcher} RouteMatcher */
+/** @typedef {import('./Router').RouteOptions} RouteOptions */
+/** @typedef {import('./Router').RouteResponse} RouteResponse */
+/** @typedef {import('./Matchers').MatcherDefinition} MatcherDefinition */
 /**
  * @typedef FetchMockConfig
  * @prop {boolean} [sendAsJson]
@@ -26,14 +29,6 @@ const defaultConfig = {
 	fetch: globalThis.fetch,
 };
 
-/**
- * @typedef {function} FetchHandler
- * @param {string | Request} requestInput
- * @param {RequestInit} [requestInit]
- * @this {FetchMock}
- * @returns {Promise<Response>}
- */
-
 /** 
  * @typedef FetchMockCore 
  * @this {FetchMock} 
@@ -41,11 +36,12 @@ const defaultConfig = {
  * @prop {Router} router
  * @prop {CallHistory} callHistory
  * @prop {function():FetchMock} createInstance
- * @prop {FetchHandler} fetchHandler
+ * @prop {function(string | Request, RequestInit): Promise<Response>} fetchHandler
  * @prop {function(...RouteArgs): FetchMock} route
  * @prop {function(RouteResponse=): FetchMock} catch
  * @prop {function(MatcherDefinition):void} defineMatcher
  */
+
 
 
 
@@ -62,9 +58,29 @@ const FetchMock = {
 		instance.callHistory = new CallHistory(this.config);
 		return instance;
 	},
+	/**
+	 * @this {FetchMock}
+	 */
 	fetchHandler(requestInput, requestInit) {
 		return fetchHandler.call(this, requestInput, requestInit);
 	},
+	/**
+	 * @overload
+	 * @param {RouteOptions} matcher
+	 */
+
+	/**
+	 * @overload
+	 * @param {RouteMatcher } matcher
+	 * @param {RouteResponse} response
+	 * @param {RouteOptions | string} [options]
+	 */
+
+	/**
+	 * @param {RouteMatcher | RouteOptions} matcher
+	 * @param {RouteResponse} [response]
+	 * @param {RouteOptions | string} [options]
+	 */
 	route(matcher, response, options) {
 		this.router.addRoute(matcher, response, options);
 		return this;
@@ -98,6 +114,23 @@ const PresetRoutes = {}
  * @param {RouteOptions} shorthandOptions 
  */
 const defineShorthand = (methodName, underlyingMethod, shorthandOptions) => {
+	/**
+	 * @overload
+	 * @param {RouteOptions} matcher
+	 */
+
+	/**
+	 * @overload
+	 * @param {RouteMatcher } matcher
+	 * @param {RouteResponse} response
+	 * @param {RouteOptions | string} [options]
+	 */
+
+	/**
+	 * @param {RouteMatcher | RouteOptions} matcher
+	 * @param {RouteResponse} [response]
+	 * @param {RouteOptions | string} [options]
+	 */
 	PresetRoutes[methodName] = function (matcher, response, options) {
 		return this[underlyingMethod](
 			matcher,
@@ -112,6 +145,11 @@ const defineShorthand = (methodName, underlyingMethod, shorthandOptions) => {
  * @param {string} underlyingMethod 
  */
 const defineGreedyShorthand = (methodName, underlyingMethod) => {
+	/**
+	 * @overload
+	 * @param {RouteResponse} response
+	 * @param {RouteOptions | string} [options]
+	 */
 	PresetRoutes[methodName] = function (response, options) {
 		return this[underlyingMethod]({}, response, options);
 	};
@@ -129,8 +167,8 @@ defineGreedyShorthand('anyOnce', 'once');
 	defineGreedyShorthand(/** @type {PresetRouteMethodName} */(`${method}AnyOnce`), `${method}Once`);
 });
 
-/** @typedef {FetchMockCore & PresetRoutes} FetchMock*/
 
+/** @typedef {FetchMockCore & PresetRoutes} FetchMock*/
 Object.assign(FetchMock, PresetRoutes)
 
 export default FetchMock.createInstance();

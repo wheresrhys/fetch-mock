@@ -117,13 +117,11 @@ export function getQuery(url) {
 	return u.search ? u.search.substr(1) : '';
 }
 
-
-// TODO: Headers need sme serious work!!!
 /**
-	 * 
-	 * @param {Headers | Object.<string, string | number>} headers 
-	 * @returns {Object.<string, string>}
-	 */
+ * 
+ * @param {Headers | [string, string][] | Record < string, string > | Object.<string, string | number>} headers 
+ * @returns {Object.<string, string>}
+ */
 export const normalizeHeaders = (headers) => {
 		const entries = (headers instanceof Headers) ? [...headers.entries()] : Object.entries(headers)
 		return Object.fromEntries(

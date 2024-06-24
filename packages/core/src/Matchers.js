@@ -13,7 +13,24 @@ import {
 	getQuery,
 	normalizeUrl,
 } from './RequestUtils.js';
-import Route from './Route.js';
+
+
+/**
+ * @param {RouteMatcher | RouteOptions} matcher
+ * @returns {matcher is RouteMatcherUrl}
+ */
+export const isUrlMatcher = (matcher) =>
+	matcher instanceof RegExp ||
+	typeof matcher === 'string' ||
+	(typeof matcher === 'object' && 'href' in matcher);
+
+/**
+ *
+ * @param {RouteMatcher| RouteOptions} matcher
+ * @returns {matcher is RouteMatcherFunction}
+ */
+export const isFunctionMatcher = (matcher) => typeof matcher === 'function';
+
 
 /** @typedef {string | RegExp | URL} RouteMatcherUrl */
 /** @typedef {function(string): boolean} UrlMatcher */
@@ -210,7 +227,7 @@ const getUrlMatcher = (route) => {
 };
 
 /** @type {MatcherDefinition[]} */
-export default [
+export const builtInMatchers = [
 	{ name: 'query', matcher: getQueryStringMatcher },
 	{ name: 'method', matcher: getMethodMatcher },
 	{ name: 'headers', matcher: getHeaderMatcher },

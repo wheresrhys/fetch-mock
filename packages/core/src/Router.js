@@ -1,5 +1,6 @@
 //@type-check
 import Route from './Route.js';
+import { isUrlMatcher, isFunctionMatcher } from './Matchers.js';
 /** @typedef {import('./Route').RouteOptions} RouteOptions */
 /** @typedef {import('./Route').RouteResponse} RouteResponse */
 /** @typedef {import('./Matchers').RouteMatcher} RouteMatcher */
@@ -8,6 +9,15 @@ import Route from './Route.js';
 /** @typedef {import('./RequestUtils').NormalizedRequest} NormalizedRequest */
 /** @typedef {import('./CallHistory').CallLog} CallLog */
 /** @typedef {[RouteOptions] | [RouteMatcher, RouteResponse,( RouteOptions | string) | [RouteMatcher, RouteResponse]} RouteArgs */
+
+
+/**
+ *
+ * @param {RouteOptions | string} options
+ * @returns {RouteOptions}
+ */
+const nameToOptions = (options) =>
+	typeof options === 'string' ? { name: options } : options;
 
 
 export default class Router {
@@ -76,22 +86,49 @@ export default class Router {
 	/**
 	 * @overload
 	 * @param {RouteOptions} matcher
+	 * @returns {void}
 	 */
 
 	/**
 	 * @overload
 	 * @param {RouteMatcher } matcher
 	 * @param {RouteResponse} response
-	 * @param {RouteOptions | string} [options]
+	 * @param {RouteOptions | string} [nameOrOptions]
+	 * @returns {void}
 	 */
 
 	/**
 	 * @param {RouteMatcher | RouteOptions} matcher
 	 * @param {RouteResponse} [response]
-	 * @param {RouteOptions | string} [options]
+	 * @param {RouteOptions | string} [nameOrOptions]
+	 * @returns {void}
 	 */
-	addRoute(matcher, response, options) {
-		const route = new Route({matcher, response, options}, this.config);
+	addRoute(matcher, response, nameOrOptions) {
+		/** @type {RouteOptions} */
+		const routeOptions = {};
+		if (isUrlMatcher(matcher) || isFunctionMatcher(matcher)) {
+			routeOptions.matcher = matcher;
+		} else {
+			Object.assign(routeOptions, matcher);
+		}
+
+		if (typeof response !== 'undefined') {
+			routeOptions.response = response;
+		}
+
+		if (nameOrOptions) {
+			Object.assign(
+				routeOptions,
+				typeof nameOrOptions === 'string'
+					? nameToOptions(nameOrOptions)
+					: nameOrOptions,
+			);
+		}
+
+		const route = new Route({
+			...this.config, ...routeOptions
+		});
+
 		if (
 			route.routeOptions.name &&
 			this.routes.some(({ routeOptions: {name: existingName }}) => route.routeOptions.name === existingName)
@@ -111,7 +148,7 @@ export default class Router {
 				'calling fetchMock.catch() twice - are you sure you want to overwrite the previous fallback response',
 			); // eslint-disable-line
 		}
-		this.fallbackRoute = new Route({matcher: '*', response: response || 'ok'}, this.config)
+		this.fallbackRoute = new Route({ matcher: '*', response: response || 'ok', ...this.config },)
 	}
 	/**
 	 *

@@ -1,5 +1,5 @@
 //@type-check
-import builtInMatchers from './Matchers.js';
+import {builtInMatchers, isUrlMatcher, isFunctionMatcher} from './Matchers.js';
 /** @typedef {import('./Matchers').RouteMatcher} RouteMatcher */
 /** @typedef {import('./Matchers').RouteMatcherFunction} RouteMatcherFunction */
 /** @typedef {import('./Matchers').RouteMatcherUrl} RouteMatcherUrl */
@@ -46,62 +46,16 @@ import builtInMatchers from './Matchers.js';
  * @prop {boolean} [usesBody]
  */
 
-/**
- * @param {RouteMatcher | RouteOptions} matcher
- * @returns {matcher is RouteMatcherUrl}
- */
-const isUrlMatcher = (matcher) =>
-	matcher instanceof RegExp ||
-	typeof matcher === 'string' ||
-	(typeof matcher === 'object' && 'href' in matcher);
-
-/**
- *
- * @param {RouteMatcher| RouteOptions} matcher
- * @returns {matcher is RouteMatcherFunction}
- */
-const isFunctionMatcher = (matcher) => typeof matcher === 'function';
-
-/**
- *
- * @param {RouteOptions | string} options
- * @returns {RouteOptions}
- */
-const nameToOptions = (options) =>
-	typeof options === 'string' ? { name: options } : options;
 
 /** 
  * @class Route 
  */
 class Route {
-	
 	/**
-	 * @overload
-	 * @param {Object} originalInput
-	 * @param {RouteOptions} originalInput.matcher
-	 * @param {FetchMockConfig} globalConfig
+	 * @param {RouteOptions} options
 	 */
-
-	/**
-	 * @overload
-	 * @param {Object} originalInput
-	 * @param {RouteMatcher } originalInput.matcher
-	 * @param {RouteResponse} originalInput.response
-	 * @param {RouteOptions | string} [originalInput.options]
-	 * @param {FetchMockConfig} globalConfig
-	 */
-
-	/**
-	 * @param {Object} originalInput
-	 * @param {RouteMatcher | RouteOptions} originalInput.matcher
-	 * @param {RouteResponse} [originalInput.response]
-	 * @param {RouteOptions | string} [originalInput.options]
-	 * @param {FetchMockConfig} globalConfig
-	 */
-	constructor(originalInput, globalConfig) {
-		this.globalConfig = globalConfig;
-		this.routeOptions = this.globalConfig;
-		this.originalInput = originalInput;
+	constructor(options) {
+		this.routeOptions = options;
 		this.#init();
 		this.#sanitize();
 		this.#validate();
@@ -128,36 +82,6 @@ class Route {
 				"fetch-mock: Each route must specify some criteria for matching calls to fetch. To match all calls use '*'",
 			);
 		}
-	}
-	/**
-	 * @returns {void}
-	 */
-	#init() {
-		const { matcher, response, options: nameOrOptions } = this.originalInput;
-		/** @type {RouteOptions} */
-		const routeOptions = {};
-
-		if (isUrlMatcher(matcher) || isFunctionMatcher(matcher)) {
-			routeOptions.matcher = matcher;
-		} else {
-			Object.assign(routeOptions, matcher);
-		}
-
-		if (typeof response !== 'undefined') {
-			routeOptions.response = response;
-		}
-
-		if (nameOrOptions) {
-			Object.assign(
-				routeOptions,
-				typeof nameOrOptions === 'string'
-					? nameToOptions(nameOrOptions)
-					: nameOrOptions,
-			);
-		}
-		
-		this.routeOptions = {
-			...this.globalConfig, ...routeOptions};
 	}
 	/**
 	 * @returns {void}

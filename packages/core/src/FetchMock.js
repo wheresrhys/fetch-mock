@@ -1,13 +1,16 @@
 //@type-check
-import fetchHandler from './FetchHandler.js';
 import Router from './Router.js';
 import Route from './Route.js';
 import CallHistory from './CallHistory.js';
+import * as requestUtils from './RequestUtils.js';
 /** @typedef {import('./Router').RouteMatcher} RouteMatcher */
 /** @typedef {import('./Route').RouteName} RouteName */
 /** @typedef {import('./Router').RouteConfig} RouteConfig */
 /** @typedef {import('./Router').RouteResponse} RouteResponse */
 /** @typedef {import('./Matchers').MatcherDefinition} MatcherDefinition */
+/** @typedef {import('./CallHistory').CallLog} CallLog */
+/** @typedef {import('./Route').RouteResponseFunction} RouteResponseFunction */
+
 /**
  * @typedef FetchMockConfig
  * @prop {boolean} [sendAsJson]
@@ -44,9 +47,6 @@ const defaultConfig = {
  * @prop {function(MatcherDefinition):void} defineMatcher
  */
 
-
-
-
 /** @type {FetchMockCore} */
 const FetchMock = {
 	config: defaultConfig,
@@ -61,10 +61,53 @@ const FetchMock = {
 		return instance;
 	},
 	/**
+	 *
+	 * @param {string | Request} requestInput
+	 * @param {RequestInit} [requestInit]
 	 * @this {FetchMock}
+	 * @returns {Promise<Response>}
 	 */
-	fetchHandler(requestInput, requestInit) {
-		return fetchHandler.call(this, requestInput, requestInit);
+	async fetchHandler (requestInput, requestInit) {
+		const normalizedRequest = requestUtils.normalizeRequest(
+			requestInput,
+			requestInit,
+			this.config.Request,
+		);
+		const { url, options, request, signal } = normalizedRequest;
+
+		if (signal) {
+			const abort = () => {
+				done();
+				throw new DOMException('The operation was aborted.', 'AbortError');
+			};
+			if (signal.aborted) {
+				abort();
+			}
+			signal.addEventListener('abort', abort);
+		}
+
+		if (this.router.needsToReadBody(options)) {
+			options.body = await options.body;
+		}
+
+		const { callLog, response } = this.router.execute(normalizedRequest);
+		// TODO log the call IMMEDIATELY and then route gradually adds to it
+		this.callHistory.recordCall(callLog);
+
+		// this is used to power the .flush() method
+		/** @type {function(any): void} */
+		let done;
+
+		// TODO holding promises should be attached to each callLog
+		this.callHistory.addHoldingPromise(
+			new Promise((res) => {
+				done = res;
+			}),
+		);
+
+		response.then(done, done);
+
+		return response;
 	},
 	/**
 	 * @overload
@@ -187,6 +230,3 @@ defineGreedyShorthand('anyOnce', 'once');
 Object.assign(FetchMock, PresetRoutes)
 
 export default FetchMock.createInstance();
-
-
-

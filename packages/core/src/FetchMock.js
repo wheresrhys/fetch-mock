@@ -5,7 +5,7 @@ import CallHistory from './CallHistory.js';
 import * as requestUtils from './RequestUtils.js';
 /** @typedef {import('./Router').RouteMatcher} RouteMatcher */
 /** @typedef {import('./Route').RouteName} RouteName */
-/** @typedef {import('./Router').RouteConfig} RouteConfig */
+/** @typedef {import('./Route').UserRouteConfig} UserRouteConfig */
 /** @typedef {import('./Router').RouteResponse} RouteResponse */
 /** @typedef {import('./Matchers').MatcherDefinition} MatcherDefinition */
 /** @typedef {import('./CallHistory').CallLog} CallLog */
@@ -17,9 +17,9 @@ import * as requestUtils from './RequestUtils.js';
  * @prop {boolean} [includeContentLength]
  * @prop {boolean} [warnOnFallback]
  * @prop {function(string | Request, RequestInit): Promise<Response>} [fetch]
- * @prop {new () => Headers} [Headers]
+ * @prop {typeof Headers} [Headers]
  * @prop {typeof Request} [Request]
- * @prop {new () => Response} [Response]
+ * @prop {typeof Response} [Response]
  */
 
 /** @type {FetchMockConfig} */
@@ -111,7 +111,7 @@ const FetchMock = {
 	},
 	/**
 	 * @overload
-	 * @param {RouteConfig} matcher
+	 * @param {UserRouteConfig} matcher
 	 * @this {FetchMock}
 	 * @returns {FetchMock}
 	 */
@@ -120,15 +120,15 @@ const FetchMock = {
 	 * @overload
 	 * @param {RouteMatcher } matcher
 	 * @param {RouteResponse} response
-	 * @param {RouteConfig | string} [options]
+	 * @param {UserRouteConfig | string} [options]
 	 * @this {FetchMock}
 	 * @returns {FetchMock}
 	 */
 
 	/**
-	 * @param {RouteMatcher | RouteConfig} matcher
+	 * @param {RouteMatcher | UserRouteConfig} matcher
 	 * @param {RouteResponse} [response]
-	 * @param {RouteConfig | string} [options]
+	 * @param {UserRouteConfig | string} [options]
 	 * @this {FetchMock}
 	 * @returns {FetchMock}
 	 */
@@ -162,12 +162,12 @@ const PresetRoutes = {}
  * 
  * @param {PresetRouteMethodName} methodName 
  * @param {string} underlyingMethod 
- * @param {RouteConfig} shorthandOptions 
+ * @param {UserRouteConfig} shorthandOptions 
  */
 const defineShorthand = (methodName, underlyingMethod, shorthandOptions) => {
 	/**
 	 * @overload
-	 * @param {RouteConfig} matcher
+	 * @param {UserRouteConfig} matcher
 	 * @this {FetchMock}
 	 * @returns {FetchMock}
 	 */
@@ -176,15 +176,15 @@ const defineShorthand = (methodName, underlyingMethod, shorthandOptions) => {
 	 * @overload
 	 * @param {RouteMatcher } matcher
 	 * @param {RouteResponse} response
-	 * @param {RouteConfig | string} [options]
+	 * @param {UserRouteConfig | string} [options]
 	 * @this {FetchMock}
 	 * @returns {FetchMock}
 	 */
 
 	/**
-	 * @param {RouteMatcher | RouteConfig} matcher
+	 * @param {RouteMatcher | UserRouteConfig} matcher
 	 * @param {RouteResponse} [response]
-	 * @param {RouteConfig | string} [options]
+	 * @param {UserRouteConfig | string} [options]
 	 * @this {FetchMock}
 	 * @returns {FetchMock}
 	 */
@@ -204,7 +204,7 @@ const defineShorthand = (methodName, underlyingMethod, shorthandOptions) => {
 const defineGreedyShorthand = (methodName, underlyingMethod) => {
 	/**
 	 * @param {RouteResponse} response
-	 * @param {RouteConfig | string} [options]
+	 * @param {UserRouteConfig | string} [options]
 	 * @this {FetchMock}
 	 * @returns {FetchMock}
 	 */

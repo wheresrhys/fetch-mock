@@ -1,10 +1,11 @@
 //@type-check
 import Route from './Route.js';
 import { isUrlMatcher, isFunctionMatcher } from './Matchers.js';
-import { buildResponse } from './ResponseBuilder.js';
+/** @typedef {import('./Route').UserRouteConfig} UserRouteConfig */
 /** @typedef {import('./Route').RouteConfig} RouteConfig */
 /** @typedef {import('./Route').RouteResponse} RouteResponse */
 /** @typedef {import('./Route').RouteResponseData} RouteResponseData */
+/** @typedef {import('./Route').RouteResponseObjectData} RouteResponseObjectData */
 /** @typedef {import('./Route').RouteResponseConfig} RouteResponseConfig */
 /** @typedef {import('./Route').RouteResponseFunction} RouteResponseFunction */
 /** @typedef {import('./Matchers').RouteMatcher} RouteMatcher */
@@ -54,17 +55,17 @@ function normalizeResponseInput(responseInput) {
 			body: responseInput,
 		};
 	}
-	return responseInput;
+	return /** @type{RouteResponseConfig} */(responseInput);
 }
 
 /**
- * 
- * @param {RouteResponseData} responseInput 
+ *
+ * @param {RouteResponseData} responseInput
  * @returns {boolean}
  */
 function shouldSendAsObject(responseInput) {
 	// TODO improve this... make it less hacky and magic
-	if (responseConfigProps.some((prop) => responseInput[prop])) {
+	if (responseConfigProps.some((prop) => /** @type {RouteResponseObjectData}*/(responseInput)[prop])) {
 		if (
 			Object.keys(responseInput).every((key) =>
 				responseConfigProps.includes(key),
@@ -182,58 +183,70 @@ export default class Router {
 			normalizedRequest
 		);
 
-		// If the response says to throw an error, throw it
-		if (responseInput.throws) {
-			throw responseInput.throws;
-		}
-
 		// If the response is a pre-made Response, respond with it
 		if (responseInput instanceof Response) {
 			callLog.response = responseInput;
 			return responseInput;
+		} 
+
+		const responseConfig = normalizeResponseInput(responseInput)
+
+		// If the response says to throw an error, throw it
+		if (responseConfig.throws) {
+			throw responseConfig.throws;
 		}
 
-		responseInput = normalizeResponseInput(responseInput)
+		const response = route.constructResponse(responseConfig);
 
-		const response = route.constructResponse(responseInput);
-
-			//TODO callhistory and holding promises
+		//TODO callhistory and holding promises
 		callLog.response = response;
-
-		return this.buildObservableResponse(response);
+		return this.createObservableResponse(response, responseConfig, normalizedRequest.url);
 	}
-
-	buildObservableResponse(response) {
-		const { fetchMock } = this;
+	/**
+	 * 
+	 * @param {Response} response 
+	 * @param {RouteResponseConfig} responseConfig
+	 * @param {string} responseUrl
+	 * @returns {Response}
+	 */
+	createObservableResponse(response, responseConfig, responseUrl) {
 		response._fmResults = {};
 		// Using a proxy means we can set properties that may not be writable on
 		// the original Response. It also means we can track the resolution of
 		// promises returned by res.json(), res.text() etc
 		return new Proxy(response, {
 			get: (originalResponse, name) => {
-				if (this.responseConfig.redirectUrl) {
+				if (responseConfig.redirectUrl) {
 					if (name === 'url') {
-						return this.responseConfig.redirectUrl;
+						return responseConfig.redirectUrl;
 					}
 
 					if (name === 'redirected') {
 						return true;
 					}
+				} else {
+					if (name === 'url') {
+						return responseUrl;
+					}
+					if (name === 'redirected') {
+						return false;
+					}
 				}
-
-				if (typeof originalResponse[name] === 'function') {
-					return new Proxy(originalResponse[name], {
+				//@ts-ignore
+				if (typeof response[name] === 'function') {
+					//@ts-ignore
+					return new Proxy(response[name], {
 						apply: (func, thisArg, args) => {
 							const result = func.apply(response, args);
 							if (result.then) {
 								this.callHistory.addHoldingPromise(result.catch(() => null));
-								originalResponse._fmResults[name] = result;
+								response._fmResults[name] = result;
 							}
 							return result;
 						},
 					});
 				}
-
+				//@ts-ignore
 				return originalResponse[name];
 			},
 		});
@@ -244,7 +257,7 @@ export default class Router {
 
 	/**
 	 * @overload
-	 * @param {RouteConfig} matcher
+	 * @param {UserRouteConfig} matcher
 	 * @returns {void}
 	 */
 
@@ -252,14 +265,14 @@ export default class Router {
 	 * @overload
 	 * @param {RouteMatcher } matcher
 	 * @param {RouteResponse} response
-	 * @param {RouteConfig | string} [nameOrOptions]
+	 * @param {UserRouteConfig | string} [nameOrOptions]
 	 * @returns {void}
 	 */
 
 	/**
-	 * @param {RouteMatcher | RouteConfig} matcher
+	 * @param {RouteMatcher | UserRouteConfig} matcher
 	 * @param {RouteResponse} [response]
-	 * @param {RouteConfig | string} [nameOrOptions]
+	 * @param {UserRouteConfig | string} [nameOrOptions]
 	 * @returns {void}
 	 */
 	addRoute(matcher, response, nameOrOptions) {

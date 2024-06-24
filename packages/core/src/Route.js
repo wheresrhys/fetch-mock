@@ -1,5 +1,7 @@
 //@type-check
 import {builtInMatchers, isUrlMatcher, isFunctionMatcher} from './Matchers';
+import statusTextMap from './StatusTextMap';
+
 /** @typedef {import('./Matchers').RouteMatcher} RouteMatcher */
 /** @typedef {import('./Matchers').RouteMatcherFunction} RouteMatcherFunction */
 /** @typedef {import('./Matchers').RouteMatcherUrl} RouteMatcherUrl */
@@ -13,9 +15,11 @@ import {builtInMatchers, isUrlMatcher, isFunctionMatcher} from './Matchers';
  * @property {{ [key: string]: string }} [headers]
  * @property {Error} [throws]
  * @property {string} [redirectUrl]
+ * @property {ResponseInit} [options]
  */
 
-/** @typedef {Response| RouteResponseConfig | number| string | Object }  RouteResponseData */
+/** @typedef {RouteResponseConfig | Object }  RouteResponseObjectData */
+/** @typedef {Response | number| string | RouteResponseObjectData }  RouteResponseData */
 /** @typedef {Promise<RouteResponseData>}  RouteResponsePromise */
 /** @typedef {function(string, RequestInit, Request=): (RouteResponseData|RouteResponsePromise)} RouteResponseFunction */
 /** @typedef {RouteResponseData | RouteResponsePromise | RouteResponseFunction} RouteResponse*/
@@ -23,7 +27,7 @@ import {builtInMatchers, isUrlMatcher, isFunctionMatcher} from './Matchers';
 /** @typedef {string} RouteName */
 
 /**
- * @typedef RouteConfig
+ * @typedef UserRouteConfig
  * @property {RouteName} [name]
  * @property {string} [method]
  * @property {{ [key: string]: string | number  }} [headers]
@@ -33,19 +37,24 @@ import {builtInMatchers, isUrlMatcher, isFunctionMatcher} from './Matchers';
  * @property {RouteMatcherFunction} [functionMatcher]
  * @property {RouteMatcher} [matcher]
  * @property {RouteMatcherUrl} [url]
- * @property {boolean} [overwriteRoutes]
  * @prop {RouteResponse | RouteResponseFunction} [response]
  * @prop {number} [repeat]
  * @prop {number} [delay]
- * @prop {boolean} [sendAsJson]
- * @prop {boolean} [includeContentLength]
- * @prop {boolean} [matchPartialBody]
+ * @prop {boolean} [sendAsJson] - TODO this is global
+ * @prop {boolean} [includeContentLength] - TODO this is global
+ * @prop {boolean} [matchPartialBody] - TODO this is global
  * @prop {boolean} [sticky]
- * @prop {boolean} [usesBody]
+ * @prop {boolean} [usesBody] - TODO this shoudl not be in user config
  * @prop {boolean} [isFallback]
  */
 
+/** @typedef {UserRouteConfig & FetchMockConfig} RouteConfig*/
 
+/**
+ * 
+ * @param {number} status 
+ * @returns {number}
+ */
 function sanitizeStatus(status) {
 	if (!status) {
 		return 200;
@@ -175,6 +184,11 @@ class Route {
 		}
 	}
 
+	/**
+	 * 
+	 * @param {RouteResponseConfig} responseInput 
+	 * @returns {Response}
+	 */
 	constructResponse(responseInput) {
 		const responseOptions = this.constructResponseOptions(responseInput);
 		const body = this.constructResponseBody(responseInput, responseOptions);
@@ -184,12 +198,15 @@ class Route {
 			responseOptions,
 		);
 	}
-
+	/**
+	 * 
+	 * @param {RouteResponseConfig} responseInput 
+	 * @returns {ResponseInit}
+	 */
 	constructResponseOptions(responseInput) {
 		const options = responseInput.options || {};
-		options.url = responseInput.redirectUrl || this.config.url;
 		options.status = sanitizeStatus(responseInput.status);
-		options.statusText = statusTextMap[String(options.status)];
+		options.statusText = statusTextMap[options.status];
 
 		// Set up response headers. The empty object is to cope with
 		// new Headers(undefined) throwing in Chrome
@@ -199,7 +216,12 @@ class Route {
 		);
 		return options;
 	}
-
+	/**
+	 * 
+	 * @param {RouteResponseConfig} responseInput 
+	 * @param {ResponseInit} responseOptions 
+	 * @returns 
+	 */
 	constructResponseBody(responseInput, responseOptions) {
 		// start to construct the body
 		let body = responseInput.body;
@@ -210,22 +232,20 @@ class Route {
 			typeof body === 'object'
 		) {
 			body = JSON.stringify(body);
-			if (!responseOptions.headers.has('Content-Type')) {
-				responseOptions.headers.set('Content-Type', 'application/json');
+			if (!/** @type {Headers} */(responseOptions.headers).has('Content-Type')) {
+				/** @type {Headers} */(responseOptions.headers).set('Content-Type', 'application/json');
 			}
 		}
-		this.setContentLength();
 		// add a Content-Length header if we need to
 		if (
 			this.config.includeContentLength &&
 			typeof body === 'string' &&
-			!responseOptions.headers.has('Content-Length')
+			!/** @type {Headers} */(responseOptions.headers).has('Content-Length')
 		) {
-			responseOptions.headers.set('Content-Length', body.length.toString());
+			/** @type {Headers} */(responseOptions.headers).set('Content-Length', body.length.toString());
 		}
 		return body
 	}
-
 	
 	/**
 	 * @param {MatcherDefinition} matcher

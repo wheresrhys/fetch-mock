@@ -29,17 +29,16 @@ const isPromise = response => typeof /** @type {Promise<any>} */(response).then 
 
 /**
  * @param {RouteResponse} response
- * @param {string} url
- * @param {RequestInit} options
- * @param {Request} request
+ * @param {NormalizedRequest} normalizedRequest
  * @returns
  */
 const resolveUntilResponseConfig = async (
 	response,
-	url,
-	options,
-	request,
+	normalizedRequest
 ) => {
+	const { url,
+		options,
+		request } = normalizedRequest
 	// We want to allow things like
 	// - function returning a Promise for a response
 	// - delaying (using a timeout Promise) a function's execution to generate
@@ -59,40 +58,6 @@ const resolveUntilResponseConfig = async (
 	}
 };
 
-/**
- *
- * @param {Object} input
- * @param {Route} input.route
- * @param {string} input.url
- * @param {RequestInit} input.options
- * @param {Request} [input.request]
- * @param {CallLog} input.callLog
- * @returns {Promise<Response>}
- */
-const generateResponse = async ({
-	route,
-	url,
-	options,
-	request,
-	callLog,
-}) => {
-	const response = await resolveUntilResponseConfig(
-		route.config.response,
-		url,
-		options,
-		request,
-	);
-
-	const [realResponse, finalResponse] = buildResponse({
-		url,
-		responseConfig: response,
-		route,
-	});
-
-	callLog.response = realResponse;
-
-	return finalResponse;
-};
 
 export default class Router {
 	/**
@@ -116,7 +81,8 @@ export default class Router {
 	 * @param {NormalizedRequest} normalizedRequest
 	 * @returns {{route: Route , callLog: CallLog, response: Promise<Response>}}
 	 */
-	execute({ url, options, request }) {
+	execute(normalizedRequest) {
+		const { url, options, request } = normalizedRequest;
 		const routesToTry = this.fallbackRoute ? [...this.routes, this.fallbackRoute]: this.routes 
 		const route = routesToTry.find((route) =>
 			route.matcher(url, options, request),
@@ -129,11 +95,9 @@ export default class Router {
 				request,
 				route,
 			}
-			const response = generateResponse({
+			const response = this.generateResponse({
 				route,
-				url,
-				options,
-				request,
+				normalizedRequest,
 				callLog,
 			});
 			return {
@@ -141,8 +105,6 @@ export default class Router {
 				route,
 				callLog,
 			};
-
-			
 		}
 
 		throw new Error(
@@ -151,6 +113,35 @@ export default class Router {
 			} to ${url}`,
 		);
 	}
+
+	/**
+	 *
+	 * @param {Object} input
+	 * @param {Route} input.route
+	 * @param {NormalizedRequest} input.normalizedRequest
+	 * @param {CallLog} input.callLog
+	 * @returns {Promise<Response>}
+	 */
+	async generateResponse ({
+		route,
+		normalizedRequest,
+		callLog,
+	}) {
+		const response = await resolveUntilResponseConfig(
+			route.config.response,
+			normalizedRequest
+		);
+
+		const [realResponse, finalResponse] = buildResponse({
+			url: normalizedRequest.url,
+			responseConfig: route.config.response,
+			route,
+		});
+
+		callLog.response = realResponse;
+
+		return finalResponse;
+	};
 
 	/**
 	 * @overload

@@ -3,6 +3,7 @@ import builtInMatchers from './Matchers.js';
 /** @typedef {import('./Matchers').RouteMatcher} RouteMatcher */
 /** @typedef {import('./Matchers').RouteMatcherFunction} RouteMatcherFunction */
 /** @typedef {import('./Matchers').RouteMatcherUrl} RouteMatcherUrl */
+/** @typedef {import('./Matchers').MatcherDefinition} MatcherDefinition */
 /** @typedef {import('./FetchMock').FetchMockConfig} FetchMockConfig */
 
 /**
@@ -20,6 +21,8 @@ import builtInMatchers from './Matchers.js';
 /** @typedef {RouteResponseData | RouteResponsePromise | RouteResponseFunction} RouteResponse*/
 
 /** @typedef {string} RouteName */
+
+
 
 /**
  * @typedef RouteOptions
@@ -45,7 +48,7 @@ import builtInMatchers from './Matchers.js';
 
 /**
  * @param {RouteMatcher | RouteOptions} matcher
- * @returns {boolean}
+ * @returns {matcher is RouteMatcherUrl}
  */
 const isUrlMatcher = (matcher) =>
 	matcher instanceof RegExp ||
@@ -55,7 +58,7 @@ const isUrlMatcher = (matcher) =>
 /**
  *
  * @param {RouteMatcher| RouteOptions} matcher
- * @returns Boolean
+ * @returns {matcher is RouteMatcherFunction}
  */
 const isFunctionMatcher = (matcher) => typeof matcher === 'function';
 
@@ -69,9 +72,9 @@ const nameToOptions = (options) =>
 
 /** 
  * @class Route 
- * @prop {RouteOptions} routeOptions
  */
 class Route {
+	
 	/**
 	 * @overload
 	 * @param {Object} originalInput
@@ -106,13 +109,12 @@ class Route {
 		this.#limit();
 		this.#delayResponse();
 	}
-	/**
-	 * @param {string} name 
-	 * @returns 
-	 */
-	getOption (name) {
-		return this.routeOptions[name]
-	}
+
+	/** @type {RouteOptions} */
+	routeOptions = {}
+	/** @type {RouteMatcherFunction=} */
+	matcher = null
+
 	/**
 	 * @returns {void}
 	 */
@@ -132,6 +134,7 @@ class Route {
 	 */
 	#init() {
 		const { matcher, response, options: nameOrOptions } = this.originalInput;
+		/** @type {RouteOptions} */
 		const routeOptions = {};
 
 		if (isUrlMatcher(matcher) || isFunctionMatcher(matcher)) {
@@ -152,24 +155,25 @@ class Route {
 					: nameOrOptions,
 			);
 		}
-		/** @type {RouteOptions} */
+		
 		this.routeOptions = {
-			...this.globalConfig, routeOptions};
+			...this.globalConfig, ...routeOptions};
 	}
 	/**
 	 * @returns {void}
 	 */
 	#sanitize() {
 		if (this.routeOptions.method) {
-			this.routeOptions.method = this.routeOptions.toLowerCase();
+			this.routeOptions.method = this.routeOptions.method.toLowerCase();
 		}
 		if (isUrlMatcher(this.routeOptions.matcher)) {
 			this.routeOptions.url = this.routeOptions.matcher;
 			delete this.routeOptions.matcher;
 		}
-
-		this.routeOptions.functionMatcher =
-			this.routeOptions.matcher || this.routeOptions.functionMatcher;
+		if (isFunctionMatcher(this.routeOptions.matcher)) {
+			this.routeOptions.functionMatcher = this.routeOptions.matcher;
+		}
+		
 	}
 	/**
 	 * @returns {void}
@@ -197,10 +201,10 @@ class Route {
 		if (!this.routeOptions.repeat) {
 			return;
 		}
-		const { matcher } = this.routeOptions;
+		const originalMatcher = this.matcher;
 		let timesLeft = this.routeOptions.repeat;
-		this.matcher = (url, options) => {
-			const match = timesLeft && matcher(url, options);
+		this.matcher = (url, options, request) => {
+			const match = timesLeft && originalMatcher(url, options, request);
 			if (match) {
 				timesLeft--;
 				return true;
@@ -218,7 +222,7 @@ class Route {
 			const { response } = this.routeOptions;
 			this.routeOptions.response = () => {
 				return new Promise((res) =>
-					setTimeout(() => res(response), this.delay),
+					setTimeout(() => res(response), this.routeOptions.delay),
 				);
 			};
 		}

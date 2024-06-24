@@ -25,7 +25,7 @@ export default class Router {
 	 * @returns {Boolean}
 	 */
 	needsToReadBody({ request }) {
-		return Boolean(request && this.routes.some(route => route.getOption('usesBody')));
+		return Boolean(request && this.routes.some(route => route.routeOptions.usesBody));
 	}
 
 	/**

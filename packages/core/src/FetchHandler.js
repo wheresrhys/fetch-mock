@@ -2,7 +2,6 @@
 /** @typedef {import('./Route')} Route */
 /** @typedef {import('./CallHistory').CallLog} CallLog */
 /** @typedef {import('./FetchMock')} FetchMock */
-/** @typedef {import('./FetchMock').FetchHandler} FetchHandler */
 /** @typedef {import('./Route').RouteOptions} RouteOptions */
 /** @typedef {import('./Route').RouteResponse} RouteResponse */
 /** @typedef {import('./Route').RouteResponseFunction} RouteResponseFunction */

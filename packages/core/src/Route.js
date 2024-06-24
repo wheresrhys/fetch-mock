@@ -42,6 +42,7 @@ import {builtInMatchers, isUrlMatcher, isFunctionMatcher} from './Matchers';
  * @prop {boolean} [matchPartialBody]
  * @prop {boolean} [sticky]
  * @prop {boolean} [usesBody]
+ * @prop {boolean} [isFallback]
  */
 
 
@@ -153,6 +154,7 @@ class Route {
 			};
 		}
 	}
+	
 	/**
 	 * @param {MatcherDefinition} matcher
 	 */

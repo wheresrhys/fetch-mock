@@ -42,7 +42,8 @@ export default class Router {
 	 * @returns {{route: Route , callLog: CallLog}}
 	 */
 	execute({ url, options, request }) {
-		const route = this.routes.find((route) =>
+		const routesToTry = this.fallbackRoute ? [...this.routes, this.fallbackRoute]: this.routes 
+		const route = routesToTry.find((route) =>
 			route.matcher(url, options, request),
 		);
 
@@ -54,23 +55,6 @@ export default class Router {
 					options,
 					request,
 					route,
-				},
-			};
-		}
-
-		if (this.config.warnOnFallback) {
-			console.warn(
-				`Unmatched ${(options && options.method) || 'GET'} to ${url}`,
-			); // eslint-disable-line
-		}
-
-		if (this.fallbackRoute) {
-			return {
-				route: this.fallbackRoute,
-				callLog: {
-					url,
-					options,
-					request,
 				},
 			};
 		}
@@ -147,7 +131,16 @@ export default class Router {
 				'calling fetchMock.catch() twice - are you sure you want to overwrite the previous fallback response',
 			); // eslint-disable-line
 		}
-		this.fallbackRoute = new Route({ matcher: '*', response: response || 'ok', ...this.config },)
+		
+		this.fallbackRoute = new Route({ matcher: (url, options, request) => {
+			if (this.config.warnOnFallback) {
+				console.warn(
+					`Unmatched ${(options && options.method) || 'GET'} to ${url}`,
+				); // eslint-disable-line
+			}
+			return true;
+		}, response: response || 'ok', ...this.config })
+		this.fallbackRoute.config.isFallback = true;
 	}
 	/**
 	 *

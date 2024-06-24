@@ -4,6 +4,8 @@ import { isUrlMatcher, isFunctionMatcher } from './Matchers.js';
 import { buildResponse } from './ResponseBuilder.js';
 /** @typedef {import('./Route').RouteConfig} RouteConfig */
 /** @typedef {import('./Route').RouteResponse} RouteResponse */
+/** @typedef {import('./Route').RouteResponseData} RouteResponseData */
+/** @typedef {import('./Route').RouteResponseConfig} RouteResponseConfig */
 /** @typedef {import('./Route').RouteResponseFunction} RouteResponseFunction */
 /** @typedef {import('./Matchers').RouteMatcher} RouteMatcher */
 /** @typedef {import('./FetchMock').FetchMockConfig} FetchMockConfig */
@@ -11,6 +13,13 @@ import { buildResponse } from './ResponseBuilder.js';
 /** @typedef {import('./RequestUtils').NormalizedRequest} NormalizedRequest */
 /** @typedef {import('./CallHistory').CallLog} CallLog */
 
+const responseConfigProps = [
+	'body',
+	'headers',
+	'throws',
+	'status',
+	'redirectUrl',
+];
 
 /**
  *
@@ -26,6 +35,47 @@ const nameToOptions = (options) =>
  * @returns {RouteResponse is RouteResponseFunction}
  */
 const isPromise = response => typeof /** @type {Promise<any>} */(response).then === 'function'
+
+/**
+ * 
+ * @param {RouteResponseData} responseInput 
+ * @returns {RouteResponseConfig}
+ */
+function normalizeResponseInput(responseInput) {
+	// If the response config looks like a status, start to generate a simple response
+	if (typeof responseInput === 'number') {
+		return {
+			status: responseInput,
+		};
+		// If the response config is not an object, or is an object that doesn't use
+		// any reserved properties, assume it is meant to be the body of the response
+	} else if (typeof responseInput === 'string' || shouldSendAsObject(responseInput)) {
+		return {
+			body: responseInput,
+		};
+	}
+	return responseInput;
+}
+
+/**
+ * 
+ * @param {RouteResponseData} responseInput 
+ * @returns {boolean}
+ */
+function shouldSendAsObject(responseInput) {
+	// TODO improve this... make it less hacky and magic
+	if (responseConfigProps.some((prop) => responseInput[prop])) {
+		if (
+			Object.keys(responseInput).every((key) =>
+				responseConfigProps.includes(key),
+			)
+		) {
+			return false;
+		}
+		return true;
+	}
+	return true;
+}
 
 /**
  * @param {RouteResponse} response
@@ -127,21 +177,70 @@ export default class Router {
 		normalizedRequest,
 		callLog,
 	}) {
-		const response = await resolveUntilResponseConfig(
+		let responseInput = await resolveUntilResponseConfig(
 			route.config.response,
 			normalizedRequest
 		);
 
-		const [realResponse, finalResponse] = buildResponse({
-			url: normalizedRequest.url,
-			responseConfig: route.config.response,
-			route,
+		// If the response says to throw an error, throw it
+		if (responseInput.throws) {
+			throw responseInput.throws;
+		}
+
+		// If the response is a pre-made Response, respond with it
+		if (responseInput instanceof Response) {
+			callLog.response = responseInput;
+			return responseInput;
+		}
+
+		responseInput = normalizeResponseInput(responseInput)
+
+		const response = route.constructResponse(responseInput);
+
+			//TODO callhistory and holding promises
+		callLog.response = response;
+
+		return this.buildObservableResponse(response);
+	}
+
+	buildObservableResponse(response) {
+		const { fetchMock } = this;
+		response._fmResults = {};
+		// Using a proxy means we can set properties that may not be writable on
+		// the original Response. It also means we can track the resolution of
+		// promises returned by res.json(), res.text() etc
+		return new Proxy(response, {
+			get: (originalResponse, name) => {
+				if (this.responseConfig.redirectUrl) {
+					if (name === 'url') {
+						return this.responseConfig.redirectUrl;
+					}
+
+					if (name === 'redirected') {
+						return true;
+					}
+				}
+
+				if (typeof originalResponse[name] === 'function') {
+					return new Proxy(originalResponse[name], {
+						apply: (func, thisArg, args) => {
+							const result = func.apply(response, args);
+							if (result.then) {
+								this.callHistory.addHoldingPromise(result.catch(() => null));
+								originalResponse._fmResults[name] = result;
+							}
+							return result;
+						},
+					});
+				}
+
+				return originalResponse[name];
+			},
 		});
+	}
 
-		callLog.response = realResponse;
 
-		return finalResponse;
-	};
+
 
 	/**
 	 * @overload

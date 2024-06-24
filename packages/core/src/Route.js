@@ -7,7 +7,7 @@ import {builtInMatchers, isUrlMatcher, isFunctionMatcher} from './Matchers';
 /** @typedef {import('./FetchMock').FetchMockConfig} FetchMockConfig */
 
 /**
- * @typedef RouteResponseObject {
+ * @typedef RouteResponseConfig {
  * @property {string | {}} [body]
  * @property {number} [status]
  * @property {{ [key: string]: string }} [headers]
@@ -15,7 +15,7 @@ import {builtInMatchers, isUrlMatcher, isFunctionMatcher} from './Matchers';
  * @property {string} [redirectUrl]
  */
 
-/** @typedef {Response| RouteResponseObject | number| string | Object }  RouteResponseData */
+/** @typedef {Response| RouteResponseConfig | number| string | Object }  RouteResponseData */
 /** @typedef {Promise<RouteResponseData>}  RouteResponsePromise */
 /** @typedef {function(string, RequestInit, Request=): (RouteResponseData|RouteResponsePromise)} RouteResponseFunction */
 /** @typedef {RouteResponseData | RouteResponsePromise | RouteResponseFunction} RouteResponse*/
@@ -44,6 +44,26 @@ import {builtInMatchers, isUrlMatcher, isFunctionMatcher} from './Matchers';
  * @prop {boolean} [usesBody]
  * @prop {boolean} [isFallback]
  */
+
+
+function sanitizeStatus(status) {
+	if (!status) {
+		return 200;
+	}
+
+	if (
+		(typeof status === 'number' &&
+			parseInt(status, 10) !== status &&
+			status >= 200) ||
+		status < 600
+	) {
+		return status;
+	}
+
+	throw new TypeError(`fetch-mock: Invalid status ${status} passed on response object.
+To respond with a JSON object that has status as a property assign the object to body
+e.g. {"body": {"status: "registered"}}`);
+}
 
 
 /** 
@@ -154,6 +174,58 @@ class Route {
 			};
 		}
 	}
+
+	constructResponse(responseInput) {
+		const responseOptions = this.constructResponseOptions(responseInput);
+		const body = this.constructResponseBody(responseInput, responseOptions);
+
+		return new this.config.Response(
+			body,
+			responseOptions,
+		);
+	}
+
+	constructResponseOptions(responseInput) {
+		const options = responseInput.options || {};
+		options.url = responseInput.redirectUrl || this.config.url;
+		options.status = sanitizeStatus(responseInput.status);
+		options.statusText = statusTextMap[String(options.status)];
+
+		// Set up response headers. The empty object is to cope with
+		// new Headers(undefined) throwing in Chrome
+		// https://code.google.com/p/chromium/issues/detail?id=335871
+		options.headers = new this.config.Headers(
+			responseInput.headers || {},
+		);
+		return options;
+	}
+
+	constructResponseBody(responseInput, responseOptions) {
+		// start to construct the body
+		let body = responseInput.body;
+		// convert to json if we need to
+		if (
+			this.config.sendAsJson &&
+			responseInput.body != null && //eslint-disable-line
+			typeof body === 'object'
+		) {
+			body = JSON.stringify(body);
+			if (!responseOptions.headers.has('Content-Type')) {
+				responseOptions.headers.set('Content-Type', 'application/json');
+			}
+		}
+		this.setContentLength();
+		// add a Content-Length header if we need to
+		if (
+			this.config.includeContentLength &&
+			typeof body === 'string' &&
+			!responseOptions.headers.has('Content-Length')
+		) {
+			responseOptions.headers.set('Content-Length', body.length.toString());
+		}
+		return body
+	}
+
 	
 	/**
 	 * @param {MatcherDefinition} matcher

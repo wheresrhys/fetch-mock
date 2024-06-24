@@ -1,5 +1,5 @@
 //@type-check
-import {builtInMatchers, isUrlMatcher, isFunctionMatcher} from './Matchers.js';
+import {builtInMatchers, isUrlMatcher, isFunctionMatcher} from './Matchers';
 /** @typedef {import('./Matchers').RouteMatcher} RouteMatcher */
 /** @typedef {import('./Matchers').RouteMatcherFunction} RouteMatcherFunction */
 /** @typedef {import('./Matchers').RouteMatcherUrl} RouteMatcherUrl */
@@ -22,10 +22,8 @@ import {builtInMatchers, isUrlMatcher, isFunctionMatcher} from './Matchers.js';
 
 /** @typedef {string} RouteName */
 
-
-
 /**
- * @typedef RouteOptions
+ * @typedef RouteConfig
  * @property {RouteName} [name]
  * @property {string} [method]
  * @property {{ [key: string]: string | number  }} [headers]
@@ -52,11 +50,10 @@ import {builtInMatchers, isUrlMatcher, isFunctionMatcher} from './Matchers.js';
  */
 class Route {
 	/**
-	 * @param {RouteOptions} options
+	 * @param {RouteConfig} config
 	 */
-	constructor(options) {
-		this.routeOptions = options;
-		this.#init();
+	constructor(config) {
+		this.config = config;
 		this.#sanitize();
 		this.#validate();
 		this.#generateMatcher();
@@ -64,15 +61,16 @@ class Route {
 		this.#delayResponse();
 	}
 
-	/** @type {RouteOptions} */
-	routeOptions = {}
+	/** @type {RouteConfig} */
+	config = {}
 	/** @type {RouteMatcherFunction=} */
 	matcher = null
 
 	/**
 	 * @returns {void}
 	 */
-	#validate() {
+	// @ts-ignore
+	#validate() { 
 		if (!('response' in this)) {
 			throw new Error('fetch-mock: Each route must define a response');
 		}
@@ -86,32 +84,34 @@ class Route {
 	/**
 	 * @returns {void}
 	 */
+	// @ts-ignore
 	#sanitize() {
-		if (this.routeOptions.method) {
-			this.routeOptions.method = this.routeOptions.method.toLowerCase();
+		if (this.config.method) {
+			this.config.method = this.config.method.toLowerCase();
 		}
-		if (isUrlMatcher(this.routeOptions.matcher)) {
-			this.routeOptions.url = this.routeOptions.matcher;
-			delete this.routeOptions.matcher;
+		if (isUrlMatcher(this.config.matcher)) {
+			this.config.url = this.config.matcher;
+			delete this.config.matcher;
 		}
-		if (isFunctionMatcher(this.routeOptions.matcher)) {
-			this.routeOptions.functionMatcher = this.routeOptions.matcher;
+		if (isFunctionMatcher(this.config.matcher)) {
+			this.config.functionMatcher = this.config.matcher;
 		}
 		
 	}
 	/**
 	 * @returns {void}
 	 */
+	// @ts-ignore
 	#generateMatcher() {
 		const activeMatchers = Route.registeredMatchers
 			.map(({ name, matcher, usesBody }) => {
-				if (name in this.routeOptions) {
-					return { matcher: matcher(this.routeOptions), usesBody };
+				if (name in this.config) {
+					return { matcher: matcher(this.config), usesBody };
 				}
 			})
 			.filter((matcher) => Boolean(matcher));
 
-		this.routeOptions.usesBody = activeMatchers.some(
+		this.config.usesBody = activeMatchers.some(
 			({ usesBody }) => usesBody,
 		);
 		/** @type {RouteMatcherFunction} */
@@ -121,12 +121,13 @@ class Route {
 	/**
 	 * @returns {void}
 	 */
+	// @ts-ignore
 	#limit() {
-		if (!this.routeOptions.repeat) {
+		if (!this.config.repeat) {
 			return;
 		}
 		const originalMatcher = this.matcher;
-		let timesLeft = this.routeOptions.repeat;
+		let timesLeft = this.config.repeat;
 		this.matcher = (url, options, request) => {
 			const match = timesLeft && originalMatcher(url, options, request);
 			if (match) {
@@ -135,18 +136,19 @@ class Route {
 			}
 		};
 		this.reset = () => {
-			timesLeft = this.routeOptions.repeat;
+			timesLeft = this.config.repeat;
 		};
 	}
 	/**
 	 * @returns {void}
 	 */
+	// @ts-ignore
 	#delayResponse() {
-		if (this.routeOptions.delay) {
-			const { response } = this.routeOptions;
-			this.routeOptions.response = () => {
+		if (this.config.delay) {
+			const { response } = this.config;
+			this.config.response = () => {
 				return new Promise((res) =>
-					setTimeout(() => res(response), this.routeOptions.delay),
+					setTimeout(() => res(response), this.config.delay),
 				);
 			};
 		}
@@ -157,7 +159,7 @@ class Route {
 	static defineMatcher(matcher) {
 		Route.registeredMatchers.push(matcher);
 	}
-	/** @type {MatcherDefinition[]]} */
+	/** @type {MatcherDefinition[]} */
 	static registeredMatchers = [];
 }
 

@@ -1,5 +1,5 @@
 //@type-check
-/** @typedef {import('./Route').RouteOptions} RouteOptions */
+/** @typedef {import('./Route').RouteConfig} RouteConfig */
 /** @typedef {import('./RequestUtils').NormalizedRequestOptions} NormalizedRequestOptions */
 /** @typedef {import('path-to-regexp').Key} Key */
 import glob from 'glob-to-regexp';
@@ -16,7 +16,7 @@ import {
 
 
 /**
- * @param {RouteMatcher | RouteOptions} matcher
+ * @param {RouteMatcher | RouteConfig} matcher
  * @returns {matcher is RouteMatcherUrl}
  */
 export const isUrlMatcher = (matcher) =>
@@ -26,7 +26,7 @@ export const isUrlMatcher = (matcher) =>
 
 /**
  *
- * @param {RouteMatcher| RouteOptions} matcher
+ * @param {RouteMatcher| RouteConfig} matcher
  * @returns {matcher is RouteMatcherFunction}
  */
 export const isFunctionMatcher = (matcher) => typeof matcher === 'function';
@@ -36,7 +36,7 @@ export const isFunctionMatcher = (matcher) => typeof matcher === 'function';
 /** @typedef {function(string): boolean} UrlMatcher */
 /** @typedef {function(string): UrlMatcher} UrlMatcherGenerator */
 /** @typedef {function(string, NormalizedRequestOptions, Request): boolean} RouteMatcherFunction */
-/** @typedef {function(RouteOptions): RouteMatcherFunction} MatcherGenerator */
+/** @typedef {function(RouteConfig): RouteMatcherFunction} MatcherGenerator */
 /** @typedef {RouteMatcherUrl | RouteMatcherFunction} RouteMatcher */
 
 /**
@@ -106,7 +106,7 @@ const getQueryStringMatcher = ({ query: passedQuery }) => {
 				if (!Array.isArray(expectedQuery[key])) {
 					return false;
 				}
-				return isEqual(query[key].sort(), expectedQuery[key].sort());
+				return isEqual(/** @type {string[]}*/(query[key]).sort(), /** @type {string[]}*/(expectedQuery[key]).sort());
 			}
 			return query[key] === expectedQuery[key];
 		});
@@ -170,7 +170,7 @@ const getBodyMatcher = (route) => {
 };
 /**
  *
- * @param {RouteOptions} route
+ * @param {RouteConfig} route
  * @param {string} matcherUrl
  * @param {Object.<string,string>} query
  * @returns {RouteMatcherFunction}

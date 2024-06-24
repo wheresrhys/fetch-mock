@@ -2,7 +2,7 @@
 /** @typedef {import('./Route')} Route */
 /** @typedef {import('./CallHistory').CallLog} CallLog */
 /** @typedef {import('./FetchMock')} FetchMock */
-/** @typedef {import('./Route').RouteOptions} RouteOptions */
+/** @typedef {import('./Route').RouteConfig} RouteConfig */
 /** @typedef {import('./Route').RouteResponse} RouteResponse */
 /** @typedef {import('./Route').RouteResponseFunction} RouteResponseFunction */
 
@@ -16,7 +16,7 @@ import * as requestUtils from './RequestUtils.js';
 const isPromise = response => typeof /** @type {Promise<any>} */(response).then === 'function'
 
 /**
- * @param {RouteOptions} route
+ * @param {RouteConfig} route
  * @param {string} url
  * @param {RequestInit} options
  * @param {Request} request
@@ -65,7 +65,7 @@ const generateResponse = async ({
 	callLog,
 }) => {
 	const response = await resolveUntilResponseConfig(
-		route.routeOptions,
+		route.config,
 		url,
 		options,
 		request,

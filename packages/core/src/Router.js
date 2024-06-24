@@ -1,20 +1,19 @@
 //@type-check
 import Route from './Route.js';
 import { isUrlMatcher, isFunctionMatcher } from './Matchers.js';
-/** @typedef {import('./Route').RouteOptions} RouteOptions */
+/** @typedef {import('./Route').RouteConfig} RouteConfig */
 /** @typedef {import('./Route').RouteResponse} RouteResponse */
 /** @typedef {import('./Matchers').RouteMatcher} RouteMatcher */
 /** @typedef {import('./FetchMock').FetchMockConfig} FetchMockConfig */
 /** @typedef {import('./FetchMock')} FetchMock */
 /** @typedef {import('./RequestUtils').NormalizedRequest} NormalizedRequest */
 /** @typedef {import('./CallHistory').CallLog} CallLog */
-/** @typedef {[RouteOptions] | [RouteMatcher, RouteResponse,( RouteOptions | string) | [RouteMatcher, RouteResponse]} RouteArgs */
 
 
 /**
  *
- * @param {RouteOptions | string} options
- * @returns {RouteOptions}
+ * @param {RouteConfig | string} options
+ * @returns {RouteConfig}
  */
 const nameToOptions = (options) =>
 	typeof options === 'string' ? { name: options } : options;
@@ -35,7 +34,7 @@ export default class Router {
 	 * @returns {Boolean}
 	 */
 	needsToReadBody({ request }) {
-		return Boolean(request && this.routes.some(route => route.routeOptions.usesBody));
+		return Boolean(request && this.routes.some(route => route.config.usesBody));
 	}
 
 	/**
@@ -85,7 +84,7 @@ export default class Router {
 
 	/**
 	 * @overload
-	 * @param {RouteOptions} matcher
+	 * @param {RouteConfig} matcher
 	 * @returns {void}
 	 */
 
@@ -93,32 +92,32 @@ export default class Router {
 	 * @overload
 	 * @param {RouteMatcher } matcher
 	 * @param {RouteResponse} response
-	 * @param {RouteOptions | string} [nameOrOptions]
+	 * @param {RouteConfig | string} [nameOrOptions]
 	 * @returns {void}
 	 */
 
 	/**
-	 * @param {RouteMatcher | RouteOptions} matcher
+	 * @param {RouteMatcher | RouteConfig} matcher
 	 * @param {RouteResponse} [response]
-	 * @param {RouteOptions | string} [nameOrOptions]
+	 * @param {RouteConfig | string} [nameOrOptions]
 	 * @returns {void}
 	 */
 	addRoute(matcher, response, nameOrOptions) {
-		/** @type {RouteOptions} */
-		const routeOptions = {};
+		/** @type {RouteConfig} */
+		const config = {};
 		if (isUrlMatcher(matcher) || isFunctionMatcher(matcher)) {
-			routeOptions.matcher = matcher;
+			config.matcher = matcher;
 		} else {
-			Object.assign(routeOptions, matcher);
+			Object.assign(config, matcher);
 		}
 
 		if (typeof response !== 'undefined') {
-			routeOptions.response = response;
+			config.response = response;
 		}
 
 		if (nameOrOptions) {
 			Object.assign(
-				routeOptions,
+				config,
 				typeof nameOrOptions === 'string'
 					? nameToOptions(nameOrOptions)
 					: nameOrOptions,
@@ -126,12 +125,12 @@ export default class Router {
 		}
 
 		const route = new Route({
-			...this.config, ...routeOptions
+			...this.config, ...config
 		});
 
 		if (
-			route.routeOptions.name &&
-			this.routes.some(({ routeOptions: {name: existingName }}) => route.routeOptions.name === existingName)
+			route.config.name &&
+			this.routes.some(({ config: {name: existingName }}) => route.config.name === existingName)
 		) {
 			throw new Error(
 				'fetch-mock: Adding route with same name as existing route.',
@@ -157,6 +156,6 @@ export default class Router {
 	removeRoutes({ force }) {
 		force
 			? (this.routes = [])
-			: (this.routes = this.routes.filter(({ routeOptions: {sticky }}) => sticky));
+			: (this.routes = this.routes.filter(({ config: {sticky }}) => sticky));
 	}
 }

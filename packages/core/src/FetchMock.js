@@ -5,7 +5,7 @@ import Route from './Route.js';
 import CallHistory from './CallHistory.js';
 /** @typedef {import('./Router').RouteMatcher} RouteMatcher */
 /** @typedef {import('./Route').RouteName} RouteName */
-/** @typedef {import('./Router').RouteOptions} RouteOptions */
+/** @typedef {import('./Router').RouteConfig} RouteConfig */
 /** @typedef {import('./Router').RouteResponse} RouteResponse */
 /** @typedef {import('./Matchers').MatcherDefinition} MatcherDefinition */
 /**
@@ -68,7 +68,7 @@ const FetchMock = {
 	},
 	/**
 	 * @overload
-	 * @param {RouteOptions} matcher
+	 * @param {RouteConfig} matcher
 	 * @this {FetchMock}
 	 * @returns {FetchMock}
 	 */
@@ -77,15 +77,15 @@ const FetchMock = {
 	 * @overload
 	 * @param {RouteMatcher } matcher
 	 * @param {RouteResponse} response
-	 * @param {RouteOptions | string} [options]
+	 * @param {RouteConfig | string} [options]
 	 * @this {FetchMock}
 	 * @returns {FetchMock}
 	 */
 
 	/**
-	 * @param {RouteMatcher | RouteOptions} matcher
+	 * @param {RouteMatcher | RouteConfig} matcher
 	 * @param {RouteResponse} [response]
-	 * @param {RouteOptions | string} [options]
+	 * @param {RouteConfig | string} [options]
 	 * @this {FetchMock}
 	 * @returns {FetchMock}
 	 */
@@ -119,12 +119,12 @@ const PresetRoutes = {}
  * 
  * @param {PresetRouteMethodName} methodName 
  * @param {string} underlyingMethod 
- * @param {RouteOptions} shorthandOptions 
+ * @param {RouteConfig} shorthandOptions 
  */
 const defineShorthand = (methodName, underlyingMethod, shorthandOptions) => {
 	/**
 	 * @overload
-	 * @param {RouteOptions} matcher
+	 * @param {RouteConfig} matcher
 	 * @this {FetchMock}
 	 * @returns {FetchMock}
 	 */
@@ -133,15 +133,15 @@ const defineShorthand = (methodName, underlyingMethod, shorthandOptions) => {
 	 * @overload
 	 * @param {RouteMatcher } matcher
 	 * @param {RouteResponse} response
-	 * @param {RouteOptions | string} [options]
+	 * @param {RouteConfig | string} [options]
 	 * @this {FetchMock}
 	 * @returns {FetchMock}
 	 */
 
 	/**
-	 * @param {RouteMatcher | RouteOptions} matcher
+	 * @param {RouteMatcher | RouteConfig} matcher
 	 * @param {RouteResponse} [response]
-	 * @param {RouteOptions | string} [options]
+	 * @param {RouteConfig | string} [options]
 	 * @this {FetchMock}
 	 * @returns {FetchMock}
 	 */
@@ -161,7 +161,7 @@ const defineShorthand = (methodName, underlyingMethod, shorthandOptions) => {
 const defineGreedyShorthand = (methodName, underlyingMethod) => {
 	/**
 	 * @param {RouteResponse} response
-	 * @param {RouteOptions | string} [options]
+	 * @param {RouteConfig | string} [options]
 	 * @this {FetchMock}
 	 * @returns {FetchMock}
 	 */

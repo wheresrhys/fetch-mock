@@ -1,5 +1,5 @@
 //@type-check
-/** @typedef {import('./Route').RouteOptions} RouteOptions */
+/** @typedef {import('./Route').RouteConfig} RouteConfig */
 /** @typedef {import('./Route').RouteName} RouteName */
 /** @typedef {import('./RequestUtils').NormalizedRequestOptions} NormalizedRequestOptions */
 /** @typedef {import('./Matchers').RouteMatcher} RouteMatcher */
@@ -83,7 +83,7 @@ class CallHistory {
 	/**
 	 *
 	 * @param {CallHistoryFilter} filter
-	 * @param {RouteOptions} options
+	 * @param {RouteConfig} options
 	 * @returns {CallLog[]}
 	 */
 	filterCalls(filter, options) {
@@ -98,9 +98,9 @@ class CallHistory {
 				calls = calls.filter(({ route }) => !Boolean(route));
 			}
 		} else if (isName(filter)) {
-			calls = calls.filter(({ route: {routeOptions: {name} }}) => name === filter);
+			calls = calls.filter(({ route: {config: {name} }}) => name === filter);
 		} else {
-			const { matcher } = new Route({matcher: filter, response: 'ok', options: {...options}}, {});
+			const { matcher } = new Route({matcher: filter, response: 'ok', ...options});
 			calls = calls.filter(({ url, options }) => {
 				const { url: normalizedUrl, options: normalizedOptions, request } = normalizeRequest(
 					url,
@@ -117,7 +117,7 @@ class CallHistory {
 	/**
 	 *
 	 * @param {CallHistoryFilter} filter
-	 * @param {RouteOptions} options
+	 * @param {RouteConfig} options
 	 * @returns {CallLog[]}
 	 */
 	calls(filter, options) {
@@ -126,7 +126,7 @@ class CallHistory {
 	/**
 	 *
 	 * @param {CallHistoryFilter} filter
-	 * @param {RouteOptions} options
+	 * @param {RouteConfig} options
 	 * @returns {Boolean}
 	 */
 	called(filter, options) {
@@ -135,7 +135,7 @@ class CallHistory {
 	/**
 	 *
 	 * @param {CallHistoryFilter} filter
-	 * @param {RouteOptions} options
+	 * @param {RouteConfig} options
 	 * @returns {CallLog}
 	 */
 	lastCall(filter, options) {
@@ -148,7 +148,7 @@ class CallHistory {
 	 * @returns {Boolean}
 	 */
 	done(allRoutes, routeNames) {
-		const routesToCheck = routeNames ? allRoutes.filter(({ routeOptions: {name} }) => routeNames.includes(name)):  allRoutes;
+		const routesToCheck = routeNames ? allRoutes.filter(({ config: {name} }) => routeNames.includes(name)):  allRoutes;
 		// TODO when checking all routes needs to check against all calls
 		// Can't use array.every because would exit after first failure, which would
 		// break the logging
@@ -160,7 +160,7 @@ class CallHistory {
 					return false;
 				}
 
-				const expectedTimes = route.routeOptions.repeat;
+				const expectedTimes = route.config.repeat;
 
 				if (!expectedTimes) {
 					return true;
@@ -169,7 +169,7 @@ class CallHistory {
 
 				if (expectedTimes > actualTimes) {
 					console.warn(
-						`Warning: ${route.routeOptions.name} only called ${actualTimes} times, but ${expectedTimes} expected`,
+						`Warning: ${route.config.name} only called ${actualTimes} times, but ${expectedTimes} expected`,
 					); // eslint-disable-line
 					return false;
 				}

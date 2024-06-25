@@ -4,17 +4,17 @@ import Route from '../../Route.js';
 // TODO should this whole thing be integration tests on router
 // as it's mainly about the shape of optiosn passed into to addRoute
 describe('matcher object', () => {
-	it('use matcher object with matcher property', async () => {
+	it('use matcher object with matcher property', () => {
 		const route = new Route({ matcher: 'http://a.com', response: 200 });
 		expect(route.matcher('http://a.com')).toBe(true);
 	});
 
-	it('use matcher object with url property', async () => {
+	it('use matcher object with url property', () => {
 		const route = new Route({ url: 'http://a.com', response: 200 });
 		expect(route.matcher('http://a.com')).toBe(true);
 	});
 
-	it('can use matcher and url simultaneously', async () => {
+	it('can use matcher and url simultaneously', () => {
 		const route = new Route({
 			url: 'end:path',
 			matcher: (url, opts) =>
@@ -36,7 +36,7 @@ describe('matcher object', () => {
 	});
 
 	// TODO this shoudl probably be an error
-	it.skip('if no url provided, match any url', async () => {
+	it.skip('if no url provided, match any url', () => {
 		const route = new Route({ response: 200 });
 		expect(route.matcher('http://a.com')).toBe(true);
 	});
@@ -51,7 +51,7 @@ describe('matcher object', () => {
 		});
 	});
 
-	it('can match Headers', async () => {
+	it('can match Headers', () => {
 		const route = new Route({
 			url: 'http://a.com',
 			headers: { a: 'b' },
@@ -70,7 +70,7 @@ describe('matcher object', () => {
 		).toBe(true);
 	});
 
-	it('can match query string', async () => {
+	it('can match query string', () => {
 		const route = new Route({
 			url: 'http://a.com',
 			query: { a: 'b' },
@@ -81,7 +81,7 @@ describe('matcher object', () => {
 		expect(route.matcher('http://a.com?a=b')).toBe(true);
 	});
 
-	it('can match path parameter', async () => {
+	it('can match path parameter', () => {
 		const route = new Route({
 			url: 'express:/type/:var',
 			params: { var: 'b' },
@@ -92,13 +92,13 @@ describe('matcher object', () => {
 		expect(route.matcher('/type/b')).toBe(true);
 	});
 
-	it('can match method', async () => {
+	it('can match method', () => {
 		const route = new Route({ method: 'POST', response: 200 });
 		expect(route.matcher('http://a.com', { method: 'GET' })).toBe(false);
 		expect(route.matcher('http://a.com', { method: 'POST' })).toBe(true);
 	});
 
-	it('can match body', async () => {
+	it('can match body', () => {
 		const route = new Route({ body: { foo: 'bar' }, response: 200 });
 
 		expect(
@@ -116,9 +116,9 @@ describe('matcher object', () => {
 	});
 
 	// TODO new tests for how multiple routes that match can be addeed
-	it.skip('support setting overwrite routes on matcher parameter', async () => {});
+	it.skip('support setting overwrite routes on matcher parameter', () => {});
 
-	it('support setting matchPartialBody on matcher parameter', async () => {
+	it('support setting matchPartialBody on matcher parameter', () => {
 		const route = new Route({
 			body: { a: 1 },
 			matchPartialBody: true,

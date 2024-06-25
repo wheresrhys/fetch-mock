@@ -133,7 +133,10 @@ class Route {
 	#generateMatcher() {
 		const activeMatchers = Route.registeredMatchers
 			.filter(({ name }) => name in this.config)
-			.map(({  matcher, usesBody }) => ({ matcher: matcher(this.config), usesBody }));
+			.map(({ matcher, usesBody }) => ({
+				matcher: matcher(this.config),
+				usesBody,
+			}));
 		this.config.usesBody = activeMatchers.some(({ usesBody }) => usesBody);
 		/** @type {RouteMatcherFunction} */
 		this.matcher = (url, options = {}, request) =>

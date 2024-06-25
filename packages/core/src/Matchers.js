@@ -190,7 +190,7 @@ const getFullUrlMatcher = (route, matcherUrl, query) => {
 
 	return (url) => {
 		if (query && expectedUrl.indexOf('?')) {
-			return getPath(url) === getPath(expectedUrl)
+			return getPath(url) === getPath(expectedUrl);
 		}
 		return normalizeUrl(url) === expectedUrl;
 	};

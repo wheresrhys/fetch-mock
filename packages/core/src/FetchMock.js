@@ -123,6 +123,9 @@ const FetchMock = {
 	done(routeNames) {
 		return this.callHistory.done(this.router.routes, routeNames);
 	},
+	// TODO add api for removing routes
+	// TODO add api for clearing history
+
 };
 
 /** @typedef {'get' |'post' |'put' |'delete' |'head' |'patch' |'once' |'sticky' |'any' |'anyOnce' |'getOnce' |'postOnce' |'putOnce' |'deleteOnce' |'headOnce' |'patchOnce' |'getAny' |'postAny' |'putAny' |'deleteAny' |'headAny' |'patchAny' |'getAnyOnce' |'postAnyOnce' |'putAnyOnce' |'deleteAnyOnce' |'headAnyOnce' |'patchAnyOnce'} PresetRouteMethodName} */

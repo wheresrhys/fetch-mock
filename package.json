@@ -59,6 +59,8 @@
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@vitest/browser": "^1.1.0",
     "@vitest/coverage-istanbul": "^1.1.0",
+    "@vitest/coverage-v8": "^1.6.0",
+    "@vitest/ui": "^1.6.0",
     "dtslint": "^1.0.2",
     "eslint": "^8.56.0",
     "eslint-config-airbnb-base": "^15.0.0",
@@ -72,6 +74,7 @@
     "rollup": "^4.9.1",
     "ts-to-jsdoc": "^2.1.0",
     "typescript": "^3.9.10",
+    "v8": "^0.1.0",
     "vitest": "^1.1.0",
     "webdriverio": "^8.27.0"
   },

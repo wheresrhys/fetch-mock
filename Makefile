@@ -23,7 +23,8 @@ lint:
 verify: lint
 
 coverage:
-	nyc --reporter=lcovonly --reporter=text make test
+	npx vitest run --coverage
+	# nyc --reporter=lcovonly --reporter=text make test-packages
 	cat ./coverage/lcov.info | coveralls
 
 docs:
@@ -56,4 +57,4 @@ test-jest:
 	npx jest test/framework-compat/jest.spec.js
 
 test-package:
-	npx vitest ./packages/core/src/__tests__
+	TESTING_ENV=packages npx vitest --coverage --coverage.enabled --ui ./packages/core/src/__tests__

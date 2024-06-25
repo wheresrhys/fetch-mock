@@ -64,7 +64,7 @@ class CallHistory {
 		const queuedPromises = this.callLogs.flatMap(
 			(call) => call.pendingPromises,
 		);
-		await Promise.all(queuedPromises);
+		await Promise.allSettled(queuedPromises);
 		if (waitForResponseBody) {
 			await this.flush();
 		}

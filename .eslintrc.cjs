@@ -29,6 +29,6 @@ module.exports = {
 		'@lwc/lwc/no-async-await': 0,
 		'jsdoc/require-param-description': 0,
 		'jsdoc/require-returns-description': 0,
-		'jsdoc/require-property-description': 0,
+		'jsdoc/require-property-description': 0
 	},
 };

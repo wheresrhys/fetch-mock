@@ -57,7 +57,7 @@ const FetchMock = {
 	createInstance() {
 		const instance = Object.create(FetchMock);
 		instance.config = { ...this.config };
-		instance.router = new Router(instance.config, this.router.routes);
+		instance.router = new Router(instance.config, [...this.router.routes]);
 		instance.callHistory = new CallHistory(this.config);
 		return instance;
 	},
@@ -75,29 +75,11 @@ const FetchMock = {
 			requestInit,
 			this.config.Request,
 		);
-		const { url, options, request, signal } = normalizedRequest;
-
-		if (signal) {
-			const abort = () => {
-				// TODO may need to bring that flushy thing back.
-				// Add a test to combvine flush with abort
-				// done();
-				throw new DOMException('The operation was aborted.', 'AbortError');
-			};
-			if (signal.aborted) {
-				abort();
-			}
-			signal.addEventListener('abort', abort);
-		}
-
-		if (this.router.needsToReadBody(options)) {
-			options.body = await options.body;
-		}
 		/** @type {Promise<any>[]} */
 		const pendingPromises = [];
-		const callLog = { url, options, request, pendingPromises };
+		const callLog = { ...normalizedRequest, pendingPromises };
 		this.callHistory.recordCall(callLog);
-		const responsePromise = this.router.execute(callLog);
+		const responsePromise = this.router.execute(callLog, normalizedRequest);
 		pendingPromises.push(responsePromise);
 		return responsePromise;
 	},

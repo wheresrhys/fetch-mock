@@ -1,26 +1,12 @@
-import { beforeEach, describe, expect, it } from 'vitest';
-
-const RESPONSE_DELAY = 50;
-const ABORT_DELAY = 10;
-
-const { fetchMock } = testGlobals;
-const getDelayedOk = () =>
-	new Promise((res) => setTimeout(() => res(200), RESPONSE_DELAY));
-
-const getDelayedAbortController = () => {
-	const controller = new AbortController();
-	setTimeout(() => controller.abort(), ABORT_DELAY);
-	return controller;
-};
+import {  beforeEach, describe, expect, it } from 'vitest';
+import fetchMock from '../../FetchMock';
 
 describe('response negotiation', () => {
 	let fm;
-	beforeAll(() => {
+	beforeEach(() => {
 		fm = fetchMock.createInstance();
 		fm.config.warnOnUnmatched = false;
 	});
-
-	afterEach(() => fm.restore());
 
 	it('function', async () => {
 		fm.route('*', (url) => url);
@@ -35,7 +21,12 @@ describe('response negotiation', () => {
 		expect(res.status).toEqual(200);
 	});
 
-	it('function that returns a Promise', async () => {
+	it('function that returns a Promise for a status', async () => {
+		fm.route('*', () => Promise.resolve(300));
+		const res = await fm.fetchHandler('http://a.com/');
+		expect(res.status).toEqual(300);
+	});
+	it('function that returns a Promise for a body', async () => {
 		fm.route('*', (url) => Promise.resolve(`test: ${url}`));
 		const res = await fm.fetchHandler('http://a.com/');
 		expect(res.status).toEqual(200);
@@ -152,50 +143,41 @@ describe('response negotiation', () => {
 	});
 
 	describe('rejecting', () => {
-		it('reject if object with `throws` property', () => {
+		it('reject if object with `throws` property', async () => {
 			fm.route('*', { throws: 'as expected' });
 
-			return fm
-				.fetchHandler('http://a.com/')
-				.then(() => {
-					throw 'not as expected';
-				})
-				.catch((err) => {
-					expect(err).toEqual('as expected');
-				});
+			await expect(fm.fetchHandler('http://a.com/')).rejects.toThrowError(
+				'as expected',
+			);
 		});
 
-		it('reject if function that returns object with `throws` property', () => {
+		it('reject if function that returns object with `throws` property', async () => {
 			fm.route('*', () => ({ throws: 'as expected' }));
 
-			return fm
-				.fetchHandler('http://a.com/')
-				.then(() => {
-					throw 'not as expected';
-				})
-				.catch((err) => {
-					expect(err).toEqual('as expected');
-				});
+			await expect(fm.fetchHandler('http://a.com/')).rejects.toThrowError(
+				'as expected',
+			);
 		});
 	});
 
 	describe('abortable fetch', () => {
-		let fm;
+		const RESPONSE_DELAY = 50;
+		const ABORT_DELAY = 10;
 
-		const expectAbortError = async (...fetchArgs) => {
-			try {
-				await fm.fetchHandler(...fetchArgs);
-				throw new Error('unexpected');
-			} catch (error) {
-				expect(error instanceof DOMException).toEqual(true);
-				expect(error.name).toEqual('AbortError');
-				expect(error.message).toEqual('The operation was aborted.');
-			}
+		const getDelayedOk = () =>
+			new Promise((res) => setTimeout(() => res(200), RESPONSE_DELAY));
+
+		const getDelayedAbortController = () => {
+			const controller = new AbortController();
+			setTimeout(() => controller.abort(), ABORT_DELAY);
+			return controller;
 		};
-
-		beforeEach(() => {
-			fm = fetchMock.createInstance();
-		});
+		const expectAbortError = async (...fetchArgs) => {
+			const result = fm.fetchHandler(...fetchArgs);
+			await expect(result).rejects.toThrowError(
+				new DOMException('The operation was aborted.', 'ABortError'),
+			);
+		};
 
 		it('error on signal abort', () => {
 			fm.route('*', getDelayedOk());

@@ -128,10 +128,10 @@ export default class Router {
 	}
 	/**
 	 *
-	 * @param {NormalizedRequest} requestOptions
+	 * @param {Request} request
 	 * @returns {boolean}
 	 */
-	needsToReadBody({ request }) {
+	needsToReadBody(request) {
 		return Boolean(
 			request && this.routes.some((route) => route.config.usesBody),
 		);
@@ -139,39 +139,65 @@ export default class Router {
 
 	/**
 	 * @param {CallLog} callLog
+	 * @param {NormalizedRequest} normalizedRequest
 	 * @returns {Promise<Response>}
 	 */
-	async execute(callLog) {
-		const { url, options, request, pendingPromises } = callLog;
-		const routesToTry = this.fallbackRoute
-			? [...this.routes, this.fallbackRoute]
-			: this.routes;
-		const route = routesToTry.find((route) =>
-			route.matcher(url, options, request),
-		);
+	async execute(callLog, normalizedRequest) {
+		// TODO make abort vs reject neater
+		return new Promise(async (resolve, reject) => {
+			const { url, options, request, pendingPromises } = callLog;
+			if (normalizedRequest.signal) {
+				const abort = () => {
+					// TODO may need to bring that flushy thing back.
+					// Add a test to combvine flush with abort
+					// done();
+					reject(new DOMException('The operation was aborted.', 'AbortError'));
+				};
+				if (normalizedRequest.signal.aborted) {
+					abort();
+				}
+				normalizedRequest.signal.addEventListener('abort', abort);
+			}
 
-		if (route) {
-			callLog.route = route;
-			const { response, responseOptions } = await this.generateResponse(
-				route,
-				callLog,
-			);
-			// TODO, get responseConfig out of generateResponse too
-			const observableResponse = this.createObservableResponse(
-				response,
-				responseOptions,
-				url,
-				pendingPromises,
-			);
-			callLog.response = response;
-			return observableResponse;
-		}
+			if (this.needsToReadBody(request)) {
+				options.body = await options.body;
+			}
 
-		throw new Error(
-			`fetch-mock: No response or fallback rule to cover ${
-				(options && options.method) || 'GET'
-			} to ${url}`,
-		);
+			const routesToTry = this.fallbackRoute
+				? [...this.routes, this.fallbackRoute]
+				: this.routes;
+			const route = routesToTry.find((route) =>
+				route.matcher(url, options, request),
+			);
+
+			if (route) {
+				try {
+					callLog.route = route;
+					const { response, responseOptions } = await this.generateResponse(
+						route,
+						callLog,
+					);
+					const observableResponse = this.createObservableResponse(
+						response,
+						responseOptions,
+						url,
+						pendingPromises,
+					);
+					callLog.response = response;
+					resolve(observableResponse);
+				} catch (err) {
+					reject(err);
+				}
+			} else {
+				reject(
+					new Error(
+						`fetch-mock: No response or fallback rule to cover ${
+							(options && options.method) || 'GET'
+						} to ${url}`,
+					),
+				);
+			}
+		});
 	}
 
 	/**
@@ -181,10 +207,12 @@ export default class Router {
 	 * @returns {Promise<{response: Response, responseOptions: ResponseInit}>}
 	 */
 	async generateResponse(route, callLog) {
+		console.log('responding start resolve');
 		const responseInput = await resolveUntilResponseConfig(
 			route.config.response,
 			callLog,
 		);
+		console.log('responding end resolve');
 
 		// If the response is a pre-made Response, respond with it
 		if (responseInput instanceof Response) {

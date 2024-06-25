@@ -132,14 +132,8 @@ class Route {
 	// @ts-ignore
 	#generateMatcher() {
 		const activeMatchers = Route.registeredMatchers
-			.map(({ name, matcher, usesBody }) => {
-				if (name in this.config) {
-					return { matcher: matcher(this.config), usesBody };
-				}
-				return undefined;
-			})
-			.filter((matcher) => Boolean(matcher));
-
+			.filter(({ name }) => name in this.config)
+			.map(({  matcher, usesBody }) => ({ matcher: matcher(this.config), usesBody }));
 		this.config.usesBody = activeMatchers.some(({ usesBody }) => usesBody);
 		/** @type {RouteMatcherFunction} */
 		this.matcher = (url, options = {}, request) =>

@@ -38,3 +38,35 @@ it('match using custom function with Request with unusual options', () => {
 		),
 	).toBe(true);
 });
+
+it.skip('match custom Headers instance', async () => {
+	const customHeaderInstance = fm.createInstance();
+	customHeaderInstance.config.Headers = class {
+		constructor(obj) {
+			this.obj = obj;
+		}
+
+		*[Symbol.iterator]() {
+			yield ['a', 'b'];
+		}
+
+		has() {
+			return true;
+		}
+	};
+
+	customHeaderInstance
+		.route(
+			{
+				headers: { a: 'b' },
+				,
+				response: 200
+			},
+		)
+
+
+	await customHeaderInstance.fetchHandler('http://a.com/', {
+		headers: new customHeaderInstance.config.Headers({ a: 'b' }),
+	});
+	expect(customHeaderInstance.calls(true).length).toEqual(1);
+});

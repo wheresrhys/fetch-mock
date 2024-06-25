@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import Route from '../../Route.js';
 
+// TODO should this whole thing be integration tests on router
+// as it's mainly about the shape of optiosn passed into to addRoute
 describe('matcher object', () => {
 	it('use matcher object with matcher property', async () => {
 		const route = new Route({ matcher: 'http://a.com', response: 200 });

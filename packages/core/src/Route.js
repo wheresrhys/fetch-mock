@@ -52,7 +52,7 @@ import statusTextMap from './StatusTextMap';
 
 /**
  * 
- * @param {number} status 
+ * @param {number} [status] 
  * @returns {number}
  */
 function sanitizeStatus(status) {
@@ -61,6 +61,7 @@ function sanitizeStatus(status) {
 	}
 
 	if (
+		//TODO wtf is this???
 		(typeof status === 'number' &&
 			parseInt(status, 10) !== status &&
 			status >= 200) ||
@@ -187,16 +188,16 @@ class Route {
 	/**
 	 * 
 	 * @param {RouteResponseConfig} responseInput 
-	 * @returns {Response}
+	 * @returns {{response: Response, responseOptions: ResponseInit}}
 	 */
 	constructResponse(responseInput) {
 		const responseOptions = this.constructResponseOptions(responseInput);
 		const body = this.constructResponseBody(responseInput, responseOptions);
 
-		return new this.config.Response(
+		return {response: new this.config.Response(
 			body,
 			responseOptions,
-		);
+		), responseOptions};
 	}
 	/**
 	 * 

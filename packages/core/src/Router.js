@@ -129,33 +129,26 @@ export default class Router {
 	}
 
 	/**
-	 * @param {NormalizedRequest} normalizedRequest
-	 * @returns {{route: Route , callLog: CallLog, response: Promise<Response>}}
+	 * @param {CallLog} callLog
+	 * @returns {Promise<Response>}
 	 */
-	execute(normalizedRequest) {
-		const { url, options, request } = normalizedRequest;
+	async execute(callLog) {
+		const { url, options, request, pendingPromises } = callLog;
 		const routesToTry = this.fallbackRoute ? [...this.routes, this.fallbackRoute]: this.routes 
 		const route = routesToTry.find((route) =>
 			route.matcher(url, options, request),
 		);
 
 		if (route) {
-			const callLog = {
-				url,
-				options,
-				request,
+			callLog.route = route;
+			const { response, responseOptions }  = await this.generateResponse(
 				route,
-			}
-			const response = this.generateResponse({
-				route,
-				normalizedRequest,
-				callLog,
-			});
-			return {
-				response,
-				route,
-				callLog,
-			};
+				callLog
+			)
+			// TODO, get responseConfig out of generateResponse too
+			const observableResponse = this.createObservableResponse(response, responseOptions, url, pendingPromises);
+			callLog.response = response;
+			return response
 		}
 
 		throw new Error(
@@ -167,26 +160,22 @@ export default class Router {
 
 	/**
 	 *
-	 * @param {Object} input
-	 * @param {Route} input.route
-	 * @param {NormalizedRequest} input.normalizedRequest
-	 * @param {CallLog} input.callLog
-	 * @returns {Promise<Response>}
+	 * @param {Route} route
+	 * @param {CallLog} callLog
+	 * @returns {Promise<{response: Response, responseOptions: ResponseInit}>}
 	 */
-	async generateResponse ({
+	async generateResponse (
 		route,
-		normalizedRequest,
 		callLog,
-	}) {
+	) {
 		let responseInput = await resolveUntilResponseConfig(
 			route.config.response,
-			normalizedRequest
+			callLog
 		);
 
 		// If the response is a pre-made Response, respond with it
 		if (responseInput instanceof Response) {
-			callLog.response = responseInput;
-			return responseInput;
+			return { response: responseInput, responseOptions : {}};
 		} 
 
 		const responseConfig = normalizeResponseInput(responseInput)
@@ -196,20 +185,17 @@ export default class Router {
 			throw responseConfig.throws;
 		}
 
-		const response = route.constructResponse(responseConfig);
-
-		//TODO callhistory and holding promises
-		callLog.response = response;
-		return this.createObservableResponse(response, responseConfig, normalizedRequest.url);
+		return route.constructResponse(responseConfig);
 	}
 	/**
 	 * 
 	 * @param {Response} response 
 	 * @param {RouteResponseConfig} responseConfig
 	 * @param {string} responseUrl
+	 * @param {Promise<any>[]} pendingPromises
 	 * @returns {Response}
 	 */
-	createObservableResponse(response, responseConfig, responseUrl) {
+	createObservableResponse(response, responseConfig, responseUrl, pendingPromises) {
 		response._fmResults = {};
 		// Using a proxy means we can set properties that may not be writable on
 		// the original Response. It also means we can track the resolution of
@@ -239,7 +225,7 @@ export default class Router {
 						apply: (func, thisArg, args) => {
 							const result = func.apply(response, args);
 							if (result.then) {
-								this.callHistory.addHoldingPromise(result.catch(() => null));
+								pendingPromises.push(result.catch(() => null));
 								response._fmResults[name] = result;
 							}
 							return result;
@@ -251,9 +237,6 @@ export default class Router {
 			},
 		});
 	}
-
-
-
 
 	/**
 	 * @overload

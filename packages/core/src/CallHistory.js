@@ -14,7 +14,9 @@ import Route from './Route.js';
  * @prop {Request} [request]
  * @prop {Route} [route]
  * @prop {Response} [response]
+ * @prop {Promise<any>[]} pendingPromises
  */
+
 
 /** @typedef {'matched'} Matched */
 /** @typedef {'unmatched'} Unmatched */

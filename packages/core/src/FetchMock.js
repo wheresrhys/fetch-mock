@@ -16,6 +16,7 @@ import * as requestUtils from './RequestUtils.js';
  * @prop {boolean} [sendAsJson]
  * @prop {boolean} [includeContentLength]
  * @prop {boolean} [warnOnFallback]
+ * @prop {boolean} [matchPartialBody]
  * @prop {function(string | Request, RequestInit): Promise<Response>} [fetch]
  * @prop {typeof Headers} [Headers]
  * @prop {typeof Request} [Request]
@@ -27,6 +28,7 @@ const defaultConfig = {
 	includeContentLength: true,
 	sendAsJson: true,
 	warnOnFallback: true,
+	matchPartialBody: false,
 	Request: globalThis.Request,
 	Response: globalThis.Response,
 	Headers: globalThis.Headers,
@@ -50,7 +52,6 @@ const defaultConfig = {
 /** @type {FetchMockCore} */
 const FetchMock = {
 	config: defaultConfig,
-
 	router: new Router(defaultConfig),
 	callHistory: new CallHistory(defaultConfig),
 	createInstance() {
@@ -77,7 +78,9 @@ const FetchMock = {
 
 		if (signal) {
 			const abort = () => {
-				done();
+				// TODO may need to bring that flushy thing back.
+				// Add a test to combvine flush with abort
+				// done();
 				throw new DOMException('The operation was aborted.', 'AbortError');
 			};
 			if (signal.aborted) {
@@ -89,25 +92,13 @@ const FetchMock = {
 		if (this.router.needsToReadBody(options)) {
 			options.body = await options.body;
 		}
-
-		const { callLog, response } = this.router.execute(normalizedRequest);
-		// TODO log the call IMMEDIATELY and then route gradually adds to it
+		/** @type {Promise<any>[]} */
+		const pendingPromises = []
+		const callLog = { url, options, request, pendingPromises} 
 		this.callHistory.recordCall(callLog);
-
-		// this is used to power the .flush() method
-		/** @type {function(any): void} */
-		let done;
-
-		// TODO holding promises should be attached to each callLog
-		this.callHistory.addHoldingPromise(
-			new Promise((res) => {
-				done = res;
-			}),
-		);
-
-		response.then(done, done);
-
-		return response;
+		const responsePromise = this.router.execute(callLog);;
+		pendingPromises.push(responsePromise)
+		return responsePromise;
 	},
 	/**
 	 * @overload

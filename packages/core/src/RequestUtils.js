@@ -77,7 +77,7 @@ export function normalizeRequest(urlOrRequest, options, Request) {
 	}
 	if (
 		typeof urlOrRequest === 'string' ||
-		/** @type {Object} */(urlOrRequest) instanceof String ||
+		/** @type {Object} */ (urlOrRequest) instanceof String ||
 		// horrible URL object duck-typing
 		(typeof urlOrRequest === 'object' && 'href' in urlOrRequest)
 	) {
@@ -118,15 +118,16 @@ export function getQuery(url) {
 }
 
 /**
- * 
- * @param {Headers | [string, string][] | Record < string, string > | Object.<string, string | number>} headers 
+ *
+ * @param {Headers | [string, string][] | Record < string, string > | Object.<string, string | number>} headers
  * @returns {Object.<string, string>}
  */
 export const normalizeHeaders = (headers) => {
-		const entries = (headers instanceof Headers) ? [...headers.entries()] : Object.entries(headers)
-		return Object.fromEntries(
-			entries.map(([key, val]) => [key.toLowerCase(), String(val).valueOf()]),
-		)
-	}
-	
-
+	const entries =
+		headers instanceof Headers
+			? [...headers.entries()]
+			: Object.entries(headers);
+	return Object.fromEntries(
+		entries.map(([key, val]) => [key.toLowerCase(), String(val).valueOf()]),
+	);
+};

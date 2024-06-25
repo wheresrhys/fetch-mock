@@ -8,7 +8,7 @@ describe('user defined matchers', () => {
 			name: 'syncMatcher',
 			matcher: (route) => (url) => url.indexOf(route.syncMatcher) > -1,
 		});
-		fm.mock(
+		fm.route(
 			{
 				syncMatcher: 'a',
 			},
@@ -28,7 +28,7 @@ describe('user defined matchers', () => {
 				JSON.parse(options.body)[route.bodyMatcher] === true,
 			usesBody: true,
 		});
-		fm.mock(
+		fm.route(
 			{
 				bodyMatcher: 'a',
 			},
@@ -61,7 +61,7 @@ describe('user defined matchers', () => {
 			matcher: (route) => (url, options) =>
 				JSON.parse(options.body)[route.asyncBodyMatcher] === true,
 		});
-		fm.mock(
+		fm.route(
 			{
 				asyncBodyMatcher: 'a',
 			},

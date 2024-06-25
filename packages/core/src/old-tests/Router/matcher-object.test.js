@@ -8,19 +8,19 @@ describe('matcher object', () => {
 	});
 
 	it('use matcher object with matcher property', async () => {
-		fm.mock({ matcher: 'http://a.com' }, 200).catch();
+		fm.route({ matcher: 'http://a.com' }, 200).catch();
 		await fm.fetchHandler('http://a.com');
 		expect(fm.calls(true).length).toEqual(1);
 	});
 
 	it('use matcher object with url property', async () => {
-		fm.mock({ url: 'http://a.com' }, 200).catch();
+		fm.route({ url: 'http://a.com' }, 200).catch();
 		await fm.fetchHandler('http://a.com');
 		expect(fm.calls(true).length).toEqual(1);
 	});
 
 	it('can use matcher and url simultaneously', async () => {
-		fm.mock(
+		fm.route(
 			{
 				url: 'end:path',
 				matcher: (url, opts) =>
@@ -42,14 +42,14 @@ describe('matcher object', () => {
 	});
 
 	it('if no url provided, match any url', async () => {
-		fm.mock({}, 200).catch();
+		fm.route({}, 200).catch();
 
 		await fm.fetchHandler('http://a.com');
 		expect(fm.calls(true).length).toEqual(1);
 	});
 
 	it.skip('deprecated message on using functionMatcher (prefer matcher)', () => {
-		fm.mock(
+		fm.route(
 			{
 				url: 'end:profile',
 				functionMatcher: (url, opts) =>
@@ -60,7 +60,7 @@ describe('matcher object', () => {
 	});
 
 	it('can match Headers', async () => {
-		fm.mock({ url: 'http://a.com', headers: { a: 'b' } }, 200).catch();
+		fm.route({ url: 'http://a.com', headers: { a: 'b' } }, 200).catch();
 
 		await fm.fetchHandler('http://a.com', {
 			headers: { a: 'c' },
@@ -73,7 +73,7 @@ describe('matcher object', () => {
 	});
 
 	it('can match query string', async () => {
-		fm.mock({ url: 'http://a.com', query: { a: 'b' } }, 200).catch();
+		fm.route({ url: 'http://a.com', query: { a: 'b' } }, 200).catch();
 
 		await fm.fetchHandler('http://a.com');
 		expect(fm.calls(true).length).toEqual(0);
@@ -82,7 +82,7 @@ describe('matcher object', () => {
 	});
 
 	it('can match path parameter', async () => {
-		fm.mock({ url: 'express:/type/:var', params: { var: 'b' } }, 200).catch();
+		fm.route({ url: 'express:/type/:var', params: { var: 'b' } }, 200).catch();
 		await fm.fetchHandler('/');
 		expect(fm.calls(true).length).toEqual(0);
 		await fm.fetchHandler('/type/a');
@@ -92,7 +92,7 @@ describe('matcher object', () => {
 	});
 
 	it('can match method', async () => {
-		fm.mock({ method: 'POST' }, 200).catch();
+		fm.route({ method: 'POST' }, 200).catch();
 
 		await fm.fetchHandler('http://a.com', { method: 'GET' });
 		expect(fm.calls(true).length).toEqual(0);
@@ -101,7 +101,7 @@ describe('matcher object', () => {
 	});
 
 	it('can match body', async () => {
-		fm.mock({ body: { foo: 'bar' } }, 200).catch();
+		fm.route({ body: { foo: 'bar' } }, 200).catch();
 
 		await fm.fetchHandler('http://a.com', {
 			method: 'POST',
@@ -119,8 +119,8 @@ describe('matcher object', () => {
 	it('support setting overwrite routes on matcher parameter', async () => {
 		expect(() =>
 			fm
-				.mock('http://a.com', 200)
-				.mock({ url: 'http://a.com', overwriteRoutes: true }, 300),
+				.route('http://a.com', 200)
+				.route({ url: 'http://a.com', overwriteRoutes: true }, 300),
 		).not.toThrow();
 
 		const res = await fm.fetchHandler('http://a.com');
@@ -128,7 +128,7 @@ describe('matcher object', () => {
 	});
 
 	it('support setting matchPartialBody on matcher parameter', async () => {
-		fm.mock({ body: { a: 1 }, matchPartialBody: true }, 200).catch(404);
+		fm.route({ body: { a: 1 }, matchPartialBody: true }, 200).catch(404);
 		const res = await fm.fetchHandler('http://a.com', {
 			method: 'POST',
 			body: JSON.stringify({ a: 1, b: 2 }),

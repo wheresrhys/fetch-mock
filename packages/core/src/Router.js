@@ -31,15 +31,16 @@ const nameToOptions = (options) =>
 	typeof options === 'string' ? { name: options } : options;
 
 /**
- * 
- * @param {RouteResponse} response 
+ *
+ * @param {RouteResponse} response
  * @returns {RouteResponse is RouteResponseFunction}
  */
-const isPromise = response => typeof /** @type {Promise<any>} */(response).then === 'function'
+const isPromise = (response) =>
+	typeof (/** @type {Promise<any>} */ (response).then) === 'function';
 
 /**
- * 
- * @param {RouteResponseData} responseInput 
+ *
+ * @param {RouteResponseData} responseInput
  * @returns {RouteResponseConfig}
  */
 function normalizeResponseInput(responseInput) {
@@ -50,12 +51,15 @@ function normalizeResponseInput(responseInput) {
 		};
 		// If the response config is not an object, or is an object that doesn't use
 		// any reserved properties, assume it is meant to be the body of the response
-	} else if (typeof responseInput === 'string' || shouldSendAsObject(responseInput)) {
+	} else if (
+		typeof responseInput === 'string' ||
+		shouldSendAsObject(responseInput)
+	) {
 		return {
 			body: responseInput,
 		};
 	}
-	return /** @type{RouteResponseConfig} */(responseInput);
+	return /** @type{RouteResponseConfig} */ (responseInput);
 }
 
 /**
@@ -64,8 +68,17 @@ function normalizeResponseInput(responseInput) {
  * @returns {boolean}
  */
 function shouldSendAsObject(responseInput) {
+	// if (Object.keys(responseInput).some(key => responseConfigProps.includes(key)) {
+	// 	if (Object.keys(responseInput).some(key => !responseConfigProps.includes(key)) {
+	// 		throw new Error(`Ambiguous whether response is a configuration object `)
+	// 	} else {return true}
+	// }
 	// TODO improve this... make it less hacky and magic
-	if (responseConfigProps.some((prop) => /** @type {RouteResponseObjectData}*/(responseInput)[prop])) {
+	if (
+		responseConfigProps.some(
+			(prop) => /** @type {RouteResponseObjectData}*/ (responseInput)[prop],
+		)
+	) {
 		if (
 			Object.keys(responseInput).every((key) =>
 				responseConfigProps.includes(key),
@@ -83,13 +96,8 @@ function shouldSendAsObject(responseInput) {
  * @param {NormalizedRequest} normalizedRequest
  * @returns
  */
-const resolveUntilResponseConfig = async (
-	response,
-	normalizedRequest
-) => {
-	const { url,
-		options,
-		request } = normalizedRequest
+const resolveUntilResponseConfig = async (response, normalizedRequest) => {
+	const { url, options, request } = normalizedRequest;
 	// We want to allow things like
 	// - function returning a Promise for a response
 	// - delaying (using a timeout Promise) a function's execution to generate
@@ -109,7 +117,6 @@ const resolveUntilResponseConfig = async (
 	}
 };
 
-
 export default class Router {
 	/**
 	 * @param {FetchMockConfig} fetchMockConfig
@@ -122,10 +129,12 @@ export default class Router {
 	/**
 	 *
 	 * @param {NormalizedRequest} requestOptions
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	needsToReadBody({ request }) {
-		return Boolean(request && this.routes.some(route => route.config.usesBody));
+		return Boolean(
+			request && this.routes.some((route) => route.config.usesBody),
+		);
 	}
 
 	/**
@@ -134,21 +143,28 @@ export default class Router {
 	 */
 	async execute(callLog) {
 		const { url, options, request, pendingPromises } = callLog;
-		const routesToTry = this.fallbackRoute ? [...this.routes, this.fallbackRoute]: this.routes 
+		const routesToTry = this.fallbackRoute
+			? [...this.routes, this.fallbackRoute]
+			: this.routes;
 		const route = routesToTry.find((route) =>
 			route.matcher(url, options, request),
 		);
 
 		if (route) {
 			callLog.route = route;
-			const { response, responseOptions }  = await this.generateResponse(
+			const { response, responseOptions } = await this.generateResponse(
 				route,
-				callLog
-			)
+				callLog,
+			);
 			// TODO, get responseConfig out of generateResponse too
-			const observableResponse = this.createObservableResponse(response, responseOptions, url, pendingPromises);
+			const observableResponse = this.createObservableResponse(
+				response,
+				responseOptions,
+				url,
+				pendingPromises,
+			);
 			callLog.response = response;
-			return response
+			return observableResponse;
 		}
 
 		throw new Error(
@@ -164,21 +180,18 @@ export default class Router {
 	 * @param {CallLog} callLog
 	 * @returns {Promise<{response: Response, responseOptions: ResponseInit}>}
 	 */
-	async generateResponse (
-		route,
-		callLog,
-	) {
-		let responseInput = await resolveUntilResponseConfig(
+	async generateResponse(route, callLog) {
+		const responseInput = await resolveUntilResponseConfig(
 			route.config.response,
-			callLog
+			callLog,
 		);
 
 		// If the response is a pre-made Response, respond with it
 		if (responseInput instanceof Response) {
-			return { response: responseInput, responseOptions : {}};
-		} 
+			return { response: responseInput, responseOptions: {} };
+		}
 
-		const responseConfig = normalizeResponseInput(responseInput)
+		const responseConfig = normalizeResponseInput(responseInput);
 
 		// If the response says to throw an error, throw it
 		if (responseConfig.throws) {
@@ -188,14 +201,19 @@ export default class Router {
 		return route.constructResponse(responseConfig);
 	}
 	/**
-	 * 
-	 * @param {Response} response 
+	 *
+	 * @param {Response} response
 	 * @param {RouteResponseConfig} responseConfig
 	 * @param {string} responseUrl
 	 * @param {Promise<any>[]} pendingPromises
 	 * @returns {Response}
 	 */
-	createObservableResponse(response, responseConfig, responseUrl, pendingPromises) {
+	createObservableResponse(
+		response,
+		responseConfig,
+		responseUrl,
+		pendingPromises,
+	) {
 		response._fmResults = {};
 		// Using a proxy means we can set properties that may not be writable on
 		// the original Response. It also means we can track the resolution of
@@ -281,12 +299,16 @@ export default class Router {
 		}
 
 		const route = new Route({
-			...this.config, ...config
+			...this.config,
+			...config,
 		});
 
 		if (
 			route.config.name &&
-			this.routes.some(({ config: {name: existingName }}) => route.config.name === existingName)
+			this.routes.some(
+				({ config: { name: existingName } }) =>
+					route.config.name === existingName,
+			)
 		) {
 			throw new Error(
 				'fetch-mock: Adding route with same name as existing route.',
@@ -303,15 +325,19 @@ export default class Router {
 				'calling fetchMock.catch() twice - are you sure you want to overwrite the previous fallback response',
 			); // eslint-disable-line
 		}
-		
-		this.fallbackRoute = new Route({ matcher: (url, options, request) => {
-			if (this.config.warnOnFallback) {
-				console.warn(
-					`Unmatched ${(options && options.method) || 'GET'} to ${url}`,
+
+		this.fallbackRoute = new Route({
+			matcher: (url, options) => {
+				if (this.config.warnOnFallback) {
+					console.warn(
+						`Unmatched ${(options && options.method) || 'GET'} to ${url}`,
 				); // eslint-disable-line
-			}
-			return true;
-		}, response: response || 'ok', ...this.config })
+				}
+				return true;
+			},
+			response: response || 'ok',
+			...this.config,
+		});
 		this.fallbackRoute.config.isFallback = true;
 	}
 	/**
@@ -319,8 +345,10 @@ export default class Router {
 	 * @param {{force: boolean}} options
 	 */
 	removeRoutes({ force }) {
-		force
-			? (this.routes = [])
-			: (this.routes = this.routes.filter(({ config: {sticky }}) => sticky));
+		if (force) {
+			this.routes = []
+		} else {
+			this.routes = this.routes.filter(({ config: { sticky } }) => sticky)
+		}
 	}
 }

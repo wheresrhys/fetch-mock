@@ -11,7 +11,7 @@ describe('unmatched calls', () => {
 	afterEach(() => fm.restore());
 
 	it('throws if any calls unmatched', () => {
-		fm.mock(/a/, 200);
+		fm.route(/a/, 200);
 		expect(() => fm.fetchHandler('http://1')).toThrow();
 	});
 

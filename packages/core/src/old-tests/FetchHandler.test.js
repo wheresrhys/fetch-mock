@@ -23,27 +23,27 @@ describe('response negotiation', () => {
 	afterEach(() => fm.restore());
 
 	it('function', async () => {
-		fm.mock('*', (url) => url);
+		fm.route('*', (url) => url);
 		const res = await fm.fetchHandler('http://a.com/');
 		expect(res.status).toEqual(200);
 		expect(await res.text()).toEqual('http://a.com/');
 	});
 
 	it('Promise', async () => {
-		fm.mock('*', Promise.resolve(200));
+		fm.route('*', Promise.resolve(200));
 		const res = await fm.fetchHandler('http://a.com/');
 		expect(res.status).toEqual(200);
 	});
 
 	it('function that returns a Promise', async () => {
-		fm.mock('*', (url) => Promise.resolve(`test: ${url}`));
+		fm.route('*', (url) => Promise.resolve(`test: ${url}`));
 		const res = await fm.fetchHandler('http://a.com/');
 		expect(res.status).toEqual(200);
 		expect(await res.text()).toEqual('test: http://a.com/');
 	});
 
 	it('Promise for a function that returns a response', async () => {
-		fm.mock(
+		fm.route(
 			'http://a.com/',
 			Promise.resolve((url) => `test: ${url}`),
 		);
@@ -53,7 +53,7 @@ describe('response negotiation', () => {
 	});
 
 	it('delay', async () => {
-		fm.mock('*', 200, { delay: 20 });
+		fm.route('*', 200, { delay: 20 });
 		const req = fm.fetchHandler('http://a.com/');
 		let resolved = false;
 		req.then(() => {
@@ -69,7 +69,7 @@ describe('response negotiation', () => {
 
 	it("delay a function response's execution", async () => {
 		const startTimestamp = new Date().getTime();
-		fm.mock('http://a.com/', () => ({ timestamp: new Date().getTime() }), {
+		fm.route('http://a.com/', () => ({ timestamp: new Date().getTime() }), {
 			delay: 20,
 		});
 		const req = fm.fetchHandler('http://a.com/');
@@ -88,7 +88,7 @@ describe('response negotiation', () => {
 	});
 
 	it('pass values to delayed function', async () => {
-		fm.mock('*', (url) => `delayed: ${url}`, {
+		fm.route('*', (url) => `delayed: ${url}`, {
 			delay: 10,
 		});
 		const req = fm.fetchHandler('http://a.com/');
@@ -99,7 +99,7 @@ describe('response negotiation', () => {
 	});
 
 	it('call delayed response multiple times, each with the same delay', async () => {
-		fm.mock('*', 200, { delay: 20 });
+		fm.route('*', 200, { delay: 20 });
 		const req1 = fm.fetchHandler('http://a.com/');
 		let resolved = false;
 		req1.then(() => {
@@ -125,7 +125,7 @@ describe('response negotiation', () => {
 	});
 
 	it('Response', async () => {
-		fm.mock(
+		fm.route(
 			'http://a.com/',
 			new fm.config.Response('http://a.com/', { status: 200 }),
 		);
@@ -134,7 +134,7 @@ describe('response negotiation', () => {
 	});
 
 	it('function that returns a Response', async () => {
-		fm.mock(
+		fm.route(
 			'http://a.com/',
 			() => new fm.config.Response('http://a.com/', { status: 200 }),
 		);
@@ -143,7 +143,7 @@ describe('response negotiation', () => {
 	});
 
 	it('Promise that returns a Response', async () => {
-		fm.mock(
+		fm.route(
 			'http://a.com/',
 			Promise.resolve(new fm.config.Response('http://a.com/', { status: 200 })),
 		);
@@ -153,7 +153,7 @@ describe('response negotiation', () => {
 
 	describe('rejecting', () => {
 		it('reject if object with `throws` property', () => {
-			fm.mock('*', { throws: 'as expected' });
+			fm.route('*', { throws: 'as expected' });
 
 			return fm
 				.fetchHandler('http://a.com/')
@@ -166,7 +166,7 @@ describe('response negotiation', () => {
 		});
 
 		it('reject if function that returns object with `throws` property', () => {
-			fm.mock('*', () => ({ throws: 'as expected' }));
+			fm.route('*', () => ({ throws: 'as expected' }));
 
 			return fm
 				.fetchHandler('http://a.com/')
@@ -198,14 +198,14 @@ describe('response negotiation', () => {
 		});
 
 		it('error on signal abort', () => {
-			fm.mock('*', getDelayedOk());
+			fm.route('*', getDelayedOk());
 			return expectAbortError('http://a.com', {
 				signal: getDelayedAbortController().signal,
 			});
 		});
 
 		it('error on signal abort for request object', () => {
-			fm.mock('*', getDelayedOk());
+			fm.route('*', getDelayedOk());
 			return expectAbortError(
 				new fm.config.Request('http://a.com', {
 					signal: getDelayedAbortController().signal,
@@ -214,7 +214,7 @@ describe('response negotiation', () => {
 		});
 
 		it('error when signal already aborted', () => {
-			fm.mock('*', 200);
+			fm.route('*', 200);
 			const controller = new AbortController();
 			controller.abort();
 			return expectAbortError('http://a.com', {
@@ -231,7 +231,7 @@ describe('response negotiation', () => {
 		});
 
 		it('will flush even when aborted', async () => {
-			fm.mock('http://a.com', getDelayedOk());
+			fm.route('http://a.com', getDelayedOk());
 
 			await expectAbortError('http://a.com', {
 				signal: getDelayedAbortController().signal,

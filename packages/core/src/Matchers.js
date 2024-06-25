@@ -14,7 +14,6 @@ import {
 	normalizeUrl,
 } from './RequestUtils.js';
 
-
 /**
  * @param {RouteMatcher | RouteConfig} matcher
  * @returns {matcher is RouteMatcherUrl}
@@ -30,7 +29,6 @@ export const isUrlMatcher = (matcher) =>
  * @returns {matcher is RouteMatcherFunction}
  */
 export const isFunctionMatcher = (matcher) => typeof matcher === 'function';
-
 
 /** @typedef {string | RegExp | URL} RouteMatcherUrl */
 /** @typedef {function(string): boolean} UrlMatcher */
@@ -74,8 +72,10 @@ const getHeaderMatcher = ({ headers: expectedHeaders }) => {
 	const expectation = normalizeHeaders(expectedHeaders);
 	return (url, { headers = {} }) => {
 		// TODO do something to handle multi value headers
-		const lowerCaseHeaders = normalizeHeaders(headers)
-		return Object.keys(expectation).every((headerName) => lowerCaseHeaders[headerName] === expectation[headerName]);
+		const lowerCaseHeaders = normalizeHeaders(headers);
+		return Object.keys(expectation).every(
+			(headerName) => lowerCaseHeaders[headerName] === expectation[headerName],
+		);
 	};
 };
 /**
@@ -106,7 +106,10 @@ const getQueryStringMatcher = ({ query: passedQuery }) => {
 				if (!Array.isArray(expectedQuery[key])) {
 					return false;
 				}
-				return isEqual(/** @type {string[]}*/(query[key]).sort(), /** @type {string[]}*/(expectedQuery[key]).sort());
+				return isEqual(
+					/** @type {string[]}*/ (query[key]).sort(),
+					/** @type {string[]}*/ (expectedQuery[key]).sort(),
+				);
 			}
 			return query[key] === expectedQuery[key];
 		});
@@ -119,7 +122,7 @@ const getParamsMatcher = ({ params: expectedParams, url: matcherUrl }) => {
 	if (!expectedParams) {
 		return;
 	}
-	if (typeof matcherUrl === 'string') {	
+	if (typeof matcherUrl === 'string') {
 		if (!/express:/.test(matcherUrl)) {
 			throw new Error(
 				'fetch-mock: matching on params is only possible when using an express: matcher',
@@ -218,7 +221,10 @@ const getUrlMatcher = (route) => {
 	if (typeof matcherUrl === 'string') {
 		for (const shorthand in stringMatchers) {
 			if (matcherUrl.indexOf(`${shorthand}:`) === 0) {
-				const urlFragment = matcherUrl.replace(new RegExp(`^${shorthand}:`), '');
+				const urlFragment = matcherUrl.replace(
+					new RegExp(`^${shorthand}:`),
+					'',
+				);
 				return stringMatchers[shorthand](urlFragment);
 			}
 		}

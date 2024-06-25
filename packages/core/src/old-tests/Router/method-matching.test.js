@@ -11,7 +11,7 @@ describe('method matching', () => {
 	afterEach(() => fm.restore());
 
 	it('match any method by default', async () => {
-		fm.mock('*', 200).catch();
+		fm.route('*', 200).catch();
 
 		await fm.fetchHandler('http://a.com/', { method: 'GET' });
 		expect(fm.calls(true).length).toEqual(1);
@@ -20,7 +20,7 @@ describe('method matching', () => {
 	});
 
 	it('configure an exact method to match', async () => {
-		fm.mock({ method: 'POST' }, 200).catch();
+		fm.route({ method: 'POST' }, 200).catch();
 
 		await fm.fetchHandler('http://a.com/', { method: 'GET' });
 		expect(fm.calls(true).length).toEqual(0);
@@ -29,14 +29,14 @@ describe('method matching', () => {
 	});
 
 	it('match implicit GET', async () => {
-		fm.mock({ method: 'GET' }, 200).catch();
+		fm.route({ method: 'GET' }, 200).catch();
 
 		await fm.fetchHandler('http://a.com/');
 		expect(fm.calls(true).length).toEqual(1);
 	});
 
 	it('be case insensitive', async () => {
-		fm.mock({ method: 'POST' }, 200).mock({ method: 'patch' }, 200).catch();
+		fm.route({ method: 'POST' }, 200).route({ method: 'patch' }, 200).catch();
 
 		await fm.fetchHandler('http://a.com/', { method: 'post' });
 		expect(fm.calls(true).length).toEqual(1);
@@ -45,7 +45,7 @@ describe('method matching', () => {
 	});
 
 	it('can be used alongside function matchers', async () => {
-		fm.mock(
+		fm.route(
 			{
 				method: 'POST',
 				functionMatcher: (url) => /a\.com/.test(url),

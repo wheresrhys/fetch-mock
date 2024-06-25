@@ -30,6 +30,9 @@ const configs = {
 	commonjs: {
 		setupFiles: './test/setup/commonjs.cjs',
 	},
+	packages: {
+		setupFiles: [],
+	},
 };
 
 export default defineConfig({

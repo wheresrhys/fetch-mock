@@ -12,7 +12,7 @@ describe('query string matching', () => {
 	afterEach(() => fm.restore());
 
 	it('match a query string', async () => {
-		fm.mock(
+		fm.route(
 			{
 				query: { a: 'b', c: 'd' },
 			},
@@ -26,7 +26,7 @@ describe('query string matching', () => {
 	});
 
 	it('match a query string against a URL object', async () => {
-		fm.mock(
+		fm.route(
 			{
 				query: { a: 'b', c: 'd' },
 			},
@@ -40,7 +40,7 @@ describe('query string matching', () => {
 	});
 
 	it('match a query string against a relative path', async () => {
-		fm.mock(
+		fm.route(
 			{
 				query: { a: 'b' },
 			},
@@ -52,7 +52,7 @@ describe('query string matching', () => {
 	});
 
 	it('match multiple query strings', async () => {
-		fm.mock(
+		fm.route(
 			{
 				query: { a: 'b', c: 'd' },
 			},
@@ -70,7 +70,7 @@ describe('query string matching', () => {
 	});
 
 	it('ignore irrelevant query strings', async () => {
-		fm.mock(
+		fm.route(
 			{
 				query: { a: 'b', c: 'd' },
 			},
@@ -82,7 +82,7 @@ describe('query string matching', () => {
 	});
 
 	it('match an empty query string', async () => {
-		fm.mock(
+		fm.route(
 			{
 				query: { a: '' },
 			},
@@ -97,7 +97,7 @@ describe('query string matching', () => {
 
 	it('distinguish between query strings that only partially differ', async () => {
 		expect(() =>
-			fm.mock({ query: { a: 'b', c: 'e' } }, 200).mock(
+			fm.route({ query: { a: 'b', c: 'e' } }, 200).route(
 				{
 					overwriteRoutes: false,
 					query: { a: 'b', c: 'd' },
@@ -111,7 +111,7 @@ describe('query string matching', () => {
 
 	describe('value coercion', () => {
 		it('coerce integers to strings and match', async () => {
-			fm.mock(
+			fm.route(
 				{
 					query: {
 						a: 1,
@@ -126,7 +126,7 @@ describe('query string matching', () => {
 		});
 
 		it('coerce floats to strings and match', async () => {
-			fm.mock(
+			fm.route(
 				{
 					query: {
 						a: 1.2,
@@ -141,7 +141,7 @@ describe('query string matching', () => {
 		});
 
 		it('coerce booleans to strings and match', async () => {
-			fm.mock(
+			fm.route(
 				{
 					query: {
 						a: true,
@@ -149,7 +149,7 @@ describe('query string matching', () => {
 				},
 				200,
 			)
-				.mock(
+				.route(
 					{
 						query: {
 							b: false,
@@ -168,7 +168,7 @@ describe('query string matching', () => {
 		});
 
 		it('coerce undefined to an empty string and match', async () => {
-			fm.mock(
+			fm.route(
 				{
 					query: {
 						a: undefined,
@@ -183,7 +183,7 @@ describe('query string matching', () => {
 		});
 
 		it('coerce null to an empty string and match', async () => {
-			fm.mock(
+			fm.route(
 				{
 					query: {
 						a: null,
@@ -198,7 +198,7 @@ describe('query string matching', () => {
 		});
 
 		it('coerce an object to an empty string and match', async () => {
-			fm.mock(
+			fm.route(
 				{
 					query: {
 						a: { b: 'c' },
@@ -220,7 +220,7 @@ describe('query string matching', () => {
 				num: 1,
 				arr: ['a', undefined],
 			};
-			fm.mock('http://a.com/', 200, {
+			fm.route('http://a.com/', 200, {
 				query,
 			}).catch();
 
@@ -233,7 +233,7 @@ describe('query string matching', () => {
 
 	describe('repeated query strings', () => {
 		it('match repeated query strings', async () => {
-			fm.mock({ url: 'http://a.com/', query: { a: ['b', 'c'] } }, 200).catch();
+			fm.route({ url: 'http://a.com/', query: { a: ['b', 'c'] } }, 200).catch();
 
 			await fm.fetchHandler('http://a.com');
 			expect(fm.calls(true).length).toEqual(0);
@@ -246,7 +246,7 @@ describe('query string matching', () => {
 		});
 
 		it('match repeated query strings in any order', async () => {
-			fm.mock({ url: 'http://a.com/', query: { a: ['b', 'c'] } }, 200).catch();
+			fm.route({ url: 'http://a.com/', query: { a: ['b', 'c'] } }, 200).catch();
 
 			await fm.fetchHandler('http://a.com');
 			expect(fm.calls(true).length).toEqual(0);
@@ -257,7 +257,7 @@ describe('query string matching', () => {
 		});
 
 		it('match a query string array of length 1', async () => {
-			fm.mock({ url: 'http://a.com/', query: { a: ['b'] } }, 200).catch();
+			fm.route({ url: 'http://a.com/', query: { a: ['b'] } }, 200).catch();
 
 			await fm.fetchHandler('http://a.com');
 			expect(fm.calls(true).length).toEqual(0);
@@ -268,7 +268,7 @@ describe('query string matching', () => {
 		});
 
 		it('match a repeated query string with an empty value', async () => {
-			fm.mock(
+			fm.route(
 				{ url: 'http://a.com/', query: { a: ['b', undefined] } },
 				200,
 			).catch();
@@ -284,7 +284,7 @@ describe('query string matching', () => {
 
 	describe('interoperability', () => {
 		it('can be used alongside query strings expressed in the url', async () => {
-			fm.mock('http://a.com/?c=d', 200, {
+			fm.route('http://a.com/?c=d', 200, {
 				query: { a: 'b' },
 			}).catch();
 
@@ -297,7 +297,7 @@ describe('query string matching', () => {
 		});
 
 		it('can be used alongside function matchers', async () => {
-			fm.mock((url) => /a\.com/.test(url), 200, {
+			fm.route((url) => /a\.com/.test(url), 200, {
 				query: { a: 'b' },
 			}).catch();
 

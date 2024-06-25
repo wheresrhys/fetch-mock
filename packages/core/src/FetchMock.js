@@ -13,14 +13,14 @@ import * as requestUtils from './RequestUtils.js';
 
 /**
  * @typedef FetchMockConfig
- * @prop {boolean} [sendAsJson]
- * @prop {boolean} [includeContentLength]
- * @prop {boolean} [warnOnFallback]
- * @prop {boolean} [matchPartialBody]
- * @prop {function(string | Request, RequestInit): Promise<Response>} [fetch]
- * @prop {typeof Headers} [Headers]
- * @prop {typeof Request} [Request]
- * @prop {typeof Response} [Response]
+ * @property {boolean} [sendAsJson]
+ * @property {boolean} [includeContentLength]
+ * @property {boolean} [warnOnFallback]
+ * @property {boolean} [matchPartialBody]
+ * @property {function(string | Request, RequestInit): Promise<Response>} [fetch]
+ * @property {typeof Headers} [Headers]
+ * @property {typeof Request} [Request]
+ * @property {typeof Response} [Response]
  */
 
 /** @type {FetchMockConfig} */
@@ -34,19 +34,19 @@ const defaultConfig = {
 	Headers: globalThis.Headers,
 	fetch: globalThis.fetch,
 };
-/** 
- * @typedef FetchMockCore 
- * @this {FetchMock} 
- * @prop {FetchMockConfig} config
- * @prop {Router} router
- * @prop {CallHistory} callHistory
- * @prop {function():FetchMock} createInstance
- * @prop {function(string | Request, RequestInit): Promise<Response>} fetchHandler
- * @prop {function(any,any,any): FetchMock} route
- * @prop {function(RouteResponse=): FetchMock} catch
- * @prop {function(boolean): Promise<any>} flush
- * @prop {function(RouteName[]=): boolean} done
- * @prop {function(MatcherDefinition):void} defineMatcher
+/**
+ * @typedef FetchMockCore
+ * @this {FetchMock}
+ * @property {FetchMockConfig} config
+ * @property {Router} router
+ * @property {CallHistory} callHistory
+ * @property {function():FetchMock} createInstance
+ * @property {function(string | Request, RequestInit): Promise<Response>} fetchHandler
+ * @property {function(any,any,any): FetchMock} route
+ * @property {function(RouteResponse=): FetchMock} catch
+ * @property {function(boolean): Promise<any>} flush
+ * @property {function(RouteName[]=): boolean} done
+ * @property {function(MatcherDefinition):void} defineMatcher
  */
 
 /** @type {FetchMockCore} */
@@ -56,7 +56,7 @@ const FetchMock = {
 	callHistory: new CallHistory(defaultConfig),
 	createInstance() {
 		const instance = Object.create(FetchMock);
-		instance.config = {...this.config};
+		instance.config = { ...this.config };
 		instance.router = new Router(instance.config, this.router.routes);
 		instance.callHistory = new CallHistory(this.config);
 		return instance;
@@ -68,7 +68,7 @@ const FetchMock = {
 	 * @this {FetchMock}
 	 * @returns {Promise<Response>}
 	 */
-	async fetchHandler (requestInput, requestInit) {
+	async fetchHandler(requestInput, requestInit) {
 		const normalizedRequest = requestUtils.normalizeRequest(
 			requestInput,
 			requestInit,
@@ -93,11 +93,11 @@ const FetchMock = {
 			options.body = await options.body;
 		}
 		/** @type {Promise<any>[]} */
-		const pendingPromises = []
-		const callLog = { url, options, request, pendingPromises} 
+		const pendingPromises = [];
+		const callLog = { url, options, request, pendingPromises };
 		this.callHistory.recordCall(callLog);
-		const responsePromise = this.router.execute(callLog);;
-		pendingPromises.push(responsePromise)
+		const responsePromise = this.router.execute(callLog);
+		pendingPromises.push(responsePromise);
 		return responsePromise;
 	},
 	/**
@@ -138,22 +138,20 @@ const FetchMock = {
 		return this.callHistory.flush(waitForResponseBody);
 	},
 	done(routeNames) {
-		return this.callHistory.done(this.router.routes, routeNames)
-	}
+		return this.callHistory.done(this.router.routes, routeNames);
+	},
 };
 
 /** @typedef {'get' |'post' |'put' |'delete' |'head' |'patch' |'once' |'sticky' |'any' |'anyOnce' |'getOnce' |'postOnce' |'putOnce' |'deleteOnce' |'headOnce' |'patchOnce' |'getAny' |'postAny' |'putAny' |'deleteAny' |'headAny' |'patchAny' |'getAnyOnce' |'postAnyOnce' |'putAnyOnce' |'deleteAnyOnce' |'headAnyOnce' |'patchAnyOnce'} PresetRouteMethodName} */
 /** @typedef {Object.<PresetRouteMethodName, function(any,any,any): FetchMock>} PresetRoutes */
 
-
-
 /** @type {PresetRoutes} */
-const PresetRoutes = {}
+const PresetRoutes = {};
 /**
- * 
- * @param {PresetRouteMethodName} methodName 
- * @param {string} underlyingMethod 
- * @param {UserRouteConfig} shorthandOptions 
+ *
+ * @param {PresetRouteMethodName} methodName
+ * @param {string} underlyingMethod
+ * @param {UserRouteConfig} shorthandOptions
  */
 const defineShorthand = (methodName, underlyingMethod, shorthandOptions) => {
 	/**
@@ -188,9 +186,9 @@ const defineShorthand = (methodName, underlyingMethod, shorthandOptions) => {
 	};
 };
 /**
- * 
- * @param {PresetRouteMethodName} methodName 
- * @param {string} underlyingMethod 
+ *
+ * @param {PresetRouteMethodName} methodName
+ * @param {string} underlyingMethod
  */
 const defineGreedyShorthand = (methodName, underlyingMethod) => {
 	/**
@@ -210,14 +208,25 @@ defineGreedyShorthand('any', 'route');
 defineGreedyShorthand('anyOnce', 'once');
 
 ['get', 'post', 'put', 'delete', 'head', 'patch'].forEach((method) => {
-	defineShorthand(/** @type {PresetRouteMethodName} */(method), 'route', { method });
-	defineShorthand(/** @type {PresetRouteMethodName} */(`${method}Once`), 'once', { method });
-	defineGreedyShorthand(/** @type {PresetRouteMethodName} */(`${method}Any`), method);
-	defineGreedyShorthand(/** @type {PresetRouteMethodName} */(`${method}AnyOnce`), `${method}Once`);
+	defineShorthand(/** @type {PresetRouteMethodName} */ (method), 'route', {
+		method,
+	});
+	defineShorthand(
+		/** @type {PresetRouteMethodName} */ (`${method}Once`),
+		'once',
+		{ method },
+	);
+	defineGreedyShorthand(
+		/** @type {PresetRouteMethodName} */ (`${method}Any`),
+		method,
+	);
+	defineGreedyShorthand(
+		/** @type {PresetRouteMethodName} */ (`${method}AnyOnce`),
+		`${method}Once`,
+	);
 });
 
-
 /** @typedef {FetchMockCore & PresetRoutes} FetchMock*/
-Object.assign(FetchMock, PresetRoutes)
+Object.assign(FetchMock, PresetRoutes);
 
 export default FetchMock.createInstance();

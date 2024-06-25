@@ -11,7 +11,7 @@ describe('path parameter matching', () => {
 	afterEach(() => fm.restore());
 
 	it('can match a path parameters', async () => {
-		fm.mock('express:/type/:instance', 200, {
+		fm.route('express:/type/:instance', 200, {
 			params: { instance: 'b' },
 		}).catch();
 		await fm.fetchHandler('/');
@@ -23,7 +23,7 @@ describe('path parameter matching', () => {
 	});
 
 	it('can match multiple path parameters', async () => {
-		fm.mock('express:/:type/:instance', 200, {
+		fm.route('express:/:type/:instance', 200, {
 			params: { instance: 'b', type: 'cat' },
 		}).catch();
 		await fm.fetchHandler('/');
@@ -39,7 +39,7 @@ describe('path parameter matching', () => {
 	});
 
 	it('can match a path parameter on a full url', async () => {
-		fm.mock('express:/type/:instance', 200, {
+		fm.route('express:/type/:instance', 200, {
 			params: { instance: 'b' },
 		}).catch();
 		await fm.fetchHandler('http://site.com/');

@@ -54,3 +54,6 @@ test-browser:
 
 test-jest:
 	npx jest test/framework-compat/jest.spec.js
+
+test-package:
+	npx vitest ./packages/core/src/__tests__

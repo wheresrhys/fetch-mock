@@ -11,14 +11,14 @@ describe('edge cases', () => {
 	afterEach(() => fm.restore());
 
 	it('match relative urls', async () => {
-		fm.mock('/a.com/', 200).catch();
+		fm.route('/a.com/', 200).catch();
 
 		await fm.fetchHandler('/a.com/');
 		expect(fm.calls(true).length).toEqual(1);
 	});
 
 	it('match relative urls with dots', async () => {
-		fm.mock('/it.at/there/', 200).catch();
+		fm.route('/it.at/there/', 200).catch();
 
 		await fm.fetchHandler('/it.at/not/../there/');
 		expect(fm.calls(true).length).toEqual(1);
@@ -27,7 +27,7 @@ describe('edge cases', () => {
 	});
 
 	it('match absolute urls with dots', async () => {
-		fm.mock('http://it.at/there/', 200).catch();
+		fm.route('http://it.at/there/', 200).catch();
 
 		await fm.fetchHandler('http://it.at/not/../there/');
 		expect(fm.calls(true).length).toEqual(1);
@@ -50,7 +50,7 @@ describe('edge cases', () => {
 	});
 
 	it('express match full url', async () => {
-		fm.mock('express:/apps/:id', 200).catch();
+		fm.route('express:/apps/:id', 200).catch();
 
 		await fm.fetchHandler('https://api.example.com/apps/abc');
 		expect(fm.calls(true).length).toEqual(1);

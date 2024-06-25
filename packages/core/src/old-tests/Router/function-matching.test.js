@@ -11,7 +11,7 @@ describe('function matching', () => {
 	afterEach(() => fm.restore());
 
 	it('match using custom function', async () => {
-		fm.mock(
+		fm.route(
 			(url, opts) =>
 				url.indexOf('logged-in') > -1 &&
 				opts &&
@@ -33,7 +33,7 @@ describe('function matching', () => {
 	});
 
 	it('match using custom function using request body', async () => {
-		fm.mock((url, opts) => opts.body === 'a string', 200).catch();
+		fm.route((url, opts) => opts.body === 'a string', 200).catch();
 		await fm.fetchHandler('http://a.com/logged-in');
 		expect(fm.calls(true).length).toEqual(0);
 		await fm.fetchHandler('http://a.com/logged-in', {
@@ -44,7 +44,7 @@ describe('function matching', () => {
 	});
 
 	it('match using custom function with Request', async () => {
-		fm.mock(
+		fm.route(
 			(url, options) =>
 				url.indexOf('logged-in') > -1 && options.headers.authorized,
 			200,
@@ -66,7 +66,7 @@ describe('function matching', () => {
 			: 'compress';
 		const valueToSet = propertyToCheck === 'credentials' ? 'include' : false;
 
-		fm.mock(
+		fm.route(
 			(url, options, request) => request[propertyToCheck] === valueToSet,
 			200,
 		).catch();
@@ -82,7 +82,7 @@ describe('function matching', () => {
 	});
 
 	it('match using custom function alongside other matchers', async () => {
-		fm.mock('end:profile', 200, {
+		fm.route('end:profile', 200, {
 			functionMatcher: (url, opts) =>
 				opts && opts.headers && opts.headers.authorized === true,
 		}).catch();

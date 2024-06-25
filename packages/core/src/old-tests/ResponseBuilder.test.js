@@ -13,14 +13,14 @@ describe('response generation', () => {
 
     describe('status', () => {
         it('respond with a status', async () => {
-            fm.mock('*', 300);
+            fm.route('*', 300);
             const res = await fm.fetchHandler('http://a.com/');
             expect(res.status).toEqual(300);
             expect(res.statusText).toEqual('Multiple Choices');
         });
 
         it('should error on invalid statuses', async () => {
-            fm.mock('*', { status: 'not number' });
+            fm.route('*', { status: 'not number' });
             try {
                 await fm.fetchHandler('http://a.com');
                 expect.unreachable('Line above should throw');
@@ -34,7 +34,7 @@ describe('response generation', () => {
 
     describe('string', () => {
         it('respond with a string', async () => {
-            fm.mock('*', 'a string');
+            fm.route('*', 'a string');
             const res = await fm.fetchHandler('http://a.com/');
             expect(res.status).toEqual(200);
             expect(res.statusText).toEqual('OK');
@@ -42,7 +42,7 @@ describe('response generation', () => {
         });
 
         it('respond with an empty string', async () => {
-            fm.mock('*', '');
+            fm.route('*', '');
             const res = await fm.fetchHandler('http://a.com/');
             expect(res.status).toEqual(200);
             expect(res.statusText).toEqual('OK');
@@ -52,7 +52,7 @@ describe('response generation', () => {
 
     describe('json', () => {
         it('respond with a json', async () => {
-            fm.mock('*', { an: 'object' });
+            fm.route('*', { an: 'object' });
             const res = await fm.fetchHandler('http://a.com/');
             expect(res.status).toEqual(200);
             expect(res.statusText).toEqual('OK');
@@ -61,7 +61,7 @@ describe('response generation', () => {
         });
 
         it('convert body properties to json', async () => {
-            fm.mock('*', {
+            fm.route('*', {
                 body: { an: 'object' },
             });
             const res = await fm.fetchHandler('http://a.com/');
@@ -70,7 +70,7 @@ describe('response generation', () => {
         });
 
         it('not overide existing content-type-header', async () => {
-            fm.mock('*', {
+            fm.route('*', {
                 body: { an: 'object' },
                 headers: {
                     'content-type': 'text/html',
@@ -82,19 +82,19 @@ describe('response generation', () => {
         });
 
         it('not convert if `body` property exists', async () => {
-            fm.mock('*', { body: 'exists' });
+            fm.route('*', { body: 'exists' });
             const res = await fm.fetchHandler('http://a.com/');
             expect(res.headers.get('content-type')).not.toEqual('application/json');
         });
 
         it('not convert if `headers` property exists', async () => {
-            fm.mock('*', { headers: {} });
+            fm.route('*', { headers: {} });
             const res = await fm.fetchHandler('http://a.com/');
             expect(res.headers.get('content-type')).toBeNull();
         });
 
         it('not convert if `status` property exists', async () => {
-            fm.mock('*', { status: 300 });
+            fm.route('*', { status: 300 });
             const res = await fm.fetchHandler('http://a.com/');
             expect(res.headers.get('content-type')).toBeNull();
         });
@@ -104,7 +104,7 @@ describe('response generation', () => {
         // read headers of a fake redirected response.
         if (typeof window === 'undefined') {
             it('not convert if `redirectUrl` property exists', async () => {
-                fm.mock('*', {
+                fm.route('*', {
                     redirectUrl: 'http://url.to.hit',
                 });
                 const res = await fm.fetchHandler('http://a.com/');
@@ -113,14 +113,14 @@ describe('response generation', () => {
         }
 
         it('convert if non-whitelisted property exists', async () => {
-            fm.mock('*', { status: 300, weird: true });
+            fm.route('*', { status: 300, weird: true });
             const res = await fm.fetchHandler('http://a.com/');
             expect(res.headers.get('content-type')).toEqual('application/json');
         });
     });
 
     it('respond with a complex response, including headers', async () => {
-        fm.mock('*', {
+        fm.route('*', {
             status: 202,
             body: { an: 'object' },
             headers: {
@@ -137,13 +137,13 @@ describe('response generation', () => {
     // However node-fetch does, so we only run this test on the server
     if (fetchMock.config.Request !== globalThis.Request) {
         it('should set the url property on responses', async () => {
-            fm.mock('begin:http://foo.com', 200);
+            fm.route('begin:http://foo.com', 200);
             const res = await fm.fetchHandler('http://foo.com/path?query=string');
             expect(res.url).toEqual('http://foo.com/path?query=string');
         });
 
         it('should set the url property on responses when called with Request', async () => {
-            fm.mock('begin:http://foo.com', 200);
+            fm.route('begin:http://foo.com', 200);
             const res = await fm.fetchHandler(
                 new fm.config.Request('http://foo.com/path?query=string'),
             );
@@ -152,7 +152,7 @@ describe('response generation', () => {
     }
 
     it('respond with a redirected response', async () => {
-        fm.mock('*', {
+        fm.route('*', {
             redirectUrl: 'http://b.com',
             body: 'I am a redirect',
         });
@@ -163,7 +163,7 @@ describe('response generation', () => {
     });
 
     it('construct a response based on the request', async () => {
-        fm.mock('*', (url, opts) => url + opts.headers.header);
+        fm.route('*', (url, opts) => url + opts.headers.header);
         const res = await fm.fetchHandler('http://a.com/', {
             headers: { header: 'val' },
         });
@@ -172,7 +172,7 @@ describe('response generation', () => {
     });
 
     it('construct a response based on a Request instance', async () => {
-        fm.mock('*', (url, opts, request) => request.json().then(({ a }) => a));
+        fm.route('*', (url, opts, request) => request.json().then(({ a }) => a));
         const res = await fm.fetchHandler(
             new fm.config.Request('http://a.com', {
                 body: JSON.stringify({ a: 'b' }),
@@ -185,19 +185,19 @@ describe('response generation', () => {
 
     describe('content-length', () => {
         it('should work on body of type string', async () => {
-            fm.mock('*', 'content');
+            fm.route('*', 'content');
             const res = await fetch('http://a.com/');
             expect(res.headers.get('content-length')).toEqual('7');
         });
 
         it('should work on body of type object', async () => {
-            fm.mock('*', { hello: 'world' });
+            fm.route('*', { hello: 'world' });
             const res = await fetch('http://a.com/');
             expect(res.headers.get('content-length')).toEqual('17');
         });
 
         it('should not overrule explicit mocked content-length header', async () => {
-            fm.mock('*', {
+            fm.route('*', {
                 body: {
                     hello: 'world',
                 },
@@ -210,7 +210,7 @@ describe('response generation', () => {
         });
 
         it('should be case-insensitive when checking for explicit content-length header', async () => {
-            fm.mock('*', {
+            fm.route('*', {
                 body: {
                     hello: 'world',
                 },
@@ -233,7 +233,7 @@ describe('nodejs only tests', () => {
         afterEach(() => fetchMock.reset());
 
         it('can respond with a buffer', () => {
-            fetchMock.mock(/a/, new Buffer('buffer'), { sendAsJson: false });
+            fetchMock.route(/a/, new Buffer('buffer'), { sendAsJson: false });
             return fetchMock
                 .fetchHandler('http://a.com')
                 .then((res) => res.text())
@@ -254,7 +254,7 @@ describe('nodejs only tests', () => {
                 readable.push('response string');
                 readable.push(null);
 
-                fetchMock.mock(/a/, readable, { sendAsJson: false });
+                fetchMock.route(/a/, readable, { sendAsJson: false });
                 fetchMock.fetchHandler('http://a.com').then((res) => {
                     res.body.pipe(writable);
                 });
@@ -269,7 +269,7 @@ describe('nodejs only tests', () => {
         it('can respond with large bodies from the interweb', async () => {
             const fm = fetchMock.sandbox();
             fm.config.fallbackToNetwork = true;
-            fm.mock();
+            fm.route();
             // this is an adequate test because the response hangs if the
             // bug referenced above creeps back in
             await fm
@@ -289,7 +289,7 @@ describe.skip('client-side only tests', () => {
     afterEach(() => fetchMock.restore());
     it('not throw when passing unmatched calls through to native fetch', () => {
         fetchMock.config.fallbackToNetwork = true;
-        fetchMock.mock();
+        fetchMock.route();
         expect(() => fetch('http://a.com')).not.to.throw();
         fetchMock.config.fallbackToNetwork = false;
     });
@@ -312,7 +312,7 @@ describe.skip('client-side only tests', () => {
 
     it('respond with blob', async () => {
         const blob = new Blob();
-        fetchMock.mock('*', blob, { sendAsJson: false });
+        fetchMock.route('*', blob, { sendAsJson: false });
         const res = await fetch('http://a.com');
         expect(res.status).to.equal(200);
         const blobData = await res.blob();
@@ -324,7 +324,7 @@ describe.skip('client-side only tests', () => {
         delete globalThis.fetch;
         const originalRealFetch = fetchMock.realFetch;
         delete fetchMock.realFetch;
-        fetchMock.mock('*', 200);
+        fetchMock.route('*', 200);
         expect(() => {
             fetch('http://a.com');
         }).not.to.throw();
@@ -369,28 +369,28 @@ describe('includeContentLength', () => {
         fm = fetchMock.createInstance();
     });
     it('include content-length header by default', async () => {
-        fm.mock('*', 'content');
+        fm.route('*', 'content');
         const res = await fm.fetchHandler('http://it.at.there');
         expect(res.headers.get('content-length')).toEqual('7');
     });
 
     it("don't include when configured false", async () => {
         fm.config.includeContentLength = false;
-        fm.mock('*', 'content');
+        fm.route('*', 'content');
         const res = await fm.fetchHandler('http://it.at.there');
         expect(res.headers.get('content-length')).toBeNull();
     });
 
     it('local setting can override to true', async () => {
         fm.config.includeContentLength = false;
-        fm.mock('*', 'content', { includeContentLength: true });
+        fm.route('*', 'content', { includeContentLength: true });
         const res = await fm.fetchHandler('http://it.at.there');
         expect(res.headers.get('content-length')).toEqual('7');
     });
 
     it('local setting can override to false', async () => {
         fm.config.includeContentLength = true;
-        fm.mock('*', 'content', { includeContentLength: false });
+        fm.route('*', 'content', { includeContentLength: false });
         const res = await fm.fetchHandler('http://it.at.there');
         expect(res.headers.get('content-length')).toBeNull();
     });
@@ -407,14 +407,14 @@ describe('sendAsJson', () => {
         fm = fetchMock.createInstance();
     });
     it('convert object responses to json by default', async () => {
-        fm.mock('*', { an: 'object' });
+        fm.route('*', { an: 'object' });
         const res = await fm.fetchHandler('http://it.at.there');
         expect(res.headers.get('content-type')).toEqual('application/json');
     });
 
     it("don't convert when configured false", async () => {
         fm.config.sendAsJson = false;
-        fm.mock('*', { an: 'object' });
+        fm.route('*', { an: 'object' });
         const res = await fm.fetchHandler('http://it.at.there');
         // can't check for existence as the spec says, in the browser, that
         // a default value should be set
@@ -423,14 +423,14 @@ describe('sendAsJson', () => {
 
     it('local setting can override to true', async () => {
         fm.config.sendAsJson = false;
-        fm.mock('*', { an: 'object' }, { sendAsJson: true });
+        fm.route('*', { an: 'object' }, { sendAsJson: true });
         const res = await fm.fetchHandler('http://it.at.there');
         expect(res.headers.get('content-type')).toEqual('application/json');
     });
 
     it('local setting can override to false', async () => {
         fm.config.sendAsJson = true;
-        fm.mock('*', { an: 'object' }, { sendAsJson: false });
+        fm.route('*', { an: 'object' }, { sendAsJson: false });
         const res = await fm.fetchHandler('http://it.at.there');
         // can't check for existence as the spec says, in the browser, that
         // a default value should be set

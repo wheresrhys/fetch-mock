@@ -57,7 +57,7 @@ describe('CallHistory', () => {
 	describe('api', () => {
 		describe('signatures', () => {
 			beforeAll(() => {
-				fm.mock('http://a.com/', 200).mock('http://b.com/', 200);
+				fm.route('http://a.com/', 200).route('http://b.com/', 200);
 				return fm.fetchHandler('http://a.com/', {
 					method: 'post',
 					arbitraryOption: true,
@@ -141,7 +141,7 @@ describe('CallHistory', () => {
 				expect(fm.filterCalls(...filter)[0]).toEqualCall(response);
 
 		it('returns [url, options] pairs', async () => {
-			fm.mock('http://a.com/', 200, { name: 'fetch-mock' });
+			fm.route('http://a.com/', 200, { name: 'fetch-mock' });
 
 			await fm.fetchHandler('http://a.com/', { method: 'get' });
 			expect(fm.filterCalls()[0]).toEqualCall([
@@ -151,14 +151,14 @@ describe('CallHistory', () => {
 		});
 
 		it('can retrieve all calls', async () => {
-			fm.mock('http://a.com/', 200).catch();
+			fm.route('http://a.com/', 200).catch();
 
 			await fetchUrls('http://a.com/', 'http://b.com/');
 			expectFilteredLength()(2);
 		});
 
 		it('can retrieve only calls matched by any route', async () => {
-			fm.mock('http://a.com/', 200).catch();
+			fm.route('http://a.com/', 200).catch();
 
 			await fetchUrls('http://a.com/', 'http://b.com/');
 			expectSingleUrl(true)('http://a.com/');
@@ -166,7 +166,7 @@ describe('CallHistory', () => {
 		});
 
 		it('can retrieve only calls not matched by any route', async () => {
-			fm.mock('http://a.com/', 200).catch();
+			fm.route('http://a.com/', 200).catch();
 
 			await fetchUrls('http://a.com/', 'http://b.com/');
 			expectSingleUrl(false)('http://b.com/');
@@ -174,14 +174,14 @@ describe('CallHistory', () => {
 		});
 
 		it('can retrieve only calls handled by a named route', async () => {
-			fm.mock('http://a.com/', 200, { name: 'a' }).catch();
+			fm.route('http://a.com/', 200, { name: 'a' }).catch();
 
 			await fetchUrls('http://a.com/', 'http://b.com/');
 			expectSingleUrl('a')('http://a.com/');
 		});
 
 		it('can retrieve only calls handled by matcher', async () => {
-			fm.mock('path:/path', 200).catch();
+			fm.route('path:/path', 200).catch();
 
 			await fetchUrls('http://a.com/', 'http://b.com/path');
 			expectSingleUrl('path:/path')('http://b.com/path');
@@ -189,14 +189,14 @@ describe('CallHistory', () => {
 
 		it('can retrieve only calls handled by a non-string matcher', async () => {
 			const rx = /path/;
-			fm.mock(rx, 200).catch();
+			fm.route(rx, 200).catch();
 
 			await fetchUrls('http://a.com/', 'http://b.com/path');
 			expectSingleUrl(rx)('http://b.com/path');
 		});
 
 		it('can retrieve only calls which match a previously undeclared matcher', async () => {
-			fm.mock('http://a.com/path', 200).catch();
+			fm.route('http://a.com/path', 200).catch();
 
 			await fm.fetchHandler('http://a.com/path');
 			expectSingleUrl('path:/path')('http://a.com/path');
@@ -204,7 +204,7 @@ describe('CallHistory', () => {
 
 		describe('filtered by method', () => {
 			it('can retrieve all calls', async () => {
-				fm.mock('http://a.com/', 200).catch();
+				fm.route('http://a.com/', 200).catch();
 
 				await fm.fetchHandler('http://a.com/', { method: 'post' });
 				await fm.fetchHandler('http://a.com/');
@@ -221,7 +221,7 @@ describe('CallHistory', () => {
 			});
 
 			it('can retrieve only calls matched by any route', async () => {
-				fm.mock('http://a.com/', 200).catch();
+				fm.route('http://a.com/', 200).catch();
 
 				await fm.fetchHandler('http://a.com/', { method: 'post' });
 				await fm.fetchHandler('http://a.com/');
@@ -235,7 +235,7 @@ describe('CallHistory', () => {
 			});
 
 			it('can retrieve only calls not matched by any route', async () => {
-				fm.mock('http://a.com/', 200).catch();
+				fm.route('http://a.com/', 200).catch();
 
 				await fm.fetchHandler('http://a.com/', { method: 'post' });
 				await fm.fetchHandler('http://a.com/');
@@ -249,8 +249,8 @@ describe('CallHistory', () => {
 			});
 
 			it('can retrieve only calls handled by a named route', async () => {
-				fm.mock('http://a.com/', 200, { name: 'a' }).catch();
-				fm.mock('http://b.com/', 200, { name: 'b' }).catch();
+				fm.route('http://a.com/', 200, { name: 'a' }).catch();
+				fm.route('http://b.com/', 200, { name: 'b' }).catch();
 
 				await fm.fetchHandler('http://a.com/', { method: 'post' });
 				await fm.fetchHandler('http://a.com/');
@@ -264,7 +264,7 @@ describe('CallHistory', () => {
 			});
 
 			it('can retrieve only calls handled by matcher', async () => {
-				fm.mock('path:/path', 200).catch();
+				fm.route('path:/path', 200).catch();
 
 				await fm.fetchHandler('http://b.com/path', { method: 'post' });
 				await fm.fetchHandler('http://b.com/path');
@@ -277,7 +277,7 @@ describe('CallHistory', () => {
 
 			it('can retrieve only calls handled by a non-string matcher', async () => {
 				const rx = /path/;
-				fm.mock(rx, 200).catch();
+				fm.route(rx, 200).catch();
 
 				await fm.fetchHandler('http://b.com/path', { method: 'post' });
 				await fm.fetchHandler('http://b.com/path');
@@ -289,7 +289,7 @@ describe('CallHistory', () => {
 			});
 
 			it('can retrieve only calls which match a previously undeclared matcher', async () => {
-				fm.mock('http://a.com/path', 200).catch();
+				fm.route('http://a.com/path', 200).catch();
 
 				await fm.fetchHandler('http://b.com/path', { method: 'post' });
 				await fm.fetchHandler('http://b.com/path');
@@ -303,7 +303,7 @@ describe('CallHistory', () => {
 
 		describe('filtered by options', () => {
 			it('can retrieve all calls', async () => {
-				fm.mock('http://a.com/', 200).catch();
+				fm.route('http://a.com/', 200).catch();
 
 				await fm.fetchHandler('http://a.com/', {
 					headers: { a: 'z' },
@@ -322,7 +322,7 @@ describe('CallHistory', () => {
 			});
 
 			it('can retrieve only calls matched by any route', async () => {
-				fm.mock('http://a.com/', 200).catch();
+				fm.route('http://a.com/', 200).catch();
 
 				await fm.fetchHandler('http://a.com/', {
 					headers: { a: 'z' },
@@ -339,7 +339,7 @@ describe('CallHistory', () => {
 			});
 
 			it('can retrieve only calls not matched by any route', async () => {
-				fm.mock('http://a.com/', 200).catch();
+				fm.route('http://a.com/', 200).catch();
 
 				await fm.fetchHandler('http://a.com/', {
 					headers: { a: 'z' },
@@ -357,7 +357,7 @@ describe('CallHistory', () => {
 			});
 
 			it('can retrieve only calls handled by a named route', async () => {
-				fm.mock('http://a.com/', 200, { name: 'here' }).catch();
+				fm.route('http://a.com/', 200, { name: 'here' }).catch();
 
 				await fm.fetchHandler('http://a.com/', {
 					headers: { a: 'z' },
@@ -371,7 +371,7 @@ describe('CallHistory', () => {
 			});
 
 			it('can retrieve only calls handled by matcher', async () => {
-				fm.mock('path:/path', 200).catch();
+				fm.route('path:/path', 200).catch();
 
 				await fm.fetchHandler('http://b.com/path', {
 					headers: { a: 'z' },
@@ -385,7 +385,7 @@ describe('CallHistory', () => {
 
 			it('can retrieve only calls handled by a non-string matcher', async () => {
 				const rx = /path/;
-				fm.mock(rx, 200).catch();
+				fm.route(rx, 200).catch();
 
 				await fm.fetchHandler('http://b.com/path', {
 					headers: { a: 'z' },
@@ -400,7 +400,7 @@ describe('CallHistory', () => {
 
 			it('can retrieve only calls handled by a body matcher', async () => {
 				const bodyMatcher = { body: { a: 1 } };
-				fm.mock(bodyMatcher, 200).catch();
+				fm.route(bodyMatcher, 200).catch();
 
 				await fm.fetchHandler('http://b.com/path', {
 					method: 'post',
@@ -422,7 +422,7 @@ describe('CallHistory', () => {
 					body: { a: 1 },
 					matchPartialBody: true,
 				};
-				fm.mock(bodyMatcher, 200).catch();
+				fm.route(bodyMatcher, 200).catch();
 
 				await fm.fetchHandler('http://b.com/path', {
 					method: 'post',
@@ -440,7 +440,7 @@ describe('CallHistory', () => {
 			});
 
 			it('can retrieve only calls which match a previously undeclared matcher', async () => {
-				fm.mock('http://a.com/path', 200).catch();
+				fm.route('http://a.com/path', 200).catch();
 
 				await fm.fetchHandler('http://b.com/path', {
 					headers: { a: 'z' },
@@ -456,7 +456,7 @@ describe('CallHistory', () => {
 
 	describe('call order', () => {
 		it('retrieves calls in correct order', () => {
-			fm.mock('http://a.com/', 200).mock('http://b.com/', 200).catch();
+			fm.route('http://a.com/', 200).route('http://b.com/', 200).catch();
 
 			fm.fetchHandler('http://a.com/');
 			fm.fetchHandler('http://b.com/');
@@ -470,7 +470,7 @@ describe('CallHistory', () => {
 
 	describe('retrieving call parameters', () => {
 		beforeAll(() => {
-			fm.mock('http://a.com/', 200);
+			fm.route('http://a.com/', 200);
 			fm.fetchHandler('http://a.com/');
 			fm.fetchHandler('http://a.com/', { method: 'POST' });
 		});
@@ -597,7 +597,7 @@ describe('CallHistory', () => {
 		afterEach(() => fm.restore());
 
 		it('can expect a route to be called', () => {
-			fm.mock('http://a.com/', 200);
+			fm.route('http://a.com/', 200);
 
 			expect(fm.done()).toBe(false);
 			expect(fm.done('http://a.com/')).toBe(false);
@@ -607,7 +607,7 @@ describe('CallHistory', () => {
 		});
 
 		it('can expect a route to be called n times', () => {
-			fm.mock('http://a.com/', 200, { repeat: 2 });
+			fm.route('http://a.com/', 200, { repeat: 2 });
 
 			fm.fetchHandler('http://a.com/');
 			expect(fm.done()).toBe(false);
@@ -618,7 +618,7 @@ describe('CallHistory', () => {
 		});
 
 		it('regression: can expect an un-normalized url to be called n times', () => {
-			fm.mock('http://a.com/', 200, { repeat: 2 });
+			fm.route('http://a.com/', 200, { repeat: 2 });
 			fm.fetchHandler('http://a.com/');
 			expect(fm.done()).toBe(false);
 			fm.fetchHandler('http://a.com/');
@@ -626,9 +626,9 @@ describe('CallHistory', () => {
 		});
 
 		it('can expect multiple routes to have been called', () => {
-			fm.mock('http://a.com/', 200, {
+			fm.route('http://a.com/', 200, {
 				repeat: 2,
-			}).mock('http://b.com/', 200, { repeat: 2 });
+			}).route('http://b.com/', 200, { repeat: 2 });
 
 			fm.fetchHandler('http://a.com/');
 			expect(fm.done()).toBe(false);
@@ -665,21 +665,21 @@ describe('CallHistory', () => {
 		});
 
 		it("can tell when done if using '*'", () => {
-			fm.mock('*', '200');
+			fm.route('*', '200');
 			fm.fetchHandler('http://a.com');
 			expect(fm.done()).toBe(true);
 		});
 
 		it('can tell when done if using begin:', () => {
-			fm.mock('begin:http', '200');
+			fm.route('begin:http', '200');
 			fm.fetchHandler('http://a.com');
 			expect(fm.done()).toBe(true);
 		});
 
 		it('falls back to second route if first route already done', async () => {
-			fm.mock('http://a.com/', 404, {
+			fm.route('http://a.com/', 404, {
 				repeat: 1,
-			}).mock('http://a.com/', 200, { overwriteRoutes: false });
+			}).route('http://a.com/', 200, { overwriteRoutes: false });
 
 			const res = await fm.fetchHandler('http://a.com/');
 			expect(res.status).toEqual(404);
@@ -689,7 +689,7 @@ describe('CallHistory', () => {
 		});
 
 		it('resetHistory() resets count', async () => {
-			fm.mock('http://a.com/', 200, { repeat: 1 });
+			fm.route('http://a.com/', 200, { repeat: 1 });
 			await fm.fetchHandler('http://a.com/');
 			expect(fm.done()).toBe(true);
 			fm.resetHistory();
@@ -702,7 +702,7 @@ describe('CallHistory', () => {
 
 		it('logs unmatched calls', () => {
             vi.spyOn(console, 'warn'); //eslint-disable-line
-			fm.mock('http://a.com/', 200).mock('http://b.com/', 200, {
+			fm.route('http://a.com/', 200).route('http://b.com/', 200, {
 				repeat: 2,
 			});
 
@@ -724,7 +724,7 @@ describe('CallHistory', () => {
 
 		describe('sandbox isolation', () => {
 			it("doesn't propagate to children of global", () => {
-				fm.mock('http://a.com/', 200, { repeat: 1 });
+				fm.route('http://a.com/', 200, { repeat: 1 });
 
 				const sb1 = fm.sandbox();
 
@@ -737,7 +737,7 @@ describe('CallHistory', () => {
 			});
 
 			it("doesn't propagate to global from children", () => {
-				fm.mock('http://a.com/', 200, { repeat: 1 });
+				fm.route('http://a.com/', 200, { repeat: 1 });
 
 				const sb1 = fm.sandbox();
 
@@ -750,7 +750,7 @@ describe('CallHistory', () => {
 			});
 
 			it("doesn't propagate to children of sandbox", () => {
-				const sb1 = fm.sandbox().mock('http://a.com/', 200, { repeat: 1 });
+				const sb1 = fm.sandbox().route('http://a.com/', 200, { repeat: 1 });
 
 				const sb2 = sb1.sandbox();
 
@@ -763,7 +763,7 @@ describe('CallHistory', () => {
 			});
 
 			it("doesn't propagate to sandbox from children", () => {
-				const sb1 = fm.sandbox().mock('http://a.com/', 200, { repeat: 1 });
+				const sb1 = fm.sandbox().route('http://a.com/', 200, { repeat: 1 });
 
 				const sb2 = sb1.sandbox();
 

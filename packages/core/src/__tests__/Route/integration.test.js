@@ -70,3 +70,9 @@ it.skip('match custom Headers instance', async () => {
 	});
 	expect(customHeaderInstance.calls(true).length).toEqual(1);
 });
+
+it('match protocol-relative urls with catch-all', async () => {
+	fm.any(200);
+
+	expect(route.matcher('//a.com/path')).toBe(true);
+});

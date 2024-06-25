@@ -346,9 +346,9 @@ export default class Router {
 	 */
 	removeRoutes({ force }) {
 		if (force) {
-			this.routes = []
+			this.routes = [];
 		} else {
-			this.routes = this.routes.filter(({ config: { sticky } }) => sticky)
+			this.routes = this.routes.filter(({ config: { sticky } }) => sticky);
 		}
 	}
 }

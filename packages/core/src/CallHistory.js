@@ -41,14 +41,11 @@ const isMatchedOrUnmatched = (filter) =>
 
 class CallHistory {
 	/**
-	 * 
 	 * @param {FetchMockConfig} globalConfig 
 	 */
 	constructor(globalConfig) {
 		/** @type {CallLog[]} */
 		this.callLogs = [];
-		/** @type {Promise<any>[]} */
-		this.holdingPromises = []
 		this.config = globalConfig;
 	}
 	/**
@@ -60,25 +57,15 @@ class CallHistory {
 	}
 
 	/**
-	 * 
-	 * @param {Promise<any>} promise 
-	 */
-	addHoldingPromise (promise) {
-		this.holdingPromises.push(promise)
-	}
-
-	/**
 	 *
-	 * @param {boolean} waitForResponseBody
+	 * @param {boolean} [waitForResponseBody]
 	 * @returns {Promise<void>}
 	 */
 	async flush(waitForResponseBody) {
-		const queuedPromises = this.holdingPromises;
-		this.holdingPromises = [];
-
-		await Promise.all(queuedPromises);
-		if (waitForResponseBody && this.holdingPromises.length) {
-			await this.flush(waitForResponseBody);
+		const queuedPromises = this.callLogs.flatMap(call => call.pendingPromises);
+		await Promise.all(queuedPromises)
+		if (waitForResponseBody) {
+			await this.flush();
 		}
 	}
 
@@ -90,7 +77,7 @@ class CallHistory {
 	 */
 	filterCalls(filter, options) {
 		let calls = [...this.callLogs];
-		let matcher = '*';
+		let matcher = () => true;
 
 		if (isMatchedOrUnmatched(filter)) {
 
@@ -154,7 +141,7 @@ class CallHistory {
 		// TODO when checking all routes needs to check against all calls
 		// Can't use array.every because would exit after first failure, which would
 		// break the logging
-		const result = routesToCheck
+		return routesToCheck
 			.map(/** @type {function(Route):boolean}*/(route) => {
 				const calls = this.callLogs.filter(({route: routeApplied}) => routeApplied === route);
 				if (!calls.length) {
@@ -178,8 +165,6 @@ class CallHistory {
 				return true;
 			})
 			.every(isDone => isDone);
-
-		return result;
 	}
 }
 export default CallHistory;

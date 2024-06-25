@@ -181,7 +181,7 @@ class Route {
 	/**
 	 *
 	 * @param {RouteResponseConfig} responseInput
-	 * @returns {{response: Response, responseOptions: ResponseInit}}
+	 * @returns {{response: Response, responseOptions: ResponseInit, responseInput: RouteResponseConfig}}
 	 */
 	constructResponse(responseInput) {
 		const responseOptions = this.constructResponseOptions(responseInput);
@@ -190,6 +190,7 @@ class Route {
 		return {
 			response: new this.config.Response(body, responseOptions),
 			responseOptions,
+			responseInput
 		};
 	}
 	/**

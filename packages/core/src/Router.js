@@ -173,13 +173,14 @@ export default class Router {
 			if (route) {
 				try {
 					callLog.route = route;
-					const { response, responseOptions } = await this.generateResponse(
+					const { response, responseOptions, responseInput } = await this.generateResponse(
 						route,
 						callLog,
 					);
 					const observableResponse = this.createObservableResponse(
 						response,
 						responseOptions,
+						responseInput,
 						url,
 						pendingPromises,
 					);
@@ -204,7 +205,7 @@ export default class Router {
 	 *
 	 * @param {Route} route
 	 * @param {CallLog} callLog
-	 * @returns {Promise<{response: Response, responseOptions: ResponseInit}>}
+	 * @returns {Promise<{response: Response, responseOptions: ResponseInit, responseInput: RouteResponseConfig}>}
 	 */
 	async generateResponse(route, callLog) {
 		console.log('responding start resolve');
@@ -231,7 +232,8 @@ export default class Router {
 	/**
 	 *
 	 * @param {Response} response
-	 * @param {RouteResponseConfig} responseConfig
+	 * @param {ResponseInit} responseConfig
+	 * @param {RouteResponseConfig} responseInput
 	 * @param {string} responseUrl
 	 * @param {Promise<any>[]} pendingPromises
 	 * @returns {Response}
@@ -239,6 +241,7 @@ export default class Router {
 	createObservableResponse(
 		response,
 		responseConfig,
+		responseInput,
 		responseUrl,
 		pendingPromises,
 	) {
@@ -248,9 +251,10 @@ export default class Router {
 		// promises returned by res.json(), res.text() etc
 		return new Proxy(response, {
 			get: (originalResponse, name) => {
-				if (responseConfig.redirectUrl) {
+				console.log(name, responseConfig)
+				if (responseInput.redirectUrl) {
 					if (name === 'url') {
-						return responseConfig.redirectUrl;
+						return responseInput.redirectUrl;
 					}
 
 					if (name === 'redirected') {

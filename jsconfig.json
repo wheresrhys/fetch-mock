@@ -1,0 +1,26 @@
+{
+    "compilerOptions": {
+        "lib": [
+            "es2021",
+            "dom",
+            "dom.iterable"
+        ],
+        "allowJs": true,
+        "checkJs": true,
+        "strict": true,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "strictNullChecks": false,
+        "strictFunctionTypes": true,
+        "types": [        ],
+        "noEmit": true,
+        "downlevelIteration": true,
+        "forceConsistentCasingInFileNames": true
+    },
+    "include": [
+        "packages/core/src/*.js",
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}

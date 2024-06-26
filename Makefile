@@ -6,8 +6,11 @@ SHELL := env "PATH=$(PATH)" /bin/bash
 NPM_PUBLISH_TAG := $(shell [[ "$(CIRCLE_TAG)" =~ -[a-z-]+ ]] && echo "pre-release" || echo "latest")
 TEST_BROWSER := $(shell [ -z $(TEST_BROWSER) ] && echo "Chrome" || echo ${TEST_BROWSER})
 
-typecheck:
+typelint:
 	dtslint --expectOnly types
+
+typecheck:
+	tsc --project ./jsconfig.json
 
 lint-ci:
 	eslint --ext .js,.cjs .
@@ -20,7 +23,8 @@ lint:
 verify: lint
 
 coverage:
-	nyc --reporter=lcovonly --reporter=text make test
+	npx vitest run --coverage
+	# nyc --reporter=lcovonly --reporter=text make test-packages
 	cat ./coverage/lcov.info | coveralls
 
 docs:
@@ -51,3 +55,6 @@ test-browser:
 
 test-jest:
 	npx jest test/framework-compat/jest.spec.js
+
+test-package:
+	TESTING_ENV=packages npx vitest --coverage --coverage.enabled --ui ./packages/core/src/__tests__

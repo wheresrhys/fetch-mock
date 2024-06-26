@@ -65,11 +65,11 @@ jobs:
       - *workspace
       - run: make lint-ci
 
-  typecheck:
+  typelint:
     <<: *nodelts
     steps:
       - *workspace
-      - run: make typecheck
+      - run: make typelint
 
   test:
     <<: *nodelts
@@ -136,7 +136,7 @@ workflows:
       # could be parallel with build, lint, and unit but it's a slow job
       # And circlecifree tier only has 3 concurrent jobs, so overall faster
       # to defer
-      - typecheck:
+      - typelint:
           <<: *triggerable-by-tag
           <<: *run-after-first-jobs
       - nodefetch3:
@@ -161,7 +161,7 @@ workflows:
             # - chrome
             # - firefox
             - build
-            - typecheck
+            - typelint
             - commonjs
             - jest
           filters:

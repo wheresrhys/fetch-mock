@@ -30,6 +30,15 @@ const configs = {
 	commonjs: {
 		setupFiles: './test/setup/commonjs.cjs',
 	},
+	packages: {
+		reporters: ['default', 'html'],
+		coverage: {
+			reporter: ['text', 'html', 'clover', 'json'],
+			provider: 'v8',
+			reportOnFailure: true,
+			enabled: true
+		}
+	},
 };
 
 export default defineConfig({

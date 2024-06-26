@@ -1,6 +1,9 @@
 test/fixtures/*
-coverage/*
+coverage
 .nyc_output/
 docs/js
 docs/_site
 dist/*
+old-tests
+packages/standalone/*
+types/fetch-mock-tests.js

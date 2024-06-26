@@ -47,6 +47,8 @@ const defaultConfig = {
  * @property {function(boolean): Promise<any>} flush
  * @property {function(RouteName[]=): boolean} done
  * @property {function(MatcherDefinition):void} defineMatcher
+ * @property {function(Object):void} removeRoutes
+ * @property {function():void} clearHistory
  */
 
 /** @type {FetchMockCore} */

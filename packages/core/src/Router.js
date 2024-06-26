@@ -14,6 +14,10 @@ import { isUrlMatcher, isFunctionMatcher } from './Matchers.js';
 /** @typedef {import('./RequestUtils').NormalizedRequest} NormalizedRequest */
 /** @typedef {import('./CallHistory').CallLog} CallLog */
 
+
+/** @typedef {'body' |'headers' |'throws' |'status' |'redirectUrl' } ResponseConfigProp */
+
+/** @type {ResponseConfigProp[]} */
 const responseConfigProps = [
 	'body',
 	'headers',
@@ -21,6 +25,8 @@ const responseConfigProps = [
 	'status',
 	'redirectUrl',
 ];
+
+
 
 /**
  *
@@ -76,7 +82,7 @@ function shouldSendAsObject(responseInput) {
 	// TODO improve this... make it less hacky and magic
 	if (
 		responseConfigProps.some(
-			(prop) => /** @type {RouteResponseObjectData}*/ (responseInput)[prop],
+			(prop) => /** @type {RouteResponseConfig}*/ (responseInput)[prop],
 		)
 	) {
 		if (
@@ -248,7 +254,6 @@ export default class Router {
 		responseUrl,
 		pendingPromises,
 	) {
-		response._fmResults = {};
 		// Using a proxy means we can set properties that may not be writable on
 		// the original Response. It also means we can track the resolution of
 		// promises returned by res.json(), res.text() etc
@@ -277,8 +282,7 @@ export default class Router {
 						apply: (func, thisArg, args) => {
 							const result = func.apply(response, args);
 							if (result.then) {
-								pendingPromises.push(result.catch(() => null));
-								response._fmResults[name] = result;
+								pendingPromises.push(result.catch(/** @type {function(): void} */() => undefined));
 							}
 							return result;
 						},

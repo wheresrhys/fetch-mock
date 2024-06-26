@@ -57,7 +57,7 @@ const FetchMock = {
 	createInstance() {
 		const instance = Object.create(FetchMock);
 		instance.config = { ...this.config };
-		instance.router = new Router(instance.config, [...this.router.routes]);
+		instance.router = new Router(instance.config, { routes: [...this.router.routes], fallbackRoute: this.router.fallbackRoute} );
 		instance.callHistory = new CallHistory(this.config);
 		return instance;
 	},

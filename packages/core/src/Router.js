@@ -120,11 +120,14 @@ const resolveUntilResponseConfig = async (response, normalizedRequest) => {
 export default class Router {
 	/**
 	 * @param {FetchMockConfig} fetchMockConfig
-	 * @param {Route[]} [routes]
+	 * @param {Object} [inheritedRoutes]
+	 * @param {Route[]} [inheritedRoutes.routes]
+	 * @param {Route} [inheritedRoutes.fallbackRoute]
 	 */
-	constructor(fetchMockConfig, routes = []) {
-		this.routes = routes; // TODO deep clone this
+	constructor(fetchMockConfig, {routes, fallbackRoute} = {}) {
 		this.config = fetchMockConfig;
+		this.routes = routes || []; // TODO deep clone this??
+		this.fallbackRoute = fallbackRoute;
 	}
 	/**
 	 *
@@ -208,12 +211,10 @@ export default class Router {
 	 * @returns {Promise<{response: Response, responseOptions: ResponseInit, responseInput: RouteResponseConfig}>}
 	 */
 	async generateResponse(route, callLog) {
-		console.log('responding start resolve');
 		const responseInput = await resolveUntilResponseConfig(
 			route.config.response,
 			callLog,
 		);
-		console.log('responding end resolve');
 
 		// If the response is a pre-made Response, respond with it
 		if (responseInput instanceof Response) {
@@ -251,7 +252,6 @@ export default class Router {
 		// promises returned by res.json(), res.text() etc
 		return new Proxy(response, {
 			get: (originalResponse, name) => {
-				console.log(name, responseConfig)
 				if (responseInput.redirectUrl) {
 					if (name === 'url') {
 						return responseInput.redirectUrl;

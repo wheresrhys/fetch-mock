@@ -55,6 +55,10 @@ class CallHistory {
 		this.callLogs.push(callLog);
 	}
 
+	clear () {
+		this.callLogs = [];
+	}
+
 	/**
 	 *
 	 * @param {boolean} [waitForResponseBody]

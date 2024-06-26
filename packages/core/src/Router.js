@@ -216,9 +216,11 @@ export default class Router {
 			callLog,
 		);
 
+
+
 		// If the response is a pre-made Response, respond with it
 		if (responseInput instanceof Response) {
-			return { response: responseInput, responseOptions: {} };
+			return { response: responseInput, responseOptions: {}, responseInput: {} };
 		}
 
 		const responseConfig = normalizeResponseInput(responseInput);
@@ -374,13 +376,24 @@ export default class Router {
 	}
 	/**
 	 *
-	 * @param {{force: boolean}} options
+	 * @param {Object} [options]
+	 * @param {string[]} [options.names]
+	 * @param {boolean} [options.includeSticky=false]
+	 * @param {boolean} [options.includeFallback=true]
 	 */
-	removeRoutes({ force }) {
-		if (force) {
-			this.routes = [];
-		} else {
-			this.routes = this.routes.filter(({ config: { sticky } }) => sticky);
+	removeRoutes({ names, includeSticky, includeFallback } = {  }) {
+		includeFallback = includeFallback ?? true;
+		this.routes = this.routes.filter(({ config: { sticky, name } }) => {
+			if (sticky && !includeSticky) {
+				return true
+			}
+			if (!names) {
+				return false;
+			}
+			return !names.includes(name)
+		});
+		if (includeFallback) {
+			delete this.fallbackRoute;
 		}
 	}
 }

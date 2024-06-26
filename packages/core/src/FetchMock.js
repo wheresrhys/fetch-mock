@@ -123,8 +123,12 @@ const FetchMock = {
 	done(routeNames) {
 		return this.callHistory.done(this.router.routes, routeNames);
 	},
-	// TODO add api for removing routes
-	// TODO add api for clearing history
+	removeRoutes(options) {
+		return this.router.removeRoutes(options)
+	},
+	clearHistory() {
+		return this.callHistory.clear()
+	}
 
 };
 

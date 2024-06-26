@@ -95,3 +95,42 @@ it("don't interfere with global fetch-mock", async () => {
 	expect(sbx.called('http://a.com')).toBe(true);
 	fetchMock.restore();
 });
+
+describe('global mocking', () => {
+	let originalFetch;
+	beforeAll(() => {
+		originalFetch = globalThis.fetch = vi.fn().mockResolvedValue();
+	});
+	afterEach(() => fetchMock.restore({ sticky: true }));
+
+	it('global mocking resists resetBehavior calls', () => {
+		fetchMock.route('*', 200, { sticky: true }).resetBehavior();
+		expect(globalThis.fetch).not.toEqual(originalFetch);
+	});
+
+	it('global mocking does not resist resetBehavior calls when sent `sticky: true`', () => {
+		fetchMock
+			.route('*', 200, { sticky: true })
+			.resetBehavior({ sticky: true });
+		expect(globalThis.fetch).toEqual(originalFetch);
+	});
+});
+
+describe('sandboxes', () => {
+	it('sandboxed instances should inherit stickiness', () => {
+		const sbx1 = fetchMock
+			.sandbox()
+			.route('*', 200, { sticky: true })
+			.catch(300);
+
+		const sbx2 = sbx1.sandbox().resetBehavior();
+
+		expect(sbx1.routes.length).toEqual(1);
+		expect(sbx2.routes.length).toEqual(1);
+
+		sbx2.resetBehavior({ sticky: true });
+
+		expect(sbx1.routes.length).toEqual(1);
+		expect(sbx2.routes.length).toEqual(0);
+	});
+});

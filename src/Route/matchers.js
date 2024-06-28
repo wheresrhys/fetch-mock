@@ -1,6 +1,5 @@
 import glob from 'glob-to-regexp';
 import pathToRegexp from 'path-to-regexp';
-import querystring from 'querystring';
 import isSubset from 'is-subset';
 import isEqual from 'lodash.isequal';
 import {
@@ -78,22 +77,54 @@ const getQueryStringMatcher = ({ query: passedQuery }) => {
 		debug('  No query parameters expectations defined - skipping');
 		return;
 	}
-	const expectedQuery = querystring.parse(querystring.stringify(passedQuery));
-	debug('  Expected query parameters:', passedQuery);
-	const keys = Object.keys(expectedQuery);
+
+	const expectedQuery = new URLSearchParams();
+	for (const [key, value] of Object.entries(passedQuery)) {
+		if (Array.isArray(value)) {
+			for (const item of value) {
+				expectedQuery.append(
+					key,
+					typeof item === 'object' || typeof item === 'undefined'
+						? ''
+						: item.toString(),
+				);
+			}
+		} else {
+			expectedQuery.append(
+				key,
+				typeof value === 'object' || typeof value === 'undefined'
+					? ''
+					: value.toString(),
+			);
+		}
+	}
+
+	const keys = Array.from(expectedQuery.keys());
 	return (url) => {
 		debug('Attempting to match query parameters');
-		const query = querystring.parse(getQuery(url));
-		debug('  Expected query parameters:', expectedQuery);
-		debug('  Actual query parameters:', query);
+		const queryString = getQuery(url);
+		const query = new URLSearchParams(queryString);
+		debug(
+			'  Expected query parameters:',
+			Object.fromEntries(expectedQuery.entries()),
+		);
+		debug('  Actual query parameters:', Object.fromEntries(query.entries()));
+
 		return keys.every((key) => {
-			if (Array.isArray(query[key])) {
-				if (!Array.isArray(expectedQuery[key])) {
-					return false;
-				}
-				return isEqual(query[key].sort(), expectedQuery[key].sort());
+			const expectedValues = expectedQuery.getAll(key).sort();
+			const actualValues = query.getAll(key).sort();
+
+			if (expectedValues.length !== actualValues.length) {
+				return false;
 			}
-			return query[key] === expectedQuery[key];
+
+			if (Array.isArray(passedQuery[key])) {
+				return expectedValues.every(
+					(expected, index) => expected === actualValues[index],
+				);
+			}
+
+			return isEqual(actualValues, expectedValues);
 		});
 	};
 };

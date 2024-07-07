@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, beforeEach } from 'vitest';
 import fetchMock from '../../FetchMock';
 
 describe('instance management', () => {
@@ -127,87 +127,20 @@ describe('instance management', () => {
 
 
         describe('sticky routes', () => {
-            describe('effect on routes', () => {
-                describe('resetting behaviour', () => {
-                    it('behaviour resists resetBehavior calls', () => {
-                        fm.route('*', 200, { sticky: true }).resetBehavior();
-                        expect(fm.routes.length).toEqual(1);
-                    });
-
-                    it('behaviour resists restore calls', () => {
-                        fm.route('*', 200, { sticky: true }).restore();
-                        expect(fm.routes.length).toEqual(1);
-                    });
-
-                    it('behaviour resists reset calls', () => {
-                        fm.route('*', 200, { sticky: true }).reset();
-                        expect(fm.routes.length).toEqual(1);
-                    });
-
-                    it('behaviour does not resist resetBehavior calls when sent `sticky: true`', () => {
-                        fm.route('*', 200, { sticky: true }).resetBehavior({ sticky: true });
-                        expect(fm.routes.length).toEqual(0);
-                    });
-
-                    it('behaviour does not resist restore calls when sent `sticky: true`', () => {
-                        fm.route('*', 200, { sticky: true }).restore({ sticky: true });
-                        expect(fm.routes.length).toEqual(0);
-                    });
-
-                    it('behaviour does not resist reset calls when sent `sticky: true`', () => {
-                        fm.route('*', 200, { sticky: true }).reset({ sticky: true });
-                        expect(fm.routes.length).toEqual(0);
-                    });
-                });
-
-                describe('resetting history', () => {
-                    it('history does not resist resetHistory calls', () => {
-                        fm.route('*', 200, { sticky: true });
-                        fm.fetchHandler('http://a.com');
-                        fm.resetHistory();
-                        expect(fm.called()).toBe(false);
-                    });
-
-                    it('history does not resist restore calls', () => {
-                        fm.route('*', 200, { sticky: true });
-                        fm.fetchHandler('http://a.com');
-                        fm.restore();
-                        expect(fm.called()).toBe(false);
-                    });
-
-                    it('history does not resist reset calls', () => {
-                        fm.route('*', 200, { sticky: true });
-                        fm.fetchHandler('http://a.com');
-                        fm.reset();
-                        expect(fm.called()).toBe(false);
-                    });
-                });
-
-                describe('multiple routes', () => {
-                    it('can have multiple sticky routes', () => {
+            let fm;
+            beforeEach(() => {
+                fm = fetchMock.createInstance()
+            })
+                    it('do not get removed by default', () => {
                         fm.route('*', 200, { sticky: true })
-                            .route('http://a.com', 200, { sticky: true })
-                            .resetBehavior();
-                        expect(fm.routes.length).toEqual(2);
+                        .removeRoutes();
+                        expect(fm.router.routes.length).toEqual(1);
                     });
 
-                    it('can have a sticky route before non-sticky routes', () => {
-                        fm.route('*', 200, { sticky: true })
-                            .route('http://a.com', 200)
-                            .resetBehavior();
-                        expect(fm.routes.length).toEqual(1);
-                        expect(fm.routes[0].url).toEqual('*');
+                    it('get removed when forced', () => {
+                        fm.route('*', 200, { sticky: true }).removeRoutes({ includeSticky: true });
+                        expect(fm.router.routes.length).toEqual(0);
                     });
-
-                    it('can have a sticky route after non-sticky routes', () => {
-                        fm.route('*', 200)
-                            .route('http://a.com', 200, { sticky: true })
-                            .resetBehavior();
-                        expect(fm.routes.length).toEqual(1);
-                        expect(fm.routes[0].url).toEqual('http://a.com');
-                    });
-                });
-            });
            
         });
 

@@ -27,7 +27,7 @@ import Route from './Route.js';
  * @returns {filter is RouteName}
  */
 const isName = (filter) =>
-	typeof filter === 'string' && /^[\da-zA-Z\-]+$/.test(filter);
+	typeof filter === 'string' && /^[\da-zA-Z\-]+$/.test(filter) && !['matched', 'unmatched'].includes(filter);
 
 /**
  *
@@ -80,55 +80,55 @@ class CallHistory {
 	 * @param {RouteConfig} options
 	 * @returns {CallLog[]}
 	 */
-	filterCalls(filter, options) {
+	calls(filter, options) {
 		let calls = [...this.callLogs];
-
-		if (isMatchedOrUnmatched(filter)) {
-			if (
-				/** @type {CallHistoryFilter[]} */ ([true, 'matched']).includes(filter)
-			) {
-				calls = calls.filter(({ route }) => Boolean(route));
-			} else if (
-				/** @type {CallHistoryFilter[]} */ ([false, 'unmatched']).includes(
-					filter,
-				)
-			) {
-				calls = calls.filter(({ route }) => !route);
-			}
-		} else if (isName(filter)) {
-			calls = calls.filter(
+		if (typeof filter === 'undefined' && !options) {
+			return calls
+		}
+		if (isName(filter)) {
+			return calls.filter(
 				({
 					route: {
 						config: { name },
 					},
 				}) => name === filter,
 			);
-		} else if (filter) {
-			const { matcher } = new Route({
-				matcher: filter,
-				response: 'ok',
-				...options,
-			});
-			calls = calls.filter(({ url, options }) => {
-				const {
-					url: normalizedUrl,
-					options: normalizedOptions,
-					request,
-				} = normalizeRequest(url, options, this.config.Request);
-				return matcher(normalizedUrl, normalizedOptions, request);
-			});
 		}
 
+		if (isMatchedOrUnmatched(filter)) {
+			if (
+				/** @type {CallHistoryFilter[]} */ ([true, 'matched']).includes(filter)
+			) {
+				calls = calls.filter(({ route }) => !Boolean(route.config.isFallback));
+			} else if (
+				/** @type {CallHistoryFilter[]} */ ([false, 'unmatched']).includes(
+					filter,
+				)
+			) {
+				calls = calls.filter(({ route }) => Boolean(route.config.isFallback));
+			}
+
+			if (!options) {
+				return calls
+			}
+		} else {
+			options = {matcher: filter, ...(options || {})}
+		}
+		const { matcher } = new Route({
+			response: 'ok',
+			...options,
+		});
+
+		calls = calls.filter(({ url, options }) => {
+			const {
+				url: normalizedUrl,
+				options: normalizedOptions,
+				request,
+			} = normalizeRequest(url, options, this.config.Request);
+			return matcher(normalizedUrl, normalizedOptions, request);
+		});
+
 		return calls;
-	}
-	/**
-	 *
-	 * @param {CallHistoryFilter} filter
-	 * @param {RouteConfig} options
-	 * @returns {CallLog[]}
-	 */
-	calls(filter, options) {
-		return this.filterCalls(filter, options);
 	}
 	/**
 	 *

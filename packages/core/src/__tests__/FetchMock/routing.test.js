@@ -57,7 +57,6 @@ describe('Routing', () => {
 		});
 	});
 	describe('routing methods', () => {
-
 		beforeEach(() => {
 			fm = fetchMock.createInstance();
 			vi.spyOn(fm.router, 'addRoute');
@@ -139,7 +138,7 @@ describe('Routing', () => {
 		describe('FetchMock.any()', () => {
 			it('has any() shorthand method', () => {
 				fm.any('a', { opt: 'b' });
-				expect(fm.router.addRoute).toHaveBeenCalledWith( '*', 'a', {
+				expect(fm.router.addRoute).toHaveBeenCalledWith('*', 'a', {
 					opt: 'b',
 				});
 			});

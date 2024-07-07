@@ -59,7 +59,10 @@ const FetchMock = {
 	createInstance() {
 		const instance = Object.create(FetchMock);
 		instance.config = { ...this.config };
-		instance.router = new Router(instance.config, { routes: [...this.router.routes], fallbackRoute: this.router.fallbackRoute} );
+		instance.router = new Router(instance.config, {
+			routes: [...this.router.routes],
+			fallbackRoute: this.router.fallbackRoute,
+		});
 		instance.callHistory = new CallHistory(this.config);
 		return instance;
 	},
@@ -126,12 +129,11 @@ const FetchMock = {
 		return this.callHistory.done(this.router.routes, routeNames);
 	},
 	removeRoutes(options) {
-		return this.router.removeRoutes(options)
+		return this.router.removeRoutes(options);
 	},
 	clearHistory() {
-		return this.callHistory.clear()
-	}
-
+		return this.callHistory.clear();
+	},
 };
 
 /** @typedef {'get' |'post' |'put' |'delete' |'head' |'patch' |'once' |'sticky' |'any' |'anyOnce' |'getOnce' |'postOnce' |'putOnce' |'deleteOnce' |'headOnce' |'patchOnce' |'getAny' |'postAny' |'putAny' |'deleteAny' |'headAny' |'patchAny' |'getAnyOnce' |'postAnyOnce' |'putAnyOnce' |'deleteAnyOnce' |'headAnyOnce' |'patchAnyOnce'} PresetRouteMethodName} */
@@ -190,7 +192,7 @@ const defineGreedyShorthand = (methodName, underlyingMethod) => {
 	 * @returns {FetchMock}
 	 */
 	PresetRoutes[methodName] = function (response, options) {
-		return this[underlyingMethod]({}, response, options);
+		return this[underlyingMethod]('*', response, options);
 	};
 };
 

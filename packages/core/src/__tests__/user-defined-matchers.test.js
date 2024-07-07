@@ -1,4 +1,3 @@
-
 import { describe, expect, it } from 'vitest';
 import fetchMock from '../FetchMock';
 
@@ -15,9 +14,9 @@ describe('user defined matchers', () => {
 			},
 			200,
 		).catch(404);
-		const miss = await fm.fetchHandler('http://b.com')
+		const miss = await fm.fetchHandler('http://b.com');
 		expect(miss.status).toEqual(404);
-		const hit = await fm.fetchHandler('http://a.com')
+		const hit = await fm.fetchHandler('http://a.com');
 		expect(hit.status).toEqual(200);
 	});
 

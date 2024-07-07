@@ -14,7 +14,6 @@ import { isUrlMatcher, isFunctionMatcher } from './Matchers.js';
 /** @typedef {import('./RequestUtils').NormalizedRequest} NormalizedRequest */
 /** @typedef {import('./CallHistory').CallLog} CallLog */
 
-
 /** @typedef {'body' |'headers' |'throws' |'status' |'redirectUrl' } ResponseConfigProp */
 
 /** @type {ResponseConfigProp[]} */
@@ -25,8 +24,6 @@ const responseConfigProps = [
 	'status',
 	'redirectUrl',
 ];
-
-
 
 /**
  *
@@ -130,7 +127,7 @@ export default class Router {
 	 * @param {Route[]} [inheritedRoutes.routes]
 	 * @param {Route} [inheritedRoutes.fallbackRoute]
 	 */
-	constructor(fetchMockConfig, {routes, fallbackRoute} = {}) {
+	constructor(fetchMockConfig, { routes, fallbackRoute } = {}) {
 		this.config = fetchMockConfig;
 		this.routes = routes || []; // TODO deep clone this??
 		this.fallbackRoute = fallbackRoute;
@@ -182,10 +179,8 @@ export default class Router {
 			if (route) {
 				try {
 					callLog.route = route;
-					const { response, responseOptions, responseInput } = await this.generateResponse(
-						route,
-						callLog,
-					);
+					const { response, responseOptions, responseInput } =
+						await this.generateResponse(route, callLog);
 					const observableResponse = this.createObservableResponse(
 						response,
 						responseOptions,
@@ -222,11 +217,13 @@ export default class Router {
 			callLog,
 		);
 
-
-
 		// If the response is a pre-made Response, respond with it
 		if (responseInput instanceof Response) {
-			return { response: responseInput, responseOptions: {}, responseInput: {} };
+			return {
+				response: responseInput,
+				responseOptions: {},
+				responseInput: {},
+			};
 		}
 
 		const responseConfig = normalizeResponseInput(responseInput);
@@ -282,7 +279,9 @@ export default class Router {
 						apply: (func, thisArg, args) => {
 							const result = func.apply(response, args);
 							if (result.then) {
-								pendingPromises.push(result.catch(/** @type {function(): void} */() => undefined));
+								pendingPromises.push(
+									result.catch(/** @type {function(): void} */ () => undefined),
+								);
 							}
 							return result;
 						},
@@ -369,7 +368,7 @@ export default class Router {
 				if (this.config.warnOnFallback) {
 					console.warn(
 						`Unmatched ${(options && options.method) || 'GET'} to ${url}`,
-				); // eslint-disable-line
+					); // eslint-disable-line
 				}
 				return true;
 			},
@@ -385,16 +384,16 @@ export default class Router {
 	 * @param {boolean} [options.includeSticky=false]
 	 * @param {boolean} [options.includeFallback=true]
 	 */
-	removeRoutes({ names, includeSticky, includeFallback } = {  }) {
+	removeRoutes({ names, includeSticky, includeFallback } = {}) {
 		includeFallback = includeFallback ?? true;
 		this.routes = this.routes.filter(({ config: { sticky, name } }) => {
 			if (sticky && !includeSticky) {
-				return true
+				return true;
 			}
 			if (!names) {
 				return false;
 			}
-			return !names.includes(name)
+			return !names.includes(name);
 		});
 		if (includeFallback) {
 			delete this.fallbackRoute;

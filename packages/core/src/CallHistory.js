@@ -55,21 +55,21 @@ class CallHistory {
 		this.callLogs.push(callLog);
 	}
 
-	clear () {
+	clear() {
 		this.callLogs = [];
 	}
 
 	/**
 	 *
-	 * @param {boolean} [waitForResponseBody]
+	 * @param {boolean} [waitForResponseMethods]
 	 * @returns {Promise<void>}
 	 */
-	async flush(waitForResponseBody) {
+	async flush(waitForResponseMethods) {
 		const queuedPromises = this.callLogs.flatMap(
 			(call) => call.pendingPromises,
 		);
 		await Promise.allSettled(queuedPromises);
-		if (waitForResponseBody) {
+		if (waitForResponseMethods) {
 			await this.flush();
 		}
 	}
@@ -168,7 +168,7 @@ class CallHistory {
 						({ route: routeApplied }) => routeApplied === route,
 					);
 					if (!calls.length) {
-					console.warn(`Warning: ${name} not called`); // eslint-disable-line
+						console.warn(`Warning: ${name} not called`); // eslint-disable-line
 						return false;
 					}
 
@@ -182,7 +182,7 @@ class CallHistory {
 					if (expectedTimes > actualTimes) {
 						console.warn(
 							`Warning: ${route.config.name} only called ${actualTimes} times, but ${expectedTimes} expected`,
-					); // eslint-disable-line
+						); // eslint-disable-line
 						return false;
 					}
 					return true;

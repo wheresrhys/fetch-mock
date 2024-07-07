@@ -3,26 +3,26 @@ import { describe, expect, it } from 'vitest';
 import Route from '../../Route.js';
 
 describe('method matching', () => {
-	it('match any method by default',  () => {
+	it('match any method by default', () => {
 		const route = new Route({ matcher: '*', response: 200 });
 
 		expect(route.matcher('http://a.com/', { method: 'GET' })).toBe(true);
 		expect(route.matcher('http://a.com/', { method: 'POST' })).toBe(true);
 	});
 
-	it('configure an exact method to match',  () => {
+	it('configure an exact method to match', () => {
 		const route = new Route({ method: 'POST', response: 200 });
 
 		expect(route.matcher('http://a.com/', { method: 'GET' })).toBe(false);
 		expect(route.matcher('http://a.com/', { method: 'POST' })).toBe(true);
 	});
 
-	it('match implicit GET',  () => {
+	it('match implicit GET', () => {
 		const route = new Route({ method: 'GET', response: 200 });
 		expect(route.matcher('http://a.com/')).toBe(true);
 	});
 
-	it('be case insensitive',  () => {
+	it('be case insensitive', () => {
 		const upperCaseRoute = new Route({ method: 'POST', response: 200 });
 		const lowerCaseRoute = new Route({ method: 'post', response: 200 });
 
@@ -40,7 +40,7 @@ describe('method matching', () => {
 		);
 	});
 
-	it('can be used alongside function matchers',  () => {
+	it('can be used alongside function matchers', () => {
 		const route = new Route({
 			method: 'POST',
 			matcher: (url) => /a\.com/.test(url),

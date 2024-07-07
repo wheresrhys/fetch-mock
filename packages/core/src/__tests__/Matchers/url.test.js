@@ -95,18 +95,18 @@ describe('url matching', () => {
 		expect(route.matcher('http://a.com/12345')).toBe(true);
 	});
 
-	it('match relative urls',  () => {
+	it('match relative urls', () => {
 		const route = new Route({ matcher: '/a.com/', response: 200 });
 		expect(route.matcher('/a.com/')).toBe(true);
 	});
 
-	it('match relative urls with dots',  () => {
+	it('match relative urls with dots', () => {
 		const route = new Route({ matcher: '/it.at/there/', response: 200 });
 		expect(route.matcher('/it.at/not/../there/')).toBe(true);
 		expect(route.matcher('./it.at/there/')).toBe(true);
 	});
 
-	it('match absolute urls with dots',  () => {
+	it('match absolute urls with dots', () => {
 		const route = new Route({ matcher: 'http://it.at/there/', response: 200 });
 		expect(route.matcher('http://it.at/not/../there/')).toBe(true);
 	});

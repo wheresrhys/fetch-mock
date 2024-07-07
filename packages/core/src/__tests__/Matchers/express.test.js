@@ -37,7 +37,7 @@ describe('express path parameter matching', () => {
 		expect(route.matcher('http://site.com/type/b')).toBe(true);
 	});
 
-	it('can match fully qualified url',  () => {
+	it('can match fully qualified url', () => {
 		const route = new Route({ matcher: 'express:/apps/:id', response: 200 });
 
 		expect(route.matcher('https://api.example.com/apps/abc')).toBe(true);

@@ -190,7 +190,7 @@ class Route {
 		return {
 			response: new this.config.Response(body, responseOptions),
 			responseOptions,
-			responseInput
+			responseInput,
 		};
 	}
 	/**

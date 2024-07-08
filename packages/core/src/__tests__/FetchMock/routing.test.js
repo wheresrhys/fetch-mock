@@ -56,8 +56,12 @@ describe('Routing', () => {
 			expect(fm.router.routes[0].config.name).toBe('my-name');
 		});
 		it('reserved names', () => {
-			expect(() => fm.route('http://a.com', 200, 'matched')).toThrow();
-			expect(() => fm.route('http://a.com', 200, 'unmatched')).toThrow();
+			expect(() => fm.route('http://a.com', 200, 'matched')).toThrow('fetch-mock: Routes cannot use the reserved name `matched`');
+			expect(() => fm.route('http://a.com', 200, 'unmatched')).toThrow('fetch-mock: Routes cannot use the reserved name `unmatched`');
+		});
+		it('error on repeated names names', () => {
+			fm.route('http://a.com', 200, 'route 1')
+			expect(() => fm.route('http://a.com', 200, 'route 1')).toThrow('fetch-mock: Adding route with same name as existing route.');
 		});
 	});
 	describe('routing methods', () => {
@@ -225,4 +229,27 @@ describe('Routing', () => {
 			});
 		});
 	});
+
+
+	describe('multiple routes', () => {
+		it('match several routes with one instance', async () => {
+			fm.route('http://a.com/', 200).route('http://b.com/', 201);
+
+			const res1 = await fm.fetchHandler('http://a.com/');
+			expect(res1.status).toEqual(200);
+			const res2 = await fm.fetchHandler('http://b.com/');
+			expect(res2.status).toEqual(201);
+		});
+
+		it('match first route that matches', async () => {
+			fm.route('http://a.com/', 200).route('begin:http://a.com/', 201);
+
+			const res = await fm.fetchHandler('http://a.com/');
+			expect(res.status).toEqual(200);
+		});
+		
+	});
+
+
+
 });

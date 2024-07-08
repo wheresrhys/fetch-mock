@@ -109,7 +109,7 @@ class Route {
 	#validate() {
 		if (['matched', 'unmatched'].includes(this.config.name)) {
 			throw new Error(
-				`fetch-mock: Routes cannot use the reserved name ${this.config.name}`,
+				`fetch-mock: Routes cannot use the reserved name \`${this.config.name}\``,
 			);
 		}
 		if (!('response' in this.config)) {

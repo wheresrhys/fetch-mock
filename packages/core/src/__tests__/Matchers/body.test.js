@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import Route from '../../Route.js';
 
 describe('body matching', () => {
+	//TODO add a test for matching an asynchronous body
 	it('should not match if no body provided in request', () => {
 		const route = new Route({ body: { foo: 'bar' }, response: 200 });
 

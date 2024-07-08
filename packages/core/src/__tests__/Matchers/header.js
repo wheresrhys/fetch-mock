@@ -139,4 +139,32 @@ describe('header matching', () => {
 			}),
 		).toBe(true);
 	});
+
+	it('match custom Headers instance', async () => {
+		const MyHeaders = class {
+			constructor(obj) {
+				this.obj = obj;
+			}
+
+			*[Symbol.iterator]() {
+				yield ['a', 'b'];
+			}
+
+			has() {
+				return true;
+			}
+		};
+
+		const route = new Route({
+			response: 200,
+			headers: { a: 'b' },
+			config: { Headers: MyHeaders },
+		});
+
+		expect(
+			route.matcher('http://a.com', {
+				headers: new MyHeaders({ a: 'b' }),
+			}),
+		).toBe(true);
+	});
 });

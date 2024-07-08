@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import fetchMock from '../../FetchMock.js';
-import Router from '../../Router.js';
 
 describe('Routing', () => {
 	let fm;
@@ -56,12 +55,18 @@ describe('Routing', () => {
 			expect(fm.router.routes[0].config.name).toBe('my-name');
 		});
 		it('reserved names', () => {
-			expect(() => fm.route('http://a.com', 200, 'matched')).toThrow('fetch-mock: Routes cannot use the reserved name `matched`');
-			expect(() => fm.route('http://a.com', 200, 'unmatched')).toThrow('fetch-mock: Routes cannot use the reserved name `unmatched`');
+			expect(() => fm.route('http://a.com', 200, 'matched')).toThrow(
+				'fetch-mock: Routes cannot use the reserved name `matched`',
+			);
+			expect(() => fm.route('http://a.com', 200, 'unmatched')).toThrow(
+				'fetch-mock: Routes cannot use the reserved name `unmatched`',
+			);
 		});
 		it('error on repeated names names', () => {
-			fm.route('http://a.com', 200, 'route 1')
-			expect(() => fm.route('http://a.com', 200, 'route 1')).toThrow('fetch-mock: Adding route with same name as existing route.');
+			fm.route('http://a.com', 200, 'route 1');
+			expect(() => fm.route('http://a.com', 200, 'route 1')).toThrow(
+				'fetch-mock: Adding route with same name as existing route.',
+			);
 		});
 	});
 	describe('routing methods', () => {
@@ -156,7 +161,10 @@ describe('Routing', () => {
 					opt: 'b',
 				});
 			});
-
+			it('match protocol-relative urls', async () => {
+				fm.any(200);
+				await expect(fm.fetchHandler('//a.com/path')).resolves.not.toThrow();
+			});
 			testChainableRoutingMethod('any');
 		});
 
@@ -230,7 +238,6 @@ describe('Routing', () => {
 		});
 	});
 
-
 	describe('multiple routes', () => {
 		it('match several routes with one instance', async () => {
 			fm.route('http://a.com/', 200).route('http://b.com/', 201);
@@ -247,9 +254,5 @@ describe('Routing', () => {
 			const res = await fm.fetchHandler('http://a.com/');
 			expect(res.status).toEqual(200);
 		});
-		
 	});
-
-
-
 });

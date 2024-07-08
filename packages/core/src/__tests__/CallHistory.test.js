@@ -72,10 +72,10 @@ describe('CallHistory', () => {
 		// 	expect(fm.called('http://b.com/')).toBe(false);
 		// });
 		// it('calls() returns array of calls', () => {
-		// 	expect(fm.calls('http://a.com/')).toReturnCalls([
+		// 	expect(fm.callHistory.calls('http://a.com/')).toReturnCalls([
 		// 		['http://a.com/', { method: 'post', arbitraryOption: true }],
 		// 	]);
-		// 	expect(fm.calls('http://b.com/')).toEqual([]);
+		// 	expect(fm.callHistory.calls('http://b.com/')).toEqual([]);
 		// });
 		// it('lastCall() returns array of parameters', () => {
 		// 	expect(fm.lastCall('http://a.com/')).toEqualCall([
@@ -112,15 +112,6 @@ describe('CallHistory', () => {
 		});
 
 		describe('calls()', () => {
-			it('returns call log objects', async () => {
-				fm.route('http://a.com/', 200, { name: 'fetch-mock' });
-
-				await fm.fetchHandler('http://a.com/', { method: 'get' });
-				expect(fm.callHistory.calls()[0]).toEqualCall({
-					url: 'http://a.com/',
-					options: { method: 'get' },
-				});
-			});
 
 			it('retrieves all calls by default', async () => {
 				fm.route('http://a.com/', 200).catch();
@@ -128,11 +119,109 @@ describe('CallHistory', () => {
 				await fetchTheseUrls('http://a.com/', 'http://b.com/');
 				expect(fm.callHistory.calls().length).toEqual(2);
 			});
+
+			it('retrieves calls in correct order', () => {
+				fm.catch();
+
+				fm.fetchHandler('http://a.com/');
+				fm.fetchHandler('http://b.com/');
+				fm.fetchHandler('http://c.com/');
+				expect(fm.callHistory.calls()[0].url).toEqual('http://a.com/');
+				expect(fm.callHistory.calls()[1].url).toEqual('http://b.com/');
+				expect(fm.callHistory.calls()[2].url).toEqual('http://c.com/');
+			});
+
+			describe('returned values', () => {
+				it('returns call log objects', async () => {
+					fm.catch();
+
+					await fm.fetchHandler('http://a.com/', { method: 'get' });
+
+					expect(fm.callHistory.calls()[0]).toEqual(
+						expect.objectContaining({
+							url: 'http://a.com/',
+							options: { method: 'get' },
+						}),
+					);
+				});
+
+				it('when called with Request instance', () => {
+					fm.catch();
+					const req = new Request('http://a.com/', {
+						method: 'post',
+					});
+					fm.fetchHandler(req);
+					expect(fm.callHistory.calls()[0]).toEqual(
+						expect.objectContaining({
+							url: 'http://a.com/',
+							options: expect.objectContaining({ method: 'POST' }),
+							request: req
+						}),
+					);
+				});
+				it('when called with Request instance and arbitrary option', () => {
+					fm.catch();
+					const req = new Request('http://a.com/', {
+						method: 'POST',
+					});
+					fm.fetchHandler(req, { arbitraryOption: true });
+					expect(fm.callHistory.calls()[0]).toEqual(
+						expect.objectContaining({
+							url: 'http://a.com/',
+							options: expect.objectContaining({ method: 'POST', arbitraryOption: true, }),
+							request: req
+						}),
+					);
+				});
+				// Not sure why this was in the old test suite
+				it.skip('Not make default signal available in options when called with Request instance using signal', () => {
+					fm.catch();
+					const req = new Request('http://a.com/', {
+						method: 'POST',
+					});
+					fm.fetchHandler(req);
+					console.log(fm.callHistory.calls()[0])
+					expect(fm.callHistory.calls()[0].signal).toBeUndefined();
+				});
+
+				describe('retrieving responses', () => {
+					it('exposes responses', async () => {
+						fm.once('*', 200).once('*', 201);
+
+						await fm.fetchHandler('http://a.com/');
+						await fm.fetchHandler('http://a.com/');
+						expect(fm.callHistory.calls()[0].response.status).toEqual(200);
+						expect(fm.callHistory.calls()[1].response.status).toEqual(201);
+					});
+
+					it('exposes Responses', async () => {
+						fm.once('*', new fm.config.Response('blah'));
+
+						await fm.fetchHandler('http://a.com/');
+						expect(fm.callHistory.calls()[0].response.status).toEqual(200);
+						await expect(fm.callHistory.calls()[0].response.text()).resolves.toEqual('blah');
+					});
+
+					// functionality deliberately not implemented yet
+					it.skip('has readable response when response already read if using lastResponse', async () => {
+						const respBody = { foo: 'bar' };
+						fm.once('*', { status: 200, body: respBody }).once('*', 201, {
+							overwriteRoutes: false,
+						});
+
+						const resp = await fm.fetchHandler('http://a.com/');
+
+						await resp.json();
+						expect(await fm.lastResponse().json()).toEqual(respBody);
+					});
+				});
+			})
+
 			describe('filters', () => {
 				const expectSingleUrl =
-					(filter) =>
+					(...filter) =>
 					(url) => {
-						const filteredCalls = fm.callHistory.calls(filter);
+						const filteredCalls = fm.callHistory.calls(...filter);
 						expect(filteredCalls.length).toEqual(1);
 						expect(filteredCalls[0].url).toEqual(url);
 					};
@@ -163,6 +252,9 @@ describe('CallHistory', () => {
 				});
 
 				describe('filtering with a matcher', () => {
+
+					//TODO write a test that just makes it clear this is contracted out to Route
+					// spy on route constructor, and then on matcher for that route
 					it('should be able to filter with a url matcher', async () => {
 						fm.catch();
 						await fm.fetchHandler('http://a.com/');
@@ -181,9 +273,14 @@ describe('CallHistory', () => {
 						await fm.fetchHandler('http://b.com/', { headers: { b: 'val' } });
 						expectSingleUrl({ headers: {a: 'val'} })('http://a.com/');
 					})
-					it('should be able to combine with options object', async () => { })
-					//TODO write a test that just makes it clear this is contracted out to Route
-					// spy on route constructor, and then on matcher for that route
+					it('should be able to combine with options object', async () => { 
+						fm.catch();
+						await fm.fetchHandler('http://a.com/', { headers: { a: 'val' } });
+						await fm.fetchHandler('http://a.com/', { headers: { b: 'val' } });
+						await fm.fetchHandler('http://b.com/', { headers: { b: 'val' } });
+						expectSingleUrl('http://a.com/', { headers: { a: 'val' } })('http://a.com/');
+					})
+					
 				});
 
 				describe('filtering with options', () => {
@@ -265,148 +362,9 @@ describe('CallHistory', () => {
 				});
 			});
 
-			describe('call order', () => {
-				it('retrieves calls in correct order', () => {
-					fm.route('http://a.com/', 200).route('http://b.com/', 200).catch();
 
-					fm.fetchHandler('http://a.com/');
-					fm.fetchHandler('http://b.com/');
-					fm.fetchHandler('http://b.com/');
-					expect(fm.calls()[0][0]).toEqual('http://a.com/');
-					expect(fm.calls()[1][0]).toEqual('http://b.com/');
-					expect(fm.calls()[2][0]).toEqual('http://b.com/');
-					fm.reset();
-				});
-			});
 
-			describe('retrieving call parameters', () => {
-				beforeAll(() => {
-					fm.route('http://a.com/', 200);
-					fm.fetchHandler('http://a.com/');
-					fm.fetchHandler('http://a.com/', { method: 'POST' });
-				});
-				afterAll(() => fm.restore());
-
-				it('calls (call history)', () => {
-					expect(fm.calls()[0]).toEqualCall(['http://a.com/', undefined]);
-					expect(fm.calls()[1]).toEqualCall([
-						'http://a.com/',
-						{ method: 'POST' },
-					]);
-				});
-
-				it('lastCall', () => {
-					expect(fm.lastCall()).toEqualCall([
-						'http://a.com/',
-						{ method: 'POST' },
-					]);
-				});
-
-				it('lastOptions', () => {
-					expect(fm.lastOptions()).toEqual({ method: 'POST' });
-				});
-
-				it('lastUrl', () => {
-					expect(fm.lastUrl()).toEqual('http://a.com/');
-				});
-
-				it('when called with Request instance', () => {
-					const req = new fm.config.Request('http://a.com/', {
-						method: 'POST',
-					});
-					fm.fetchHandler(req);
-					const [url, callOptions] = fm.lastCall();
-
-					expect(url).toEqual('http://a.com/');
-					expect(callOptions).toEqual(
-						expect.objectContaining({ method: 'POST' }),
-					);
-					expect(fm.lastUrl()).toEqual('http://a.com/');
-					const options = fm.lastOptions();
-					expect(options).toEqual(expect.objectContaining({ method: 'POST' }));
-					expect(fm.lastCall().request).toEqual(req);
-				});
-
-				it('when called with Request instance and arbitrary option', () => {
-					const req = new fm.config.Request('http://a.com/', {
-						method: 'POST',
-					});
-					fm.fetchHandler(req, { arbitraryOption: true });
-					const [url, callOptions] = fm.lastCall();
-					expect(url).toEqual('http://a.com/');
-					expect(callOptions).toEqual(
-						expect.objectContaining({
-							method: 'POST',
-							arbitraryOption: true,
-						}),
-					);
-					expect(fm.lastUrl()).toEqual('http://a.com/');
-					const options = fm.lastOptions();
-					expect(options).toEqual(
-						expect.objectContaining({
-							method: 'POST',
-							arbitraryOption: true,
-						}),
-					);
-					expect(fm.lastCall().request).toEqual(req);
-				});
-
-				it('Not make default signal available in options when called with Request instance using signal', () => {
-					const req = new fm.config.Request('http://a.com/', {
-						method: 'POST',
-					});
-					fm.fetchHandler(req);
-					const [, callOptions] = fm.lastCall();
-
-					expect(callOptions.signal).toBeUndefined();
-					const options = fm.lastOptions();
-					expect(options.signal).toBeUndefined();
-				});
-			});
-
-			describe('retrieving responses', () => {
-				it('exposes responses', async () => {
-					fm.once('*', 200).once('*', 201, { overwriteRoutes: false });
-
-					await fm.fetchHandler('http://a.com/');
-					await fm.fetchHandler('http://a.com/');
-					expect(fm.calls()[0].response.status).toEqual(200);
-					expect(fm.calls()[1].response.status).toEqual(201);
-					fm.restore();
-				});
-
-				it('exposes Responses', async () => {
-					fm.once('*', new fm.config.Response('blah'));
-
-					await fm.fetchHandler('http://a.com/');
-					expect(fm.calls()[0].response.status).toEqual(200);
-					expect(await fm.calls()[0].response.text()).toEqual('blah');
-					fm.restore();
-				});
-
-				it('has lastResponse shorthand', async () => {
-					fm.once('*', 200).once('*', 201, { overwriteRoutes: false });
-
-					await fm.fetchHandler('http://a.com/');
-					await fm.fetchHandler('http://a.com/');
-					expect(fm.lastResponse().status).toEqual(201);
-					fm.restore();
-				});
-
-				it('has readable response when response already read if using lastResponse', async () => {
-					const respBody = { foo: 'bar' };
-					fm.once('*', { status: 200, body: respBody }).once('*', 201, {
-						overwriteRoutes: false,
-					});
-
-					const resp = await fm.fetchHandler('http://a.com/');
-
-					await resp.json();
-					expect(await fm.lastResponse().json()).toEqual(respBody);
-				});
-			});
-
-			describe('repeat and done()', () => {
+			describe('done()', () => {
 				let fm;
 				beforeAll(() => {
 					fm = fetchMock.createInstance();

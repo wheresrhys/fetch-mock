@@ -73,7 +73,7 @@ const FetchMock = {
 	 * @this {FetchMock}
 	 * @returns {Promise<Response>}
 	 */
-	async fetchHandler(requestInput, requestInit) {
+	fetchHandler(requestInput, requestInit) {
 		// TODO move into router
 		const normalizedRequest = requestUtils.normalizeRequest(
 			requestInput,

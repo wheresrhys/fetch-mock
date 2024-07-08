@@ -148,7 +148,7 @@ export default class Router {
 	 * @param {NormalizedRequest} normalizedRequest
 	 * @returns {Promise<Response>}
 	 */
-	async execute(callLog, normalizedRequest) {
+	execute(callLog, normalizedRequest) {
 		// TODO make abort vs reject neater
 		return new Promise(async (resolve, reject) => {
 			const { url, options, request, pendingPromises } = callLog;
@@ -211,6 +211,7 @@ export default class Router {
 	 * @param {CallLog} callLog
 	 * @returns {Promise<{response: Response, responseOptions: ResponseInit, responseInput: RouteResponseConfig}>}
 	 */
+	// eslint-disable-next-line class-methods-use-this
 	async generateResponse(route, callLog) {
 		const responseInput = await resolveUntilResponseConfig(
 			route.config.response,
@@ -244,6 +245,7 @@ export default class Router {
 	 * @param {Promise<any>[]} pendingPromises
 	 * @returns {Response}
 	 */
+	// eslint-disable-next-line class-methods-use-this
 	createObservableResponse(
 		response,
 		responseConfig,

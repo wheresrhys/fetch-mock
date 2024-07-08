@@ -98,9 +98,8 @@ class Route {
 	/**
 	 * @returns {void}
 	 */
-	reset() {
-		return;
-	}
+	// eslint-disable-next-line class-methods-use-this
+	reset() {}
 
 	/**
 	 * @returns {void}

@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import Route from '../../Route.js';
 
 // TODO should this whole thing be integration tests on router
@@ -43,7 +43,7 @@ describe('matcher object', () => {
 
 	//TODO be strionger on discouraging this
 	it.skip('deprecated message on using functionMatcher (prefer matcher)', () => {
-		const route = new Route({
+		new Route({
 			url: 'end:profile',
 			functionMatcher: (url, opts) =>
 				opts && opts.headers && opts.headers.authorized === true,
@@ -124,7 +124,7 @@ describe('matcher object', () => {
 			matchPartialBody: true,
 			response: 200,
 		});
-		const res = expect(
+		expect(
 			route.matcher('http://a.com', {
 				method: 'POST',
 				body: JSON.stringify({ a: 1, b: 2 }),

@@ -7,3 +7,4 @@ dist/*
 old-tests
 packages/standalone/*
 types/fetch-mock-tests.js
+node_modules

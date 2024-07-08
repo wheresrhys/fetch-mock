@@ -120,7 +120,7 @@ describe('header matching', () => {
 
 		expect(
 			route.matcher('http://a.com/', {
-				headers: new fm.config.Headers({ a: 'b' }),
+				headers: new Headers({ a: 'b' }),
 			}),
 		).toBe(true);
 	});
@@ -140,16 +140,16 @@ describe('header matching', () => {
 		).toBe(true);
 	});
 
-	it('match custom Headers instance', async () => {
+	it('match custom Headers instance', () => {
 		const MyHeaders = class {
 			constructor(obj) {
 				this.obj = obj;
 			}
-
+			// eslint-disable-next-line class-methods-use-this
 			*[Symbol.iterator]() {
 				yield ['a', 'b'];
 			}
-
+			// eslint-disable-next-line class-methods-use-this
 			has() {
 				return true;
 			}

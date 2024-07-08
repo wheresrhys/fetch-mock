@@ -61,9 +61,8 @@ function sanitizeStatus(status) {
 	}
 
 	if (
-		//TODO wtf is this???
 		(typeof status === 'number' &&
-			parseInt(status, 10) !== status &&
+			parseInt(String(status), 10) !== status &&
 			status >= 200) ||
 		status < 600
 	) {
@@ -212,50 +211,51 @@ class Route {
 		const options = responseInput.options || {};
 		options.status = sanitizeStatus(responseInput.status);
 		options.statusText = statusTextMap[options.status];
-
-		// Set up response headers. The empty object is to cope with
-		// new Headers(undefined) throwing in Chrome
-		// https://code.google.com/p/chromium/issues/detail?id=335871
-		options.headers = new this.config.Headers(responseInput.headers || {});
+		/** @type {Headers} */
+		options.headers = new this.config.Headers(responseInput.headers);
 		return options;
 	}
 	/**
 	 *
 	 * @param {RouteResponseConfig} responseInput
 	 * @param {ResponseInit} responseOptions
-	 * @returns
+	 * @returns {string|null}
 	 */
 	constructResponseBody(responseInput, responseOptions) {
 		// start to construct the body
 		let body = responseInput.body;
 		// convert to json if we need to
-		if (
-			this.config.sendAsJson &&
-			responseInput.body != null && //eslint-disable-line
-			typeof body === 'object'
-		) {
-			body = JSON.stringify(body);
+		if (typeof body === 'object') {
 			if (
-				!(/** @type {Headers} */ (responseOptions.headers).has('Content-Type'))
+				this.config.sendAsJson &&
+				responseInput.body != null//eslint-disable-line
 			) {
-				/** @type {Headers} */ (responseOptions.headers).set(
-					'Content-Type',
-					'application/json',
-				);
+				body = JSON.stringify(body);
+				if (
+					!(responseOptions.headers.has('Content-Type'))
+				) {
+					responseOptions.headers.set(
+						'Content-Type',
+						'application/json',
+					);
+				}
 			}
-		}
-		// add a Content-Length header if we need to
-		if (
-			this.config.includeContentLength &&
-			typeof body === 'string' &&
-			!(/** @type {Headers} */ (responseOptions.headers).has('Content-Length'))
-		) {
-			/** @type {Headers} */ (responseOptions.headers).set(
+		} 
+		
+		if (typeof body === 'string') {
+			// add a Content-Length header if we need to
+			if (
+				this.config.includeContentLength &&
+				!( responseOptions.headers.has('Content-Length'))
+			) {
+			responseOptions.headers.set(
 				'Content-Length',
 				body.length.toString(),
 			);
+			}
+			return body;
 		}
-		return body;
+		return body || null;
 	}
 
 	/**

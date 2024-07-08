@@ -1,10 +1,10 @@
-import { describe, expect, it, beforeAll } from 'vitest';
+import { describe, expect, it, beforeEach } from 'vitest';
 
 import fetchMock from '../../FetchMock';
 describe('FetchMockWrapper.js', () => {
 	describe('flushing pending calls', () => {
 		let fm;
-		beforeAll(() => {
+		beforeEach(() => {
 			fm = fetchMock.createInstance();
 		});
 
@@ -13,16 +13,16 @@ describe('FetchMockWrapper.js', () => {
 			// no expectation, but if it doesn't work then the promises will hang
 			// or reject and the test will timeout
 			await fm.flush();
-			fetch('http://one.com');
+			fm.fetchHandler('http://one.com');
 			await fm.flush();
-			fetch('http://two.com');
+			fm.fetchHandler('http://two.com');
 			await fm.flush();
 		});
 
 		it('should resolve after fetches', async () => {
-			fm.route('http://example/', 'working!');
+			fm.route('http://example', 'working!');
 			let data;
-			fetch('http://example').then(() => {
+			fm.fetchHandler('http://example').then(() => {
 				data = 'done';
 			});
 			await fm.flush();
@@ -30,10 +30,21 @@ describe('FetchMockWrapper.js', () => {
 		});
 
 		describe('response methods', () => {
+			it('should resolve after .text() if waitForResponseMethods option passed', async () => {
+				fm.route('http://example/', 'working!');
+				let data = 'not set';
+				fm.fetchHandler('http://example/').then(async (res) => {
+					await res.text();
+					data = 'done';
+				});
+
+				await fm.flush(true);
+				expect(data).toEqual('done');
+			});
 			it('should resolve after .json() if waitForResponseMethods option passed', async () => {
 				fm.route('http://example/', { a: 'ok' });
 				let data;
-				fetch('http://example/')
+				fm.fetchHandler('http://example/')
 					.then((res) => res.json())
 					.then(() => {
 						data = 'done';
@@ -43,25 +54,12 @@ describe('FetchMockWrapper.js', () => {
 				expect(data).toEqual('done');
 			});
 
-			it('should resolve after .json() if waitForResponseMethods option passed', async () => {
+			it('should resolve after .json() if waitForResponseMethods option passed, but contains invalid json', async () => {
 				fm.route('http://example/', 'bleurgh');
 				let data;
-				fetch('http://example/')
+				fm.fetchHandler('http://example/')
 					.then((res) => res.json())
 					.catch(() => {
-						data = 'done';
-					});
-
-				await fm.flush(true);
-				expect(data).toEqual('done');
-			});
-
-			it('should resolve after .text() if waitForResponseMethods option passed', async () => {
-				fm.route('http://example/', 'working!');
-				let data;
-				fetch('http://example/')
-					.then((res) => res.text())
-					.then(() => {
 						data = 'done';
 					});
 
@@ -77,8 +75,8 @@ describe('FetchMockWrapper.js', () => {
 			);
 
 			const orderedResults = [];
-			fetch('http://one.com/');
-			fetch('http://two.com/');
+			fm.fetchHandler('http://one.com/');
+			fm.fetchHandler('http://two.com/');
 
 			setTimeout(() => orderedResults.push('not flush'), 25);
 

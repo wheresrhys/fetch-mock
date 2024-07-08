@@ -72,8 +72,12 @@ class CallHistory {
 		const queuedPromises = this.callLogs.flatMap(
 			(call) => call.pendingPromises,
 		);
-		await Promise.allSettled(queuedPromises);
+		const results = await Promise.allSettled(queuedPromises);
 		if (waitForResponseMethods) {
+			// forces an extra tick, which is needed to ensure that flush doesn't resolve
+			// before all the complicated promises we set up in the proxy that wraps all
+			// the response body methods
+			await Promise.resolve();
 			await this.flush();
 		}
 	}

@@ -5,6 +5,7 @@
 /** @typedef {import('./Matchers').RouteMatcher} RouteMatcher */
 /** @typedef {import('./FetchMock').FetchMockConfig} FetchMockConfig */
 import { normalizeRequest } from './RequestUtils.js';
+import { isUrlMatcher } from "./Matchers.js";
 import Route from './Route.js';
 
 /**
@@ -85,15 +86,7 @@ class CallHistory {
 		if (typeof filter === 'undefined' && !options) {
 			return calls
 		}
-		if (isName(filter)) {
-			return calls.filter(
-				({
-					route: {
-						config: { name },
-					},
-				}) => name === filter,
-			);
-		}
+
 
 		if (isMatchedOrUnmatched(filter)) {
 			if (
@@ -111,9 +104,25 @@ class CallHistory {
 			if (!options) {
 				return calls
 			}
+		} else if (isName(filter)) {
+			calls = calls.filter(
+				({
+					route: {
+						config: { name },
+					},
+				}) => name === filter,
+			);
+			if (!options) {
+				return calls
+			}
 		} else {
-			options = {matcher: filter, ...(options || {})}
+			if (isUrlMatcher(filter)) {
+				options = {matcher: filter, ...(options || {})}
+			} else {
+				options = { ...filter, ...(options || {}) }
+			}
 		}
+
 		const { matcher } = new Route({
 			response: 'ok',
 			...options,

@@ -55,6 +55,10 @@ describe('Routing', () => {
 			fm.route('http://a.com', 200, 'my-name');
 			expect(fm.router.routes[0].config.name).toBe('my-name');
 		});
+		it('reserved names', () => {
+			expect(() => fm.route('http://a.com', 200, 'matched')).toThrow()
+			expect(() => fm.route('http://a.com', 200, 'unmatched')).toThrow();
+		})
 	});
 	describe('routing methods', () => {
 		beforeEach(() => {

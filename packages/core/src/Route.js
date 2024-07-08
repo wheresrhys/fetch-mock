@@ -101,6 +101,9 @@ class Route {
 	 */
 	// @ts-ignore
 	#validate() {
+		if (['matched', 'unmatched'].includes(this.config.name)) {
+			throw new Error(`fetch-mock: Routes cannot use the reserved name ${this.config.name}`);
+		}
 		if (!('response' in this.config)) {
 			throw new Error('fetch-mock: Each route must define a response');
 		}

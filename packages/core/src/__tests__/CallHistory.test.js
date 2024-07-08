@@ -129,27 +129,13 @@ describe('CallHistory', () => {
 				expect(fm.callHistory.calls().length).toEqual(2);
 			});
 			describe('filters', () => {
-				const expectFilteredLength =
-					(...filter) =>
-					(length) =>
-						expect(fm.callHistory.calls(...filter).length).toEqual(length);
-
-				const expectFilteredUrl =
-					(...filter) =>
-					(url) =>
-						expect(fm.callHistory.calls(...filter)[0].url).toEqual(url);
-
 				const expectSingleUrl =
-					(...filter) =>
+					(filter) =>
 					(url) => {
-						expectFilteredLength(...filter)(1);
-						expectFilteredUrl(...filter)(url);
+						const filteredCalls = fm.callHistory.calls(filter);
+						expect(filteredCalls.length).toEqual(1);
+						expect(filteredCalls[0].url).toEqual(url);
 					};
-
-				const expectFilteredResponse =
-					(...filter) =>
-					(...response) =>
-						expect(fm.callHistory.calls(...filter)[0]).toEqualCall(response);
 
 				describe('boolean and named route filters', () => {
 					it('can retrieve calls matched by non-fallback routes', async () => {
@@ -177,10 +163,27 @@ describe('CallHistory', () => {
 				});
 
 				describe('filtering with a matcher', () => {
-					it('should be able to filter with any of the built in url matchers', () => {})
-					it('should be able to filter with a method', () => { })
-					it('should be able to filter with headers', () => { })
+					it('should be able to filter with a url matcher', async () => {
+						fm.catch();
+						await fm.fetchHandler('http://a.com/');
+						await fm.fetchHandler('http://b.com/');
+						expectSingleUrl('begin:http://a')('http://a.com/');
+					})
+					it('should be able to filter with a method', async () => {
+						fm.catch();
+						await fm.fetchHandler('http://a.com/', {method: 'get'});
+						await fm.fetchHandler('http://b.com/', { method: 'post' });
+						expectSingleUrl({ method: 'GET' })('http://a.com/');
+					 })
+					it('should be able to filter with headers', async () => { 
+						fm.catch();
+						await fm.fetchHandler('http://a.com/', { headers: {a: 'val'} });
+						await fm.fetchHandler('http://b.com/', { headers: { b: 'val' } });
+						expectSingleUrl({ headers: {a: 'val'} })('http://a.com/');
+					})
+					it('should be able to combine with options object', async () => { })
 					//TODO write a test that just makes it clear this is contracted out to Route
+					// spy on route constructor, and then on matcher for that route
 				});
 
 				describe('filtering with options', () => {
@@ -195,13 +198,9 @@ describe('CallHistory', () => {
 							headers: { a: 'z' },
 						});
 						await fm.fetchHandler('http://b.com/');
-						
-						expectFilteredLength(undefined, { headers: { a: 'z' } })(2);
-						expect(
-							fm.callHistory
-								.calls(undefined, { headers: { a: 'z' } })
-								.filter(([, options]) => options.headers.a).length,
-						).toEqual(2);
+						const filteredCalls = fm.callHistory.calls(undefined, { headers: { a: 'z' } });
+						expect(filteredCalls.length).toEqual(2)
+						filteredCalls.forEach(({options}) => expect(options.headers.a).toEqual('z'))
 					});
 
 					it('can retrieve calls matched by non-fallback routes', async () => {
@@ -215,13 +214,14 @@ describe('CallHistory', () => {
 							headers: { a: 'z' },
 						});
 						await fm.fetchHandler('http://b.com/');
-						expectFilteredLength(true, { headers: { a: 'z' } })(1);
-						expectFilteredResponse(true, { headers: { a: 'z' } })(
-							'http://a.com/',
-							{
+						const filteredCalls = fm.callHistory.calls(true, { headers: { a: 'z' } });
+						expect(filteredCalls.length).toEqual(1);
+						expect(filteredCalls[0]).toMatchObject(expect.objectContaining({
+							url: 'http://a.com/',
+							options: {
 								headers: { a: 'z' },
 							},
-						);
+						}));
 					});
 
 					it('can retrieve calls matched by the fallback route', async () => {
@@ -235,11 +235,14 @@ describe('CallHistory', () => {
 							headers: { a: 'z' },
 						});
 						await fm.fetchHandler('http://b.com/');
-						expectFilteredLength(false, { headers: { a: 'z' } })(1);
-						expectFilteredResponse(false, { headers: { a: 'z' } })(
-							'http://b.com/',
-							{ headers: { a: 'z' } },
-						);
+						const filteredCalls = fm.callHistory.calls(false, { headers: { a: 'z' } });
+						expect(filteredCalls.length).toEqual(1);
+						expect(filteredCalls[0]).toMatchObject(expect.objectContaining({
+							url: 'http://b.com/',
+							options: {
+								headers: { a: 'z' },
+							},
+						}));
 					});
 
 					it('can retrieve only calls handled by a named route', async () => {
@@ -249,11 +252,14 @@ describe('CallHistory', () => {
 							headers: { a: 'z' },
 						});
 						await fm.fetchHandler('http://a.com/');
-						expectFilteredLength('here', { headers: { a: 'z' } })(1);
-						expectFilteredResponse('here', { headers: { a: 'z' } })(
-							'http://a.com/',
-							{ headers: { a: 'z' } },
-						);
+						const filteredCalls = fm.callHistory.calls('here', { headers: { a: 'z' } });
+						expect(filteredCalls.length).toEqual(1);
+						expect(filteredCalls[0]).toMatchObject(expect.objectContaining({
+							url: 'http://a.com/',
+							options: {
+								headers: { a: 'z' },
+							},
+						}));
 					});
 					
 				});

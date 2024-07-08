@@ -5,7 +5,7 @@
 /** @typedef {import('./Matchers').RouteMatcher} RouteMatcher */
 /** @typedef {import('./FetchMock').FetchMockConfig} FetchMockConfig */
 import { normalizeRequest } from './RequestUtils.js';
-import { isUrlMatcher } from "./Matchers.js";
+import { isUrlMatcher } from './Matchers.js';
 import Route from './Route.js';
 
 /**
@@ -28,7 +28,9 @@ import Route from './Route.js';
  * @returns {filter is RouteName}
  */
 const isName = (filter) =>
-	typeof filter === 'string' && /^[\da-zA-Z\-]+$/.test(filter) && !['matched', 'unmatched'].includes(filter);
+	typeof filter === 'string' &&
+	/^[\da-zA-Z\-]+$/.test(filter) &&
+	!['matched', 'unmatched'].includes(filter);
 
 /**
  *
@@ -57,7 +59,7 @@ class CallHistory {
 	}
 
 	clear() {
-		this.callLogs.forEach(({route}) => route.reset())
+		this.callLogs.forEach(({ route }) => route.reset());
 		this.callLogs = [];
 	}
 
@@ -85,9 +87,8 @@ class CallHistory {
 	calls(filter, options) {
 		let calls = [...this.callLogs];
 		if (typeof filter === 'undefined' && !options) {
-			return calls
+			return calls;
 		}
-
 
 		if (isMatchedOrUnmatched(filter)) {
 			if (
@@ -103,7 +104,7 @@ class CallHistory {
 			}
 
 			if (!options) {
-				return calls
+				return calls;
 			}
 		} else if (isName(filter)) {
 			calls = calls.filter(
@@ -114,13 +115,13 @@ class CallHistory {
 				}) => name === filter,
 			);
 			if (!options) {
-				return calls
+				return calls;
 			}
 		} else {
 			if (isUrlMatcher(filter)) {
-				options = {matcher: filter, ...(options || {})}
+				options = { matcher: filter, ...(options || {}) };
 			} else {
-				options = { ...filter, ...(options || {}) }
+				options = { ...filter, ...(options || {}) };
 			}
 		}
 
@@ -156,7 +157,7 @@ class CallHistory {
 	 * @returns {CallLog}
 	 */
 	lastCall(filter, options) {
-		return this.filterCalls(filter, options).pop();
+		return this.calls(filter, options).pop();
 	}
 	/**
 	 *
@@ -184,7 +185,7 @@ class CallHistory {
 					}
 
 					const expectedTimes = route.config.repeat;
-					
+
 					if (!expectedTimes) {
 						return true;
 					}

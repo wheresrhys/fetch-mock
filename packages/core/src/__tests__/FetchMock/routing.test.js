@@ -56,9 +56,9 @@ describe('Routing', () => {
 			expect(fm.router.routes[0].config.name).toBe('my-name');
 		});
 		it('reserved names', () => {
-			expect(() => fm.route('http://a.com', 200, 'matched')).toThrow()
+			expect(() => fm.route('http://a.com', 200, 'matched')).toThrow();
 			expect(() => fm.route('http://a.com', 200, 'unmatched')).toThrow();
-		})
+		});
 	});
 	describe('routing methods', () => {
 		beforeEach(() => {
@@ -141,7 +141,7 @@ describe('Routing', () => {
 				fm.once('http://a.com/', 200);
 				await fm.fetchHandler('http://a.com/');
 				fm.clearHistory();
-				await expect(fm.fetchHandler('http://a.com/')).resolves.not.toThrow()
+				await expect(fm.fetchHandler('http://a.com/')).resolves.not.toThrow();
 			});
 		});
 

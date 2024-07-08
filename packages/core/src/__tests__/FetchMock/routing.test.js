@@ -137,6 +137,12 @@ describe('Routing', () => {
 					repeat: 1,
 				});
 			});
+			it('clearHistory() resets repeat setting on routes', async () => {
+				fm.once('http://a.com/', 200);
+				await fm.fetchHandler('http://a.com/');
+				fm.clearHistory();
+				await expect(fm.fetchHandler('http://a.com/')).resolves.not.toThrow()
+			});
 		});
 
 		describe('FetchMock.any()', () => {

@@ -95,6 +95,10 @@ class Route {
 	config = {};
 	/** @type {RouteMatcherFunction=} */
 	matcher = null;
+	/**
+	 * @returns {void}
+	 */
+	reset() { return }
 
 	/**
 	 * @returns {void}

@@ -125,14 +125,24 @@ const FetchMock = {
 	flush(waitForResponseBody) {
 		return this.callHistory.flush(waitForResponseBody);
 	},
+	/**
+	 * 
+	 * @param {RouteName|RouteName[]} routeNames 
+	 * @returns {boolean}
+	 */
 	done(routeNames) {
-		return this.callHistory.done(this.router.routes, routeNames);
+		if (!routeNames) {
+			return this.callHistory.done(this.router.routes)
+		}
+		return this.callHistory.done(this.router.routes, Array.isArray(routeNames) ? routeNames : [routeNames]);
 	},
 	removeRoutes(options) {
-		return this.router.removeRoutes(options);
+		this.router.removeRoutes(options);
+		return this
 	},
 	clearHistory() {
-		return this.callHistory.clear();
+		this.callHistory.clear();
+		return this;
 	},
 };
 

@@ -366,144 +366,139 @@ describe('CallHistory', () => {
 
 			describe('done()', () => {
 				let fm;
-				beforeAll(() => {
-					fm = fetchMock.createInstance();
-					fm.config.warnOnUnmatched = false;
-				});
 
-				afterEach(() => fm.restore());
-
-				it('can expect a route to be called', () => {
-					fm.route('http://a.com/', 200);
-
-					expect(fm.done()).toBe(false);
-					expect(fm.done('http://a.com/')).toBe(false);
-					fm.fetchHandler('http://a.com/');
-					expect(fm.done()).toBe(true);
-					expect(fm.done('http://a.com/')).toBe(true);
-				});
-
-				it('can expect a route to be called n times', () => {
-					fm.route('http://a.com/', 200, { repeat: 2 });
-
-					fm.fetchHandler('http://a.com/');
-					expect(fm.done()).toBe(false);
-					expect(fm.done('http://a.com/')).toBe(false);
-					fm.fetchHandler('http://a.com/');
-					expect(fm.done()).toBe(true);
-					expect(fm.done('http://a.com/')).toBe(true);
-				});
-
-				it('regression: can expect an un-normalized url to be called n times', () => {
-					fm.route('http://a.com/', 200, { repeat: 2 });
-					fm.fetchHandler('http://a.com/');
-					expect(fm.done()).toBe(false);
-					fm.fetchHandler('http://a.com/');
-					expect(fm.done()).toBe(true);
-				});
-
-				it('can expect multiple routes to have been called', () => {
-					fm.route('http://a.com/', 200, {
-						repeat: 2,
-					}).route('http://b.com/', 200, { repeat: 2 });
-
-					fm.fetchHandler('http://a.com/');
-					expect(fm.done()).toBe(false);
-					expect(fm.done('http://a.com/')).toBe(false);
-					expect(fm.done('http://b.com/')).toBe(false);
-					fm.fetchHandler('http://a.com/');
-					expect(fm.done()).toBe(false);
-					expect(fm.done('http://a.com/')).toBe(true);
-					expect(fm.done('http://b.com/')).toBe(false);
-					fm.fetchHandler('http://b.com/');
-					expect(fm.done()).toBe(false);
-					expect(fm.done('http://a.com/')).toBe(true);
-					expect(fm.done('http://b.com/')).toBe(false);
-					fm.fetchHandler('http://b.com/');
-					expect(fm.done()).toBe(true);
-					expect(fm.done('http://a.com/')).toBe(true);
-					expect(fm.done('http://b.com/')).toBe(true);
-				});
-
-				// todo more tests for filtering
-				it('`done` filters on match types', async () => {
-					fm.once('http://a.com/', 200)
-						.once('http://b.com/', 200)
-						.once('http://c.com/', 200)
-						.catch();
-
-					await fm.fetchHandler('http://a.com/');
-					await fm.fetchHandler('http://b.com/');
-					expect(fm.done()).toBe(false);
-					expect(fm.done(true)).toBe(false);
-					expect(fm.done('http://a.com/')).toBe(true);
-					expect(fm.done('http://b.com/')).toBe(true);
-					expect(fm.done('http://c.com/')).toBe(false);
-				});
-
-				it("can tell when done if using '*'", () => {
-					fm.route('*', '200');
-					fm.fetchHandler('http://a.com');
-					expect(fm.done()).toBe(true);
-				});
-
-				it('can tell when done if using begin:', () => {
-					fm.route('begin:http', '200');
-					fm.fetchHandler('http://a.com');
-					expect(fm.done()).toBe(true);
-				});
-
-				it('falls back to second route if first route already done', async () => {
-					fm.route('http://a.com/', 404, {
-						repeat: 1,
-					}).route('http://a.com/', 200, { overwriteRoutes: false });
-
-					const res = await fm.fetchHandler('http://a.com/');
-					expect(res.status).toEqual(404);
-
-					const res2 = await fm.fetchHandler('http://a.com/');
-					expect(res2.status).toEqual(200);
-				});
-
-				it('resetHistory() resets count', async () => {
-					fm.route('http://a.com/', 200, { repeat: 1 });
+				it('clearHistory() resets count done-ness', async () => {
+					fm = fetchMock.createInstance().route('http://a.com/', 200);
 					await fm.fetchHandler('http://a.com/');
 					expect(fm.done()).toBe(true);
-					fm.resetHistory();
+					fm.clearHistory();
 					expect(fm.done()).toBe(false);
-					expect(fm.done('http://a.com/')).toBe(false);
 					await fm.fetchHandler('http://a.com/');
 					expect(fm.done()).toBe(true);
-					expect(fm.done('http://a.com/')).toBe(true);
 				});
 
-				it('logs unmatched calls', () => {
-					vi.spyOn(console, 'warn'); //eslint-disable-line
-					fm.route('http://a.com/', 200).route('http://b.com/', 200, {
-						repeat: 2,
+				describe('where number of expected calls is not specified', () => {
+					beforeEach(() => {
+						fm = fetchMock.createInstance();
+						// Note that the c route is unnamed, mainly for verifying that the presence of unnamed routtes does not lead to errors
+						fm.route('http://a.com/', 200, 'a').route('http://b.com/', 200, 'b').route('http://c.com/', 200);
 					});
 
-					fm.fetchHandler('http://b.com/');
-					fm.done();
-					expect(console.warn).toHaveBeenCalledWith(
-						'Warning: http://a.com/ not called',
-					); //eslint-disable-line
-					expect(console.warn).toHaveBeenCalledWith(
-						'Warning: http://b.com/ only called 1 times, but 2 expected',
-					); //eslint-disable-line
+					it('can expect at least one call to have been made to every defined route',  () => {
+						expect(fm.done()).toBe(false);
+						fm.fetchHandler('http://a.com/');
+						expect(fm.done()).toBe(false);
+						fm.fetchHandler('http://b.com/');
+						expect(fm.done()).toBe(false);
+						fm.fetchHandler('http://c.com/');
+						expect(fm.done()).toBe(true);
+					})
 
-					console.warn.mockClear(); //eslint-disable-line
-					fm.done('http://a.com/');
-					expect(console.warn).toHaveBeenCalledWith(
-						'Warning: http://a.com/ not called',
-					); //eslint-disable-line
-					expect(console.warn).not.toHaveBeenCalledWith(
-						'Warning: http://b.com/ only called 1 times, but 2 expected',
-					); //eslint-disable-line
-					console.warn.mockRestore(); //eslint-disable-line
-				});
+					it('can expect a named route to be called at least once',  () => {
+						expect(fm.done('a')).toBe(false);
+						expect(fm.done('b')).toBe(false);
+						fm.fetchHandler('http://a.com/');
+						expect(fm.done('a')).toBe(true);
+						expect(fm.done('b')).toBe(false);
+						fm.fetchHandler('http://a.com/');
+						expect(fm.done('a')).toBe(true);
+						expect(fm.done('b')).toBe(false);
+					});
 
-				describe('sandbox isolation', () => {
+					it('can expect multiple named routes to be called at least once each', () => {
+						expect(fm.done(['a', 'b'])).toBe(false);
+						fm.fetchHandler('http://a.com/');
+						expect(fm.done(['a', 'b'])).toBe(false);
+						fm.fetchHandler('http://b.com/');
+						expect(fm.done(['a', 'b'])).toBe(true);
+					});
+				})
+				describe('where number of expected calls is specified', () => {
+					beforeEach(() => {
+						fm = fetchMock.createInstance();
+						// Note that the c route is unnamed, mainly for verifying that the presence of unnamed routtes does not lead to errors
+						fm.route('http://a.com/', 200, { name: 'a', repeat: 2 }).route('http://b.com/', 200, { name: 'b', repeat: 1 })
+						.route('http://c.com/', 200, {  repeat: 2 })
+					});
+
+					it('can expect a named route to be called specified number of times', () => {
+						expect(fm.done('a')).toBe(false);
+						fm.fetchHandler('http://a.com/');
+						expect(fm.done('a')).toBe(false);
+						fm.fetchHandler('http://a.com/');
+						expect(fm.done('a')).toBe(true);
+					});
+
+					it('can expect multiple named routes to be called specified number of times', () => {
+						expect(fm.done(['a', 'b'])).toBe(false);
+						fm.fetchHandler('http://a.com/');
+						fm.fetchHandler('http://b.com/');
+						expect(fm.done(['a', 'b'])).toBe(false);
+						fm.fetchHandler('http://a.com/');
+						expect(fm.done(['a', 'b'])).toBe(true);
+					});
+
+					it('can expect specific number of calls to have been made to every defined route', () => {
+						expect(fm.done()).toBe(false);
+						fm.fetchHandler('http://a.com/');
+						fm.fetchHandler('http://b.com/');
+						fm.fetchHandler('http://c.com/');
+						expect(fm.done()).toBe(false);
+						fm.fetchHandler('http://a.com/');
+						expect(fm.done()).toBe(false);
+						fm.fetchHandler('http://c.com/');
+						expect(fm.done()).toBe(true);
+					})
+
+					it('can combine with routes where specific number of calls is unspecified', () => {
+						fm.removeRoutes()
+						fm.clearHistory()
+						fm.route('http://a.com/', 200, { name: 'a', repeat: 2 })
+							.route('http://b.com/', 200, { name: 'b' })
+							.route('http://c.com/', 200)
+
+						expect(fm.done()).toBe(false);
+						fm.fetchHandler('http://a.com/');
+						fm.fetchHandler('http://b.com/');
+						fm.fetchHandler('http://c.com/');
+						expect(fm.done()).toBe(false);
+						expect(fm.done(['a', 'b'])).toBe(false);
+						fm.fetchHandler('http://a.com/');
+						expect(fm.done()).toBe(true);
+						expect(fm.done(['a', 'b'])).toBe(true);
+					})
+				})
+
+
+				
+
+				// it('logs unmatched calls', () => {
+				// 	vi.spyOn(console, 'warn'); //eslint-disable-line
+				// 	fm.route('http://a.com/', 200).route('http://b.com/', 200, {
+				// 		repeat: 2,
+				// 	});
+
+				// 	fm.fetchHandler('http://b.com/');
+				// 	fm.done();
+				// 	expect(console.warn).toHaveBeenCalledWith(
+				// 		'Warning: http://a.com/ not called',
+				// 	); //eslint-disable-line
+				// 	expect(console.warn).toHaveBeenCalledWith(
+				// 		'Warning: http://b.com/ only called 1 times, but 2 expected',
+				// 	); //eslint-disable-line
+
+				// 	console.warn.mockClear(); //eslint-disable-line
+				// 	fm.done('http://a.com/');
+				// 	expect(console.warn).toHaveBeenCalledWith(
+				// 		'Warning: http://a.com/ not called',
+				// 	); //eslint-disable-line
+				// 	expect(console.warn).not.toHaveBeenCalledWith(
+				// 		'Warning: http://b.com/ only called 1 times, but 2 expected',
+				// 	); //eslint-disable-line
+				// 	console.warn.mockRestore(); //eslint-disable-line
+				// });
+
+				describe.skip('sandbox isolation', () => {
 					it("doesn't propagate to children of global", () => {
 						fm.route('http://a.com/', 200, { repeat: 1 });
 

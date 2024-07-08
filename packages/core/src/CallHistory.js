@@ -57,6 +57,7 @@ class CallHistory {
 	}
 
 	clear() {
+		this.callLogs.forEach(({route}) => route.reset())
 		this.callLogs = [];
 	}
 
@@ -167,6 +168,7 @@ class CallHistory {
 		const routesToCheck = routeNames
 			? allRoutes.filter(({ config: { name } }) => routeNames.includes(name))
 			: allRoutes;
+
 		// TODO when checking all routes needs to check against all calls
 		// Can't use array.every because would exit after first failure, which would
 		// break the logging
@@ -177,12 +179,12 @@ class CallHistory {
 						({ route: routeApplied }) => routeApplied === route,
 					);
 					if (!calls.length) {
-						console.warn(`Warning: ${name} not called`); // eslint-disable-line
+						console.warn(`Warning: ${route.config.name} not called`); // eslint-disable-line
 						return false;
 					}
 
 					const expectedTimes = route.config.repeat;
-
+					
 					if (!expectedTimes) {
 						return true;
 					}

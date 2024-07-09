@@ -84,7 +84,7 @@ function shouldSendAsObject(responseInput) {
 	) {
 		if (
 			Object.keys(responseInput).every((key) =>
-				responseConfigProps.includes(key),
+				responseConfigProps.includes(/** @type {ResponseConfigProp} */ (key)),
 			)
 		) {
 			return false;

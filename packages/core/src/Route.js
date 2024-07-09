@@ -18,6 +18,13 @@ import statusTextMap from './StatusTextMap';
  * @property {ResponseInit} [options]
  */
 
+/**
+ * @typedef ResponseInitUsingHeaders
+ * @property {number} status
+ * @property {string} statusText
+ * @property {Headers} headers
+ */
+
 /** @typedef {RouteResponseConfig | Object }  RouteResponseObjectData */
 /** @typedef {Response | number| string | RouteResponseObjectData }  RouteResponseData */
 /** @typedef {Promise<RouteResponseData>}  RouteResponsePromise */
@@ -205,20 +212,21 @@ class Route {
 	/**
 	 *
 	 * @param {RouteResponseConfig} responseInput
-	 * @returns {ResponseInit}
+	 * @returns {ResponseInitUsingHeaders}
 	 */
 	constructResponseOptions(responseInput) {
 		const options = responseInput.options || {};
 		options.status = sanitizeStatus(responseInput.status);
 		options.statusText = statusTextMap[options.status];
-		/** @type {Headers} */
+		// we use Headers rather than an object because it allows us to add
+		// to them without worrying about case sensitivity of keys
 		options.headers = new this.config.Headers(responseInput.headers);
-		return options;
+		return /** @type {ResponseInitUsingHeaders} */ (options);
 	}
 	/**
 	 *
 	 * @param {RouteResponseConfig} responseInput
-	 * @param {ResponseInit} responseOptions
+	 * @param {ResponseInitUsingHeaders} responseOptions
 	 * @returns {string|null}
 	 */
 	constructResponseBody(responseInput, responseOptions) {
@@ -228,33 +236,26 @@ class Route {
 		if (typeof body === 'object') {
 			if (
 				this.config.sendAsJson &&
-				responseInput.body != null//eslint-disable-line
+				responseInput.body != null //eslint-disable-line
 			) {
 				body = JSON.stringify(body);
-				if (
-					!(responseOptions.headers.has('Content-Type'))
-				) {
-					responseOptions.headers.set(
-						'Content-Type',
-						'application/json',
-					);
+				if (!responseOptions.headers.has('Content-Type')) {
+					responseOptions.headers.set('Content-Type', 'application/json');
 				}
 			}
-		} 
-		
+		}
+
 		if (typeof body === 'string') {
 			// add a Content-Length header if we need to
 			if (
 				this.config.includeContentLength &&
-				!( responseOptions.headers.has('Content-Length'))
+				!responseOptions.headers.has('Content-Length')
 			) {
-			responseOptions.headers.set(
-				'Content-Length',
-				body.length.toString(),
-			);
+				responseOptions.headers.set('Content-Length', body.length.toString());
 			}
 			return body;
 		}
+		// @ts-ignore
 		return body || null;
 	}
 

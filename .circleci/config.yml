@@ -68,7 +68,7 @@ jobs:
     <<: *nodelts
     steps:
       - *workspace
-      - run: npm run coverage
+      - run: npm run test:coverage
 
   nodefetch3:
     <<: *nodelts

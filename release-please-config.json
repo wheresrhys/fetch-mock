@@ -30,17 +30,6 @@
 		"node-workspace"
 	],
 	"packages": {
-		"packages/app-info": {},
-		"packages/crash-handler": {},
-		"packages/errors": {},
-		"packages/eslint-config": {},
-		"packages/fetch-error-handler": {},
-		"packages/log-error": {},
-		"packages/logger": {},
-		"packages/middleware-log-errors": {},
-		"packages/middleware-render-error-info": {},
-		"packages/serialize-error": {},
-		"packages/serialize-request": {},
-		"packages/opentelemetry": {}
+		"packages/fetch-mock": {}
 	}
 }

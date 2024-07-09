@@ -21,14 +21,16 @@
     "packages/*"
   ],
   "scripts": {
-    "_create-package": "./scripts/create-package.js",
-    "_lint": "npm run lint:eslint && npm run lint:tsc",
-    "_lint:eslint": "eslint .",
-    "_lint:tsc": "tsc --project ./jsconfig.json",
-    "_test": "npm run test:jest && npm run test:modules",
-    "_test:jest": "jest --silent",
-    "_test:modules": "npm run test --workspaces --if-present",
-    "prepare": "husky"
+    "lint": "eslint --cache --fix --ext .js,.cjs . && prettier --cache --write *.md docs/*.md docs/**/*.md",
+    "lint:ci":"eslint --ext .js,.cjs . && prettier *.md docs/*.md docs/**/*.md",
+    "lint:types":"dtslint --expectOnly types",
+    "prepare": "husky",
+    "build": "rollup -c",
+    "docs:serve": "cd docs; jekyll serve build --watch",
+    "test": "vitest ./packages/fetch-mock/test/specs",
+    "test:coverage": "vitest run --coverage ./packages/fetch-mock/test/specs",
+    "test:jest": "jest test/framework-compat/jest.spec.js",
+    "coverage:send": "cat ./coverage/lcov.info | coveralls"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",

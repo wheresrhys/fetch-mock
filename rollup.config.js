@@ -7,16 +7,16 @@ function createCommonJsPackage() {
 	return {
 		name: 'cjs-package',
 		buildEnd: async () => {
-			await mkdir('./dist', { recursive: true });
-			await writeFile('./dist/package.json', JSON.stringify(pkg, null, 2));
+			await mkdir('./packages/fetch-mock/dist', { recursive: true });
+			await writeFile('./packages/fetch-mock/dist/package.json', JSON.stringify(pkg, null, 2));
 		},
 	};
 }
 
 export default {
-	input: 'src/index.js',
+	input: 'packages/fetch-mock/src/index.js',
 	output: {
-		dir: 'dist',
+		dir: 'packages/fetch-mock/dist',
 		entryFileNames: 'commonjs.js',
 		format: 'commonjs',
 	},

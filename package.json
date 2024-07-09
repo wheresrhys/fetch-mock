@@ -17,6 +17,19 @@
   "engines": {
     "node": ">=4.0.0"
   },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "_create-package": "./scripts/create-package.js",
+    "_lint": "npm run lint:eslint && npm run lint:tsc",
+    "_lint:eslint": "eslint .",
+    "_lint:tsc": "tsc --project ./jsconfig.json",
+    "_test": "npm run test:jest && npm run test:modules",
+    "_test:jest": "jest --silent",
+    "_test:modules": "npm run test --workspaces --if-present",
+    "prepare": "husky",
+  },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
@@ -42,7 +55,7 @@
     "husky": "^9.0.11",
     "lint-staged": "^15.2.7",
     "prettier": "^3.3.2",
-    "release-please": "^16.12.0",
+    "release-please": "^16.12.0"
   },
   "volta": {
     "node": "20.0.0"

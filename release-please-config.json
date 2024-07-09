@@ -1,0 +1,46 @@
+{
+	"changelog-type": "default",
+	"changelog-sections": [
+		{
+			"type": "feat",
+			"section": "Features",
+			"hidden": false
+		},
+		{
+			"type": "fix",
+			"section": "Bug Fixes",
+			"hidden": false
+		},
+		{
+			"type": "docs",
+			"section": "Documentation Changes",
+			"hidden": false
+		},
+		{
+			"type": "chore",
+			"section": "Miscellaneous",
+			"hidden": true
+		}
+	],
+	"pull-request-header": ":rock: I've created a release for you",
+	"prerelease": true,
+	"bump-minor-pre-major": true,
+	"bump-patch-for-minor-pre-major": true,
+	"plugins": [
+		"node-workspace"
+	],
+	"packages": {
+		"packages/app-info": {},
+		"packages/crash-handler": {},
+		"packages/errors": {},
+		"packages/eslint-config": {},
+		"packages/fetch-error-handler": {},
+		"packages/log-error": {},
+		"packages/logger": {},
+		"packages/middleware-log-errors": {},
+		"packages/middleware-render-error-info": {},
+		"packages/serialize-error": {},
+		"packages/serialize-request": {},
+		"packages/opentelemetry": {}
+	}
+}

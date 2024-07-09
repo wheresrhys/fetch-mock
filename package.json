@@ -28,7 +28,7 @@
     "_test": "npm run test:jest && npm run test:modules",
     "_test:jest": "jest --silent",
     "_test:modules": "npm run test --workspaces --if-present",
-    "prepare": "husky",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",

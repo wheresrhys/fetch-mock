@@ -8,7 +8,10 @@ function createCommonJsPackage() {
 		name: 'cjs-package',
 		buildEnd: async () => {
 			await mkdir('./packages/fetch-mock/dist', { recursive: true });
-			await writeFile('./packages/fetch-mock/dist/package.json', JSON.stringify(pkg, null, 2));
+			await writeFile(
+				'./packages/fetch-mock/dist/package.json',
+				JSON.stringify(pkg, null, 2),
+			);
 		},
 	};
 }

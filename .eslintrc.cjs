@@ -7,7 +7,7 @@ module.exports = {
 	extends: ['origami-component', 'plugin:prettier/recommended'],
 	overrides: [
 		{
-			files: ['test/**/*.js'],
+			files: ['packages/*/test/**/*.js'],
 			globals: {
 				testGlobals: 'writable',
 			},

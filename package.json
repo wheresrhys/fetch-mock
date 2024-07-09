@@ -23,7 +23,7 @@
   "scripts": {
     "lint": "eslint --cache --fix --ext .js,.cjs . && prettier --cache --write *.md docs/*.md docs/**/*.md",
     "lint:ci":"eslint --ext .js,.cjs . && prettier *.md docs/*.md docs/**/*.md",
-    "lint:types":"dtslint --expectOnly types",
+    "lint:types":"dtslint --expectOnly packages/fetch-mock/types",
     "prepare": "husky",
     "build": "rollup -c",
     "docs:serve": "cd docs; jekyll serve build --watch",

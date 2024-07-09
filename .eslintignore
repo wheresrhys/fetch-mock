@@ -1,6 +1,6 @@
-test/fixtures/*
+packages/*/test/fixtures/*
 coverage/*
 .nyc_output/
 docs/js
 docs/_site
-dist/*
+packages/*/dist/*

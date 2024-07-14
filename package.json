@@ -27,9 +27,10 @@
     "prepare": "husky",
     "build": "rollup -c",
     "docs:serve": "cd docs; jekyll serve build --watch",
-    "test": "vitest ./packages/fetch-mock/test/specs",
-    "test:packages": "vitest --ui ./packages/core/src/__tests__",
-    "test:coverage": "vitest run --coverage ./packages/fetch-mock/test/specs",
+    "test:ci": "npm run test:legacy -- --watch=false && npm run test:legacy -- --watch=false  ",
+    "test:legacy": "vitest ./packages/fetch-mock/test/specs",
+    "test:new": "vitest --ui ./packages/**/src/__tests__",
+    "test:coverage": "vitest run --coverage ./packages/**/src/__tests__",
     "test:jest": "jest test/framework-compat/jest.spec.js",
     "coverage:send": "cat ./coverage/lcov.info | coveralls"
   },

@@ -68,21 +68,21 @@ jobs:
     <<: *nodelts
     steps:
       - *workspace
-      - run: npm run test:coverage
+      - run: npm run test:ci
 
   nodefetch3:
     <<: *nodelts
     steps:
       - *workspace
       - run: npm install node-fetch@3
-      - run: TESTING_ENV=node-fetch npm run test
+      - run: TESTING_ENV=node-fetch npm run test:legacy
 
   commonjs:
     <<: *nodelts
     steps:
       - *workspace
       - run: npm run build
-      - run: TESTING_ENV=commonjs npm run test
+      - run: TESTING_ENV=commonjs npm run test:legacy
   jest:
     <<: *nodelts
     steps:

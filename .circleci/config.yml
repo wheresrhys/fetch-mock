@@ -110,7 +110,7 @@ jobs:
       - run: |
           NPM_PUBLISH_TAG=$([[ $CIRCLE_TAG =~ -[a-z-]+ ]] && echo "pre-release" || echo "latest")
           echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ${HOME}/.npmrc
-          cd ./packages/fetch-mock
+          cd ./packages/fetch-mock-legacy
           npm version --no-git-tag-version $CIRCLE_TAG
           npm publish --access public --tag $NPM_PUBLISH_TAG
 

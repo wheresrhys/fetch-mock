@@ -29,8 +29,7 @@
     "node-workspace"
   ],
   "packages": {
-    "packages/fetch-mock-legacy": {},
-    "packages/core": {}
+    "packages/fetch-mock-legacy": {}
   },
   "pull-request-title-pattern": "build${scope}: release${component} ${version}",
   "pull-request-header": ":rock: I've created a release for you",

@@ -107,13 +107,12 @@ jobs:
     steps:
       - *workspace
       - run: npm run build
-      - run: NPM_PUBLISH_TAG=$([[ "$CIRCLE_TAG" =~ -[a-z-]+ ]] && echo "pre-release" || echo "latest")
-      - run: echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ${HOME}/.npmrc
-      - run: cd ./packages/fetch-mock
-      - run: echo $CIRCLE_TAG
-      - run: echo $NPM_PUBLISH_TAG
-      - run: npm version --no-git-tag-version $CIRCLE_TAG
-      - run: npm publish --access public --tag $NPM_PUBLISH_TAG
+      - run: |
+          NPM_PUBLISH_TAG=$([[ $CIRCLE_TAG =~ -[a-z-]+ ]] && echo "pre-release" || echo "latest")
+          echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ${HOME}/.npmrc
+          cd ./packages/fetch-mock
+          npm version --no-git-tag-version $CIRCLE_TAG
+          npm publish --access public --tag $NPM_PUBLISH_TAG
 
 workflows:
   version: 2

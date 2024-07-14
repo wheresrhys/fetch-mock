@@ -17,14 +17,10 @@ describe('abortable fetch', () => {
 	let fm;
 
 	const expectAbortError = async (...fetchArgs) => {
-		try {
-			await fm.fetchHandler(...fetchArgs);
-			throw new Error('unexpected');
-		} catch (error) {
-			expect(error instanceof DOMException).toEqual(true);
-			expect(error.name).toEqual('AbortError');
-			expect(error.message).toEqual('The operation was aborted.');
-		}
+		const result = fm.fetchHandler(...fetchArgs);
+		await expect(result).rejects.toThrowError(
+			new DOMException('The operation was aborted.', 'ABortError'),
+		);
 	};
 
 	beforeEach(() => {

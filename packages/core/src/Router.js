@@ -123,7 +123,7 @@ const resolveUntilResponseConfig = async (response, normalizedRequest) => {
 export default class Router {
 	/**
 	 * @param {FetchMockConfig} fetchMockConfig
-	 * @param {Object} [inheritedRoutes]
+	 * @param {object} [inheritedRoutes]
 	 * @param {Route[]} [inheritedRoutes.routes]
 	 * @param {Route} [inheritedRoutes.fallbackRoute]
 	 */
@@ -381,10 +381,10 @@ export default class Router {
 	}
 	/**
 	 *
-	 * @param {Object} [options]
+	 * @param {object} [options]
 	 * @param {string[]} [options.names]
-	 * @param {boolean} [options.includeSticky=false]
-	 * @param {boolean} [options.includeFallback=true]
+	 * @param {boolean} [options.includeSticky]
+	 * @param {boolean} [options.includeFallback]
 	 */
 	removeRoutes({ names, includeSticky, includeFallback } = {}) {
 		includeFallback = includeFallback ?? true;

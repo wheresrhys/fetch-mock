@@ -2,7 +2,7 @@ import { defineConfig } from 'vitest/config';
 
 const configs = {
 	browser: {
-		setupFiles: './test/setup/browser.js',
+		setupFiles: './packages/fetch-mock/test/setup/browser.js',
 		environment: 'jsdom',
 		// browser: {
 		//     enabled: true,
@@ -19,16 +19,16 @@ const configs = {
 	},
 
 	server: {
-		setupFiles: './test/setup/server.js',
+		setupFiles: './packages/fetch-mock/test/setup/server.js',
 		coverage: {
 			provider: 'istanbul',
 		},
 	},
 	['node-fetch']: {
-		setupFiles: './test/setup/node-fetch.js',
+		setupFiles: './packages/fetch-mock/test/setup/node-fetch.js',
 	},
 	commonjs: {
-		setupFiles: './test/setup/commonjs.cjs',
+		setupFiles: './packages/fetch-mock/test/setup/commonjs.cjs',
 	},
 	packages: {
 		reporters: ['default', 'html'],
@@ -36,8 +36,8 @@ const configs = {
 			reporter: ['text', 'html', 'clover', 'json'],
 			provider: 'v8',
 			reportOnFailure: true,
-			enabled: true
-		}
+			enabled: true,
+		},
 	},
 };
 

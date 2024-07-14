@@ -7,7 +7,7 @@ module.exports = {
 	extends: ['origami-component', 'plugin:prettier/recommended'],
 	overrides: [
 		{
-			files: ['test/**/*.js'],
+			files: ['packages/*/test/**/*.js'],
 			globals: {
 				testGlobals: 'writable',
 			},
@@ -29,6 +29,6 @@ module.exports = {
 		'@lwc/lwc/no-async-await': 0,
 		'jsdoc/require-param-description': 0,
 		'jsdoc/require-returns-description': 0,
-		'jsdoc/require-property-description': 0
+		'jsdoc/require-property-description': 0,
 	},
 };

@@ -12,6 +12,4 @@ coverage/
 
 # built files
 /docs/_site/
-/dist
-
-html
+/packages/**/dist

@@ -25,7 +25,7 @@ import statusTextMap from './StatusTextMap';
  * @property {Headers} headers
  */
 
-/** @typedef {RouteResponseConfig | Object }  RouteResponseObjectData */
+/** @typedef {RouteResponseConfig | object}  RouteResponseObjectData */
 /** @typedef {Response | number| string | RouteResponseObjectData }  RouteResponseData */
 /** @typedef {Promise<RouteResponseData>}  RouteResponsePromise */
 /** @typedef {function(string, RequestInit, Request=): (RouteResponseData|RouteResponsePromise)} RouteResponseFunction */

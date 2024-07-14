@@ -32,13 +32,6 @@ references:
       paths:
         - .
 
-  rebuild_test: &rebuild_test
-    steps:
-      - *workspace
-      - run: npm rebuild
-      - run: FETCH_MOCK_SRC=../cjs/server.js make test
-
-
 jobs:
   checkout_code:
     <<: *nodelts
@@ -57,45 +50,45 @@ jobs:
     <<: *nodelts
     steps:
       - *workspace
-      - run: make build
+      - run: npm run build
       - *persist
   lint:
     <<: *nodelts
     steps:
       - *workspace
-      - run: make lint-ci
+      - run: npm run lint:ci
 
   typelint:
     <<: *nodelts
     steps:
       - *workspace
-      - run: make typelint
+      - run: npm run types:lint
 
   test:
     <<: *nodelts
     steps:
       - *workspace
-      - run: make test-coverage
+      - run: npm run test:coverage
 
   nodefetch3:
     <<: *nodelts
     steps:
       - *workspace
       - run: npm install node-fetch@3
-      - run: make test-node-fetch
+      - run: TESTING_ENV=node-fetch npm run test
 
   commonjs:
     <<: *nodelts
     steps:
       - *workspace
-      - run: make build
-      - run: make test-commonjs
+      - run: npm run build
+      - run: TESTING_ENV=commonjs npm run test
   jest:
     <<: *nodelts
     steps:
       - *workspace
-      - run: make build
-      - run: make test-jest
+      - run: npm run build
+      - run: npm run test:jest
   # chrome:
   #   <<: *browsers
   #   steps:
@@ -109,12 +102,17 @@ jobs:
   #     - run: npm install karma-firefox-launcher
   #     - run: TEST_BROWSER=Firefox make test-browser
 
-  deploy:
+  publish:
     <<: *nodelts
     steps:
       - *workspace
-      - run: make build publish
-
+      - run: npm run build
+      - run: |
+          NPM_PUBLISH_TAG=$([[ $CIRCLE_TAG =~ -[a-z-]+ ]] && echo "pre-release" || echo "latest")
+          echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ${HOME}/.npmrc
+          cd ./packages/fetch-mock
+          npm version --no-git-tag-version $CIRCLE_TAG
+          npm publish --access public --tag $NPM_PUBLISH_TAG
 
 workflows:
   version: 2
@@ -154,8 +152,7 @@ workflows:
       # - firefox:
       #     <<: *triggerable-by-tag
       #     <<: *run-after-first-jobs
-      - deploy:
-          context: wheresrhys-npm-publish
+      - publish:
           requires:
             - nodefetch3
             # - chrome

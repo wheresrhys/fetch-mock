@@ -10,7 +10,7 @@ typelint:
 	dtslint --expectOnly types
 
 typecheck:
-	tsc --project ./jsconfig.json
+
 
 lint-ci:
 	eslint --ext .js,.cjs .

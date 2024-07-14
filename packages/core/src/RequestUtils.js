@@ -77,7 +77,7 @@ export function normalizeRequest(urlOrRequest, options, Request) {
 	}
 	if (
 		typeof urlOrRequest === 'string' ||
-		/** @type {Object} */ (urlOrRequest) instanceof String ||
+		/** @type {object} */ (urlOrRequest) instanceof String ||
 		// horrible URL object duck-typing
 		(typeof urlOrRequest === 'object' && 'href' in urlOrRequest)
 	) {

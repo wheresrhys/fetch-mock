@@ -1,4 +1,4 @@
-import fetchMock = require('..');
+import fetchMock from '..';
 
 fetchMock.mock();
 fetchMock.mock("http://test.com", 200);

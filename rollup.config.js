@@ -7,9 +7,9 @@ function createCommonJsPackage() {
 	return {
 		name: 'cjs-package',
 		buildEnd: async () => {
-			await mkdir('./packages/fetch-mock-legacy/dist', { recursive: true });
+			await mkdir('./packages/fetch-mock/dist', { recursive: true });
 			await writeFile(
-				'./packages/fetch-mock-legacy/dist/package.json',
+				'./packages/fetch-mock/dist/package.json',
 				JSON.stringify(pkg, null, 2),
 			);
 		},
@@ -17,9 +17,9 @@ function createCommonJsPackage() {
 }
 
 export default {
-	input: 'packages/fetch-mock-legacy/src/index.js',
+	input: 'packages/fetch-mock/src/index.js',
 	output: {
-		dir: 'packages/fetch-mock-legacy/dist',
+		dir: 'packages/fetch-mock/dist',
 		entryFileNames: 'commonjs.js',
 		format: 'commonjs',
 	},

@@ -4,4 +4,4 @@ coverage/*
 docs/js
 docs/_site
 packages/*/dist/*
-packages/fetch-mock-legacy/types/fetch-mock-tests.js
+packages/fetch-mock/types/fetch-mock-tests.js

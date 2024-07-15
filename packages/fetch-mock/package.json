@@ -22,7 +22,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/wheresrhys/fetch-mock.git",
-    "directory": "packages/fetch-mock-legacy"
+    "directory": "packages/fetch-mock"
   },
   "keywords": [
     "fetch",

@@ -29,7 +29,7 @@
     "node-workspace"
   ],
   "packages": {
-    "packages/core": {},
+    "packages/core": {"release-as": "0.1.0"},
     "packages/fetch-mock": {}
   },
   "bootstrap-sha": "29cffe47c853bc398f0b86fdb4f3e6325568bbda",

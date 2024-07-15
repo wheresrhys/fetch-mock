@@ -128,7 +128,7 @@ describe('Router', () => {
 						body: JSON.stringify({ a: true }),
 					}),
 				),
-			).rejects;
+			).rejects.toThrow();
 		});
 	});
 });

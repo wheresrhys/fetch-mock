@@ -63,7 +63,6 @@ describe('instance management', () => {
 		it('inherits fallback routes', async () => {
 			const parent = fetchMock.createInstance().catch(404);
 			const child = parent.createInstance();
-			console.log(child.router);
 			await expect((await child.fetchHandler('http://a.com')).status).toBe(404);
 		});
 

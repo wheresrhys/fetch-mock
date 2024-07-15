@@ -42,13 +42,12 @@ const configs = {
 };
 
 export default defineConfig({
-	test: {...configs[process.env.TESTING_ENV || 'server'],
-	exclude: [
-    "packages/standalone/*.test.js",
-    "packages/fetch-mock/test/framework-compat/jest.spec.js",
-    '**/node_modules/**',
-  ]
-},
-
-
+	test: {
+		...configs[process.env.TESTING_ENV || 'server'],
+		exclude: [
+			'packages/standalone/*.test.js',
+			'packages/fetch-mock/test/framework-compat/jest.spec.js',
+			'**/node_modules/**',
+		],
+	},
 });

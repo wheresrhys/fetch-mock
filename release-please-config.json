@@ -29,7 +29,8 @@
     "node-workspace"
   ],
   "packages": {
-    "packages/fetch-mock": {}
+    "packages/fetch-mock": {},
+    "packages/core": {},
   },
   "bootstrap-sha": "32d6924d0ac2587dc2fd4860aa0e87a4288fb5c1",
   "pull-request-title-pattern": "build${scope}: release${component} ${version}",

@@ -58,31 +58,31 @@ jobs:
       - *workspace
       - run: npm run lint:ci
 
-  typecheck:
+  typelint:
     <<: *nodelts
     steps:
       - *workspace
-      - run: npm run lint:types
+      - run: npm run types:lint
 
   test:
     <<: *nodelts
     steps:
       - *workspace
-      - run: npm run test:coverage
+      - run: npm run test:ci
 
   nodefetch3:
     <<: *nodelts
     steps:
       - *workspace
       - run: npm install node-fetch@3
-      - run: TESTING_ENV=node-fetch npm run test
+      - run: TESTING_ENV=node-fetch npm run test:legacy
 
   commonjs:
     <<: *nodelts
     steps:
       - *workspace
       - run: npm run build
-      - run: TESTING_ENV=commonjs npm run test
+      - run: TESTING_ENV=commonjs npm run test:legacy
   jest:
     <<: *nodelts
     steps:
@@ -134,7 +134,7 @@ workflows:
       # could be parallel with build, lint, and unit but it's a slow job
       # And circlecifree tier only has 3 concurrent jobs, so overall faster
       # to defer
-      - typecheck:
+      - typelint:
           <<: *triggerable-by-tag
           <<: *run-after-first-jobs
       - nodefetch3:
@@ -158,7 +158,7 @@ workflows:
             # - chrome
             # - firefox
             - build
-            - typecheck
+            - typelint
             - commonjs
             - jest
           filters:

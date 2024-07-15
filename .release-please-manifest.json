@@ -1,4 +1,4 @@
 {
-  "packages/core": "0.0.0",
+  "packages/core": "10.0.8",
   "packages/fetch-mock": "10.0.8"
 }

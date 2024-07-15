@@ -11,14 +11,6 @@
   },
   "types": "./types/index.d.ts",
   "type": "module",
-  "scripts": {
-    "test": "make lint test",
-    "prepublishOnly": "make build"
-  },
-  "funding": {
-    "type": "charity",
-    "url": "https://www.justgiving.com/refugee-support-europe"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/wheresrhys/fetch-mock.git",

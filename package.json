@@ -17,7 +17,8 @@
     "node": ">=4.0.0"
   },
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "astro"
   ],
   "scripts": {
     "lint": "eslint --cache --fix --ext .js,.cjs . && prettier --cache --write *.md docs/*.md docs/**/*.md",

@@ -51,7 +51,7 @@ describe('instance management', () => {
 			await expect(parent.fetchHandler('http://a.com')).resolves.toMatchObject({
 				status: 200,
 			});
-			await expect(parent.fetchHandler('http://b.com')).rejects;
+			await expect(parent.fetchHandler('http://b.com')).rejects.toThrow();
 			await expect(child.fetchHandler('http://a.com')).resolves.toMatchObject({
 				status: 200,
 			});

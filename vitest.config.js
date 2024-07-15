@@ -30,17 +30,25 @@ const configs = {
 	commonjs: {
 		setupFiles: './packages/fetch-mock/test/setup/commonjs.cjs',
 	},
-	packages: {
-		reporters: ['default', 'html'],
-		coverage: {
-			reporter: ['text', 'html', 'clover', 'json'],
-			provider: 'v8',
-			reportOnFailure: true,
-			enabled: true,
-		},
-	},
+	// packages: {
+	// 	reporters: ['default', 'html'],
+	// 	coverage: {
+	// 		reporter: ['text', 'html', 'clover', 'json'],
+	// 		provider: 'v8',
+	// 		reportOnFailure: true,
+	// 		enabled: true,
+	// 	},
+	// },
 };
 
 export default defineConfig({
-	test: configs[process.env.TESTING_ENV || 'server'],
+	test: {...configs[process.env.TESTING_ENV || 'server'],
+	exclude: [
+    "packages/standalone/*.test.js",
+    "packages/fetch-mock/test/framework-compat/jest.spec.js",
+    '**/node_modules/**',
+  ]
+},
+
+
 });

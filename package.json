@@ -27,11 +27,11 @@
     "prepare": "husky",
     "build": "rollup -c",
     "docs:serve": "cd docs; jekyll serve build --watch",
-    "test:ci": "npm run test:legacy -- --watch=false && npm run test:legacy -- --watch=false  ",
+    "test:ci": "npm run test:legacy -- --watch=false && npm run test:new -- --watch=false  ",
     "test:legacy": "vitest ./packages/fetch-mock/test/specs",
     "test:new": "vitest --ui ./packages/**/src/__tests__",
     "test:coverage": "vitest run --coverage ./packages/**/src/__tests__",
-    "test:jest": "jest test/framework-compat/jest.spec.js",
+    "test:jest": "jest ./packages/fetch-mock/test/framework-compat/jest.spec.js",
     "coverage:send": "cat ./coverage/lcov.info | coveralls"
   },
   "devDependencies": {

@@ -1,6 +1,6 @@
 {
   "name": "fetch-mock",
-  "version": "0.0.0",
+  "version": "10.0.8",
   "description": "Mock http requests made using fetch (or isomorphic-fetch)",
   "main": "./dist/commonjs.js",
   "exports": {
@@ -11,14 +11,6 @@
   },
   "types": "./types/index.d.ts",
   "type": "module",
-  "scripts": {
-    "test": "make lint test",
-    "prepublishOnly": "make build"
-  },
-  "funding": {
-    "type": "charity",
-    "url": "https://www.justgiving.com/refugee-support-europe"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/wheresrhys/fetch-mock.git",
@@ -44,8 +36,7 @@
     "glob-to-regexp": "^0.4.0",
     "is-subset": "^0.1.1",
     "lodash.isequal": "^4.5.0",
-    "path-to-regexp": "^2.2.1",
-    "querystring": "^0.2.1"
+    "path-to-regexp": "^2.2.1"
   },
   "peerDependenciesMeta": {
     "node-fetch": {

@@ -163,7 +163,6 @@ e.g. {"body": {"status: "registered"}}`);
 					this.debug('Wrapping body promises in ES proxies for observability');
 					return new Proxy(originalResponse[name], {
 						apply: (func, thisArg, args) => {
-							this.debug(`Calling res.${name}`);
 							const result = func.apply(response, args);
 							if (result.then) {
 								fetchMock._holdingPromises.push(result.catch(() => null));

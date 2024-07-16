@@ -1,5 +1,5 @@
 import glob from 'globrex';
-import * as regexparam from 'regexparam'
+import * as regexparam from 'regexparam';
 import isSubset from 'is-subset';
 import { dequal as isEqual } from 'dequal';
 import {

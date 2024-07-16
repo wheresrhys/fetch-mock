@@ -1,0 +1,80 @@
+# ----
+# Site
+
+title: fetch-mock
+description: Mock http requests using fetch
+url: https://www.wheresrhys.co.uk/fetch-mock-docs-workspace
+google_analytics_key:
+permalink: pretty
+
+# -----
+# Build
+
+timezone: Etc/UTC
+
+collections:
+  about:
+    title: About
+    position: 0
+  usage:
+    title: Usage
+    position: 1
+  api-mocking:
+    title: Mocking API
+    position: 2
+  api-lifecycle:
+    title: Lifecycle methods
+    position: 3
+  api-inspection:
+    title: Inspection methods
+    position: 3
+  troubleshooting:
+    title: Troubleshooting
+    position: 4
+plugins:
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+exclude:
+  - readme.md
+  - LICENSE
+
+defaults:
+  -
+    scope:
+      path: ""
+    values:
+      layout: default
+  -
+    scope:
+      type: "about"
+    values:
+      _hide_content: true
+  -
+    scope:
+      type: "general"
+    values:
+      _hide_content: true
+  -
+    scope:
+      type: "api"
+    values:
+      _hide_content: true
+
+# -----------
+# CloudCannon
+languages:
+  bash: Bash
+  javascript: JavaScript
+
+_options:
+  content_markdown:
+    format: p h4 h5 h6
+    bold: true
+    italic: true
+    link: true
+    bulletedlist: true
+    numberedlist: true
+    image: true
+    table: true
+    styles: /css/editor.css

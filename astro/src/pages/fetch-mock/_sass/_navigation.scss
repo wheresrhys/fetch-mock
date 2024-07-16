@@ -1,0 +1,156 @@
+.navigation {
+	max-height: 100vh;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	overflow-x: hidden;
+	z-index: 1;
+}
+
+nav {
+	display: none;
+}
+
+body.nav-open {
+	overflow: hidden;
+
+	.navigation {
+		bottom: 0;
+	}
+
+	nav {
+		display: block
+	}
+}
+
+@media only screen and (min-width:$mobile-break) {
+	.navigation {
+		position: static;
+		overflow-y: scroll;
+	}
+	nav {
+		display: block
+	}
+
+	.open-nav {
+		display: none;
+	}
+}
+
+.navigation {
+	background-color: $nav-background-color;
+
+	.site-title {
+		height: 6rem;
+		position: relative;
+		box-sizing: border-box;
+		background-color: #00994D;
+		text-align: center;
+		line-height: 6rem;
+		margin: 0;
+		font-size: 4.0rem;
+		letter-spacing: -.1rem;
+
+
+		a {
+			color: #fff;
+			text-decoration: none;
+
+
+		}
+	}
+
+	nav {
+		padding: 0 2rem 4rem;
+	}
+	section h1 {
+		font-size: 2.4rem;
+		line-height: 1.35;
+		letter-spacing: -.08rem;
+		margin: 0 0 5px 0;
+		font-weight: 300;
+
+	}
+
+	section {
+		ul {
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+		li {
+			padding-left: 2rem
+		}
+		li.parameter {
+			padding-left: 4rem;
+			font-size: 0.9em;
+		}
+		a {
+	    		color: #777;
+		text-decoration: none;
+		font-size: .90em;
+		display: block;
+		width: 100%;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		padding: 2px 0;
+
+		&.active {
+			color: #2196F3;
+			text-decoration: none;
+		}
+		}
+	}
+	.github-link::before {
+		background: url($base-url + '/images/github-logo.png');
+		content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    vertical-align: text-top;
+    background-size: contain;
+	}
+
+	.open-nav {
+		width: 4rem;
+		height: 4rem;
+ 		left: 1rem;
+ 		top: 1rem;
+ 		position: absolute;
+		background-image: url($base-url + '/images/menu.svg');
+		background-color: transparent;
+		background-repeat: no-repeat;
+		background-size: 100%;
+		border: 0;
+		border-radius: 2px;
+		cursor: pointer;
+
+		&:focus {
+			outline: none;
+			background-color: rgba(0, 0, 0, 0.05);
+		}
+
+		&:hover {
+			background-color: rgba(0, 0, 0, 0.1);
+		}
+	}
+
+	// @media (min-width: $mobile-break) {
+	// 	background-color: transparent;
+	// 	width: $nav-width;
+	// 	right: auto;
+	// 	bottom: auto;
+
+	// 	.copyright {
+	// 		display: block;
+	// 	}
+
+
+
+	// 	h1 {
+	// 		box-shadow: inset -10px 0 10px -10px rgba(0, 0, 0, 0.1);
+	// 	}
+	// }
+
+}

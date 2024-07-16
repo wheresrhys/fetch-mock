@@ -27,6 +27,7 @@
     "types:lint": "dtslint --expectOnly packages/fetch-mock/types",
     "prepare": "husky",
     "build": "rollup -c",
+    "docs": "npm run dev -w astro",
     "docs:serve": "cd docs; jekyll serve build --watch",
     "test:ci": "vitest .",
     "test:legacy": "vitest ./packages/fetch-mock/test/specs",

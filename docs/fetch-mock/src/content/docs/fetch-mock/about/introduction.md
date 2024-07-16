@@ -1,0 +1,26 @@
+---
+title: Introduction
+sidebar:
+  # Set a custom label for the link
+  label: Custom sidebar label
+  # Set a custom order for the link (lower numbers are displayed higher up)
+  order: 2
+  # Add a badge to the link
+  badge:
+    text: New
+    variant: tip
+---
+
+fetch-mock allows mocking http requests made using [fetch](https://fetch.spec.whatwg.org/) or a library imitating its api, such as [node-fetch](https://www.npmjs.com/package/node-fetch) or [fetch-ponyfill](https://www.npmjs.com/package/fetch-ponyfill).
+
+It supports most JavaScript environments, including Node.js, web workers, service workers, and any browser that either supports `fetch` natively or that can have a `fetch` polyfill installed.
+
+As well as shorthand methods for the simplest use cases, it offers a flexible API for customising all aspects of mocking behaviour.
+
+##Example
+```js
+fetchMock.mock('http://example.com', 200);
+const res = await fetch('http://example.com');
+assert(res.ok);
+fetchMock.restore();
+```

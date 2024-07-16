@@ -36,7 +36,7 @@
     "dequal": "^2.0.3",
     "globrex": "^0.1.2",
     "is-subset": "^0.1.1",
-    "path-to-regexp": "^7.1.0"
+    "regexparam": "^3.0.0"
   },
   "peerDependenciesMeta": {
     "node-fetch": {

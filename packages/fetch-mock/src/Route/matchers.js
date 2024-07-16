@@ -142,13 +142,12 @@ const getParamsMatcher = ({ params: expectedParams, url: matcherUrl }) => {
 	}
 	debug('  Expected path parameters:', expectedParams);
 	const expectedKeys = Object.keys(expectedParams);
-	const keys = [];
-	const re = pathToRegexp(matcherUrl.replace(/^express:/, ''), keys);
+	const re = pathToRegexp(matcherUrl.replace(/^express:/, ''));
 	return (url) => {
 		debug('Attempting to match path parameters');
 		const vals = re.exec(getPath(url)) || [];
 		vals.shift();
-		const params = keys.reduce(
+		const params = re.keys.reduce(
 			(map, { name }, i) =>
 				vals[i] ? Object.assign(map, { [name]: vals[i] }) : map,
 			{},

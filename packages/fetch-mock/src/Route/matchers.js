@@ -1,7 +1,7 @@
-import glob from 'glob-to-regexp';
-import pathToRegexp from 'path-to-regexp';
+import glob from 'globrex';
+import { pathToRegexp } from 'path-to-regexp';
 import isSubset from 'is-subset';
-import isEqual from 'lodash.isequal';
+import { dequal as isEqual } from 'dequal';
 import {
 	headers as headerUtils,
 	getPath,
@@ -24,7 +24,7 @@ const stringMatchers = {
 		),
 	glob: (targetString) => {
 		const urlRX = glob(targetString);
-		return debuggableUrlFunc((url) => urlRX.test(url));
+		return debuggableUrlFunc((url) => urlRX.regex.test(url));
 	},
 	express: (targetString) => {
 		const urlRX = pathToRegexp(targetString);

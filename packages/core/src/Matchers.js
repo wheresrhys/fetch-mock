@@ -2,11 +2,11 @@
 /** @typedef {import('./Route').RouteConfig} RouteConfig */
 /** @typedef {import('./RequestUtils').NormalizedRequestOptions} NormalizedRequestOptions */
 /** @typedef {import('path-to-regexp').Key} Key */
-import glob from 'glob-to-regexp';
-import pathToRegexp from 'path-to-regexp';
+import glob from 'globrex';
+import { pathToRegexp } from 'path-to-regexp';
 import querystring from 'querystring';
 import isSubset from 'is-subset';
-import isEqual from 'lodash.isequal';
+import { dequal as isEqual } from 'dequal';
 import {
 	normalizeHeaders,
 	getPath,
@@ -54,7 +54,7 @@ const stringMatchers = {
 
 	glob: (targetString) => {
 		const urlRX = glob(targetString);
-		return (url) => urlRX.test(url);
+		return (url) => urlRX.regex.test(url);
 	},
 	express: (targetString) => {
 		const urlRX = pathToRegexp(targetString);
@@ -129,14 +129,12 @@ const getParamsMatcher = ({ params: expectedParams, url: matcherUrl }) => {
 			);
 		}
 		const expectedKeys = Object.keys(expectedParams);
-		/** @type {Key[]} */
-		const keys = [];
-		const re = pathToRegexp(matcherUrl.replace(/^express:/, ''), keys);
+		const re = pathToRegexp(matcherUrl.replace(/^express:/, ''));
 		return (url) => {
 			const vals = re.exec(getPath(url)) || [];
 			vals.shift();
 			/** @type {Object.<string,string>} */
-			const params = keys.reduce(
+			const params = re.keys.reduce(
 				(map, { name }, i) =>
 					vals[i] ? Object.assign(map, { [name]: vals[i] }) : map,
 				{},

@@ -33,10 +33,10 @@
   "homepage": "http://www.wheresrhys.co.uk/fetch-mock",
   "dependencies": {
     "debug": "^4.1.1",
-    "glob-to-regexp": "^0.4.0",
+    "dequal": "^2.0.3",
+    "globrex": "^0.1.2",
     "is-subset": "^0.1.1",
-    "lodash.isequal": "^4.5.0",
-    "path-to-regexp": "^2.2.1"
+    "path-to-regexp": "^7.1.0"
   },
   "peerDependenciesMeta": {
     "node-fetch": {

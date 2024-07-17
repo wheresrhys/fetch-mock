@@ -1,26 +1,18 @@
 ---
 title: Global or non-global
 sidebar:
-  # Set a custom label for the link
-  label: Custom sidebar label
-  # Set a custom order for the link (lower numbers are displayed higher up)
-  order: 2
-  # Add a badge to the link
-  badge:
-    text: New
-    variant: tip
+  order: 1
 ---
 `fetch` can be used by your code globally or locally. It's important to determine which one applies to your codebase as it will impact how you use `fetch-mock`
-{: .warning}
 
-#### Global fetch
+## Global fetch
 In the following scenarios `fetch` will be a global
 - When using native `fetch` (or a polyfill) in the browser
 - When `node-fetch` has been assigned to `global` in your Node.js process (a pattern sometimes used in isomorphic codebases)
 
 By default fetch-mock assumes `fetch` is a global so no more setup is required once you've required `fetch-mock`.
 
-#### Non-global fetch library
+## Non-global fetch library
 In the following scenarios `fetch` will not be a global
 
 - Using [node-fetch](https://www.npmjs.com/package/node-fetch) in Node.js without assigning to `global`

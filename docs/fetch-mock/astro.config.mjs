@@ -19,16 +19,12 @@ export default defineConfig({
 					autogenerate: { directory: 'fetch-mock/usage' },
 				},
 				{
-					label: 'Mocking methods',
-					autogenerate: { directory: 'fetch-mock/api-mocking' },
-				},
-				{
-					label: 'Inspection methods',
-					autogenerate: { directory: 'fetch-mock/api-inspection' },
-				},
-				{
-					label: 'Lifecycle methods',
-					autogenerate: { directory: 'fetch-mock/api-lifecycle' },
+					label: 'API reference',
+					items: [
+						{label: "Mocking", autogenerate: { directory: 'fetch-mock/API/Mocking' }},
+						{label: "Inspection", autogenerate: { directory: 'fetch-mock/API/Inspection' }},
+						{label: "Lifecycle", autogenerate: { directory: 'fetch-mock/API/Lifecycle' }}
+					],
 				},
 				{
 					label: 'Troubleshooting',

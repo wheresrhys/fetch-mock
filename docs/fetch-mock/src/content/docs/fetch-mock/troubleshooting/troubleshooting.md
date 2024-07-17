@@ -54,6 +54,6 @@ it.md
 
 Put this with the spy() docs
 When using `node-fetch`, `fetch-mock` will use the instance you have installed. The one exception is that a reference to `fetchMock.config.fetch = require('node-fetch')` is required if you intend to use the `.spy()` method)
-{: .info}
+
 
 to Within individual tests `.catch()` and `spy()` can be used for fine-grained control of this"

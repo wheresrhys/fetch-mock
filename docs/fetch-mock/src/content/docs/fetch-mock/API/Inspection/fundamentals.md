@@ -11,7 +11,7 @@ sidebar:
     variant: tip
 ---
 Check out the new [cheatsheet](https://github.com/wheresrhys/fetch-mock/blob/master/docs/cheatsheet.md)
-{: .info}
+
 
 `fetch-mock`'s inspection methods allow information about how `fetch` was called to be retrieved after your application code has run. Most inspection methods take two arguments — `filter` and `options` — which allow individual, or groups of, `fetch` calls to be extracted and examined.
 parameters:

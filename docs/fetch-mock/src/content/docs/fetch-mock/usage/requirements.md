@@ -1,14 +1,7 @@
 ---
-title: Requirement
+title: Requirements
 sidebar:
-  # Set a custom label for the link
-  label: Custom sidebar label
-  # Set a custom order for the link (lower numbers are displayed higher up)
-  order: 2
-  # Add a badge to the link
-  badge:
-    text: New
-    variant: tip
+  order: 1
 ---
 fetch-mock requires the following to run:
 
@@ -20,4 +13,3 @@ fetch-mock requires the following to run:
   - A browser that supports the `fetch` API either natively or via a [polyfill/ponyfill](https://ponyfoo.com/articles/polyfills-or-ponyfills)
 
 Check out the new [cheatsheet](https://github.com/wheresrhys/fetch-mock/blob/master/docs/cheatsheet.md)
-{: .info}

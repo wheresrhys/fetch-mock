@@ -1,17 +1,10 @@
 ---
 title: Quickstart
 sidebar:
-  # Set a custom label for the link
-  label: Custom sidebar label
-  # Set a custom order for the link (lower numbers are displayed higher up)
   order: 2
-  # Add a badge to the link
-  badge:
-    text: New
-    variant: tip
 ---
 
-#### Setting up your mock
+## Setting up your mock
 
 - The commonest use case is `fetchMock.mock(matcher, response)`, where `matcher` is an exact url or regex to match, and `response` is a status code, string or object literal.
 - You can also use `fetchMock.once()` to limit to a single call or `fetchMock.get()`, `fetchMock.post()` etc. to limit to a method.
@@ -23,23 +16,22 @@ fetchMock
   .post('http://good.com/', 400)
   .get(/bad\.com/, 500)
 ```
-#### Analysing calls to your mock
+## Analysing calls to your mock
 
 - `fetchMock.called(matcher)` reports if any calls matched your mock (or leave `matcher` out if you just want to check `fetch` was called at all).
 - `fetchMock.lastCall()`, `fetchMock.lastUrl()` or `fetchMock.lastOptions()` give you access to the parameters last passed in to `fetch`.
 - `fetchMock.done()` will tell you if `fetch` was called the expected number of times.
 
-#### Tearing down your mock
+## Tearing down your mock
 
 - `fetchMock.resetHistory()` resets the call history.
 - `fetchMock.reset()` or `fetchMock.restore()` will also restore `fetch()` to its native implementation
 
-#### Example
+## Example
 
 Example with Node.js: suppose we have a file `make-request.js` with a function that calls `fetch`:
 
 ```js
-require('isomorphic-fetch');
 module.exports = function makeRequest() {
   return fetch('http://httpbin.org/my-url', {
     headers: {

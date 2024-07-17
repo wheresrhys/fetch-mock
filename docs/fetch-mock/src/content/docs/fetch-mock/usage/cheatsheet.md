@@ -1,19 +1,8 @@
 ---
 title: Cheatsheet
 sidebar:
-  # Set a custom label for the link
-  label: Custom sidebar label
-  # Set a custom order for the link (lower numbers are displayed higher up)
-  order: 2
-  # Add a badge to the link
-  badge:
-    text: New
-    variant: tip
+  order: 3
 ---
-# fetch-mock cheatsheet
-
-_This is a first draft - please feedback in the [issues](https://github.com/wheresrhys/fetch-mock/issues)_
-
 - [Installation](#installation)
 - [Set up and teardown](#setup-and-teardown)
 - [Request matching](#request-matching)

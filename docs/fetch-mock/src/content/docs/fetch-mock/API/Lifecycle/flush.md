@@ -4,6 +4,7 @@ sidebar:
   label: .flush()
   order: 2
 ---
+
 Returns a `Promise` that resolves once all fetches handled by fetch-mock have resolved
 
 Useful for testing code that uses `fetch` but doesn't return a promise.

@@ -12,10 +12,11 @@ sidebar:
 
 ```javascript
 fetchMock
-  .get('http://good.com/', 200)
-  .post('http://good.com/', 400)
-  .get(/bad\.com/, 500)
+	.get('http://good.com/', 200)
+	.post('http://good.com/', 400)
+	.get(/bad\.com/, 500);
 ```
+
 ## Analysing calls to your mock
 
 - `fetchMock.called(matcher)` reports if any calls matched your mock (or leave `matcher` out if you just want to check `fetch` was called at all).
@@ -33,13 +34,13 @@ Example with Node.js: suppose we have a file `make-request.js` with a function t
 
 ```js
 module.exports = function makeRequest() {
-  return fetch('http://httpbin.org/my-url', {
-    headers: {
-      user: 'me'
-    }
-  }).then(function(response) {
-    return response.json();
-  });
+	return fetch('http://httpbin.org/my-url', {
+		headers: {
+			user: 'me',
+		},
+	}).then(function (response) {
+		return response.json();
+	});
 };
 ```
 
@@ -49,16 +50,20 @@ We can use fetch-mock to mock `fetch`. In `mocked.js`:
 var makeRequest = require('./make-request');
 var fetchMock = require('fetch-mock');
 
-// Mock the fetch() global to return a response 
-fetchMock.get('http://httpbin.org/my-url', { hello: 'world' }, {
-  delay: 1000, // fake a slow network
-  headers: {
-    user: 'me' // only match requests with certain headers
-  }
-});
+// Mock the fetch() global to return a response
+fetchMock.get(
+	'http://httpbin.org/my-url',
+	{ hello: 'world' },
+	{
+		delay: 1000, // fake a slow network
+		headers: {
+			user: 'me', // only match requests with certain headers
+		},
+	},
+);
 
-makeRequest().then(function(data) {
-  console.log('got data', data);
+makeRequest().then(function (data) {
+	console.log('got data', data);
 });
 
 // Unmock.

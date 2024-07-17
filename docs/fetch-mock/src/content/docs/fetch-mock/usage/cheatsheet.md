@@ -3,6 +3,7 @@ title: Cheatsheet
 sidebar:
   order: 3
 ---
+
 - [Installation](#installation)
 - [Set up and teardown](#setup-and-teardown)
 - [Request matching](#request-matching)

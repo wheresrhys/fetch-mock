@@ -10,7 +10,8 @@ sidebar:
     text: New
     variant: tip
 ---
-The first  step when debugging tests should be to run with the environment variable `DEBUG=fetch-mock*`. This will output additional logs for debugging purposes.
+
+The first step when debugging tests should be to run with the environment variable `DEBUG=fetch-mock*`. This will output additional logs for debugging purposes.
 
 ### `fetch` is assigned to a local variable, not a global
 
@@ -38,10 +39,12 @@ In that case `fetchMock.sandbox()` can be used to generate a function which you 
 - For server side tests running in Node.js 0.12 or lower use `require('fetch-mock/es5/server')`
 
 ### Matching `Request` objects in node fails
+
 In node, if your `Request` object is not an instance of the `Request`
 constructor used by fetch-mock, you need to set a reference to your custom
 request class. This needs to be done if you are mocking the `Request` object
 for a test or you are running npm with a version below 3.
+
 - use `fetchMock.config.Request = myRequest`, where `myRequest` is a reference to the Request constructor used in your application code.
 
 it.md
@@ -54,6 +57,5 @@ it.md
 
 Put this with the spy() docs
 When using `node-fetch`, `fetch-mock` will use the instance you have installed. The one exception is that a reference to `fetchMock.config.fetch = require('node-fetch')` is required if you intend to use the `.spy()` method)
-
 
 to Within individual tests `.catch()` and `spy()` can be used for fine-grained control of this"

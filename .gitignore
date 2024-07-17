@@ -11,5 +11,5 @@ coverage/
 .nyc_output
 
 # built files
-/docs/_site/
+/docs/fetch-mock/dist/
 /packages/**/dist

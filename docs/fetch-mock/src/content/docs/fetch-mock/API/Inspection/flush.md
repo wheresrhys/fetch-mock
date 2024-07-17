@@ -2,7 +2,7 @@
 title: .flush(waitForBody)
 sidebar:
   label: .flush()
-  order: 2
+  order: 3
 ---
 
 Returns a `Promise` that resolves once all fetches handled by fetch-mock have resolved

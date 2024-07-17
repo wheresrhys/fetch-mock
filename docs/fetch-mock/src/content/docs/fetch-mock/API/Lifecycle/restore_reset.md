@@ -1,14 +1,7 @@
 ---
 title: .restore(), .reset()
 sidebar:
-  # Set a custom label for the link
-  label: Custom sidebar label
-  # Set a custom order for the link (lower numbers are displayed higher up)
-  order: 2
-  # Add a badge to the link
-  badge:
-    text: New
-    variant: tip
+  order: 3
 ---
 Resets `fetch()` to its unstubbed state and clears all data recorded for its calls. `restore()` is an alias for `reset()`. Optionally pass in a `{sticky: true}` option to remove even sticky routes.
 

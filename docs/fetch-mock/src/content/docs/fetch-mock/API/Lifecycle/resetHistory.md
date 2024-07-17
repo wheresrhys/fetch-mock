@@ -1,14 +1,7 @@
 ---
 title: .resetHistory()
 sidebar:
-  # Set a custom label for the link
-  label: Custom sidebar label
-  # Set a custom order for the link (lower numbers are displayed higher up)
-  order: 2
-  # Add a badge to the link
-  badge:
-    text: New
-    variant: tip
+  order: 4
 ---
 Clears all data recorded for `fetch`'s calls. It _will not_ restore fetch to its default implementation
 

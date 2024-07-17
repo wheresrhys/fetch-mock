@@ -1,14 +1,8 @@
 ---
 title: .flush(waitForBody)
 sidebar:
-  # Set a custom label for the link
-  label: Custom sidebar label
-  # Set a custom order for the link (lower numbers are displayed higher up)
+  label: .flush()
   order: 2
-  # Add a badge to the link
-  badge:
-    text: New
-    variant: tip
 ---
 Returns a `Promise` that resolves once all fetches handled by fetch-mock have resolved
 

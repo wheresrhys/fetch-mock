@@ -1,51 +1,36 @@
 ---
 title: '.mock(matcher, response, optionsOrName)'
 sidebar:
-  # Set a custom label for the link
-  label: Custom sidebar label
-  # Set a custom order for the link (lower numbers are displayed higher up)
-  order: 2
-  # Add a badge to the link
-  badge:
-    text: New
-    variant: tip
+  label: '.mock()'
+  order: 1
 ---
-Check out the new [cheatsheet](https://github.com/wheresrhys/fetch-mock/blob/master/docs/cheatsheet.md)
-
-
 Initialises or extends a stub implementation of fetch, applying a `route` that matches `matcher`, delivers a `Response` configured using `response`, and that respects the additional `options`. The stub will record its calls so they can be inspected later. If `.mock` is called on the top level `fetch-mock` instance, this stub function will also replace `fetch` globally. Calling `.mock()` with no arguments will carry out this stubbing without defining any mock responses.
 
 In the documentation, **route** is often used to refer to the combination of matching and responding behaviour set up using a single call to `mock()`
-{: .warning}
-parameters:
-  - name: matcher
-    versionAdded: 2.0.0
-    types:
-      - String
-      - Regex
-      - Function
-      - Object
-    content: Criteria for which calls to `fetch` should match this route
-  - name: response
-    versionAdded: 2.0.0
-    types:
-      - String
-      - Object
-      - Function
-      - Promise
-      - Response
-    content: Response to send when a call is matched
-  - name: optionsOrName
-    versionAdded: 2.0.0
-    types:
-      - Object
-      - String
-    content: |
-      More options to configure matching and responding behaviour.
-      Alternatively, use this parameter to pass a string to use as a name for the route in order to make using the call inspection API easier.
 
+## Parameters
+
+### matcher
+`{String|Regex|Function|Object}`
+
+Determines which calls to `fetch` should be handled by this route
 
 Alternatively a single parameter, `options`, an Object with `matcher`, `response` and other options defined, can be passed in. 
+
+Note that if you use matchers that target anything other than the url string, you may also need to add a `name` to your matcher object so that a) you can add multiple mocks on the same url that differ only in other properties (e.g. query strings or headers) b) if you [inspect](#api-inspectionfundamentals) the result of the fetch calls, retrieving the correct results will be easier. 
+
+### response
+`{String|Object|Function|Promise|Response}`
+
+Response to send when a call is matched
+
+### optionsOrName
+`{Object|String}`
+
+More options to configure matching and responding behaviour. Alternatively, use this parameter to pass a string to use as a name for the route in order to make using the call inspection API easier.
+
+
+## Matching on multiple criteria
 
 For complex matching (e.g. matching on headers in addition to url), there are 4 patterns to choose from:
 
@@ -76,59 +61,62 @@ fetchMock
 ```
 Avoid using this unless you need to match on some criteria fetch-mock does not support.
 
-left_code_blocks:
-  - title: Strings
-    code_block: |-
-      fetchMock
-        .mock('http://it.at.here/route', 200)
-        .mock('begin:http://it', 200)
-        .mock('end:here/route', 200)
-        .mock('path:/route', 200)
-        .mock('*', 200)
-    language: javascript
-  - title: Complex Matchers
-    code_block: |-
-      fetchMock
-        .mock(/.*\.here.*/, 200)
-        .mock((url, opts) => opts.method === 'patch', 200)
-        .mock('express:/:type/:id', 200, {
-          params: {
-            type: 'shoe'
-          }
-        })
-        .mock({
-          headers: {'Authorization': 'Bearer 123'},
-          method: 'POST'
-        }, 200)
-    language: javascript
-  - title: Responses
-    code_block: |-
-      fetchMock
-        .mock('*', 'ok')
-        .mock('*', 404)
-        .mock('*', {results: []})
-        .mock('*', {throw: new Error('Bad kitty')))
-        .mock('*', new Promise(res => setTimeout(res, 1000, 404)))
-        .mock('*', (url, opts) => {
-          status: 302, 
-          headers: {
-            Location: url.replace(/^http/, 'https')
-          }, 
-        }))
-    language: javascript
-  - title: End to end example
-    language: javascript
-    code_block: |-
-      fetchMock
-        .mock('begin:http://it.at.here/api', 403)
-        .mock({
-          url: 'begin:http://it.at.here/api',
-          headers: {
-            authorization: 'Basic dummy-token'
-          }
-        }, 200)
-        
-      callApi('/endpoint', 'dummy-token')
-        .then(res => {
-          expect(res.status).to.equal(200)
-        })
+## Examples
+
+### Strings
+```js
+fetchMock
+  .mock('http://it.at.here/route', 200)
+  .mock('begin:http://it', 200)
+  .mock('end:here/route', 200)
+  .mock('path:/route', 200)
+  .mock('*', 200)
+````
+### Complex Matchers
+```js
+fetchMock
+.mock(/.*\.here.*/, 200)
+.mock((url, opts) => opts.method === 'patch', 200)
+.mock('express:/:type/:id', 200, {
+  params: {
+    type: 'shoe'
+  }
+})
+.mock({
+  headers: {'Authorization': 'Bearer 123'},
+  method: 'POST'
+}, 200)
+```
+
+### Responses
+```js
+fetchMock
+  .mock('*', 'ok')
+  .mock('*', 404)
+  .mock('*', {results: []})
+  .mock('*', {throw: new Error('Bad kitty')))
+  .mock('*', new Promise(res => setTimeout(res, 1000, 404)))
+  .mock('*', (url, opts) => {
+    status: 302, 
+    headers: {
+      Location: url.replace(/^http/, 'https')
+    }, 
+  }))
+```
+
+### End to end example
+```js
+fetchMock
+  .mock('begin:http://it.at.here/api', 403)
+  .mock({
+    url: 'begin:http://it.at.here/api',
+    headers: {
+      authorization: 'Basic dummy-token'
+    }
+  }, 200)
+  
+callApi('/endpoint', 'dummy-token')
+  .then(res => {
+    expect(res.status).to.equal(200)
+  })
+```

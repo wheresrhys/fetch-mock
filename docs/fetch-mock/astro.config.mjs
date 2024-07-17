@@ -11,10 +11,6 @@ export default defineConfig({
 			},
 			sidebar: [
 				{
-					label: 'About',
-					autogenerate: { directory: 'fetch-mock/about' },
-				},
-				{
 					label: 'Usage',
 					autogenerate: { directory: 'fetch-mock/usage' },
 				},

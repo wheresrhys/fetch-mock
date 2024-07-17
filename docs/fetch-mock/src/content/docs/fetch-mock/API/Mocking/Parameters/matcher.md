@@ -2,6 +2,9 @@
 title: 'matcher'
 sidebar:
   order: 1
+tableOfContents:
+  minHeadingLevel: 2
+  maxHeadingLevel: 2
 ---
 Criteria for deciding which requests to mock.
 

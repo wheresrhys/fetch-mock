@@ -1,33 +1,20 @@
 ---
-title: Welcome to Starlight
-description: Get started building your docs site with Starlight.
-template: splash
-hero:
-  tagline: Congrats on setting up a new Starlight project!
-  image:
-    file: ../../assets/houston.webp
-  actions:
-    - text: Legacy fetch-mock docs
-      link: /fetch-mock/about/introduction
-      icon: right-arrow
-      variant: primary
+title: Overview
+description: 'fetch-mock: The most comprehensive library for mocking the fetch API.'
 ---
+fetch-mock is the most comprehensive library for mocking the fetch API.
 
-import { Card, CardGrid } from '@astrojs/starlight/components';
+It allows mocking http requests made using [fetch](https://fetch.spec.whatwg.org/) or a library imitating its api, such as [node-fetch](https://www.npmjs.com/package/node-fetch).
 
-## Next steps
+It supports most JavaScript environments, including browsers, Node.js, web workers and service workers.
 
-<CardGrid stagger>
-	<Card title="Update content" icon="pencil">
-		Edit `src/content/docs/index.mdx` to see this page change.
-	</Card>
-	<Card title="Add new content" icon="add-document">
-		Add Markdown or MDX files to `src/content/docs` to create new pages.
-	</Card>
-	<Card title="Configure your site" icon="setting">
-		Edit your `sidebar` and other config in `astro.config.mjs`.
-	</Card>
-	<Card title="Read the docs" icon="open-book">
-		Learn more in [the Starlight Docs](https://starlight.astro.build/).
-	</Card>
-</CardGrid>
+As well as shorthand methods for the simplest use cases, it offers a flexible API for customising all aspects of mocking behaviour.
+
+## Example
+
+```js
+fetchMock.mock('http://example.com', 200);
+const res = await fetch('http://example.com');
+assert(res.ok);
+fetchMock.restore();
+```

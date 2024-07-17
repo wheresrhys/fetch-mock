@@ -24,6 +24,7 @@ jobs:
         uses: withastro/action@v2
         with:
           path: ./docs/fetch-mock
+          package-manager: npm@latest
 
   deploy:
     needs: build

@@ -14,19 +14,19 @@ export default defineConfig({
 			sidebar: [
 				{
 					label: 'Usage',
-					autogenerate: { directory: 'fetch-mock/usage' },
+					autogenerate: { directory: 'usage' },
 				},
 				{
 					label: 'API reference',
 					items: [
-						{label: "Mocking", autogenerate: { directory: 'fetch-mock/API/Mocking' }},
-						{label: "Inspection", autogenerate: { directory: 'fetch-mock/API/Inspection' }},
-						{label: "Lifecycle", autogenerate: { directory: 'fetch-mock/API/Lifecycle' }}
+						{label: "Mocking", autogenerate: { directory: 'API/Mocking' }},
+						{label: "Inspection", autogenerate: { directory: 'API/Inspection' }},
+						{label: "Lifecycle", autogenerate: { directory: 'API/Lifecycle' }}
 					],
 				},
 				{
 					label: 'Troubleshooting',
-					autogenerate: { directory: 'fetch-mock/troubleshooting' },
+					autogenerate: { directory: 'troubleshooting' },
 				},
 
 			],

@@ -12,15 +12,13 @@ tableOfContents:
 
 Returns an array of all calls to fetch matching the given `filter` and `options`. Each call is returned as a `[url, options]` array. If `fetch` was called using a `Request` instance, the `url` and `options` will be inferred from it, and the original `Request` will be available as a `request` property on this array.
 
-
 ### .called(filter, options)
-Returns a Boolean indicating whether any calls to `fetch` matched the given `filter` and `options`
 
+Returns a Boolean indicating whether any calls to `fetch` matched the given `filter` and `options`
 
 ### .lastCall(filter, options)
 
 Returns the arguments for the last call to `fetch` matching the given `filter` and `options`. The call is returned as a `[url, options]` array. If `fetch` was called using a `Request` instance, the `url` and `options` will be inferred from it, and the original `Request` will be available as a `request` property on this array.
-
 
 ### .lastUrl(filter, options)
 
@@ -47,11 +45,9 @@ When doing all the following:
 
 To obtain json/text responses await the `.json()/.text()` methods of the response
 
-
-
 ## Filtering
-`fetch-mock`'s inspection methods allow information about how `fetch` was called to be retrieved after your application code has run. Most inspection methods take two arguments — `(filter, options)` — which allow individual, or groups of, `fetch` calls to be extracted and examined.
 
+`fetch-mock`'s inspection methods allow information about how `fetch` was called to be retrieved after your application code has run. Most inspection methods take two arguments — `(filter, options)` — which allow individual, or groups of, `fetch` calls to be extracted and examined.
 
 ### Parameters
 
@@ -96,6 +92,7 @@ Either an object compatible with the [mocking api](#api-mockingmock_options) or 
 ### Caveats
 
 #### Confusing API
+
 The filtering API is powerful, but potentially confusing. If in doubt, [add a `name` to your route](#api-mockingmock_options), and pass that name in to retrieve exactly the calls you want.
 
 The API will be simplified and changed significantly in the next major version

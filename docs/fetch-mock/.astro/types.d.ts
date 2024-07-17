@@ -136,205 +136,128 @@ declare module 'astro:content' {
 
 	type ContentEntryMap = {
 		"docs": {
-"fetch-mock/about/introduction.md": {
-	id: "fetch-mock/about/introduction.md";
-  slug: "fetch-mock/about/introduction";
+"fetch-mock/API/Inspection/done.md": {
+	id: "fetch-mock/API/Inspection/done.md";
+  slug: "fetch-mock/api/inspection/done";
   body: string;
   collection: "docs";
   data: InferEntrySchema<"docs">
 } & { render(): Render[".md"] };
-"fetch-mock/about/previous-versions.md": {
-	id: "fetch-mock/about/previous-versions.md";
-  slug: "fetch-mock/about/previous-versions";
+"fetch-mock/API/Inspection/flush.md": {
+	id: "fetch-mock/API/Inspection/flush.md";
+  slug: "fetch-mock/api/inspection/flush";
   body: string;
   collection: "docs";
   data: InferEntrySchema<"docs">
 } & { render(): Render[".md"] };
-"fetch-mock/about/quickstart.md": {
-	id: "fetch-mock/about/quickstart.md";
-  slug: "fetch-mock/about/quickstart";
+"fetch-mock/API/Inspection/inspecting-calls.md": {
+	id: "fetch-mock/API/Inspection/inspecting-calls.md";
+  slug: "fetch-mock/api/inspection/inspecting-calls";
   body: string;
   collection: "docs";
   data: InferEntrySchema<"docs">
 } & { render(): Render[".md"] };
-"fetch-mock/api-inspection/called.md": {
-	id: "fetch-mock/api-inspection/called.md";
-  slug: "fetch-mock/api-inspection/called";
+"fetch-mock/API/Lifecycle/resetting.md": {
+	id: "fetch-mock/API/Lifecycle/resetting.md";
+  slug: "fetch-mock/api/lifecycle/resetting";
   body: string;
   collection: "docs";
   data: InferEntrySchema<"docs">
 } & { render(): Render[".md"] };
-"fetch-mock/api-inspection/calls.md": {
-	id: "fetch-mock/api-inspection/calls.md";
-  slug: "fetch-mock/api-inspection/calls";
+"fetch-mock/API/Lifecycle/sandbox.md": {
+	id: "fetch-mock/API/Lifecycle/sandbox.md";
+  slug: "fetch-mock/api/lifecycle/sandbox";
   body: string;
   collection: "docs";
   data: InferEntrySchema<"docs">
 } & { render(): Render[".md"] };
-"fetch-mock/api-inspection/done.md": {
-	id: "fetch-mock/api-inspection/done.md";
-  slug: "fetch-mock/api-inspection/done";
+"fetch-mock/API/Mocking/Parameters/matcher.md": {
+	id: "fetch-mock/API/Mocking/Parameters/matcher.md";
+  slug: "fetch-mock/api/mocking/parameters/matcher";
   body: string;
   collection: "docs";
   data: InferEntrySchema<"docs">
 } & { render(): Render[".md"] };
-"fetch-mock/api-inspection/fundamentals.md": {
-	id: "fetch-mock/api-inspection/fundamentals.md";
-  slug: "fetch-mock/api-inspection/fundamentals";
+"fetch-mock/API/Mocking/Parameters/options.md": {
+	id: "fetch-mock/API/Mocking/Parameters/options.md";
+  slug: "fetch-mock/api/mocking/parameters/options";
   body: string;
   collection: "docs";
   data: InferEntrySchema<"docs">
 } & { render(): Render[".md"] };
-"fetch-mock/api-inspection/lastCall.md": {
-	id: "fetch-mock/api-inspection/lastCall.md";
-  slug: "fetch-mock/api-inspection/lastcall";
+"fetch-mock/API/Mocking/Parameters/response.md": {
+	id: "fetch-mock/API/Mocking/Parameters/response.md";
+  slug: "fetch-mock/api/mocking/parameters/response";
   body: string;
   collection: "docs";
   data: InferEntrySchema<"docs">
 } & { render(): Render[".md"] };
-"fetch-mock/api-inspection/lastOptions.md": {
-	id: "fetch-mock/api-inspection/lastOptions.md";
-  slug: "fetch-mock/api-inspection/lastoptions";
+"fetch-mock/API/Mocking/add-matcher.md": {
+	id: "fetch-mock/API/Mocking/add-matcher.md";
+  slug: "fetch-mock/api/mocking/add-matcher";
   body: string;
   collection: "docs";
   data: InferEntrySchema<"docs">
 } & { render(): Render[".md"] };
-"fetch-mock/api-inspection/lastResponse.md": {
-	id: "fetch-mock/api-inspection/lastResponse.md";
-  slug: "fetch-mock/api-inspection/lastresponse";
+"fetch-mock/API/Mocking/catch.md": {
+	id: "fetch-mock/API/Mocking/catch.md";
+  slug: "fetch-mock/api/mocking/catch";
   body: string;
   collection: "docs";
   data: InferEntrySchema<"docs">
 } & { render(): Render[".md"] };
-"fetch-mock/api-inspection/lastUrl.md": {
-	id: "fetch-mock/api-inspection/lastUrl.md";
-  slug: "fetch-mock/api-inspection/lasturl";
+"fetch-mock/API/Mocking/mock.md": {
+	id: "fetch-mock/API/Mocking/mock.md";
+  slug: "fetch-mock/api/mocking/mock";
   body: string;
   collection: "docs";
   data: InferEntrySchema<"docs">
 } & { render(): Render[".md"] };
-"fetch-mock/api-lifecycle/flush.md": {
-	id: "fetch-mock/api-lifecycle/flush.md";
-  slug: "fetch-mock/api-lifecycle/flush";
+"fetch-mock/API/Mocking/shorthands.md": {
+	id: "fetch-mock/API/Mocking/shorthands.md";
+  slug: "fetch-mock/api/mocking/shorthands";
   body: string;
   collection: "docs";
   data: InferEntrySchema<"docs">
 } & { render(): Render[".md"] };
-"fetch-mock/api-lifecycle/resetBehavior.md": {
-	id: "fetch-mock/api-lifecycle/resetBehavior.md";
-  slug: "fetch-mock/api-lifecycle/resetbehavior";
+"fetch-mock/API/Mocking/spy.md": {
+	id: "fetch-mock/API/Mocking/spy.md";
+  slug: "fetch-mock/api/mocking/spy";
   body: string;
   collection: "docs";
   data: InferEntrySchema<"docs">
 } & { render(): Render[".md"] };
-"fetch-mock/api-lifecycle/resetHistory.md": {
-	id: "fetch-mock/api-lifecycle/resetHistory.md";
-  slug: "fetch-mock/api-lifecycle/resethistory";
+"fetch-mock/troubleshooting/cookies.md": {
+	id: "fetch-mock/troubleshooting/cookies.md";
+  slug: "fetch-mock/troubleshooting/cookies";
   body: string;
   collection: "docs";
   data: InferEntrySchema<"docs">
 } & { render(): Render[".md"] };
-"fetch-mock/api-lifecycle/restore_reset.md": {
-	id: "fetch-mock/api-lifecycle/restore_reset.md";
-  slug: "fetch-mock/api-lifecycle/restore_reset";
+"fetch-mock/troubleshooting/custom-classes.md": {
+	id: "fetch-mock/troubleshooting/custom-classes.md";
+  slug: "fetch-mock/troubleshooting/custom-classes";
   body: string;
   collection: "docs";
   data: InferEntrySchema<"docs">
 } & { render(): Render[".md"] };
-"fetch-mock/api-lifecycle/sandbox.md": {
-	id: "fetch-mock/api-lifecycle/sandbox.md";
-  slug: "fetch-mock/api-lifecycle/sandbox";
+"fetch-mock/troubleshooting/debug-mode.md": {
+	id: "fetch-mock/troubleshooting/debug-mode.md";
+  slug: "fetch-mock/troubleshooting/debug-mode";
   body: string;
   collection: "docs";
   data: InferEntrySchema<"docs">
 } & { render(): Render[".md"] };
-"fetch-mock/api-mocking/add-matcher.md": {
-	id: "fetch-mock/api-mocking/add-matcher.md";
-  slug: "fetch-mock/api-mocking/add-matcher";
+"fetch-mock/troubleshooting/global-non-global.md": {
+	id: "fetch-mock/troubleshooting/global-non-global.md";
+  slug: "fetch-mock/troubleshooting/global-non-global";
   body: string;
   collection: "docs";
   data: InferEntrySchema<"docs">
 } & { render(): Render[".md"] };
-"fetch-mock/api-mocking/catch.md": {
-	id: "fetch-mock/api-mocking/catch.md";
-  slug: "fetch-mock/api-mocking/catch";
-  body: string;
-  collection: "docs";
-  data: InferEntrySchema<"docs">
-} & { render(): Render[".md"] };
-"fetch-mock/api-mocking/combined-shorthands.md": {
-	id: "fetch-mock/api-mocking/combined-shorthands.md";
-  slug: "fetch-mock/api-mocking/combined-shorthands";
-  body: string;
-  collection: "docs";
-  data: InferEntrySchema<"docs">
-} & { render(): Render[".md"] };
-"fetch-mock/api-mocking/cookies.md": {
-	id: "fetch-mock/api-mocking/cookies.md";
-  slug: "fetch-mock/api-mocking/cookies";
-  body: string;
-  collection: "docs";
-  data: InferEntrySchema<"docs">
-} & { render(): Render[".md"] };
-"fetch-mock/api-mocking/get_post.md": {
-	id: "fetch-mock/api-mocking/get_post.md";
-  slug: "fetch-mock/api-mocking/get_post";
-  body: string;
-  collection: "docs";
-  data: InferEntrySchema<"docs">
-} & { render(): Render[".md"] };
-"fetch-mock/api-mocking/mock.md": {
-	id: "fetch-mock/api-mocking/mock.md";
-  slug: "fetch-mock/api-mocking/mock";
-  body: string;
-  collection: "docs";
-  data: InferEntrySchema<"docs">
-} & { render(): Render[".md"] };
-"fetch-mock/api-mocking/mock_any.md": {
-	id: "fetch-mock/api-mocking/mock_any.md";
-  slug: "fetch-mock/api-mocking/mock_any";
-  body: string;
-  collection: "docs";
-  data: InferEntrySchema<"docs">
-} & { render(): Render[".md"] };
-"fetch-mock/api-mocking/mock_matcher.md": {
-	id: "fetch-mock/api-mocking/mock_matcher.md";
-  slug: "fetch-mock/api-mocking/mock_matcher";
-  body: string;
-  collection: "docs";
-  data: InferEntrySchema<"docs">
-} & { render(): Render[".md"] };
-"fetch-mock/api-mocking/mock_once.md": {
-	id: "fetch-mock/api-mocking/mock_once.md";
-  slug: "fetch-mock/api-mocking/mock_once";
-  body: string;
-  collection: "docs";
-  data: InferEntrySchema<"docs">
-} & { render(): Render[".md"] };
-"fetch-mock/api-mocking/mock_options.md": {
-	id: "fetch-mock/api-mocking/mock_options.md";
-  slug: "fetch-mock/api-mocking/mock_options";
-  body: string;
-  collection: "docs";
-  data: InferEntrySchema<"docs">
-} & { render(): Render[".md"] };
-"fetch-mock/api-mocking/mock_response.md": {
-	id: "fetch-mock/api-mocking/mock_response.md";
-  slug: "fetch-mock/api-mocking/mock_response";
-  body: string;
-  collection: "docs";
-  data: InferEntrySchema<"docs">
-} & { render(): Render[".md"] };
-"fetch-mock/api-mocking/mock_sticky.md": {
-	id: "fetch-mock/api-mocking/mock_sticky.md";
-  slug: "fetch-mock/api-mocking/mock_sticky";
-  body: string;
-  collection: "docs";
-  data: InferEntrySchema<"docs">
-} & { render(): Render[".md"] };
-"fetch-mock/api-mocking/spy.md": {
-	id: "fetch-mock/api-mocking/spy.md";
-  slug: "fetch-mock/api-mocking/spy";
+"fetch-mock/troubleshooting/importing.md": {
+	id: "fetch-mock/troubleshooting/importing.md";
+  slug: "fetch-mock/troubleshooting/importing";
   body: string;
   collection: "docs";
   data: InferEntrySchema<"docs">
@@ -360,34 +283,6 @@ declare module 'astro:content' {
   collection: "docs";
   data: InferEntrySchema<"docs">
 } & { render(): Render[".md"] };
-"fetch-mock/usage/custom-classes.md": {
-	id: "fetch-mock/usage/custom-classes.md";
-  slug: "fetch-mock/usage/custom-classes";
-  body: string;
-  collection: "docs";
-  data: InferEntrySchema<"docs">
-} & { render(): Render[".md"] };
-"fetch-mock/usage/debug-mode.md": {
-	id: "fetch-mock/usage/debug-mode.md";
-  slug: "fetch-mock/usage/debug-mode";
-  body: string;
-  collection: "docs";
-  data: InferEntrySchema<"docs">
-} & { render(): Render[".md"] };
-"fetch-mock/usage/global-non-global.md": {
-	id: "fetch-mock/usage/global-non-global.md";
-  slug: "fetch-mock/usage/global-non-global";
-  body: string;
-  collection: "docs";
-  data: InferEntrySchema<"docs">
-} & { render(): Render[".md"] };
-"fetch-mock/usage/importing.md": {
-	id: "fetch-mock/usage/importing.md";
-  slug: "fetch-mock/usage/importing";
-  body: string;
-  collection: "docs";
-  data: InferEntrySchema<"docs">
-} & { render(): Render[".md"] };
 "fetch-mock/usage/installation.md": {
 	id: "fetch-mock/usage/installation.md";
   slug: "fetch-mock/usage/installation";
@@ -395,9 +290,9 @@ declare module 'astro:content' {
   collection: "docs";
   data: InferEntrySchema<"docs">
 } & { render(): Render[".md"] };
-"fetch-mock/usage/polyfilling.md": {
-	id: "fetch-mock/usage/polyfilling.md";
-  slug: "fetch-mock/usage/polyfilling";
+"fetch-mock/usage/quickstart.md": {
+	id: "fetch-mock/usage/quickstart.md";
+  slug: "fetch-mock/usage/quickstart";
   body: string;
   collection: "docs";
   data: InferEntrySchema<"docs">
@@ -409,23 +304,9 @@ declare module 'astro:content' {
   collection: "docs";
   data: InferEntrySchema<"docs">
 } & { render(): Render[".md"] };
-"fetch-mock/usage/usage-with-jest.md": {
-	id: "fetch-mock/usage/usage-with-jest.md";
-  slug: "fetch-mock/usage/usage-with-jest";
-  body: string;
-  collection: "docs";
-  data: InferEntrySchema<"docs">
-} & { render(): Render[".md"] };
-"fetch-mock/usage/v6-v7-upgrade-guide.md": {
-	id: "fetch-mock/usage/v6-v7-upgrade-guide.md";
-  slug: "fetch-mock/usage/v6-v7-upgrade-guide";
-  body: string;
-  collection: "docs";
-  data: InferEntrySchema<"docs">
-} & { render(): Render[".md"] };
-"fetch-mock/usage/version-10-caveat.md": {
-	id: "fetch-mock/usage/version-10-caveat.md";
-  slug: "fetch-mock/usage/version-10-caveat";
+"fetch-mock/usage/versions.md": {
+	id: "fetch-mock/usage/versions.md";
+  slug: "fetch-mock/usage/versions";
   body: string;
   collection: "docs";
   data: InferEntrySchema<"docs">

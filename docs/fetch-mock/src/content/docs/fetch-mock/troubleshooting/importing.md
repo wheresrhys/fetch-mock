@@ -4,6 +4,8 @@ sidebar:
   order: 2
 ---
 
+*Note that the documentation below applies to version 9 and below.*
+
 The JS ecosystem is in a transitional period between module systems, and there are also a number of different build tools available, all with their own idosyncratic opinions about how JS should be compiled. The following detail may help debug any problems, and a few known workarounds are listed below.
 
 ## Built files

@@ -3,18 +3,22 @@ title: Versions
 sidebar:
   order: 2
 ---
-Note that the documentation below refers to **version 9** of the library.
 
-Version 10 is a significant rewrite and should just work in any environment where `fetch` is available natively. It's relatively untested, so if it doesn't work for you please raise an issue, then downgrade to version 9 and follow the usage documentation below. 
+### Version 10
 
-- [Node.js](https://Node.js.org/) 8+ for full feature operation
-- [Node.js](https://Node.js.org/) 0.12+ with [limitations](http://www.wheresrhys.co.uk/fetch-mock/installation)
-- [npm](https://www.npmjs.com/package/npm) (normally comes with Node.js)
-- Either
-  - [node-fetch](https://www.npmjs.com/package/node-fetch) when testing in Node.js. To allow users a choice over which version to use, `node-fetch` is not included as a dependency of `fetch-mock`.
-  - A browser that supports the `fetch` API either natively or via a [polyfill/ponyfill](https://ponyfoo.com/articles/polyfills-or-ponyfills)
+This has 2 major differences from previous versions
+
+1. It is written using ES modules
+2. It uses native fetch in node.js
+
+If you experience any compatibility issues upgrading from version 9, please either 
+- try the approaches iom the troubleshooting section of these docs
+- downgrade to v9 again
+
+I intend to keep version 10 and above r4easonably clean, with as few workarounds for different toolchains as possible. Hopefully, as other toolchains gradually migrate to ESM and native fetch then fetch-mock will eventually be compatible with their latest versions.
 
 
+### Version 9 and below
 
 v7, v8 & v9 are practically identical, only differing in their treatment of a few edge cases, or in compatibility with other libraries and environments. For clarity, each section of the documentation tells you which version a feature was added with a <small class="version-added">version</small> label.
 

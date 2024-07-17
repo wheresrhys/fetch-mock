@@ -1,7 +1,7 @@
 ---
 title: Installation
 sidebar:
-  order: 0
+  order: 1
 ---
 
 Install fetch-mock using
@@ -21,3 +21,7 @@ import fetchMock from 'fetch-mock';
 ```js
 const fetchMock = require('fetch-mock');
 ```
+
+## Using with Jest
+
+Please try out the new jest-friendly wrapper for fetch-mock, [fetch-mock-jest](https://github.com/wheresrhys/fetch-mock-jest).

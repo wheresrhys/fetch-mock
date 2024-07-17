@@ -1,5 +1,5 @@
 ---
-title: '.mock() shorthands'
+title: Shorthand methods
 sidebar:
   # Set a custom label for the link
   order: 2

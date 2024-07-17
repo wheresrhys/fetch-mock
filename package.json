@@ -17,15 +17,17 @@
     "node": ">=4.0.0"
   },
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "docs/*"
   ],
   "scripts": {
-    "lint": "eslint --cache --fix --ext .js,.cjs . && prettier --cache --write *.md docs/*.md docs/**/*.md",
-    "lint:ci": "eslint --ext .js,.cjs . && prettier *.md docs/*.md docs/**/*.md",
+    "lint": "eslint --cache --fix --ext .js,.cjs . && prettier --cache --write *.md docs/**/*.md docs/**/**/*.md",
+    "lint:ci": "eslint --ext .js,.cjs . && prettier *.md docs/**/*.md docs/**/**/*.md",
     "types:check": "tsc --project ./jsconfig.json",
     "types:lint": "dtslint --expectOnly packages/fetch-mock/types",
-    "prepare": "husky",
+    "prepare": "husky || echo \"husky not available\"",
     "build": "rollup -c",
+    "docs:fetch-mock": "npm run dev -w docs/fetch-mock",
     "docs:serve": "cd docs; jekyll serve build --watch",
     "test:ci": "vitest .",
     "test:legacy": "vitest ./packages/fetch-mock/test/specs",

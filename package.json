@@ -14,7 +14,7 @@
   },
   "homepage": "http://www.wheresrhys.co.uk/fetch-mock",
   "engines": {
-    "node": ">=4.0.0"
+    "node": ">=8.0.0"
   },
   "workspaces": [
     "packages/*",

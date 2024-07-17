@@ -22,7 +22,7 @@
   ],
   "scripts": {
     "lint": "eslint --cache --fix --ext .js,.cjs . && prettier --cache --write *.md docs/**/*.md docs/**/**/*.md",
-    "lint:ci": "eslint --ext .js,.cjs . && prettier *.md docs/*.md docs/**/*.md",
+    "lint:ci": "eslint --ext .js,.cjs . && prettier *.md docs/**/*.md docs/**/**/*.md",
     "types:check": "tsc --project ./jsconfig.json",
     "types:lint": "dtslint --expectOnly packages/fetch-mock/types",
     "prepare": "husky",

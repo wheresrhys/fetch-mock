@@ -65,13 +65,12 @@ const config = {
 				items: [
 					{
 						type: 'docSidebar',
-						sidebarId: 'tutorialSidebar',
+						sidebarId: 'fetchMockSidebar',
 						position: 'left',
-						label: 'Tutorial',
+						label: 'Docs',
 					},
-					{ to: '/blog', label: 'Blog', position: 'left' },
 					{
-						href: 'https://github.com/facebook/docusaurus',
+						href: 'https://github.com/wheresrhys/fetch-mock',
 						label: 'GitHub',
 						position: 'right',
 					},

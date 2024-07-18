@@ -1,5 +1,19 @@
 # Changelog
 
+## [10.1.0](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v10.0.8...fetch-mock-v10.1.0) (2024-07-18)
+
+
+### Features
+
+* **wip:** replace dequal, glob-to-regexp and bump path-to-regexp ([d8d8b25](https://github.com/wheresrhys/fetch-mock/commit/d8d8b259fffbd01a03d5c5bf2768ee48797b68bb))
+
+
+### Bug Fixes
+
+* failing tests ([65ef567](https://github.com/wheresrhys/fetch-mock/commit/65ef5678ba23c53d27f3b165fe25020d96c498db))
+* replace path-to-regexp with regexparam ([4bf3e32](https://github.com/wheresrhys/fetch-mock/commit/4bf3e32f852ffc169ca354288eff86737e131480))
+* wildcard import ([ff9fee6](https://github.com/wheresrhys/fetch-mock/commit/ff9fee634db8b019f1384e44d13b4121bc2d62bb))
+
 ## [10.0.8](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v10.0.8-alpha.1...fetch-mock-v10.0.8) (2024-07-15)
 
 

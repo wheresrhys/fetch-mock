@@ -1,7 +1,7 @@
-import glob from 'glob-to-regexp';
-import pathToRegexp from 'path-to-regexp';
+import glob from 'globrex';
+import * as regexparam from 'regexparam';
 import isSubset from 'is-subset';
-import isEqual from 'lodash.isequal';
+import { dequal as isEqual } from 'dequal';
 import {
 	headers as headerUtils,
 	getPath,
@@ -24,11 +24,11 @@ const stringMatchers = {
 		),
 	glob: (targetString) => {
 		const urlRX = glob(targetString);
-		return debuggableUrlFunc((url) => urlRX.test(url));
+		return debuggableUrlFunc((url) => urlRX.regex.test(url));
 	},
 	express: (targetString) => {
-		const urlRX = pathToRegexp(targetString);
-		return debuggableUrlFunc((url) => urlRX.test(getPath(url)));
+		const urlRX = regexparam.parse(targetString);
+		return debuggableUrlFunc((url) => urlRX.pattern.test(getPath(url)));
 	},
 	path: (targetString) =>
 		debuggableUrlFunc((url) => getPath(url) === targetString),
@@ -142,15 +142,14 @@ const getParamsMatcher = ({ params: expectedParams, url: matcherUrl }) => {
 	}
 	debug('  Expected path parameters:', expectedParams);
 	const expectedKeys = Object.keys(expectedParams);
-	const keys = [];
-	const re = pathToRegexp(matcherUrl.replace(/^express:/, ''), keys);
+	const re = regexparam.parse(matcherUrl.replace(/^express:/, ''));
 	return (url) => {
 		debug('Attempting to match path parameters');
-		const vals = re.exec(getPath(url)) || [];
+		const vals = re.pattern.exec(getPath(url)) || [];
 		vals.shift();
-		const params = keys.reduce(
-			(map, { name }, i) =>
-				vals[i] ? Object.assign(map, { [name]: vals[i] }) : map,
+		const params = re.keys.reduce(
+			(map, paramName, i) =>
+				vals[i] ? Object.assign(map, { [paramName]: vals[i] }) : map,
 			{},
 		);
 		debug('  Expected path parameters:', expectedParams);

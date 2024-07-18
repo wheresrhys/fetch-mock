@@ -42,21 +42,24 @@ For complex matching (e.g. matching on headers in addition to url), there are 4 
 ```js
 fetchMock.mock({ url, headers }, response);
 ```
-This has the advantage of keeping all the matching criteria in one place. 
+
+This has the advantage of keeping all the matching criteria in one place.
 
 2. Pass in options in a third parameter e.g.
 
 ```js
 fetchMock.mock(url, response, { headers });
 ```
-This splits matching criteria between two parameters, which is arguably harder to read. However, if most of your tests only match on url, then this provides a convenient way to create a variant of an existing test. 
+
+This splits matching criteria between two parameters, which is arguably harder to read. However, if most of your tests only match on url, then this provides a convenient way to create a variant of an existing test.
 
 3. Use a single object, e.g.
 
 ```js
 fetchMock.mock({ url, response, headers });
 ```
-Nothing wrong with doing this, but keeping response configuration in a separate argument to the matcher config feels like a good split. 
+
+Nothing wrong with doing this, but keeping response configuration in a separate argument to the matcher config feels like a good split.
 
 4. Use a function matcher e.g.
 
@@ -65,6 +68,7 @@ fetchMock.mock((url, options) => {
 	// write your own logic
 }, response);
 ```
+
 Avoid using this unless you need to match on some criteria fetch-mock does not support.
 
 ## Examples

@@ -9,7 +9,7 @@ export default defineConfig({
 		starlight({
 			title: 'fetch-mock',
 			social: {
-				github: 'https://github.com/fetch-mock/packages/fetch-mock',
+				github: 'https://github.com/wheresrhys/fetch-mock',
 			},
 			sidebar: [
 				{

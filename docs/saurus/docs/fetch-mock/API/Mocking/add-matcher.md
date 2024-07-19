@@ -1,9 +1,8 @@
 ---
-
-sidebar_position: 5
-
+sidebar_position: 3
 ---
-# .addMatcher({name, usesBody, matcher})
+# .addMatcher(options)
+
 
 Allows adding your own, reusable custom matchers to fetch-mock, for example a matcher for interacting with GraphQL queries, or an `isAuthorized` matcher that encapsulates the exact authorization conditions for the API you are mocking, and only requires a `true` or `false` to be input
 
@@ -49,21 +48,21 @@ fetchMock
 ##### GraphQL
 
 ```js
-  fetchMock
-    .addMatcher({
-      name: 'graphqlVariables',
-      matcher: ({graphqlVariables}) => (url, options) => {
-          if (!/\/graphql$/.test(url)) {
-              return false;
-          }
-          const body = JSON.parse(options.body)
-          return body.variables && Object.keys(body.variables).length === Object.keys(body.graphqlVariables).length && Object.entries(graphqlVariables).every(([key, val]) => body.variables[key] === val)
-      }
-    })
-    .mock({graphqlVariables: {owner: 'wheresrhys'}}, {data: {account: {
-      name: 'wheresrhys',
-      repos: [ ... ]
-      }}})
+fetchMock
+  .addMatcher({
+    name: 'graphqlVariables',
+    matcher: ({graphqlVariables}) => (url, options) => {
+        if (!/\/graphql$/.test(url)) {
+            return false;
+        }
+        const body = JSON.parse(options.body)
+        return body.variables && Object.keys(body.variables).length === Object.keys(body.graphqlVariables).length && Object.entries(graphqlVariables).every(([key, val]) => body.variables[key] === val)
+    }
+  })
+  .mock({graphqlVariables: {owner: 'wheresrhys'}}, {data: {account: {
+    name: 'wheresrhys',
+    repos: [ ... ]
+    }}})
 ```
 
 One intent behind this functionality is to allow companies or publishers of particular toolsets to provide packages that extend fetch-mock to provide a more user friendly experience for developers using fetch to interact with their APIs. The GraphQL use case is a good example of this - the things which a developer might want to match on are buried in the request body, and written in a non-javascript query language. Please get in touch if you'd like to collaborate on writing such a package.

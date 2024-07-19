@@ -1,5 +1,5 @@
 ---
-sidebar_position: 1.5
+sidebar_position: 0.5
 
 ---
 # Requirements

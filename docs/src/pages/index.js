@@ -19,7 +19,7 @@ function HomepageHeader() {
 				<div className={styles.buttons}>
 					<Link
 						className="button button--secondary button--lg"
-						to="/fetch-mock/docs/fetch-mock/Usage/installation"
+						to="/fetch-mock/docs/fetch-mock/Usage"
 					>
 						Get started
 					</Link>

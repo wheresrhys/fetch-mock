@@ -2,8 +2,6 @@
 
 
 ---
-# Overview
-description:
 fetch-mock is the most comprehensive library for mocking the fetch API.
 
 It allows mocking http requests made using [fetch](https://fetch.spec.whatwg.org/) or a library imitating its api, such as [node-fetch](https://www.npmjs.com/package/node-fetch).

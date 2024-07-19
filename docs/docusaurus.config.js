@@ -63,6 +63,12 @@ const config = {
 						label: 'Docs',
 					},
 					{
+						type: 'docSidebar',
+						sidebarId: 'coreSidebar',
+						position: 'left',
+						label: 'core',
+					},
+					{
 						href: 'https://github.com/wheresrhys/fetch-mock',
 						label: 'GitHub',
 						position: 'right',

@@ -5,3 +5,4 @@ coverage/*
 packages/*/dist/*
 packages/fetch-mock/types/fetch-mock-tests.js
 /docs/src/**/*.js
+/docs/build

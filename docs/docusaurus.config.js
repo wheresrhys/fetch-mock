@@ -11,7 +11,8 @@ const config = {
 	title: 'Fetch Mock',
 	tagline: 'Powerful mocking of the fetch API.',
 	favicon: 'img/favicon.ico',
-
+	projectName: 'wheresrhys.github.io',
+	organizationName: 'wheresrhys',
 	// Set the production url of your site here
 	url: 'https://www.wheresrhys.co.uk',
 	// Set the /<baseUrl>/ pathname under which your site is served

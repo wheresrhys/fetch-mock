@@ -4,4 +4,4 @@ coverage/*
 .nyc_output/
 packages/*/dist/*
 packages/fetch-mock/types/fetch-mock-tests.js
-/docs/saurus/src/**/*.js
+/docs/src/**/*.js

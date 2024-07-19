@@ -18,7 +18,7 @@
   },
   "workspaces": [
     "packages/*",
-    "docs/*"
+    "docs"
   ],
   "scripts": {
     "lint": "eslint --cache --fix --ext .js,.cjs . && prettier --cache --write *.md docs/**/*.md docs/**/**/*.md",
@@ -27,7 +27,7 @@
     "types:lint": "dtslint --expectOnly packages/fetch-mock/types",
     "prepare": "husky || echo \"husky not available\"",
     "build": "rollup -c",
-    "docs": "npm run dev -w docs/fetch-mock",
+    "docs": "npm run start -w docs",
     "test:ci": "vitest .",
     "test:legacy": "vitest ./packages/fetch-mock/test/specs",
     "test": "vitest --ui .",

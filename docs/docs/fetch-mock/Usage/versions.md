@@ -1,9 +1,7 @@
 ---
-sidebar_position: 2
-
+sidebar_position: 
 ---
 # Versions
-
 
 ### Version 10
 
@@ -21,7 +19,7 @@ I intend to keep version 10 and above r4easonably clean, with as few workarounds
 
 ### Version 9 and below
 
-v7, v8 & v9 are practically identical, only differing in their treatment of a few edge cases, or in compatibility with other libraries and environments. For clarity, each section of the documentation tells you which version a feature was added with a <small class="version-added">version</small> label.
+v7, v8 & v9 are practically identical, only differing in their treatment of a few edge cases, or in compatibility with other libraries and environments. 
 
 For previous versions follow the documentation below:
 

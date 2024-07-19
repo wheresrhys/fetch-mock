@@ -8,8 +8,8 @@ const FeatureList = [
 		Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
 		description: (
 			<>
-				An intuitive, powerful API for creating a mock that
-				targets different requests based on a variety of criteria.
+				An intuitive, powerful API for creating a mock that targets different
+				requests based on a variety of criteria.
 			</>
 		),
 	},

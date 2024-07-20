@@ -1,21 +1,43 @@
 ---
-sidebar_position: 2
-
+sidebar_position: 3
+sidebar_label: Shorthands, .get(), .once() etc.
 ---
-# Shorthand methods
 
+# Routing shorthands
 
-These methods allow configuring routes for common use cases while avoiding writing configuration objects. Unless noted otherwise, each of the methods below have the same signature as `.mock(matcher, response, optionsOrName)`
+These methods allow defining routes for common use cases while avoiding writing hard to read configuration objects. Unless noted otherwise, each of the methods below have the same signature as `.route()`
+
+## .catch()
+
+`.catch(response)`
+
+Specifies how to respond to calls to `fetch` that don't match any routes.
+
+It accepts any [response](#api-mockingmock_response) compatible with `.route()`. If no argument is passed, then every unmatched call will receive a `200` response.
+
+## .sticky()
+
+Shorthand for `mock()` which creates a route that persists even when `restore()`, `reset()` or `resetbehavior()` are called;
+
+This method is particularly useful for setting up fixtures that must remain in place for all tests, e.g.
+
+```js
+fetchMock.sticky(/config-hub.com/, require('./fixtures/start-up-config.json'));
+```
 
 ## .once()
 
 Shorthand for `mock()` which creates a route that can only mock a single request. (see `repeat` option above)
 
-## .any(response, options)
+## .any()
+
+`.any(response, options)`
 
 Shorthand for `mock()` which creates a route that will return a response to any fetch request.
 
 ## .anyOnce(response, options)
+
+`.anyOnce(response, options)`
 
 Creates a route that responds to any single request
 
@@ -41,20 +63,12 @@ Creates a route that only responds to a single request using a particular http m
 
 ## .getAny(), .postAny(), .putAny(), .deleteAny(), .headAny(), .patchAny()
 
+`.___Any(response, options)`
+
 Creates a route that responds to any requests using a particular http method.
-As with `.any()`, these only accept the parameters `(response, options)`.
 
 ## .getAnyOnce(), .postAnyOnce(), .putAnyOnce(), .deleteAnyOnce(), .headAnyOnce(), .patchAnyOnce()
 
+`.___AnyOnce(response, options)`
+
 Creates a route that responds to any single request using a particular http method.
-As with `.any()`, these only accept the parameters `(response, options)`.
-
-## .sticky()
-
-Shorthand for `mock()` which creates a route that persists even when `restore()`, `reset()` or `resetbehavior()` are called;
-
-This method is particularly useful for setting up fixtures that must remain in place for all tests, e.g.
-
-```js
-fetchMock.sticky(/config-hub.com/, require('./fixtures/start-up-config.json'));
-```

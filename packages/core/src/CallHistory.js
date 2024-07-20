@@ -125,7 +125,7 @@ class CallHistory {
 			}
 		} else {
 			if (isUrlMatcher(filter)) {
-				options = { matcher: filter, ...(options || {}) };
+				options = { url: filter, ...(options || {}) };
 			} else {
 				options = { ...filter, ...(options || {}) };
 			}

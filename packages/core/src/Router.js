@@ -318,8 +318,10 @@ export default class Router {
 	addRoute(matcher, response, nameOrOptions) {
 		/** @type {RouteConfig} */
 		const config = {};
-		if (isUrlMatcher(matcher) || isFunctionMatcher(matcher)) {
-			config.matcher = matcher;
+		if (isUrlMatcher(matcher)) {
+			config.url = matcher;
+		} else if (isFunctionMatcher(matcher)) {
+			config.func = matcher;
 		} else {
 			Object.assign(config, matcher);
 		}
@@ -366,14 +368,7 @@ export default class Router {
 		}
 
 		this.fallbackRoute = new Route({
-			matcher: (url, options) => {
-				if (this.config.warnOnFallback) {
-					console.warn(
-						`Unmatched ${(options && options.method) || 'GET'} to ${url}`,
-					); // eslint-disable-line
-				}
-				return true;
-			},
+			func: () => true,
 			response: response || 'ok',
 			...this.config,
 		});

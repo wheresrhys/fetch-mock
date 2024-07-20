@@ -5,7 +5,7 @@ import Route from '../../Route.js';
 // as it's mainly about the shape of optiosn passed into to addRoute
 describe('matcher object', () => {
 	it('use matcher object with matcher property', () => {
-		const route = new Route({ matcher: 'http://a.com', response: 200 });
+		const route = new Route({ url: 'http://a.com', response: 200 });
 		expect(route.matcher('http://a.com')).toBe(true);
 	});
 
@@ -14,10 +14,10 @@ describe('matcher object', () => {
 		expect(route.matcher('http://a.com')).toBe(true);
 	});
 
-	it('can use matcher and url simultaneously', () => {
+	it('can use function and url simultaneously', () => {
 		const route = new Route({
 			url: 'end:path',
-			matcher: (url, opts) =>
+			func: (url, opts) =>
 				opts && opts.headers && opts.headers.authorized === true,
 			response: 200,
 		});
@@ -41,7 +41,7 @@ describe('matcher object', () => {
 		expect(route.matcher('http://a.com')).toBe(true);
 	});
 
-	//TODO be strionger on discouraging this
+	//TODO be stronger on discouraging this
 	it.skip('deprecated message on using func (prefer matcher)', () => {
 		new Route({
 			url: 'end:profile',
@@ -114,9 +114,6 @@ describe('matcher object', () => {
 			}),
 		).toBe(true);
 	});
-
-	// TODO new tests for how multiple routes that match can be addeed
-	it.skip('support setting overwrite routes on matcher parameter', () => {});
 
 	it('support setting matchPartialBody on matcher parameter', () => {
 		const route = new Route({

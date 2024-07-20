@@ -63,7 +63,7 @@ const FetchMock = {
 			routes: [...this.router.routes],
 			fallbackRoute: this.router.fallbackRoute,
 		});
-		instance.callHistory = new CallHistory(this.config, instance.router);
+		instance.callHistory = new CallHistory(instance.config, instance.router);
 		return instance;
 	},
 	/**

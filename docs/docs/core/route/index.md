@@ -4,7 +4,7 @@ sidebar_label: .route()
 ---
 # route()
 
-`fetchMock.route(matcher, response, optionsOrName)`
+`fetchMock.route(matcher, response, options)`
 
 Adds a route to  `fetchHandler`'s router. A route is a combination of 
 
@@ -25,15 +25,45 @@ Determines which calls to `fetch` should be handled by this route. If multiple c
 
 Response to send when a call is matched
 
-### optionsOrName
+### options
 
 `{Object|String}`
 
-More options to configure matching and response behaviour. Alternatively, when a `String` is provided it will be used as a name for the route (used when inspecting calls or removing routes)
+More options to configure matching and response behaviour. Alternatively, when a `String` is provided it will be used as a name for the route (used when inspecting calls or removing routes).
 
-## Calling with a single options object
+## Alternate call patterns
 
-`fetchMock.route(options)` is also supported, where `options` is an object that contains a `{response}` property and any number of matchers and other options.
+As well as the function signature described above, the following patterns are supported.  
+
+### Name as third parameter
+
+A string can be passed as the third parameter, and will be used as the route name. e.g.
+`fetchMock.route('*', 200, 'catch-all')` is equivalent to `fetchMock.route('*', 200, {name: 'catch-all'})`.
+
+### Matchers on third parameter
+
+The matchers specified in the first parameter are merged internally with the options object passed as the third parameter. This means that it does not matter on which of these objects you specify options/matchers.
+
+This can be particularly useful for clearly and concisely expressing similar routes that only differ in e.g. different query strings or headers e.g.
+
+```js
+fetchMock
+	.route('http://my.site', 401)
+	.route('http://my.site', 200, {headers: {auth: true}})
+```
+
+### Single options object
+
+Matchers, options and a response can be combined on a single options object passed into the first parameter, e.g.
+
+```js
+fetchMock.route({
+	url: 'http://my.site',
+	repeat: 2
+	response: 200
+})
+
+```
 
 ## Examples
 

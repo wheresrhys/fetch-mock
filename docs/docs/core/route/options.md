@@ -3,14 +3,11 @@
 sidebar_position: 3
 
 ---
-# optionsOrName
+# options
 
-Either
+An object containing further options for configuring mocking behaviour.
 
-- An object containing further options for configuring mocking behaviour.
-- A string, which will be used as the route's name
-
-## General options
+## Options
 
 ### name
 
@@ -20,13 +17,13 @@ A unique string naming the route. Used to subsequently retrieve references to th
 
 ### response
 
-Instead of defining the response as the second argument of `mock()`, it can be passed as a property on the first argument. See the [response documentation](#usageapimock_response) for valid values.
+When using pattern 3. above, `response` can be passed as a property on the options object. See the [response documentation](#usageapimock_response) for valid values.
 
 ### repeat
 
 `{Int}`
 
-Limits the number of times the route can be used. If the route has already been called `repeat` times, the call to `fetch()` will fall through to be handled by any other routes defined (which may eventually result in an error if nothing matches it)
+Limits the number of times the route will be used to respond. If the route has already been called `repeat` times, the call to `fetch()` will fall through to be handled by any other routes defined (which may eventually result in an error if nothing matches it).
 
 ### delay
 
@@ -38,7 +35,7 @@ Delays responding for the number of milliseconds specified.
 
 `{Boolean}`
 
-Avoids a route being removed when `reset()`, `restore()` or `resetBehavior()` are called. _Note - this does not preserve the history of calls to the route_
+Avoids a route being removed when `removeRoutes()` is called. 
 
 ### sendAsJson
 
@@ -52,10 +49,5 @@ See [global configuration](#usageconfiguration)
 
 See [global configuration](#usageconfiguration)
 
-### overwriteRoutes
-
-`{Boolean}`
-
-See [global configuration](#usageconfiguration)
 
 

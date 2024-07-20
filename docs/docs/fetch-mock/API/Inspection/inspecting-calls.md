@@ -1,10 +1,9 @@
 ---
-
 sidebar_position: 1
 tableOfContents:
   maxHeadingLevel: 5
-
 ---
+
 # Inspecting calls
 
 ## Methods

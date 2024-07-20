@@ -1,8 +1,7 @@
 ---
-
 sidebar_position: 3
-
 ---
+
 # .catch(response)
 
 Specifies how to respond to calls to `fetch` that don't match any mocks.

@@ -1,9 +1,8 @@
 ---
 sidebar_position: 1
-
 ---
-# Global or non-global
 
+# Global or non-global
 
 `fetch` can be used by your code globally or locally. It's important to determine which one applies to your codebase as it will impact how you use `fetch-mock`
 

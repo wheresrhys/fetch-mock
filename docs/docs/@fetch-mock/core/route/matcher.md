@@ -1,19 +1,19 @@
 ---
 sidebar_position: 1
 ---
+
 # matcher
 
 Determines whether a route should be used to generate a response for a request.
 
-URL matchers and function matchers can be passed in as standalone values. They can also be combined with other matchers by passing in an object containing one or more matchers. e.g. 
+URL matchers and function matchers can be passed in as standalone values. They can also be combined with other matchers by passing in an object containing one or more matchers. e.g.
 
 ```js
 {
-	url: "begin: https://my.site", 
+	url: "begin: https://my.site",
 	method: 'post'
 }
 ```
-
 
 ## URL matchers
 
@@ -58,7 +58,6 @@ Matches a url that satisfies a regular expression, e.g. `/(article|post)\/\d+/`
 `{String}`
 Match a url that satisfies an [express style path](https://www.npmjs.com/package/path-to-regexp), e.g. `"express:/user/:user"`
 
-
 #### Matching express param values
 
 `{Object}`
@@ -71,9 +70,6 @@ When the `express:` keyword is used in a string matcher, it can be combined with
 	params: {"section": "feed", "user": "geoff"}
 }
 ```
-
-
-
 
 ## Other matching criteria
 
@@ -88,7 +84,6 @@ Match only requests using this http method. Not case-sensitive, e.g. `{method: "
 `{Object|Headers}`
 
 Match only requests that have these headers set, e.g. `{headers: {"Accepts": "text/html"}}`
-
 
 ### query
 
@@ -108,7 +103,6 @@ Match only requests that have these query parameters set (in any order). Query p
 - `{{query: "tags": ["cute", "kittenz"]}}` `?tags=cute&tags=kittenz`
 - `{{query: "q": undefined, inform: true}}` `?q=&inform=true`
 
-
 ### body
 
 `{Object}`
@@ -124,14 +118,15 @@ e.g.`{body: { "key1": "value1", "key2": "value2" }}`
 `{Boolean}`
 
 When matching a body, this option ignores any properties not mentioned in the matcher e.g. the following will ignore any properties of body that are not `"key1"`, and will therefore match the body `{ "key1": "value1", "key2": "value2" }`.
+
 ```
 {
 	body: { "key1": "value1"},
 	matchPartialBody: true
 }
 ```
-This option can also be [set in the global configuration](/dummy)
 
+This option can also be [set in the global configuration](/dummy)
 
 ## Function matchers
 
@@ -145,5 +140,3 @@ As well as being passed as a standalone argument, it can also be added to the ma
 
 - `(url, {headers}) => !!headers.Authorization`
 - `(_, _, request) => !!request.headers.get('Authorization')`
-
-

@@ -1,8 +1,7 @@
 ---
-
 sidebar_position: 3
-
 ---
+
 # options
 
 An object containing further options for configuring mocking behaviour.
@@ -35,7 +34,7 @@ Delays responding for the number of milliseconds specified.
 
 `{Boolean}`
 
-Avoids a route being removed when `removeRoutes()` is called. 
+Avoids a route being removed when `removeRoutes()` is called.
 
 ### sendAsJson
 
@@ -48,6 +47,3 @@ See [global configuration](#usageconfiguration)
 `{Boolean}`
 
 See [global configuration](#usageconfiguration)
-
-
-

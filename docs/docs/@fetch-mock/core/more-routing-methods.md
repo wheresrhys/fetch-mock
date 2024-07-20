@@ -73,10 +73,7 @@ Creates a route that responds to any requests using a particular http method.
 
 Creates a route that responds to any single request using a particular http method.
 
-
-
 ## .addMatcher(options)
-
 
 Allows adding your own, reusable custom matchers to fetch-mock, for example a matcher for interacting with GraphQL queries, or an `isAuthorized` matcher that encapsulates the exact authorization conditions for the API you are mocking, and only requires a `true` or `false` to be input
 
@@ -140,5 +137,3 @@ fetchMock
 ```
 
 One intent behind this functionality is to allow companies or publishers of particular toolsets to provide packages that extend fetch-mock to provide a more user friendly experience for developers using fetch to interact with their APIs. The GraphQL use case is a good example of this - the things which a developer might want to match on are buried in the request body, and written in a non-javascript query language. Please get in touch if you'd like to collaborate on writing such a package.
-
-

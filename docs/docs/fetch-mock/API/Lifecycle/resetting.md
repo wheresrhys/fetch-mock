@@ -1,9 +1,8 @@
 ---
-
 sidebar_position: 2
 ---
-# Resetting
 
+# Resetting
 
 ## .restore() / .reset()
 

@@ -1,8 +1,7 @@
 ---
-
 sidebar_position: 5
-
 ---
+
 # Setting cookies in the browser
 
 The `Set-Cookie` header is used to set cookies in the browser. This behaviour is part of the [browser/http spec](https://tools.ietf.org/html/rfc6265#section-4.1), not the fetch spec. As fetch-mock prevents requests getting out of js and into the browser, `Set-Cookie` will have no effect.

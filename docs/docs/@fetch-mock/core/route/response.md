@@ -1,10 +1,10 @@
 ---
 sidebar_position: 2
 ---
+
 # response
 
 Configures the http response returned by `fetchHandler`. Unless otherwise stated, all responses have a `200` status
-
 
 ## Response
 
@@ -13,6 +13,7 @@ Configures the http response returned by `fetchHandler`. Unless otherwise stated
 A [`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response/Response) instance to return unaltered.
 
 ## Status code
+
 `{Int}`
 
 Returns a `Response` with the given status code, e.g. `200`. The response's `statusText` will also be set to the [default value corresponding to the status](https://fetch.spec.whatwg.org/#dom-response-statustext).
@@ -33,7 +34,7 @@ If the object _only_ contains properties from among those listed below it is use
 
 `{String|Object}`
 
-Set the `Response` body,  e.g. `"Server responded ok"`, `{ token: 'abcdef' }`. See the `Object` section of the docs below for behaviour when passed an `Object`.
+Set the `Response` body, e.g. `"Server responded ok"`, `{ token: 'abcdef' }`. See the `Object` section of the docs below for behaviour when passed an `Object`.
 
 ### status
 

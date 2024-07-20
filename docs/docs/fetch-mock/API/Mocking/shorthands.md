@@ -1,9 +1,8 @@
 ---
 sidebar_position: 2
-
 ---
-# Shorthand methods
 
+# Shorthand methods
 
 These methods allow configuring routes for common use cases while avoiding writing configuration objects. Unless noted otherwise, each of the methods below have the same signature as `.mock(matcher, response, optionsOrName)`
 

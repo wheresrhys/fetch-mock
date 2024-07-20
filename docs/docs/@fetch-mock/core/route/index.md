@@ -2,11 +2,12 @@
 sidebar_position: 2
 sidebar_label: .route()
 ---
+
 # route()
 
 `fetchMock.route(matcher, response, options)`
 
-Adds a route to  `fetchHandler`'s router. A route is a combination of 
+Adds a route to `fetchHandler`'s router. A route is a combination of
 
 - one or more rules for deciding whether a particular fetch request should be handled by the route
 - configuration for generating an appropriate response
@@ -33,7 +34,7 @@ More options to configure matching and response behaviour. Alternatively, when a
 
 ## Alternate call patterns
 
-As well as the function signature described above, the following patterns are supported.  
+As well as the function signature described above, the following patterns are supported.
 
 ### Name as third parameter
 
@@ -49,7 +50,7 @@ This can be particularly useful for clearly and concisely expressing similar rou
 ```js
 fetchMock
 	.route('http://my.site', 401)
-	.route('http://my.site', 200, {headers: {auth: true}})
+	.route('http://my.site', 200, { headers: { auth: true } });
 ```
 
 ### Single options object

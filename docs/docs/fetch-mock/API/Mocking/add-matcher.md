@@ -1,8 +1,8 @@
 ---
 sidebar_position: 3
 ---
-# .addMatcher(options)
 
+# .addMatcher(options)
 
 Allows adding your own, reusable custom matchers to fetch-mock, for example a matcher for interacting with GraphQL queries, or an `isAuthorized` matcher that encapsulates the exact authorization conditions for the API you are mocking, and only requires a `true` or `false` to be input
 

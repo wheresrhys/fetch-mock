@@ -1,9 +1,8 @@
 ---
 sidebar_position: 2
-
 ---
-# Importing the correct version
 
+# Importing the correct version
 
 _Note that the documentation below applies to version 9 and below._
 

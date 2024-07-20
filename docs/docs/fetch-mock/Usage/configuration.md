@@ -1,9 +1,8 @@
 ---
-
 sidebar_position: 4
 ---
-# Configuration
 
+# Configuration
 
 On any `fetch-mock` instance, set configuration options directly on the `fetchMock.config` object. e.g.
 

@@ -12,6 +12,8 @@ Adds a route to `fetchHandler`'s router. A route is a combination of
 - one or more rules for deciding whether a particular fetch request should be handled by the route
 - configuration for generating an appropriate response
 
+It returns the fetchMock instance, so is chainable e.g. `fetchMock.route('a', 200).route('b', 301)`
+
 ## Parameters
 
 ### matcher

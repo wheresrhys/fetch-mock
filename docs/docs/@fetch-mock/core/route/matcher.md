@@ -24,6 +24,7 @@ All of the following can be passed in directly as the `matcher` argument or as t
 ### Full url
 
 `{String|URL}`
+
 Match an exact url. Can be defined using a string or a `URL` instance, e.g. `"http://www.site.com/page.html"`
 
 The value `*` can be used to match any url
@@ -31,31 +32,37 @@ The value `*` can be used to match any url
 ### begin:...
 
 `{String}`
+
 Match a url beginning with a string, e.g. `"begin:http://www.site.com"`
 
 ### end:...
 
 `{String}`
+
 Match a url ending with a string, e.g. `"end:.jpg"`
 
 ### path:...
 
 `{String}`
+
 Match a url which has a given path, e.g. `"path:/posts/2018/7/3"`
 
 ### glob:...
 
 `{String}`
+
 Match a url using a glob pattern, e.g. `"glob:http://*.*"`
 
 ### RegExp
 
 `{RegExp}`
+
 Matches a url that satisfies a regular expression, e.g. `/(article|post)\/\d+/`
 
 ### express:...
 
 `{String}`
+
 Match a url that satisfies an [express style path](https://www.npmjs.com/package/path-to-regexp), e.g. `"express:/user/:user"`
 
 #### Matching express param values

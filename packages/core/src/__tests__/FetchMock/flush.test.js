@@ -12,11 +12,11 @@ describe('FetchMockWrapper.js', () => {
 			fm.route('http://one.com/', 200).route('http://two.com/', 200);
 			// no expectation, but if it doesn't work then the promises will hang
 			// or reject and the test will timeout
-			await fm.flush();
+			await fm.callHistory.flush();
 			fm.fetchHandler('http://one.com');
-			await fm.flush();
+			await fm.callHistory.flush();
 			fm.fetchHandler('http://two.com');
-			await fm.flush();
+			await fm.callHistory.flush();
 		});
 
 		it('should resolve after fetches', async () => {
@@ -25,7 +25,7 @@ describe('FetchMockWrapper.js', () => {
 			fm.fetchHandler('http://example').then(() => {
 				data = 'done';
 			});
-			await fm.flush();
+			await fm.callHistory.flush();
 			expect(data).toEqual('done');
 		});
 
@@ -38,7 +38,7 @@ describe('FetchMockWrapper.js', () => {
 					data = 'done';
 				});
 
-				await fm.flush(true);
+				await fm.callHistory.flush(true);
 				expect(data).toEqual('done');
 			});
 			it('should resolve after .json() if waitForResponseMethods option passed', async () => {
@@ -50,7 +50,7 @@ describe('FetchMockWrapper.js', () => {
 						data = 'done';
 					});
 
-				await fm.flush(true);
+				await fm.callHistory.flush(true);
 				expect(data).toEqual('done');
 			});
 
@@ -63,7 +63,7 @@ describe('FetchMockWrapper.js', () => {
 						data = 'done';
 					});
 
-				await fm.flush(true);
+				await fm.callHistory.flush(true);
 				expect(data).toEqual('done');
 			});
 		});
@@ -80,14 +80,14 @@ describe('FetchMockWrapper.js', () => {
 
 			setTimeout(() => orderedResults.push('not flush'), 25);
 
-			await fm.flush();
+			await fm.callHistory.flush();
 			orderedResults.push('flush');
 			expect(orderedResults).toEqual(['not flush', 'flush']);
 		});
 
 		it('flush resolves on expected error', async () => {
 			fm.route('http://one.com/', { throws: 'Problem in space' });
-			await fm.flush();
+			await fm.callHistory.flush();
 		});
 	});
 });

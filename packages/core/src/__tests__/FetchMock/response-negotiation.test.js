@@ -209,7 +209,7 @@ describe('response negotiation', () => {
 			await expectAbortError('http://a.com', {
 				signal: getDelayedAbortController().signal,
 			});
-			expect(fm.done()).toBe(true);
+			expect(fm.callHistory.done()).toBe(true);
 		});
 
 		it('will flush even when aborted', async () => {
@@ -218,8 +218,8 @@ describe('response negotiation', () => {
 			await expectAbortError('http://a.com', {
 				signal: getDelayedAbortController().signal,
 			});
-			await fm.flush();
-			expect(fm.done()).toBe(true);
+			await fm.callHistory.flush();
+			expect(fm.callHistory.done()).toBe(true);
 		});
 	});
 });

@@ -126,7 +126,7 @@ When matching a body, this option ignores any properties not mentioned in the ma
 }
 ```
 
-This option can also be [set in the global configuration](/dummy)
+This option can also be [set in the global configuration](/fetch-mock/docs/@fetch-mock/core/configuration)
 
 ## Function matchers
 

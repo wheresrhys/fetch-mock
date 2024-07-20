@@ -1,9 +1,9 @@
 ---
 sidebar_position: 3
-sidebar_label: Shorthands, .get(), .once() etc.
+sidebar_label: More routing methods
 ---
 
-# Routing shorthands
+# More routing methods
 
 These methods allow defining routes for common use cases while avoiding writing hard to read configuration objects. Unless noted otherwise, each of the methods below have the same signature as `.route()`
 

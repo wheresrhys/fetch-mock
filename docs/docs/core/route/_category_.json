@@ -1,5 +1,5 @@
 {
   "position": 2.5,
-  "collapsible": true,
-  "collapsed": true,
+  "collapsible": false,
+  "collapsed": false,
 }

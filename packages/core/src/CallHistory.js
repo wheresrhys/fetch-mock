@@ -44,6 +44,7 @@ const isMatchedOrUnmatched = (filter) =>
 class CallHistory {
 	/**
 	 * @param {FetchMockConfig} globalConfig
+	 * @param router
 	 */
 	constructor(globalConfig, router) {
 		/** @type {CallLog[]} */
@@ -164,15 +165,19 @@ class CallHistory {
 	lastCall(filter, options) {
 		return this.calls(filter, options).pop();
 	}
+
 	/**
-	 * @param {RouteName[]} [routeNames]
+	 * @param {RouteName|RouteName[]} [routeNames]
 	 * @returns {boolean}
 	 */
 	done(routeNames) {
-		const routesToCheck = routeNames
-			? this.router.routes.filter(({ config: { name } }) => routeNames.includes(name))
-			: this.router.routes;
-
+		let routesToCheck = this.router.routes;
+		if (routeNames) {
+			routeNames = Array.isArray(routeNames) ? routeNames : [routeNames];
+			routesToCheck = this.router.routes.filter(({ config: { name } }) =>
+				routeNames.includes(name),
+			)
+		}
 		// TODO when checking all routes needs to check against all calls
 		// Can't use array.every because would exit after first failure, which would
 		// break the logging

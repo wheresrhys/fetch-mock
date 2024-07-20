@@ -131,12 +131,7 @@ const FetchMock = {
 	 * @returns {boolean}
 	 */
 	done(routeNames) {
-		if (!routeNames) {
-			return this.callHistory.done();
-		}
-		return this.callHistory.done(
-			Array.isArray(routeNames) ? routeNames : [routeNames],
-		);
+		return this.callHistory.done(routeNames);
 	},
 	removeRoutes(options) {
 		this.router.removeRoutes(options);

@@ -1,9 +1,8 @@
 ---
 sidebar_position: 3
-
 ---
-# Cheatsheet
 
+# Cheatsheet
 
 - [Installation](#installation)
 - [Set up and teardown](#setup-and-teardown)

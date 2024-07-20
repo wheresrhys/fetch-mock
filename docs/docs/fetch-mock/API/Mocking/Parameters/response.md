@@ -1,8 +1,7 @@
 ---
-
 sidebar_position: 2
-
 ---
+
 # response
 
 Configures the http response returned by the mock. Accepts any of the following values or a `Promise` for any of them (useful when testing race conditions, loading transitions etc.). Unless otherwise stated, all responses have a `200` status

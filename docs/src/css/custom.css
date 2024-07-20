@@ -28,3 +28,14 @@
   --ifm-color-primary-lightest: #4fddbf;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+
+a.navbar__link.new::after {
+  content:  '(experimental)';
+  display:  inline-block;
+  padding-left:  3px;
+  color:  green;
+  vertical-align: super;
+  font-size:  0.8em;
+
+}

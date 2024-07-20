@@ -1,6 +1,7 @@
 ---
 sidebar_position: 1
 ---
+
 # matcher
 
 Criteria for deciding which requests to mock.
@@ -73,7 +74,6 @@ This can also be set as a `functionMatcher` in the [options parameter](#api-mock
 The url and function matchers described above can be combined with other criteria for matching a request by passing an options object which may have one or more of the properties described in the documentation for the `options` parameter.
 
 In particular, **headers**, **query string parameters**, **request bodies** and **express parameter values** can all be used as matching criteria.
-
 
 #### Examples
 

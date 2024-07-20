@@ -1,9 +1,8 @@
 ---
-
 sidebar_position: 2
 ---
-# Quickstart
 
+# Quickstart
 
 ## Setting up your mock
 

@@ -1,5 +1,5 @@
 ---
-sidebar_position: 4
+sidebar_position: 6
 ---
 
 # Configuration
@@ -27,36 +27,26 @@ Always convert objects passed to `.mock()` to JSON strings before building repon
 
 Sets a `Content-Length` header on each response.
 
-### fallbackToNetwork
-
-`{Boolean|String}` default: `false`
-
-- `true`: Unhandled calls fall through to the network
-- `false`: Unhandled calls throw an error
-- `'always'`: All calls fall through to the network, effectively disabling fetch-mock.
-
-### overwriteRoutes<sup>†</sup>
-
-`{Boolean}` default: `undefined`
-
-Configures behaviour when attempting to add a new route with the same name (or inferred name) as an existing one
-
-- `undefined`: An error will be thrown
-- `true`: Overwrites the existing route
-- `false`: Appends the new route to the list of routes
-
 ### matchPartialBody
 
 `{Boolean}` default: `false`
 
 Match calls that only partially match a specified body json. Uses the [is-subset](https://www.npmjs.com/package/is-subset) library under the hood, which implements behaviour the same as jest's [.objectContaining()](https://jestjs.io/docs/en/expect#expectobjectcontainingobject) method.
 
-### warnOnFallback
-
-`{Boolean}` default: `true`
-
-Print a warning if any call is caught by a fallback handler (set using `catch()`, `spy()` or the `fallbackToNetwork` option)
-
 ### Custom fetch implementations
 
-`fetch`, `Headers`, `Request`, `Response` can all be set on the configuration object, allowing fetch-mock to mock any implementation if you are not using the default one for the environment.
+`fetch`, `Headers`, `Request`, `Response` can all be set on the configuration object, allowing fetch-mock to mock any implementation of `fetch`, e.g. `node-fetch`. e.g.
+
+```js
+
+import { default as fetch, Headers, Request, Response } from 'node-fetch';
+
+import fetchMock from 'fetch-mock';
+
+fetchMock.config = Object.assign(fetchMock.config, {
+	Request,
+	Response,
+	Headers,
+	fetch,
+});
+```

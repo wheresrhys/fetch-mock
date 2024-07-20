@@ -1,9 +1,8 @@
 ---
 sidebar_position: 0.5
-
 ---
-# Requirements
 
+# Requirements
 
 fetch-mock requires the following to run:
 

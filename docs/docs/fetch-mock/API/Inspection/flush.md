@@ -1,9 +1,8 @@
 ---
-
 sidebar_position: 3
 ---
-# .flush(waitForBody)
 
+# .flush(waitForBody)
 
 Returns a `Promise` that resolves once all fetches handled by fetch-mock have resolved
 

@@ -4,7 +4,7 @@ import Route from '../../Route.js';
 
 describe('method matching', () => {
 	it('match any method by default', () => {
-		const route = new Route({ matcher: '*', response: 200 });
+		const route = new Route({ url: '*', response: 200 });
 
 		expect(route.matcher('http://a.com/', { method: 'GET' })).toBe(true);
 		expect(route.matcher('http://a.com/', { method: 'POST' })).toBe(true);
@@ -43,7 +43,7 @@ describe('method matching', () => {
 	it('can be used alongside function matchers', () => {
 		const route = new Route({
 			method: 'POST',
-			matcher: (url) => /a\.com/.test(url),
+			matcherFunction: (url) => /a\.com/.test(url),
 
 			response: 200,
 		});

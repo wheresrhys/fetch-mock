@@ -196,7 +196,7 @@ const getFullUrlMatcher = (route, matcherUrl, query) => {
 /**
  * @type {MatcherGenerator}
  */
-const getFunctionMatcher = ({ func }) => func;
+const getFunctionMatcher = ({ matcherFunction }) => matcherFunction;
 /**
  * @type {MatcherGenerator}
  */
@@ -236,6 +236,6 @@ export const builtInMatchers = [
 	{ name: 'headers', matcher: getHeaderMatcher },
 	{ name: 'params', matcher: getParamsMatcher },
 	{ name: 'body', matcher: getBodyMatcher, usesBody: true },
-	{ name: 'func', matcher: getFunctionMatcher },
+	{ name: 'matcherFunction', matcher: getFunctionMatcher },
 	{ name: 'url', matcher: getUrlMatcher },
 ];

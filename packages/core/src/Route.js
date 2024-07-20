@@ -1,5 +1,5 @@
 //@type-check
-import { builtInMatchers, isUrlMatcher, isFunctionMatcher } from './Matchers';
+import { builtInMatchers } from './Matchers';
 import statusTextMap from './StatusTextMap';
 
 /** @typedef {import('./Matchers').RouteMatcher} RouteMatcher */
@@ -41,7 +41,7 @@ import statusTextMap from './StatusTextMap';
  * @property {{ [key: string]: string }} [query]
  * @property {{ [key: string]: string }} [params]
  * @property {object} [body]
- * @property {RouteMatcherFunction} [func]
+ * @property {RouteMatcherFunction} [matcherFunction]
  * @property {RouteMatcher} [matcher]
  * @property {RouteMatcherUrl} [url]
  * @property {RouteResponse | RouteResponseFunction} [response]
@@ -133,13 +133,6 @@ class Route {
 	#sanitize() {
 		if (this.config.method) {
 			this.config.method = this.config.method.toLowerCase();
-		}
-		if (isUrlMatcher(this.config.matcher)) {
-			this.config.url = this.config.matcher;
-			delete this.config.matcher;
-		}
-		if (isFunctionMatcher(this.config.matcher)) {
-			this.config.func = this.config.matcher;
 		}
 	}
 	/**

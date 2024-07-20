@@ -4,7 +4,7 @@ import Route from '../../Route.js';
 describe('express path parameter matching', () => {
 	it('can match a path parameters', () => {
 		const route = new Route({
-			matcher: 'express:/type/:instance',
+			url: 'express:/type/:instance',
 			response: 200,
 			params: { instance: 'b' },
 		});
@@ -15,7 +15,7 @@ describe('express path parameter matching', () => {
 
 	it('can match multiple path parameters', () => {
 		const route = new Route({
-			matcher: 'express:/:type/:instance',
+			url: 'express:/:type/:instance',
 			response: 200,
 			params: { instance: 'b', type: 'cat' },
 		});
@@ -28,7 +28,7 @@ describe('express path parameter matching', () => {
 
 	it('can match a path parameter on a full url', () => {
 		const route = new Route({
-			matcher: 'express:/type/:instance',
+			url: 'express:/type/:instance',
 			response: 200,
 			params: { instance: 'b' },
 		});
@@ -38,7 +38,7 @@ describe('express path parameter matching', () => {
 	});
 
 	it('can match fully qualified url', () => {
-		const route = new Route({ matcher: 'express:/apps/:id', response: 200 });
+		const route = new Route({ url: 'express:/apps/:id', response: 200 });
 
 		expect(route.matcher('https://api.example.com/apps/abc')).toBe(true);
 	});

@@ -278,8 +278,8 @@ export default class Router {
 				if (typeof response[name] === 'function') {
 					//@ts-ignore
 					return new Proxy(response[name], {
-						apply: (func, thisArg, args) => {
-							const result = func.apply(response, args);
+						apply: (matcherFunction, thisArg, args) => {
+							const result = matcherFunction.apply(response, args);
 							if (result.then) {
 								pendingPromises.push(
 									result.catch(/** @type {function(): void} */ () => undefined),
@@ -318,8 +318,10 @@ export default class Router {
 	addRoute(matcher, response, nameOrOptions) {
 		/** @type {RouteConfig} */
 		const config = {};
-		if (isUrlMatcher(matcher) || isFunctionMatcher(matcher)) {
-			config.matcher = matcher;
+		if (isUrlMatcher(matcher)) {
+			config.url = matcher;
+		} else if (isFunctionMatcher(matcher)) {
+			config.matcherFunction = matcher;
 		} else {
 			Object.assign(config, matcher);
 		}
@@ -366,14 +368,7 @@ export default class Router {
 		}
 
 		this.fallbackRoute = new Route({
-			matcher: (url, options) => {
-				if (this.config.warnOnFallback) {
-					console.warn(
-						`Unmatched ${(options && options.method) || 'GET'} to ${url}`,
-					); // eslint-disable-line
-				}
-				return true;
-			},
+			matcherFunction: () => true,
 			response: response || 'ok',
 			...this.config,
 		});

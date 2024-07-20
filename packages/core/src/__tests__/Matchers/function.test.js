@@ -4,7 +4,7 @@ import Route from '../../Route.js';
 describe('function matching', () => {
 	it('match using custom function', () => {
 		const route = new Route({
-			matcher: (url, opts) =>
+			matcherFunction: (url, opts) =>
 				url.indexOf('logged-in') > -1 &&
 				opts &&
 				opts.headers &&
@@ -27,7 +27,7 @@ describe('function matching', () => {
 
 	it('match using custom function using request body', () => {
 		const route = new Route({
-			matcher: (url, opts) => opts.body === 'a string',
+			matcherFunction: (url, opts) => opts.body === 'a string',
 			response: 200,
 		});
 		expect(route.matcher('http://a.com/logged-in')).toBe(false);
@@ -41,9 +41,9 @@ describe('function matching', () => {
 
 	it('match using custom function alongside other matchers', () => {
 		const route = new Route({
-			matcher: 'end:profile',
+			url: 'end:profile',
 			response: 200,
-			func: (url, opts) =>
+			matcherFunction: (url, opts) =>
 				opts && opts.headers && opts.headers.authorized === true,
 		});
 

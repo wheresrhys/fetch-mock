@@ -1,6 +1,6 @@
 ---
 sidebar_label: '@fetch-mock/core'
-sidebar_position: 0
+sidebar_position: 1
 ---
 
 # @fetch-mock/core

@@ -60,13 +60,13 @@ const config = {
 						type: 'docSidebar',
 						sidebarId: 'fetchMockSidebar',
 						position: 'left',
-						label: 'Docs',
+						label: 'fetch-mock docs',
 					},
 					{
 						type: 'docSidebar',
-						sidebarId: 'coreSidebar',
+						sidebarId: 'suiteSidebar',
 						position: 'left',
-						label: 'core',
+						label: '@fetch-mock docs',
 					},
 					{
 						href: 'https://github.com/wheresrhys/fetch-mock',

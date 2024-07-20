@@ -4,7 +4,7 @@ sidebar_position: 4
 
 # Call history
 
-`fetchMock.callHistory` is an object used to record the history of all calls handled by `fetchMock.fetchHandler`. 
+`fetchMock.callHistory` is an object used to record the history of all calls handled by `fetchMock.fetchHandler`.
 
 ## CallLog schema
 
@@ -55,6 +55,7 @@ Any matcher compatible with the [route api](#api-mockingmock_matcher) can be pas
 An options object compatible with the [route api](#api-mockingmock_options) to be used to filter the list of calls further.
 
 ## Methods
+
 `fetchMock.callHistory` exposes the following methods.
 
 ### .recordCall(callLog)
@@ -90,5 +91,3 @@ Returns a `Promise` that resolves once all fetches handled by fetch-mock have re
 Useful for testing code that uses `fetch` but where the returned promise cannot be accessed from your tests.
 
 If `waitForBody` is `true`, the promise will wait for all body parsing methods (`res.json()`, `res.text()`, etc.) to resolve too.
-
-

@@ -38,7 +38,6 @@ Match calls that only partially match a specified body json. Uses the [is-subset
 `fetch`, `Headers`, `Request`, `Response` can all be set on the configuration object, allowing fetch-mock to mock any implementation of `fetch`, e.g. `node-fetch`. e.g.
 
 ```js
-
 import { default as fetch, Headers, Request, Response } from 'node-fetch';
 
 import fetchMock from 'fetch-mock';

@@ -69,6 +69,7 @@ const config = {
 						label: '@fetch-mock docs',
 						className: 'new',
 					},
+					{ to: 'blog', label: 'Blog', position: 'right' },
 					{
 						href: 'https://github.com/wheresrhys/fetch-mock',
 						label: 'GitHub',

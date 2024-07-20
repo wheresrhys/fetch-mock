@@ -42,10 +42,10 @@ describe('matcher object', () => {
 	});
 
 	//TODO be strionger on discouraging this
-	it.skip('deprecated message on using functionMatcher (prefer matcher)', () => {
+	it.skip('deprecated message on using func (prefer matcher)', () => {
 		new Route({
 			url: 'end:profile',
-			functionMatcher: (url, opts) =>
+			func: (url, opts) =>
 				opts && opts.headers && opts.headers.authorized === true,
 			response: 200,
 		});

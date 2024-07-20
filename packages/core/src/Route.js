@@ -41,7 +41,7 @@ import statusTextMap from './StatusTextMap';
  * @property {{ [key: string]: string }} [query]
  * @property {{ [key: string]: string }} [params]
  * @property {object} [body]
- * @property {RouteMatcherFunction} [functionMatcher]
+ * @property {RouteMatcherFunction} [func]
  * @property {RouteMatcher} [matcher]
  * @property {RouteMatcherUrl} [url]
  * @property {RouteResponse | RouteResponseFunction} [response]
@@ -139,7 +139,7 @@ class Route {
 			delete this.config.matcher;
 		}
 		if (isFunctionMatcher(this.config.matcher)) {
-			this.config.functionMatcher = this.config.matcher;
+			this.config.func = this.config.matcher;
 		}
 	}
 	/**

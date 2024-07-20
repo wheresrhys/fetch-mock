@@ -43,7 +43,7 @@ describe('function matching', () => {
 		const route = new Route({
 			matcher: 'end:profile',
 			response: 200,
-			functionMatcher: (url, opts) =>
+			func: (url, opts) =>
 				opts && opts.headers && opts.headers.authorized === true,
 		});
 

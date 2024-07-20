@@ -67,6 +67,7 @@ const config = {
 						sidebarId: 'suiteSidebar',
 						position: 'left',
 						label: '@fetch-mock docs',
+						className: "new"
 					},
 					{
 						href: 'https://github.com/wheresrhys/fetch-mock',

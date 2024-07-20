@@ -17,7 +17,7 @@ describe('matcher object', () => {
 	it('can use function and url simultaneously', () => {
 		const route = new Route({
 			url: 'end:path',
-			func: (url, opts) =>
+			matcherFunction: (url, opts) =>
 				opts && opts.headers && opts.headers.authorized === true,
 			response: 200,
 		});
@@ -42,10 +42,10 @@ describe('matcher object', () => {
 	});
 
 	//TODO be stronger on discouraging this
-	it.skip('deprecated message on using func (prefer matcher)', () => {
+	it.skip('deprecated message on using matcherFunction (prefer matcher)', () => {
 		new Route({
 			url: 'end:profile',
-			func: (url, opts) =>
+			matcherFunction: (url, opts) =>
 				opts && opts.headers && opts.headers.authorized === true,
 			response: 200,
 		});

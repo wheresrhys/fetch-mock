@@ -41,7 +41,7 @@ import statusTextMap from './StatusTextMap';
  * @property {{ [key: string]: string }} [query]
  * @property {{ [key: string]: string }} [params]
  * @property {object} [body]
- * @property {RouteMatcherFunction} [func]
+ * @property {RouteMatcherFunction} [matcherFunction]
  * @property {RouteMatcher} [matcher]
  * @property {RouteMatcherUrl} [url]
  * @property {RouteResponse | RouteResponseFunction} [response]

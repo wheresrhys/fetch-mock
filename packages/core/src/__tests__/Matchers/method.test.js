@@ -43,7 +43,7 @@ describe('method matching', () => {
 	it('can be used alongside function matchers', () => {
 		const route = new Route({
 			method: 'POST',
-			func: (url) => /a\.com/.test(url),
+			matcherFunction: (url) => /a\.com/.test(url),
 
 			response: 200,
 		});

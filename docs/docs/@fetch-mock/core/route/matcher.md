@@ -141,7 +141,7 @@ This option can also be [set in the global configuration](/fetch-mock/docs/@fetc
 
 For use cases not covered by all the built in matchers, a custom function can be used. It should return `true` to indicate a route should respond to a request. It will be passed the `url` and `options` `fetch` was called with. If `fetch` was called with a `Request` instance, it will be passed `url` and `options` inferred from the `Request` instance, with the original `Request` available as a third argument.
 
-As well as being passed as a standalone argument, it can also be added to the matcher object as the property `{func: ...}` when combining with other matchers or options.
+As well as being passed as a standalone argument, it can also be added to the matcher object as the property `{matcherFunction: ...}` when combining with other matchers or options.
 
 ### Examples
 

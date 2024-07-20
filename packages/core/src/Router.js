@@ -278,8 +278,8 @@ export default class Router {
 				if (typeof response[name] === 'function') {
 					//@ts-ignore
 					return new Proxy(response[name], {
-						apply: (func, thisArg, args) => {
-							const result = func.apply(response, args);
+						apply: (matcherFunction, thisArg, args) => {
+							const result = matcherFunction.apply(response, args);
 							if (result.then) {
 								pendingPromises.push(
 									result.catch(/** @type {function(): void} */ () => undefined),
@@ -321,7 +321,7 @@ export default class Router {
 		if (isUrlMatcher(matcher)) {
 			config.url = matcher;
 		} else if (isFunctionMatcher(matcher)) {
-			config.func = matcher;
+			config.matcherFunction = matcher;
 		} else {
 			Object.assign(config, matcher);
 		}
@@ -368,7 +368,7 @@ export default class Router {
 		}
 
 		this.fallbackRoute = new Route({
-			func: () => true,
+			matcherFunction: () => true,
 			response: response || 'ok',
 			...this.config,
 		});

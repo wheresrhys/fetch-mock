@@ -176,7 +176,7 @@ class CallHistory {
 			routeNames = Array.isArray(routeNames) ? routeNames : [routeNames];
 			routesToCheck = this.router.routes.filter(({ config: { name } }) =>
 				routeNames.includes(name),
-			)
+			);
 		}
 		// TODO when checking all routes needs to check against all calls
 		// Can't use array.every because would exit after first failure, which would

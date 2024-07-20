@@ -74,11 +74,7 @@ Returns a Boolean indicating whether any calls to `fetch` matched the given `fil
 
 Returns the `CallLog` for the last call to `fetch` matching the given `filter` and `options`.
 
-### fetchMock.done(routeNames)
-
-_Note that this function is exposed on the `fetchMock` object, not on `fetchMock.callHistory`_
-
-TODO, should callHistory just have access to `routes`... yes probably as these docs are horrible
+### .done(routeNames)
 
 Returns a Boolean indicating whether `fetch` was called the expected number of times (or has been called at least once if `repeat` is not defined for the route). It does not take into account whether the `fetches` completed successfully.
 

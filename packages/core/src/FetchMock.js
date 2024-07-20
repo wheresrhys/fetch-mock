@@ -55,7 +55,7 @@ const defaultConfig = {
 const FetchMock = {
 	config: defaultConfig,
 	router: new Router(defaultConfig),
-	callHistory: new CallHistory(defaultConfig),
+	callHistory: new CallHistory(defaultConfig, this.router),
 	createInstance() {
 		const instance = Object.create(FetchMock);
 		instance.config = { ...this.config };
@@ -63,7 +63,7 @@ const FetchMock = {
 			routes: [...this.router.routes],
 			fallbackRoute: this.router.fallbackRoute,
 		});
-		instance.callHistory = new CallHistory(this.config);
+		instance.callHistory = new CallHistory(this.config, instance.router);
 		return instance;
 	},
 	/**
@@ -132,10 +132,9 @@ const FetchMock = {
 	 */
 	done(routeNames) {
 		if (!routeNames) {
-			return this.callHistory.done(this.router.routes);
+			return this.callHistory.done();
 		}
 		return this.callHistory.done(
-			this.router.routes,
 			Array.isArray(routeNames) ? routeNames : [routeNames],
 		);
 	},

@@ -45,10 +45,11 @@ class CallHistory {
 	/**
 	 * @param {FetchMockConfig} globalConfig
 	 */
-	constructor(globalConfig) {
+	constructor(globalConfig, router) {
 		/** @type {CallLog[]} */
 		this.callLogs = [];
 		this.config = globalConfig;
+		this.router = router;
 	}
 	/**
 	 *
@@ -164,15 +165,13 @@ class CallHistory {
 		return this.calls(filter, options).pop();
 	}
 	/**
-	 *
 	 * @param {RouteName[]} [routeNames]
-	 * @param {Route[]} allRoutes
 	 * @returns {boolean}
 	 */
-	done(allRoutes, routeNames) {
+	done(routeNames) {
 		const routesToCheck = routeNames
-			? allRoutes.filter(({ config: { name } }) => routeNames.includes(name))
-			: allRoutes;
+			? this.router.routes.filter(({ config: { name } }) => routeNames.includes(name))
+			: this.router.routes;
 
 		// TODO when checking all routes needs to check against all calls
 		// Can't use array.every because would exit after first failure, which would

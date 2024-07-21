@@ -1,20 +1,25 @@
 //@type-check
 /** @typedef {import('./Route').RouteConfig} RouteConfig */
 /** @typedef {import('./Route').RouteName} RouteName */
+/** @typedef {import('./Router')} Router */
 /** @typedef {import('./RequestUtils').NormalizedRequestOptions} NormalizedRequestOptions */
 /** @typedef {import('./Matchers').RouteMatcher} RouteMatcher */
 /** @typedef {import('./FetchMock').FetchMockConfig} FetchMockConfig */
-import { normalizeRequest } from './RequestUtils.js';
+import { createCallLog } from './RequestUtils.js';
 import { isUrlMatcher } from './Matchers.js';
 import Route from './Route.js';
 
 /**
  * @typedef CallLog
+ * @property {any[]} arguments
  * @property {string} url
  * @property {NormalizedRequestOptions} options
  * @property {Request} [request]
+ * @property {AbortSignal} [signal]
  * @property {Route} [route]
  * @property {Response} [response]
+ * @property {Object.<string, string>} [expressParameters]
+ * @property {Object.<string, string>} [queryParameters]
  * @property {Promise<any>[]} pendingPromises
  */
 
@@ -44,7 +49,7 @@ const isMatchedOrUnmatched = (filter) =>
 class CallHistory {
 	/**
 	 * @param {FetchMockConfig} globalConfig
-	 * @param router
+	 * @param {Router} router
 	 */
 	constructor(globalConfig, router) {
 		/** @type {CallLog[]} */
@@ -137,7 +142,7 @@ class CallHistory {
 		});
 
 		calls = calls.filter(({ url, options }) => {
-			return matcher(normalizeRequest(url, options, this.config.Request));
+			return matcher(createCallLog(url, options, this.config.Request));
 		});
 
 		return calls;

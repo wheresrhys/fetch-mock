@@ -49,7 +49,7 @@ const defaultConfig = {
  * @property {function():void} clearHistory
  */
 
-const defaultRouter = new Router(defaultConfig)
+const defaultRouter = new Router(defaultConfig);
 
 /** @type {FetchMockCore} */
 const FetchMock = {

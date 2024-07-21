@@ -30,8 +30,7 @@ export const isUrlMatcher = (matcher) =>
 export const isFunctionMatcher = (matcher) => typeof matcher === 'function';
 
 /** @typedef {string | RegExp | URL} RouteMatcherUrl */
-/** @typedef {function(string): boolean} UrlMatcher */
-/** @typedef {function(string): UrlMatcher} UrlMatcherGenerator */
+/** @typedef {function(string): RouteMatcherFunction} UrlMatcherGenerator */
 /** @typedef {function(CallLog): boolean} RouteMatcherFunction */
 /** @typedef {function(RouteConfig): RouteMatcherFunction} MatcherGenerator */
 /** @typedef {RouteMatcherUrl | RouteMatcherFunction} RouteMatcher */

@@ -1,13 +1,13 @@
 //@type-check
 /** @typedef {import('./Route').RouteConfig} RouteConfig */
 /** @typedef {import('./Route').RouteName} RouteName */
-/** @typedef {import('./Router')} Router */
 /** @typedef {import('./RequestUtils').NormalizedRequestOptions} NormalizedRequestOptions */
 /** @typedef {import('./Matchers').RouteMatcher} RouteMatcher */
 /** @typedef {import('./FetchMock').FetchMockConfig} FetchMockConfig */
 import { createCallLog } from './RequestUtils.js';
 import { isUrlMatcher } from './Matchers.js';
 import Route from './Route.js';
+import Router from './Router.js';
 
 /**
  * @typedef CallLog

@@ -49,11 +49,13 @@ const defaultConfig = {
  * @property {function():void} clearHistory
  */
 
+const defaultRouter = new Router(defaultConfig)
+
 /** @type {FetchMockCore} */
 const FetchMock = {
 	config: defaultConfig,
-	router: new Router(defaultConfig),
-	callHistory: new CallHistory(defaultConfig, this.router),
+	router: defaultRouter,
+	callHistory: new CallHistory(defaultConfig, defaultRouter),
 	createInstance() {
 		const instance = Object.create(FetchMock);
 		instance.config = { ...this.config };

@@ -1,6 +1,6 @@
 //@type-check
 /** @typedef {import('./Route').RouteConfig} RouteConfig */
-/** @typedef {import('./RequestUtils').NormalizedRequestOptions} NormalizedRequestOptions */
+/** @typedef {import('./CallHistory').CallLog} CallLog */
 import glob from 'globrex';
 import * as regexparam from 'regexparam';
 import querystring from 'querystring';
@@ -30,9 +30,8 @@ export const isUrlMatcher = (matcher) =>
 export const isFunctionMatcher = (matcher) => typeof matcher === 'function';
 
 /** @typedef {string | RegExp | URL} RouteMatcherUrl */
-/** @typedef {function(string): boolean} UrlMatcher */
-/** @typedef {function(string): UrlMatcher} UrlMatcherGenerator */
-/** @typedef {function(string, NormalizedRequestOptions, Request): boolean} RouteMatcherFunction */
+/** @typedef {function(string): RouteMatcherFunction} UrlMatcherGenerator */
+/** @typedef {function(CallLog): boolean} RouteMatcherFunction */
 /** @typedef {function(RouteConfig): RouteMatcherFunction} MatcherGenerator */
 /** @typedef {RouteMatcherUrl | RouteMatcherFunction} RouteMatcher */
 
@@ -47,19 +46,41 @@ export const isFunctionMatcher = (matcher) => typeof matcher === 'function';
  * @type {Object.<string, UrlMatcherGenerator>}
  */
 const stringMatchers = {
-	begin: (targetString) => (url) => url.indexOf(targetString) === 0,
-	end: (targetString) => (url) =>
-		url.substr(-targetString.length) === targetString,
+	begin:
+		(targetString) =>
+		({ url }) =>
+			url.indexOf(targetString) === 0,
+	end:
+		(targetString) =>
+		({ url }) =>
+			url.substr(-targetString.length) === targetString,
 
 	glob: (targetString) => {
 		const urlRX = glob(targetString);
-		return (url) => urlRX.regex.test(url);
+		return ({ url }) => urlRX.regex.test(url);
 	},
 	express: (targetString) => {
 		const urlRX = regexparam.parse(targetString);
-		return (url) => urlRX.pattern.test(getPath(url));
+		return (callLog) => {
+			const vals = urlRX.pattern.exec(getPath(callLog.url));
+			if (!vals) {
+				callLog.expressParams = {};
+				return false;
+			}
+			vals.shift();
+			/** @type {Object.<string,string>} */
+			callLog.expressParams = urlRX.keys.reduce(
+				(map, paramName, i) =>
+					vals[i] ? Object.assign(map, { [paramName]: vals[i] }) : map,
+				{},
+			);
+			return true;
+		};
 	},
-	path: (targetString) => (url) => getPath(url) === targetString,
+	path:
+		(targetString) =>
+		({ url }) =>
+			getPath(url) === targetString,
 };
 /**
  * @type {MatcherGenerator}
@@ -69,7 +90,7 @@ const getHeaderMatcher = ({ headers: expectedHeaders }) => {
 		return;
 	}
 	const expectation = normalizeHeaders(expectedHeaders);
-	return (url, { headers = {} }) => {
+	return ({ options: { headers = {} } }) => {
 		// TODO do something to handle multi value headers
 		const lowerCaseHeaders = normalizeHeaders(headers);
 		return Object.keys(expectation).every(
@@ -84,7 +105,7 @@ const getMethodMatcher = ({ method: expectedMethod }) => {
 	if (!expectedMethod) {
 		return;
 	}
-	return (url, { method }) => {
+	return ({ options: { method } = {} }) => {
 		const actualMethod = method ? method.toLowerCase() : 'get';
 		return expectedMethod === actualMethod;
 	};
@@ -98,7 +119,7 @@ const getQueryStringMatcher = ({ query: passedQuery }) => {
 	}
 	const expectedQuery = querystring.parse(querystring.stringify(passedQuery));
 	const keys = Object.keys(expectedQuery);
-	return (url) => {
+	return ({ url }) => {
 		const query = querystring.parse(getQuery(url));
 		return keys.every((key) => {
 			if (Array.isArray(query[key])) {
@@ -117,30 +138,21 @@ const getQueryStringMatcher = ({ query: passedQuery }) => {
 /**
  * @type {MatcherGenerator}
  */
-const getParamsMatcher = ({ params: expectedParams, url: matcherUrl }) => {
+const getParamsMatcher = ({ params: expectedParams, url }) => {
 	if (!expectedParams) {
 		return;
 	}
-	if (typeof matcherUrl === 'string') {
-		if (!/express:/.test(matcherUrl)) {
-			throw new Error(
-				'fetch-mock: matching on params is only possible when using an express: matcher',
-			);
-		}
-		const expectedKeys = Object.keys(expectedParams);
-		const re = regexparam.parse(matcherUrl.replace(/^express:/, ''));
-		return (url) => {
-			const vals = re.pattern.exec(getPath(url)) || [];
-			vals.shift();
-			/** @type {Object.<string,string>} */
-			const params = re.keys.reduce(
-				(map, paramName, i) =>
-					vals[i] ? Object.assign(map, { [paramName]: vals[i] }) : map,
-				{},
-			);
-			return expectedKeys.every((key) => params[key] === expectedParams[key]);
-		};
+	if (!(typeof url === 'string' && /express:/.test(url))) {
+		throw new Error(
+			'fetch-mock: matching on params is only possible when using an express: matcher',
+		);
 	}
+	const expectedKeys = Object.keys(expectedParams);
+	return ({ expressParams = {} }) => {
+		return expectedKeys.every(
+			(key) => expressParams[key] === expectedParams[key],
+		);
+	};
 };
 /**
  * @type {MatcherGenerator}
@@ -148,7 +160,7 @@ const getParamsMatcher = ({ params: expectedParams, url: matcherUrl }) => {
 const getBodyMatcher = (route) => {
 	const { body: expectedBody } = route;
 
-	return (url, { body, method = 'get' }) => {
+	return ({ options: { body, method = 'get' } }) => {
 		if (method.toLowerCase() === 'get') {
 			// GET requests don’t send a body so the body matcher should be ignored for them
 			return true;
@@ -185,7 +197,7 @@ const getFullUrlMatcher = (route, matcherUrl, query) => {
 		route.url = expectedUrl;
 	}
 
-	return (url) => {
+	return ({ url }) => {
 		if (query && expectedUrl.indexOf('?')) {
 			return getPath(url) === getPath(expectedUrl);
 		}
@@ -196,7 +208,7 @@ const getFullUrlMatcher = (route, matcherUrl, query) => {
 /**
  * @type {MatcherGenerator}
  */
-const getFunctionMatcher = ({ functionMatcher }) => functionMatcher;
+const getFunctionMatcher = ({ matcherFunction }) => matcherFunction;
 /**
  * @type {MatcherGenerator}
  */
@@ -208,7 +220,7 @@ const getUrlMatcher = (route) => {
 	}
 
 	if (matcherUrl instanceof RegExp) {
-		return (url) => matcherUrl.test(url);
+		return ({ url }) => matcherUrl.test(url);
 	}
 	if (matcherUrl instanceof URL) {
 		if (matcherUrl.href) {
@@ -231,11 +243,11 @@ const getUrlMatcher = (route) => {
 
 /** @type {MatcherDefinition[]} */
 export const builtInMatchers = [
+	{ name: 'url', matcher: getUrlMatcher },
 	{ name: 'query', matcher: getQueryStringMatcher },
 	{ name: 'method', matcher: getMethodMatcher },
 	{ name: 'headers', matcher: getHeaderMatcher },
 	{ name: 'params', matcher: getParamsMatcher },
 	{ name: 'body', matcher: getBodyMatcher, usesBody: true },
-	{ name: 'functionMatcher', matcher: getFunctionMatcher },
-	{ name: 'url', matcher: getUrlMatcher },
+	{ name: 'matcherFunction', matcher: getFunctionMatcher },
 ];

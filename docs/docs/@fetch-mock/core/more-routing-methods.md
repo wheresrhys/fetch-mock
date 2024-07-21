@@ -95,7 +95,9 @@ If your matcher requires access to the body of the request set this to true; bec
 
 `{Function}`
 
-A function which takes a route definition object as input, and returns a function of the signature `(url, options, request) => Boolean`. See the examples below for more detail. The function is passed the fetchMock instance as a second parameter in case you need to access any config.
+A function which takes a route definition object as input, and returns a function of the signature `(NormalizedRequest) => Boolean`. See the examples below for more detail. The function is passed the fetchMock instance as a second parameter in case you need to access any config.
+
+// TODO at time of writing the NormalizedRequest schema is still evolving, so more detailed docs will emerge soon
 
 ##### Examples
 

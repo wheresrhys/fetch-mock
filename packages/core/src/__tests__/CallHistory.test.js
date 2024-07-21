@@ -231,7 +231,7 @@ describe('CallHistory', () => {
 				});
 
 				describe('filtering with a matcher', () => {
-					//TODO write a test that just makes it clear this is contracted out to Route
+					// TODO write a test that just makes it clear this is contracted out to Route
 					// spy on route constructor, and then on matcher for that route
 					it('should be able to filter with a url matcher', async () => {
 						fm.catch();
@@ -362,11 +362,11 @@ describe('CallHistory', () => {
 				it('clearHistory() resets count done-ness', async () => {
 					fm = fetchMock.createInstance().route('http://a.com/', 200);
 					await fm.fetchHandler('http://a.com/');
-					expect(fm.done()).toBe(true);
+					expect(fm.callHistory.done()).toBe(true);
 					fm.clearHistory();
-					expect(fm.done()).toBe(false);
+					expect(fm.callHistory.done()).toBe(false);
 					await fm.fetchHandler('http://a.com/');
-					expect(fm.done()).toBe(true);
+					expect(fm.callHistory.done()).toBe(true);
 				});
 
 				describe('where number of expected calls is not specified', () => {
@@ -379,32 +379,32 @@ describe('CallHistory', () => {
 					});
 
 					it('can expect at least one call to have been made to every defined route', () => {
-						expect(fm.done()).toBe(false);
+						expect(fm.callHistory.done()).toBe(false);
 						fm.fetchHandler('http://a.com/');
-						expect(fm.done()).toBe(false);
+						expect(fm.callHistory.done()).toBe(false);
 						fm.fetchHandler('http://b.com/');
-						expect(fm.done()).toBe(false);
+						expect(fm.callHistory.done()).toBe(false);
 						fm.fetchHandler('http://c.com/');
-						expect(fm.done()).toBe(true);
+						expect(fm.callHistory.done()).toBe(true);
 					});
 
 					it('can expect a named route to be called at least once', () => {
-						expect(fm.done('a')).toBe(false);
-						expect(fm.done('b')).toBe(false);
+						expect(fm.callHistory.done('a')).toBe(false);
+						expect(fm.callHistory.done('b')).toBe(false);
 						fm.fetchHandler('http://a.com/');
-						expect(fm.done('a')).toBe(true);
-						expect(fm.done('b')).toBe(false);
+						expect(fm.callHistory.done('a')).toBe(true);
+						expect(fm.callHistory.done('b')).toBe(false);
 						fm.fetchHandler('http://a.com/');
-						expect(fm.done('a')).toBe(true);
-						expect(fm.done('b')).toBe(false);
+						expect(fm.callHistory.done('a')).toBe(true);
+						expect(fm.callHistory.done('b')).toBe(false);
 					});
 
 					it('can expect multiple named routes to be called at least once each', () => {
-						expect(fm.done(['a', 'b'])).toBe(false);
+						expect(fm.callHistory.done(['a', 'b'])).toBe(false);
 						fm.fetchHandler('http://a.com/');
-						expect(fm.done(['a', 'b'])).toBe(false);
+						expect(fm.callHistory.done(['a', 'b'])).toBe(false);
 						fm.fetchHandler('http://b.com/');
-						expect(fm.done(['a', 'b'])).toBe(true);
+						expect(fm.callHistory.done(['a', 'b'])).toBe(true);
 					});
 				});
 				describe('where number of expected calls is specified', () => {
@@ -417,32 +417,32 @@ describe('CallHistory', () => {
 					});
 
 					it('can expect a named route to be called specified number of times', () => {
-						expect(fm.done('a')).toBe(false);
+						expect(fm.callHistory.done('a')).toBe(false);
 						fm.fetchHandler('http://a.com/');
-						expect(fm.done('a')).toBe(false);
+						expect(fm.callHistory.done('a')).toBe(false);
 						fm.fetchHandler('http://a.com/');
-						expect(fm.done('a')).toBe(true);
+						expect(fm.callHistory.done('a')).toBe(true);
 					});
 
 					it('can expect multiple named routes to be called specified number of times', () => {
-						expect(fm.done(['a', 'b'])).toBe(false);
+						expect(fm.callHistory.done(['a', 'b'])).toBe(false);
 						fm.fetchHandler('http://a.com/');
 						fm.fetchHandler('http://b.com/');
-						expect(fm.done(['a', 'b'])).toBe(false);
+						expect(fm.callHistory.done(['a', 'b'])).toBe(false);
 						fm.fetchHandler('http://a.com/');
-						expect(fm.done(['a', 'b'])).toBe(true);
+						expect(fm.callHistory.done(['a', 'b'])).toBe(true);
 					});
 
 					it('can expect specific number of calls to have been made to every defined route', () => {
-						expect(fm.done()).toBe(false);
+						expect(fm.callHistory.done()).toBe(false);
 						fm.fetchHandler('http://a.com/');
 						fm.fetchHandler('http://b.com/');
 						fm.fetchHandler('http://c.com/');
-						expect(fm.done()).toBe(false);
+						expect(fm.callHistory.done()).toBe(false);
 						fm.fetchHandler('http://a.com/');
-						expect(fm.done()).toBe(false);
+						expect(fm.callHistory.done()).toBe(false);
 						fm.fetchHandler('http://c.com/');
-						expect(fm.done()).toBe(true);
+						expect(fm.callHistory.done()).toBe(true);
 					});
 
 					it('can combine with routes where specific number of calls is unspecified', () => {
@@ -452,15 +452,15 @@ describe('CallHistory', () => {
 							.route('http://b.com/', 200, { name: 'b' })
 							.route('http://c.com/', 200);
 
-						expect(fm.done()).toBe(false);
+						expect(fm.callHistory.done()).toBe(false);
 						fm.fetchHandler('http://a.com/');
 						fm.fetchHandler('http://b.com/');
 						fm.fetchHandler('http://c.com/');
-						expect(fm.done()).toBe(false);
-						expect(fm.done(['a', 'b'])).toBe(false);
+						expect(fm.callHistory.done()).toBe(false);
+						expect(fm.callHistory.done(['a', 'b'])).toBe(false);
 						fm.fetchHandler('http://a.com/');
-						expect(fm.done()).toBe(true);
-						expect(fm.done(['a', 'b'])).toBe(true);
+						expect(fm.callHistory.done()).toBe(true);
+						expect(fm.callHistory.done(['a', 'b'])).toBe(true);
 					});
 				});
 			});

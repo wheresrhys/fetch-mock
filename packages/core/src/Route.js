@@ -1,8 +1,9 @@
 //@type-check
-import { builtInMatchers, isUrlMatcher, isFunctionMatcher } from './Matchers';
+import { builtInMatchers } from './Matchers';
 import statusTextMap from './StatusTextMap';
 
 /** @typedef {import('./Matchers').RouteMatcher} RouteMatcher */
+/** @typedef {import('./CallHistory').CallLog} CallLog */
 /** @typedef {import('./Matchers').RouteMatcherFunction} RouteMatcherFunction */
 /** @typedef {import('./Matchers').RouteMatcherUrl} RouteMatcherUrl */
 /** @typedef {import('./Matchers').MatcherDefinition} MatcherDefinition */
@@ -28,7 +29,7 @@ import statusTextMap from './StatusTextMap';
 /** @typedef {RouteResponseConfig | object}  RouteResponseObjectData */
 /** @typedef {Response | number| string | RouteResponseObjectData }  RouteResponseData */
 /** @typedef {Promise<RouteResponseData>}  RouteResponsePromise */
-/** @typedef {function(string, RequestInit, Request=): (RouteResponseData|RouteResponsePromise)} RouteResponseFunction */
+/** @typedef {function(CallLog): (RouteResponseData|RouteResponsePromise)} RouteResponseFunction */
 /** @typedef {RouteResponseData | RouteResponsePromise | RouteResponseFunction} RouteResponse*/
 
 /** @typedef {string} RouteName */
@@ -41,7 +42,7 @@ import statusTextMap from './StatusTextMap';
  * @property {{ [key: string]: string }} [query]
  * @property {{ [key: string]: string }} [params]
  * @property {object} [body]
- * @property {RouteMatcherFunction} [functionMatcher]
+ * @property {RouteMatcherFunction} [matcherFunction]
  * @property {RouteMatcher} [matcher]
  * @property {RouteMatcherUrl} [url]
  * @property {RouteResponse | RouteResponseFunction} [response]
@@ -134,13 +135,6 @@ class Route {
 		if (this.config.method) {
 			this.config.method = this.config.method.toLowerCase();
 		}
-		if (isUrlMatcher(this.config.matcher)) {
-			this.config.url = this.config.matcher;
-			delete this.config.matcher;
-		}
-		if (isFunctionMatcher(this.config.matcher)) {
-			this.config.functionMatcher = this.config.matcher;
-		}
 	}
 	/**
 	 * @returns {void}
@@ -155,8 +149,8 @@ class Route {
 			}));
 		this.config.usesBody = activeMatchers.some(({ usesBody }) => usesBody);
 		/** @type {RouteMatcherFunction} */
-		this.matcher = (url, options = {}, request) =>
-			activeMatchers.every(({ matcher }) => matcher(url, options, request));
+		this.matcher = (normalizedRequest) =>
+			activeMatchers.every(({ matcher }) => matcher(normalizedRequest));
 	}
 	/**
 	 * @returns {void}
@@ -168,8 +162,8 @@ class Route {
 		}
 		const originalMatcher = this.matcher;
 		let timesLeft = this.config.repeat;
-		this.matcher = (url, options, request) => {
-			const match = timesLeft && originalMatcher(url, options, request);
+		this.matcher = (callLog) => {
+			const match = timesLeft && originalMatcher(callLog);
 			if (match) {
 				timesLeft--;
 				return true;

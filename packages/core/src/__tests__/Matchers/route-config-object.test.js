@@ -5,32 +5,38 @@ import Route from '../../Route.js';
 // as it's mainly about the shape of optiosn passed into to addRoute
 describe('matcher object', () => {
 	it('use matcher object with matcher property', () => {
-		const route = new Route({ matcher: 'http://a.com', response: 200 });
-		expect(route.matcher('http://a.com')).toBe(true);
+		const route = new Route({ url: 'http://a.com', response: 200 });
+		expect(route.matcher({ url: 'http://a.com' })).toBe(true);
 	});
 
 	it('use matcher object with url property', () => {
 		const route = new Route({ url: 'http://a.com', response: 200 });
-		expect(route.matcher('http://a.com')).toBe(true);
+		expect(route.matcher({ url: 'http://a.com' })).toBe(true);
 	});
 
-	it('can use matcher and url simultaneously', () => {
+	it('can use function and url simultaneously', () => {
 		const route = new Route({
 			url: 'end:path',
-			matcher: (url, opts) =>
-				opts && opts.headers && opts.headers.authorized === true,
+			matcherFunction: ({ options }) =>
+				options && options.headers && options.headers.authorized === true,
 			response: 200,
 		});
 
-		expect(route.matcher('http://a.com/path')).toBe(false);
+		expect(route.matcher({ url: 'http://a.com/path' })).toBe(false);
 		expect(
-			route.matcher('http://a.com', {
-				headers: { authorized: true },
+			route.matcher({
+				url: 'http://a.com',
+				options: {
+					headers: { authorized: true },
+				},
 			}),
 		).toBe(false);
 		expect(
-			route.matcher('http://a.com/path', {
-				headers: { authorized: true },
+			route.matcher({
+				url: 'http://a.com/path',
+				options: {
+					headers: { authorized: true },
+				},
 			}),
 		).toBe(true);
 	});
@@ -38,14 +44,14 @@ describe('matcher object', () => {
 	// TODO this shoudl probably be an error
 	it.skip('if no url provided, match any url', () => {
 		const route = new Route({ response: 200 });
-		expect(route.matcher('http://a.com')).toBe(true);
+		expect(route.matcher({ url: 'http://a.com' })).toBe(true);
 	});
 
-	//TODO be strionger on discouraging this
-	it.skip('deprecated message on using functionMatcher (prefer matcher)', () => {
+	//TODO be stronger on discouraging this
+	it.skip('deprecated message on using matcherFunction (prefer matcher)', () => {
 		new Route({
 			url: 'end:profile',
-			functionMatcher: (url, opts) =>
+			matcherFunction: (url, opts) =>
 				opts && opts.headers && opts.headers.authorized === true,
 			response: 200,
 		});
@@ -59,13 +65,19 @@ describe('matcher object', () => {
 		});
 
 		expect(
-			route.matcher('http://a.com', {
-				headers: { a: 'c' },
+			route.matcher({
+				url: 'http://a.com',
+				options: {
+					headers: { a: 'c' },
+				},
 			}),
 		).toBe(false);
 		expect(
-			route.matcher('http://a.com', {
-				headers: { a: 'b' },
+			route.matcher({
+				url: 'http://a.com',
+				options: {
+					headers: { a: 'b' },
+				},
 			}),
 		).toBe(true);
 	});
@@ -77,8 +89,8 @@ describe('matcher object', () => {
 			response: 200,
 		});
 
-		expect(route.matcher('http://a.com')).toBe(false);
-		expect(route.matcher('http://a.com?a=b')).toBe(true);
+		expect(route.matcher({ url: 'http://a.com' })).toBe(false);
+		expect(route.matcher({ url: 'http://a.com?a=b' })).toBe(true);
 	});
 
 	it('can match path parameter', () => {
@@ -87,36 +99,43 @@ describe('matcher object', () => {
 			params: { var: 'b' },
 			response: 200,
 		});
-		expect(route.matcher('/')).toBe(false);
-		expect(route.matcher('/type/a')).toBe(false);
-		expect(route.matcher('/type/b')).toBe(true);
+		expect(route.matcher({ url: '/' })).toBe(false);
+		expect(route.matcher({ url: '/type/a' })).toBe(false);
+		expect(route.matcher({ url: '/type/b' })).toBe(true);
 	});
 
 	it('can match method', () => {
 		const route = new Route({ method: 'POST', response: 200 });
-		expect(route.matcher('http://a.com', { method: 'GET' })).toBe(false);
-		expect(route.matcher('http://a.com', { method: 'POST' })).toBe(true);
+		expect(
+			route.matcher({ url: 'http://a.com', options: { method: 'GET' } }),
+		).toBe(false);
+		expect(
+			route.matcher({ url: 'http://a.com', options: { method: 'POST' } }),
+		).toBe(true);
 	});
 
 	it('can match body', () => {
 		const route = new Route({ body: { foo: 'bar' }, response: 200 });
 
 		expect(
-			route.matcher('http://a.com', {
-				method: 'POST',
+			route.matcher({
+				url: 'http://a.com',
+				options: {
+					method: 'POST',
+				},
 			}),
 		).toBe(false);
 		expect(
-			route.matcher('http://a.com', {
-				method: 'POST',
-				body: JSON.stringify({ foo: 'bar' }),
-				headers: { 'Content-Type': 'application/json' },
+			route.matcher({
+				url: 'http://a.com',
+				options: {
+					method: 'POST',
+					body: JSON.stringify({ foo: 'bar' }),
+					headers: { 'Content-Type': 'application/json' },
+				},
 			}),
 		).toBe(true);
 	});
-
-	// TODO new tests for how multiple routes that match can be addeed
-	it.skip('support setting overwrite routes on matcher parameter', () => {});
 
 	it('support setting matchPartialBody on matcher parameter', () => {
 		const route = new Route({
@@ -125,9 +144,12 @@ describe('matcher object', () => {
 			response: 200,
 		});
 		expect(
-			route.matcher('http://a.com', {
-				method: 'POST',
-				body: JSON.stringify({ a: 1, b: 2 }),
+			route.matcher({
+				url: 'http://a.com',
+				options: {
+					method: 'POST',
+					body: JSON.stringify({ a: 1, b: 2 }),
+				},
 			}),
 		).toBe(true);
 	});

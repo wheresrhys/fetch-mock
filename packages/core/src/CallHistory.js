@@ -4,17 +4,22 @@
 /** @typedef {import('./RequestUtils').NormalizedRequestOptions} NormalizedRequestOptions */
 /** @typedef {import('./Matchers').RouteMatcher} RouteMatcher */
 /** @typedef {import('./FetchMock').FetchMockConfig} FetchMockConfig */
-import { normalizeRequest } from './RequestUtils.js';
+import { createCallLog } from './RequestUtils.js';
 import { isUrlMatcher } from './Matchers.js';
 import Route from './Route.js';
+import Router from './Router.js';
 
 /**
  * @typedef CallLog
+ * @property {any[]} arguments
  * @property {string} url
  * @property {NormalizedRequestOptions} options
  * @property {Request} [request]
+ * @property {AbortSignal} [signal]
  * @property {Route} [route]
  * @property {Response} [response]
+ * @property {Object.<string, string>} [expressParameters]
+ * @property {Object.<string, string>} [queryParameters]
  * @property {Promise<any>[]} pendingPromises
  */
 
@@ -44,11 +49,13 @@ const isMatchedOrUnmatched = (filter) =>
 class CallHistory {
 	/**
 	 * @param {FetchMockConfig} globalConfig
+	 * @param {Router} router
 	 */
-	constructor(globalConfig) {
+	constructor(globalConfig, router) {
 		/** @type {CallLog[]} */
 		this.callLogs = [];
 		this.config = globalConfig;
+		this.router = router;
 	}
 	/**
 	 *
@@ -123,7 +130,7 @@ class CallHistory {
 			}
 		} else {
 			if (isUrlMatcher(filter)) {
-				options = { matcher: filter, ...(options || {}) };
+				options = { url: filter, ...(options || {}) };
 			} else {
 				options = { ...filter, ...(options || {}) };
 			}
@@ -135,12 +142,7 @@ class CallHistory {
 		});
 
 		calls = calls.filter(({ url, options }) => {
-			const {
-				url: normalizedUrl,
-				options: normalizedOptions,
-				request,
-			} = normalizeRequest(url, options, this.config.Request);
-			return matcher(normalizedUrl, normalizedOptions, request);
+			return matcher(createCallLog(url, options, this.config.Request));
 		});
 
 		return calls;
@@ -163,17 +165,19 @@ class CallHistory {
 	lastCall(filter, options) {
 		return this.calls(filter, options).pop();
 	}
+
 	/**
-	 *
-	 * @param {RouteName[]} [routeNames]
-	 * @param {Route[]} allRoutes
+	 * @param {RouteName|RouteName[]} [routeNames]
 	 * @returns {boolean}
 	 */
-	done(allRoutes, routeNames) {
-		const routesToCheck = routeNames
-			? allRoutes.filter(({ config: { name } }) => routeNames.includes(name))
-			: allRoutes;
-
+	done(routeNames) {
+		let routesToCheck = this.router.routes;
+		if (routeNames) {
+			routeNames = Array.isArray(routeNames) ? routeNames : [routeNames];
+			routesToCheck = this.router.routes.filter(({ config: { name } }) =>
+				routeNames.includes(name),
+			);
+		}
 		// TODO when checking all routes needs to check against all calls
 		// Can't use array.every because would exit after first failure, which would
 		// break the logging

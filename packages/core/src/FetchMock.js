@@ -44,18 +44,18 @@ const defaultConfig = {
  * @property {function(string | Request, RequestInit): Promise<Response>} fetchHandler
  * @property {function(any,any,any): FetchMock} route
  * @property {function(RouteResponse=): FetchMock} catch
- * @property {function(boolean): Promise<any>} flush
- * @property {function(RouteName[]=): boolean} done
  * @property {function(MatcherDefinition):void} defineMatcher
  * @property {function(object): void} removeRoutes
  * @property {function():void} clearHistory
  */
 
+const defaultRouter = new Router(defaultConfig);
+
 /** @type {FetchMockCore} */
 const FetchMock = {
 	config: defaultConfig,
-	router: new Router(defaultConfig),
-	callHistory: new CallHistory(defaultConfig),
+	router: defaultRouter,
+	callHistory: new CallHistory(defaultConfig, defaultRouter),
 	createInstance() {
 		const instance = Object.create(FetchMock);
 		instance.config = { ...this.config };
@@ -63,7 +63,7 @@ const FetchMock = {
 			routes: [...this.router.routes],
 			fallbackRoute: this.router.fallbackRoute,
 		});
-		instance.callHistory = new CallHistory(this.config);
+		instance.callHistory = new CallHistory(instance.config, instance.router);
 		return instance;
 	},
 	/**
@@ -75,17 +75,15 @@ const FetchMock = {
 	 */
 	fetchHandler(requestInput, requestInit) {
 		// TODO move into router
-		const normalizedRequest = requestUtils.normalizeRequest(
+		const callLog = requestUtils.createCallLog(
 			requestInput,
 			requestInit,
 			this.config.Request,
 		);
-		/** @type {Promise<any>[]} */
-		const pendingPromises = [];
-		const callLog = { ...normalizedRequest, pendingPromises };
+
 		this.callHistory.recordCall(callLog);
-		const responsePromise = this.router.execute(callLog, normalizedRequest);
-		pendingPromises.push(responsePromise);
+		const responsePromise = this.router.execute(callLog);
+		callLog.pendingPromises.push(responsePromise);
 		return responsePromise;
 	},
 	/**
@@ -121,23 +119,6 @@ const FetchMock = {
 	},
 	defineMatcher(matcher) {
 		Route.defineMatcher(matcher);
-	},
-	flush(waitForResponseBody) {
-		return this.callHistory.flush(waitForResponseBody);
-	},
-	/**
-	 *
-	 * @param {RouteName|RouteName[]} routeNames
-	 * @returns {boolean}
-	 */
-	done(routeNames) {
-		if (!routeNames) {
-			return this.callHistory.done(this.router.routes);
-		}
-		return this.callHistory.done(
-			this.router.routes,
-			Array.isArray(routeNames) ? routeNames : [routeNames],
-		);
 	},
 	removeRoutes(options) {
 		this.router.removeRoutes(options);

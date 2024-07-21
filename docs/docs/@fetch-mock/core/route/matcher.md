@@ -78,6 +78,10 @@ When the `express:` keyword is used in a string matcher, it can be combined with
 }
 ```
 
+The values of express parameters are made available in the `expressParams` property when 
+- [Inspecting call history](/fetch-mock/docs/@fetch-mock/core/CallHistory#calllog-schema)
+- [Using a function to construct a response](/fetch-mock/docs/@fetch-mock/core/route/response#function)
+
 ## Other matching criteria
 
 ### method
@@ -116,7 +120,7 @@ Match only requests that have these query parameters set (in any order). Query p
 
 Match only requests that send a JSON body with the exact structure and properties as the one provided here.
 
-Note that if matching on body _and_ using `Request` instances in your source code, this forces fetch-mock into an asynchronous flow _before_ it is able to route requests effectively. This means no [inspection methods](#api-inspectionfundamentals) can be used synchronously. You must first either await the fetches to resolve, or `await fetchMock.flush()`. The popular library [Ky](https://github.com/sindresorhus/ky) uses `Request` instances internally, and so also triggers this mode.
+Note that if matching on body _and_ using `Request` instances in your source code, this forces fetch-mock into an asynchronous flow _before_ it is able to route requests effectively. This means no [inspection methods](#api-inspectionfundamentals) can be used synchronously. You must first either await the fetches to resolve, or `await fetchMock.callHistory.flush()`. The popular library [Ky](https://github.com/sindresorhus/ky) uses `Request` instances internally, and so also triggers this mode.
 
 e.g.`{body: { "key1": "value1", "key2": "value2" }}`
 
@@ -141,7 +145,7 @@ This option can also be [set in the global configuration](/fetch-mock/docs/@fetc
 
 For use cases not covered by all the built in matchers, a custom function can be used. It should return `true` to indicate a route should respond to a request. It will be passed the `url` and `options` `fetch` was called with. If `fetch` was called with a `Request` instance, it will be passed `url` and `options` inferred from the `Request` instance, with the original `Request` available as a third argument.
 
-As well as being passed as a standalone argument, it can also be added to the matcher object as the property `{functionMatcher: ...}` when combining with other matchers or options.
+As well as being passed as a standalone argument, it can also be added to the matcher object as the property `{matcherFunction: ...}` when combining with other matchers or options.
 
 ### Examples
 

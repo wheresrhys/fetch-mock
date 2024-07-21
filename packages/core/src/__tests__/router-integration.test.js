@@ -15,7 +15,7 @@ describe('Router', () => {
 
 		it('match using custom function with Request', async () => {
 			const fm = fetchMock.createInstance();
-			fm.route((url, options) => {
+			fm.route(({ url, options }) => {
 				return url.indexOf('logged-in') > -1 && options.headers.authorized;
 			}, 200);
 
@@ -37,10 +37,7 @@ describe('Router', () => {
 			const valueToSet = propertyToCheck === 'credentials' ? 'include' : false;
 
 			const fm = fetchMock.createInstance();
-			fm.route(
-				(url, options, request) => request[propertyToCheck] === valueToSet,
-				200,
-			);
+			fm.route(({ request }) => request[propertyToCheck] === valueToSet, 200);
 
 			await expect(
 				fm.fetchHandler(new Request('http://a.com/logged-in')),
@@ -59,7 +56,10 @@ describe('Router', () => {
 			const fm = fetchMock.createInstance();
 			fm.defineMatcher({
 				name: 'syncMatcher',
-				matcher: (route) => (url) => url.indexOf(route.syncMatcher) > -1,
+				matcher:
+					(route) =>
+					({ url }) =>
+						url.indexOf(route.syncMatcher) > -1,
 			});
 			fm.route(
 				{
@@ -77,8 +77,10 @@ describe('Router', () => {
 			const fm = fetchMock.createInstance();
 			fm.defineMatcher({
 				name: 'bodyMatcher',
-				matcher: (route) => (url, options) =>
-					JSON.parse(options.body)[route.bodyMatcher] === true,
+				matcher:
+					(route) =>
+					({ options }) =>
+						JSON.parse(options.body)[route.bodyMatcher] === true,
 				usesBody: true,
 			});
 			fm.route(
@@ -115,8 +117,10 @@ describe('Router', () => {
 			const fm = fetchMock.createInstance();
 			fm.defineMatcher({
 				name: 'asyncBodyMatcher',
-				matcher: (route) => (url, options) =>
-					JSON.parse(options.body)[route.asyncBodyMatcher] === true,
+				matcher:
+					(route) =>
+					({ options }) =>
+						JSON.parse(options.body)[route.asyncBodyMatcher] === true,
 			});
 			fm.route(
 				{

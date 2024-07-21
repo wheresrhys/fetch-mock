@@ -197,7 +197,7 @@ describe('response generation', () => {
 	});
 
 	it('construct a response based on the request', async () => {
-		fm.route('*', (url, opts) => url + opts.headers.header);
+		fm.route('*', ({ url, options }) => url + options.headers.header);
 		const res = await fm.fetchHandler('http://a.com/', {
 			headers: { header: 'val' },
 		});
@@ -206,7 +206,7 @@ describe('response generation', () => {
 	});
 
 	it('construct a response based on a Request instance', async () => {
-		fm.route('*', (url, opts, request) => request.json().then(({ a }) => a));
+		fm.route('*', ({ request }) => request.json().then(({ a }) => a));
 		const res = await fm.fetchHandler(
 			new fm.config.Request('http://a.com', {
 				body: JSON.stringify({ a: 'b' }),

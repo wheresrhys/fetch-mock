@@ -11,7 +11,6 @@ import { isUrlMatcher, isFunctionMatcher } from './Matchers.js';
 /** @typedef {import('./Matchers').RouteMatcher} RouteMatcher */
 /** @typedef {import('./FetchMock').FetchMockConfig} FetchMockConfig */
 /** @typedef {import('./FetchMock')} FetchMock */
-/** @typedef {import('./RequestUtils').NormalizedRequest} NormalizedRequest */
 /** @typedef {import('./CallHistory').CallLog} CallLog */
 
 /** @typedef {'body' |'headers' |'throws' |'status' |'redirectUrl' } ResponseConfigProp */
@@ -95,12 +94,10 @@ function shouldSendAsObject(responseInput) {
 }
 
 /**
- * @param {RouteResponse} response
- * @param {NormalizedRequest} normalizedRequest
+ * @param {CallLog} callLog
  * @returns
  */
-const resolveUntilResponseConfig = async (response, normalizedRequest) => {
-	const { url, options, request } = normalizedRequest;
+const resolveUntilResponseConfig = async (callLog) => {
 	// We want to allow things like
 	// - function returning a Promise for a response
 	// - delaying (using a timeout Promise) a function's execution to generate
@@ -109,9 +106,11 @@ const resolveUntilResponseConfig = async (response, normalizedRequest) => {
 	// or vice versa. So to keep it DRY, and flexible, we keep trying until we
 	// have something that looks like neither Promise nor function
 	//eslint-disable-next-line no-constant-condition
+	let response = callLog.route.config.response;
+	// eslint-disable-next-line  no-constant-condition
 	while (true) {
 		if (typeof response === 'function') {
-			response = response(url, options, request);
+			response = response(callLog);
 		} else if (isPromise(response)) {
 			response = await response; // eslint-disable-line  no-await-in-loop
 		} else {
@@ -121,6 +120,8 @@ const resolveUntilResponseConfig = async (response, normalizedRequest) => {
 };
 
 export default class Router {
+	/** @type {Route[]} */
+	routes = [];
 	/**
 	 * @param {FetchMockConfig} fetchMockConfig
 	 * @param {object} [inheritedRoutes]
@@ -145,26 +146,24 @@ export default class Router {
 
 	/**
 	 * @param {CallLog} callLog
-	 * @param {NormalizedRequest} normalizedRequest
 	 * @returns {Promise<Response>}
 	 */
-	execute(callLog, normalizedRequest) {
+	execute(callLog) {
 		// TODO make abort vs reject neater
 		return new Promise(async (resolve, reject) => {
 			const { url, options, request, pendingPromises } = callLog;
-			if (normalizedRequest.signal) {
+			if (callLog.signal) {
 				const abort = () => {
 					// TODO may need to bring that flushy thing back.
 					// Add a test to combvine flush with abort
 					// done();
 					reject(new DOMException('The operation was aborted.', 'AbortError'));
 				};
-				if (normalizedRequest.signal.aborted) {
+				if (callLog.signal.aborted) {
 					abort();
 				}
-				normalizedRequest.signal.addEventListener('abort', abort);
+				callLog.signal.addEventListener('abort', abort);
 			}
-
 			if (this.needsToReadBody(request)) {
 				options.body = await options.body;
 			}
@@ -172,15 +171,13 @@ export default class Router {
 			const routesToTry = this.fallbackRoute
 				? [...this.routes, this.fallbackRoute]
 				: this.routes;
-			const route = routesToTry.find((route) =>
-				route.matcher(url, options, request),
-			);
+			const route = routesToTry.find((route) => route.matcher(callLog));
 
 			if (route) {
 				try {
 					callLog.route = route;
 					const { response, responseOptions, responseInput } =
-						await this.generateResponse(route, callLog);
+						await this.generateResponse(callLog);
 					const observableResponse = this.createObservableResponse(
 						response,
 						responseOptions,
@@ -207,16 +204,12 @@ export default class Router {
 
 	/**
 	 *
-	 * @param {Route} route
 	 * @param {CallLog} callLog
 	 * @returns {Promise<{response: Response, responseOptions: ResponseInit, responseInput: RouteResponseConfig}>}
 	 */
 	// eslint-disable-next-line class-methods-use-this
-	async generateResponse(route, callLog) {
-		const responseInput = await resolveUntilResponseConfig(
-			route.config.response,
-			callLog,
-		);
+	async generateResponse(callLog) {
+		const responseInput = await resolveUntilResponseConfig(callLog);
 
 		// If the response is a pre-made Response, respond with it
 		if (responseInput instanceof Response) {
@@ -234,7 +227,7 @@ export default class Router {
 			throw responseConfig.throws;
 		}
 
-		return route.constructResponse(responseConfig);
+		return callLog.route.constructResponse(responseConfig);
 	}
 	/**
 	 *
@@ -278,8 +271,8 @@ export default class Router {
 				if (typeof response[name] === 'function') {
 					//@ts-ignore
 					return new Proxy(response[name], {
-						apply: (func, thisArg, args) => {
-							const result = func.apply(response, args);
+						apply: (matcherFunction, thisArg, args) => {
+							const result = matcherFunction.apply(response, args);
 							if (result.then) {
 								pendingPromises.push(
 									result.catch(/** @type {function(): void} */ () => undefined),
@@ -318,8 +311,10 @@ export default class Router {
 	addRoute(matcher, response, nameOrOptions) {
 		/** @type {RouteConfig} */
 		const config = {};
-		if (isUrlMatcher(matcher) || isFunctionMatcher(matcher)) {
-			config.matcher = matcher;
+		if (isUrlMatcher(matcher)) {
+			config.url = matcher;
+		} else if (isFunctionMatcher(matcher)) {
+			config.matcherFunction = matcher;
 		} else {
 			Object.assign(config, matcher);
 		}
@@ -366,14 +361,7 @@ export default class Router {
 		}
 
 		this.fallbackRoute = new Route({
-			matcher: (url, options) => {
-				if (this.config.warnOnFallback) {
-					console.warn(
-						`Unmatched ${(options && options.method) || 'GET'} to ${url}`,
-					); // eslint-disable-line
-				}
-				return true;
-			},
+			matcherFunction: () => true,
 			response: response || 'ok',
 			...this.config,
 		});

@@ -4,58 +4,77 @@ import Route from '../../Route.js';
 describe('function matching', () => {
 	it('match using custom function', () => {
 		const route = new Route({
-			matcher: (url, opts) =>
+			matcherFunction: ({ url, options }) =>
 				url.indexOf('logged-in') > -1 &&
-				opts &&
-				opts.headers &&
-				opts.headers.authorized === true,
+				options &&
+				options.headers &&
+				options.headers.authorized === true,
 			response: 200,
 		});
 
 		expect(
-			route.matcher('http://a.com/12345', {
-				headers: { authorized: true },
+			route.matcher({
+				url: 'http://a.com/12345',
+				options: {
+					headers: { authorized: true },
+				},
 			}),
 		).toBe(false);
-		expect(route.matcher('http://a.com/logged-in')).toBe(false);
+		expect(route.matcher({ url: 'http://a.com/logged-in' })).toBe(false);
 		expect(
-			route.matcher('http://a.com/logged-in', {
-				headers: { authorized: true },
+			route.matcher({
+				url: 'http://a.com/logged-in',
+				options: {
+					headers: { authorized: true },
+				},
 			}),
 		).toBe(true);
 	});
 
 	it('match using custom function using request body', () => {
 		const route = new Route({
-			matcher: (url, opts) => opts.body === 'a string',
+			matcherFunction: (req) => {
+				return req.options.body === 'a string';
+			},
 			response: 200,
 		});
-		expect(route.matcher('http://a.com/logged-in')).toBe(false);
+		expect(route.matcher({ url: 'http://a.com/logged-in', options: {} })).toBe(
+			false,
+		);
 		expect(
-			route.matcher('http://a.com/logged-in', {
-				method: 'post',
-				body: 'a string',
+			route.matcher({
+				url: 'http://a.com/logged-in',
+				options: {
+					method: 'post',
+					body: 'a string',
+				},
 			}),
 		).toBe(true);
 	});
 
 	it('match using custom function alongside other matchers', () => {
 		const route = new Route({
-			matcher: 'end:profile',
+			url: 'end:profile',
 			response: 200,
-			functionMatcher: (url, opts) =>
-				opts && opts.headers && opts.headers.authorized === true,
+			matcherFunction: ({ options }) =>
+				options && options.headers && options.headers.authorized === true,
 		});
 
-		expect(route.matcher('http://a.com/profile')).toBe(false);
+		expect(route.matcher({ url: 'http://a.com/profile' })).toBe(false);
 		expect(
-			route.matcher('http://a.com/not', {
-				headers: { authorized: true },
+			route.matcher({
+				url: 'http://a.com/not',
+				options: {
+					headers: { authorized: true },
+				},
 			}),
 		).toBe(false);
 		expect(
-			route.matcher('http://a.com/profile', {
-				headers: { authorized: true },
+			route.matcher({
+				url: 'http://a.com/profile',
+				options: {
+					headers: { authorized: true },
+				},
 			}),
 		).toBe(true);
 	});

@@ -9,7 +9,7 @@ describe('header matching', () => {
 			response: 200,
 		});
 
-		expect(route.matcher('http://a.com/')).toBe(true);
+		expect(route.matcher({ url: 'http://a.com/' })).toBe(true);
 	});
 
 	it("not match when headers don't match", () => {
@@ -20,8 +20,11 @@ describe('header matching', () => {
 		});
 
 		expect(
-			route.matcher('http://a.com/', {
-				headers: { a: 'c' },
+			route.matcher({
+				url: 'http://a.com/',
+				options: {
+					headers: { a: 'c' },
+				},
 			}),
 		).toBe(false);
 	});
@@ -34,8 +37,11 @@ describe('header matching', () => {
 		});
 
 		expect(
-			route.matcher('http://a.com/', {
-				headers: { a: 'b' },
+			route.matcher({
+				url: 'http://a.com/',
+				options: {
+					headers: { a: 'b' },
+				},
 			}),
 		).toBe(true);
 	});
@@ -48,8 +54,11 @@ describe('header matching', () => {
 		});
 
 		expect(
-			route.matcher('http://a.com/', {
-				headers: { A: 'b' },
+			route.matcher({
+				url: 'http://a.com/',
+				options: {
+					headers: { A: 'b' },
+				},
 			}),
 		).toBe(true);
 	});
@@ -63,8 +72,11 @@ describe('header matching', () => {
 		});
 
 		expect(
-			route.matcher('http://a.com/', {
-				headers: { a: ['b', 'c'] },
+			route.matcher({
+				url: 'http://a.com/',
+				options: {
+					headers: { a: ['b', 'c'] },
+				},
 			}),
 		).toBe(true);
 	});
@@ -77,8 +89,11 @@ describe('header matching', () => {
 		});
 
 		expect(
-			route.matcher('http://a.com/', {
-				headers: { a: ['b', 'c'] },
+			route.matcher({
+				url: 'http://a.com/',
+				options: {
+					headers: { a: ['b', 'c'] },
+				},
 			}),
 		).toBe(false);
 	});
@@ -91,8 +106,11 @@ describe('header matching', () => {
 		});
 
 		expect(
-			route.matcher('http://a.com/', {
-				headers: { a: 'b', c: 'd' },
+			route.matcher({
+				url: 'http://a.com/',
+				options: {
+					headers: { a: 'b', c: 'd' },
+				},
 			}),
 		).toBe(true);
 	});
@@ -105,8 +123,11 @@ describe('header matching', () => {
 		});
 
 		expect(
-			route.matcher('http://a.com/', {
-				headers: { a: 'b' },
+			route.matcher({
+				url: 'http://a.com/',
+				options: {
+					headers: { a: 'b' },
+				},
 			}),
 		).toBe(false);
 	});
@@ -119,8 +140,11 @@ describe('header matching', () => {
 		});
 
 		expect(
-			route.matcher('http://a.com/', {
-				headers: new Headers({ a: 'b' }),
+			route.matcher({
+				url: 'http://a.com/',
+				options: {
+					headers: new Headers({ a: 'b' }),
+				},
 			}),
 		).toBe(true);
 	});
@@ -132,10 +156,13 @@ describe('header matching', () => {
 			headers: { a: 'b' },
 		});
 
-		expect(route.matcher('http://domain.com/person')).toBe(false);
+		expect(route.matcher({ url: 'http://domain.com/person' })).toBe(false);
 		expect(
-			route.matcher('http://domain.com/person', {
-				headers: { a: 'b' },
+			route.matcher({
+				url: 'http://domain.com/person',
+				options: {
+					headers: { a: 'b' },
+				},
 			}),
 		).toBe(true);
 	});
@@ -162,8 +189,11 @@ describe('header matching', () => {
 		});
 
 		expect(
-			route.matcher('http://a.com', {
-				headers: new MyHeaders({ a: 'b' }),
+			route.matcher({
+				url: 'http://a.com',
+				options: {
+					headers: new MyHeaders({ a: 'b' }),
+				},
 			}),
 		).toBe(true);
 	});

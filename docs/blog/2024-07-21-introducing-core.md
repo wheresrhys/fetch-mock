@@ -83,7 +83,7 @@ Related to the removal of inferred route names, matchers that are passed in to c
 
 #### `CallLog`
 
-Previously items in the call history were returned as `[url, options]` arrays, with a few additional properties added. Now they are returned as objects - `CallLog`s - that contain all information about the call and how it was handled.
+Previously items in the call history were returned as `[url, options]` arrays, with a few additional properties added. Now they are returned as objects - `CallLog`s - that contain all information about the call and how it was handled. The `CallLog` interface is also the expected input for matcher functions and response builder functions.
 
 #### `done()` uses route names
 
@@ -96,6 +96,7 @@ These are the new methods for resetting fetch mock to its default state. The nam
 #### `.createInstance()`
 
 A replacement for `sandbox()` that eschews all the weird wiring that `.sandbox()` used. Possibly not very useful for the average user, but I use it a lot in my tests for fetch mock, so it stays :-).
+
 
 ## What's still to come
 

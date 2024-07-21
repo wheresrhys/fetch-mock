@@ -76,9 +76,9 @@ A `Promise` that resolves to any of the options documented above e.g. `new Promi
 
 `{Function}`
 
-A function that returns any of the options documented above (including `Promise`. The function will be passed the `url` and `options` `fetch` was called with. If `fetch` was called with a `Request` instance, it will be passed `url` and `options` inferred from the `Request` instance, with the original `Request` passed as a third argument.
+A function that is passed a [`CallLog`](/fetch-mock/docs/@fetch-mock/core/CallHistory#calllog-schema) and returns any of the options documented above (including `Promise`).
 
 ### Examples
 
-- `(url, opts) => opts.headers.Authorization ? 200 : 403`
-- `(_, _, request) => request.headers.get('Authorization') ?  200 : 403`
+- `({url, options}) => options.headers.Authorization ? 200 : 403`
+- `({request}) => request.headers.get('Authorization') ?  200 : 403`

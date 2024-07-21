@@ -53,7 +53,7 @@ const isRequest = (urlOrRequest, Request) =>
  * @param {typeof Request} Request
  * @returns {NormalizedRequest}
  */
-export function normalizeRequest(urlOrRequest, options, Request) {
+export function normalizeRequest(urlOrRequest, options = {}, Request) {
 	if (isRequest(urlOrRequest, Request)) {
 		/** @type {NormalizedRequestOptions} */
 		const derivedOptions = {

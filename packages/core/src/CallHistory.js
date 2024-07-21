@@ -137,12 +137,7 @@ class CallHistory {
 		});
 
 		calls = calls.filter(({ url, options }) => {
-			const {
-				url: normalizedUrl,
-				options: normalizedOptions,
-				request,
-			} = normalizeRequest(url, options, this.config.Request);
-			return matcher(normalizedUrl, normalizedOptions, request);
+			return matcher(normalizeRequest(url, options, this.config.Request));
 		});
 
 		return calls;

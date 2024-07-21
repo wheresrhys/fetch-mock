@@ -9,7 +9,7 @@ describe('response negotiation', () => {
 	});
 
 	it('function', async () => {
-		fm.route('*', (url) => url);
+		fm.route('*', ({ url }) => url);
 		const res = await fm.fetchHandler('http://a.com/');
 		expect(res.status).toEqual(200);
 		expect(await res.text()).toEqual('http://a.com/');
@@ -27,7 +27,7 @@ describe('response negotiation', () => {
 		expect(res.status).toEqual(300);
 	});
 	it('function that returns a Promise for a body', async () => {
-		fm.route('*', (url) => Promise.resolve(`test: ${url}`));
+		fm.route('*', ({ url }) => Promise.resolve(`test: ${url}`));
 		const res = await fm.fetchHandler('http://a.com/');
 		expect(res.status).toEqual(200);
 		expect(await res.text()).toEqual('test: http://a.com/');
@@ -36,7 +36,7 @@ describe('response negotiation', () => {
 	it('Promise for a function that returns a response', async () => {
 		fm.route(
 			'http://a.com/',
-			Promise.resolve((url) => `test: ${url}`),
+			Promise.resolve(({ url }) => `test: ${url}`),
 		);
 		const res = await fm.fetchHandler('http://a.com/');
 		expect(res.status).toEqual(200);
@@ -79,7 +79,7 @@ describe('response negotiation', () => {
 	});
 
 	it('pass values to delayed function', async () => {
-		fm.route('*', (url) => `delayed: ${url}`, {
+		fm.route('*', ({ url }) => `delayed: ${url}`, {
 			delay: 10,
 		});
 		const req = fm.fetchHandler('http://a.com/');

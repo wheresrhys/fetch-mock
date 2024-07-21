@@ -78,6 +78,10 @@ When the `express:` keyword is used in a string matcher, it can be combined with
 }
 ```
 
+The values of express parameters are made available in the `expressParams` property when 
+- [Inspecting call history](/fetch-mock/docs/@fetch-mock/core/CallHistory#calllog-schema)
+- [Using a function to construct a response](/fetch-mock/docs/@fetch-mock/core/route/response#function)
+
 ## Other matching criteria
 
 ### method

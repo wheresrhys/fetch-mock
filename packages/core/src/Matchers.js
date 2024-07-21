@@ -1,6 +1,6 @@
 //@type-check
 /** @typedef {import('./Route').RouteConfig} RouteConfig */
-/** @typedef {import('./RequestUtils').NormalizedRequest} NormalizedRequest */
+/** @typedef {import('./CallHistory').CallLog} CallLog */
 import glob from 'globrex';
 import * as regexparam from 'regexparam';
 import querystring from 'querystring';
@@ -30,9 +30,8 @@ export const isUrlMatcher = (matcher) =>
 export const isFunctionMatcher = (matcher) => typeof matcher === 'function';
 
 /** @typedef {string | RegExp | URL} RouteMatcherUrl */
-/** @typedef {function(string): boolean} UrlMatcher */
-/** @typedef {function(string): UrlMatcher} UrlMatcherGenerator */
-/** @typedef {function(NormalizedRequest): boolean} RouteMatcherFunction */
+/** @typedef {function(string): RouteMatcherFunction} UrlMatcherGenerator */
+/** @typedef {function(CallLog): boolean} RouteMatcherFunction */
 /** @typedef {function(RouteConfig): RouteMatcherFunction} MatcherGenerator */
 /** @typedef {RouteMatcherUrl | RouteMatcherFunction} RouteMatcher */
 
@@ -156,8 +155,7 @@ const getParamsMatcher = ({ params: expectedParams, url: matcherUrl }) => {
 const getBodyMatcher = (route) => {
 	const { body: expectedBody } = route;
 
-	return ({ url, options: { body, method = 'get' } }) => {
-		console.log({ url, body, method });
+	return ({ options: { body, method = 'get' } }) => {
 		if (method.toLowerCase() === 'get') {
 			// GET requests don’t send a body so the body matcher should be ignored for them
 			return true;

@@ -12,13 +12,7 @@ const protocolRelativeUrlRX = new RegExp('^//', 'i');
  */
 
 /** @typedef {RequestInit | (RequestInit & DerivedRequestOptions) } NormalizedRequestOptions */
-/**
- * @typedef NormalizedRequest
- * @property  {string} url
- * @property  {NormalizedRequestOptions} options
- * @property  {Request} [request]
- * @property  {AbortSignal} [signal]
- */
+/** @typedef {import('./CallHistory').CallLog} CallLog */
 
 /**
  *
@@ -51,9 +45,11 @@ const isRequest = (urlOrRequest, Request) =>
  * @param {string|Request} urlOrRequest
  * @param {RequestInit} options
  * @param {typeof Request} Request
- * @returns {NormalizedRequest}
+ * @returns {CallLog}
  */
-export function normalizeRequest(urlOrRequest, options = {}, Request) {
+export function createCallLog(urlOrRequest, options, Request) {
+	/** @type {Promise<any>[]} */
+	const pendingPromises = [];
 	if (isRequest(urlOrRequest, Request)) {
 		/** @type {NormalizedRequestOptions} */
 		const derivedOptions = {
@@ -67,13 +63,15 @@ export function normalizeRequest(urlOrRequest, options = {}, Request) {
 		if (urlOrRequest.headers) {
 			derivedOptions.headers = normalizeHeaders(urlOrRequest.headers);
 		}
-		const normalizedRequestObject = {
+		const callLog = {
+			arguments: [urlOrRequest, options],
 			url: normalizeUrl(urlOrRequest.url),
 			options: Object.assign(derivedOptions, options),
 			request: urlOrRequest,
 			signal: (options && options.signal) || urlOrRequest.signal,
+			pendingPromises,
 		};
-		return normalizedRequestObject;
+		return callLog;
 	}
 	if (
 		typeof urlOrRequest === 'string' ||
@@ -82,9 +80,11 @@ export function normalizeRequest(urlOrRequest, options = {}, Request) {
 		(typeof urlOrRequest === 'object' && 'href' in urlOrRequest)
 	) {
 		return {
+			arguments: [urlOrRequest, options],
 			url: normalizeUrl(urlOrRequest),
-			options,
+			options: options || {},
 			signal: options && options.signal,
+			pendingPromises,
 		};
 	}
 	if (typeof urlOrRequest === 'object') {

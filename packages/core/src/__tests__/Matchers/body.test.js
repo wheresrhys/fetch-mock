@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import Route from '../../Route.js';
 import Router from '../../Router.js';
-import { normalizeRequest } from '../../RequestUtils.js';
+import { createCallLog } from '../../RequestUtils.js';
 describe('body matching', () => {
 	//TODO add a test for matching an asynchronous body
 	it('should not match if no body provided in request', () => {
@@ -45,7 +45,7 @@ describe('body matching', () => {
 			Response,
 		});
 		const router = new Router({ Request, Headers }, { routes: [route] });
-		const normalizedRequest = normalizeRequest(
+		const normalizedRequest = createCallLog(
 			new Request('http://a.com/', {
 				method: 'POST',
 				body: JSON.stringify({ foo: 'bar' }),

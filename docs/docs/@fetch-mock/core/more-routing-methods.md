@@ -5,7 +5,7 @@ sidebar_label: More routing methods
 
 # More routing methods
 
-These methods allow defining routes for common use cases while avoiding writing hard to read configuration objects. Unless noted otherwise, each of the methods below have the same signature as `.route()`
+These methods allow defining routes for common use cases while avoiding writing hard to read configuration objects. They all return the fetchMock instance, and are therefor chainable. Unless noted otherwise, each of the methods below have the same signature as `.route()`. 
 
 ## .catch()
 

@@ -163,7 +163,7 @@ export default class Router {
 				}
 				normalizedRequest.signal.addEventListener('abort', abort);
 			}
-
+			console.log(this.routes);
 			if (this.needsToReadBody(request)) {
 				options.body = await options.body;
 			}
@@ -172,7 +172,7 @@ export default class Router {
 				? [...this.routes, this.fallbackRoute]
 				: this.routes;
 			const route = routesToTry.find((route) =>
-				route.matcher(url, options, request),
+				route.matcher(normalizedRequest),
 			);
 
 			if (route) {

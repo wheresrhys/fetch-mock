@@ -80,6 +80,7 @@ const FetchMock = {
 			requestInit,
 			this.config.Request,
 		);
+
 		/** @type {Promise<any>[]} */
 		const pendingPromises = [];
 		const callLog = { ...normalizedRequest, pendingPromises };

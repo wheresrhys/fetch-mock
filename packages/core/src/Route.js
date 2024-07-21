@@ -148,8 +148,8 @@ class Route {
 			}));
 		this.config.usesBody = activeMatchers.some(({ usesBody }) => usesBody);
 		/** @type {RouteMatcherFunction} */
-		this.matcher = (url, options = {}, request) =>
-			activeMatchers.every(({ matcher }) => matcher(url, options, request));
+		this.matcher = (normalizedRequest) =>
+			activeMatchers.every(({ matcher }) => matcher(normalizedRequest));
 	}
 	/**
 	 * @returns {void}

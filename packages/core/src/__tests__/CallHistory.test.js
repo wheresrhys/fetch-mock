@@ -231,7 +231,7 @@ describe('CallHistory', () => {
 				});
 
 				describe('filtering with a matcher', () => {
-					//TODO write a test that just makes it clear this is contracted out to Route
+					// TODO write a test that just makes it clear this is contracted out to Route
 					// spy on route constructor, and then on matcher for that route
 					it('should be able to filter with a url matcher', async () => {
 						fm.catch();

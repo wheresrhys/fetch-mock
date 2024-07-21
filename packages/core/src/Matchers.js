@@ -61,7 +61,22 @@ const stringMatchers = {
 	},
 	express: (targetString) => {
 		const urlRX = regexparam.parse(targetString);
-		return ({ url }) => urlRX.pattern.test(getPath(url));
+		return (callLog) => {
+			const { url } = callLog;
+			const vals = urlRX.pattern.exec(getPath(url));
+			if (!vals) {
+				callLog.expressParams = {};
+				return false;
+			}
+			vals.shift();
+			/** @type {Object.<string,string>} */
+			callLog.expressParams = urlRX.keys.reduce(
+				(map, paramName, i) =>
+					vals[i] ? Object.assign(map, { [paramName]: vals[i] }) : map,
+				{},
+			);
+			return true;
+		};
 	},
 	path:
 		(targetString) =>
@@ -124,30 +139,21 @@ const getQueryStringMatcher = ({ query: passedQuery }) => {
 /**
  * @type {MatcherGenerator}
  */
-const getParamsMatcher = ({ params: expectedParams, url: matcherUrl }) => {
+const getParamsMatcher = ({ params: expectedParams, url }) => {
 	if (!expectedParams) {
 		return;
 	}
-	if (typeof matcherUrl === 'string') {
-		if (!/express:/.test(matcherUrl)) {
-			throw new Error(
-				'fetch-mock: matching on params is only possible when using an express: matcher',
-			);
-		}
-		const expectedKeys = Object.keys(expectedParams);
-		const re = regexparam.parse(matcherUrl.replace(/^express:/, ''));
-		return ({ url }) => {
-			const vals = re.pattern.exec(getPath(url)) || [];
-			vals.shift();
-			/** @type {Object.<string,string>} */
-			const params = re.keys.reduce(
-				(map, paramName, i) =>
-					vals[i] ? Object.assign(map, { [paramName]: vals[i] }) : map,
-				{},
-			);
-			return expectedKeys.every((key) => params[key] === expectedParams[key]);
-		};
+	if (!(typeof url === 'string' && /express:/.test(url))) {
+		throw new Error(
+			'fetch-mock: matching on params is only possible when using an express: matcher',
+		);
 	}
+	const expectedKeys = Object.keys(expectedParams);
+	return ({ expressParams = {} }) => {
+		return expectedKeys.every(
+			(key) => expressParams[key] === expectedParams[key],
+		);
+	};
 };
 /**
  * @type {MatcherGenerator}
@@ -238,11 +244,11 @@ const getUrlMatcher = (route) => {
 
 /** @type {MatcherDefinition[]} */
 export const builtInMatchers = [
+	{ name: 'url', matcher: getUrlMatcher },
 	{ name: 'query', matcher: getQueryStringMatcher },
 	{ name: 'method', matcher: getMethodMatcher },
 	{ name: 'headers', matcher: getHeaderMatcher },
 	{ name: 'params', matcher: getParamsMatcher },
 	{ name: 'body', matcher: getBodyMatcher, usesBody: true },
 	{ name: 'matcherFunction', matcher: getFunctionMatcher },
-	{ name: 'url', matcher: getUrlMatcher },
 ];

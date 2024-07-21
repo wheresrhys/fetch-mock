@@ -100,7 +100,6 @@ function shouldSendAsObject(responseInput) {
  * @returns
  */
 const resolveUntilResponseConfig = async (response, normalizedRequest) => {
-	const { url, options, request } = normalizedRequest;
 	// We want to allow things like
 	// - function returning a Promise for a response
 	// - delaying (using a timeout Promise) a function's execution to generate
@@ -111,7 +110,7 @@ const resolveUntilResponseConfig = async (response, normalizedRequest) => {
 	//eslint-disable-next-line no-constant-condition
 	while (true) {
 		if (typeof response === 'function') {
-			response = response(url, options, request);
+			response = response(normalizedRequest);
 		} else if (isPromise(response)) {
 			response = await response; // eslint-disable-line  no-await-in-loop
 		} else {

@@ -23,7 +23,7 @@
   "scripts": {
     "lint": "eslint --cache --fix --ext .js,.cjs . && prettier --cache --write *.md docs/**/*.md docs/**/**/*.md",
     "lint:ci": "eslint --ext .js,.cjs . && prettier *.md docs/**/*.md docs/**/**/*.md",
-    "types:check": "tsc --project ./jsconfig.json",
+    "types:check": "tsc -p ./jsconfig.json",
     "types:lint": "dtslint --expectOnly packages/fetch-mock/types",
     "prepare": "husky || echo \"husky not available\"",
     "build": "rollup -c",
@@ -59,7 +59,7 @@
     "prettier": "^3.1.1",
     "rollup": "^4.9.1",
     "ts-to-jsdoc": "^2.1.0",
-    "typescript": "^3.9.10",
+    "typescript": "^5.5.3",
     "v8": "^0.1.0",
     "vitest": "^1.1.0",
     "webdriverio": "^8.27.0"

@@ -12,15 +12,22 @@
         "noImplicitThis": true,
         "strictNullChecks": false,
         "strictFunctionTypes": true,
-        "types": [        ],
-        "noEmit": true,
+        "types": [   "node"     ],
         "downlevelIteration": true,
-        "forceConsistentCasingInFileNames": true
+        "forceConsistentCasingInFileNames": true,
+        "declaration": true,
+        "emitDeclarationOnly": true,
+        "outDir": "packages/core/types",
+        "skipLibCheck": true,
+        "noEmit": false,
+        "declarationMap": true
     },
     "include": [
-        "packages/core/src/*.js",
+        "./packages/core/src/*.js",
+        "./packages/core/src/**/*.js",
     ],
     "exclude": [
-        "node_modules"
+        "node_modules",
+        "packages/**/src/__tests__"
     ]
 }

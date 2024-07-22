@@ -119,12 +119,12 @@ describe('CallHistory', () => {
 					);
 				});
 
-				it('when called with Request instance', () => {
+				it('when called with Request instance', async () => {
 					fm.catch();
 					const req = new Request('http://a.com/', {
 						method: 'post',
 					});
-					fm.fetchHandler(req);
+					await fm.fetchHandler(req);
 					expect(fm.callHistory.calls()[0]).toEqual(
 						expect.objectContaining({
 							url: 'http://a.com/',
@@ -133,12 +133,12 @@ describe('CallHistory', () => {
 						}),
 					);
 				});
-				it('when called with Request instance and arbitrary option', () => {
+				it('when called with Request instance and arbitrary option', async () => {
 					fm.catch();
 					const req = new Request('http://a.com/', {
 						method: 'POST',
 					});
-					fm.fetchHandler(req, { arbitraryOption: true });
+					await fm.fetchHandler(req, { arbitraryOption: true });
 					expect(fm.callHistory.calls()[0]).toEqual(
 						expect.objectContaining({
 							url: 'http://a.com/',

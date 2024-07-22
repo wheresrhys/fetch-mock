@@ -73,13 +73,20 @@ const FetchMock = {
 	 * @this {FetchMock}
 	 * @returns {Promise<Response>}
 	 */
-	fetchHandler(requestInput, requestInit) {
+	async fetchHandler(requestInput, requestInit) {
 		// TODO move into router
-		const callLog = requestUtils.createCallLog(
-			requestInput,
-			requestInit,
-			this.config.Request,
-		);
+		let callLog;
+		if (requestUtils.isRequest(requestInput, this.config.Request)) {
+			callLog = await requestUtils.createCallLogFromRequest(
+				requestInput,
+				requestInit,
+			);
+		} else {
+			callLog = requestUtils.createCallLogFromUrlAndOptions(
+				requestInput,
+				requestInit,
+			);
+		}
 
 		this.callHistory.recordCall(callLog);
 		const responsePromise = this.router.execute(callLog);

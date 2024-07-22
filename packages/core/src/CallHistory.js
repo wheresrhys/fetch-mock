@@ -4,7 +4,7 @@
 /** @typedef {import('./RequestUtils').NormalizedRequestOptions} NormalizedRequestOptions */
 /** @typedef {import('./Matchers').RouteMatcher} RouteMatcher */
 /** @typedef {import('./FetchMock').FetchMockConfig} FetchMockConfig */
-import { createCallLog } from './RequestUtils.js';
+import { createCallLogFromUrlAndOptions } from './RequestUtils.js';
 import { isUrlMatcher } from './Matchers.js';
 import Route from './Route.js';
 import Router from './Router.js';
@@ -18,8 +18,8 @@ import Router from './Router.js';
  * @property {AbortSignal} [signal]
  * @property {Route} [route]
  * @property {Response} [response]
- * @property {Object.<string, string>} [expressParameters]
- * @property {Object.<string, string>} [queryParameters]
+ * @property {Object.<string, string>} [expressParams]
+ * @property {Object.<string, string>} [queryParams]
  * @property {Promise<any>[]} pendingPromises
  */
 
@@ -142,7 +142,7 @@ class CallHistory {
 		});
 
 		calls = calls.filter(({ url, options }) => {
-			return matcher(createCallLog(url, options, this.config.Request));
+			return matcher(createCallLogFromUrlAndOptions(url, options));
 		});
 
 		return calls;

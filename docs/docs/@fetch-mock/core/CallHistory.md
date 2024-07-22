@@ -60,6 +60,8 @@ An options object compatible with the [route api](#api-mockingmock_options) to b
 
 `fetchMock.callHistory` exposes the following methods.
 
+> Note that fetch calls made using `(url, options)` pairs are added synchronously, but calls using a `Request` are added asynchronously. This is because when a `Request` is used access to many of its internals is via asynchronous methods, while for an options object they can be read directly. In general it's best to `await` your code to complete before attempting to access call history.
+
 ### .recordCall(callLog)
 
 For internal use.

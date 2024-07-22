@@ -22,7 +22,7 @@ Note that if you use matchers that target anything other than the url string, yo
 
 ### response
 
-`{String|Object|Function|Promise|Response}`
+`{String|Int|Object|Function|Promise|Response}`
 
 Response to send when a call is matched
 

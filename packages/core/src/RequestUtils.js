@@ -7,7 +7,7 @@ const protocolRelativeUrlRX = new RegExp('^//', 'i');
 /**
  * @typedef DerivedRequestOptions
  * @property  {string} method
- * @property  {Promise<string>} [body]
+ * @property  {string} [body]
  * @property  {{ [key: string]: string }} [headers]
  */
 
@@ -15,18 +15,18 @@ const protocolRelativeUrlRX = new RegExp('^//', 'i');
 /** @typedef {import('./CallHistory').CallLog} CallLog */
 
 /**
- *
- * @param {string} url
+ * @param {string | string | URL} url
  * @returns {string}
  */
 export function normalizeUrl(url) {
+	if (url instanceof URL) {
+		return url.href;
+	}
 	if (absoluteUrlRX.test(url)) {
-		const u = new URL(url);
-		return u.href;
+		return new URL(url).href;
 	}
 	if (protocolRelativeUrlRX.test(url)) {
-		const u = new URL(url, 'http://dummy');
-		return u.href;
+		return new URL(url, 'http://dummy').href;
 	}
 	const u = new URL(url, 'http://dummy');
 	return u.pathname + u.search;
@@ -37,57 +37,29 @@ export function normalizeUrl(url) {
  * @param {typeof Request} Request
  * @returns  {urlOrRequest is Request}
  */
-const isRequest = (urlOrRequest, Request) =>
+export const isRequest = (urlOrRequest, Request) =>
 	Request.prototype.isPrototypeOf(urlOrRequest);
 
 /**
  *
- * @param {string|Request} urlOrRequest
+ * @param {string | object} url
  * @param {RequestInit} options
- * @param {typeof Request} Request
  * @returns {CallLog}
  */
-export function createCallLog(urlOrRequest, options, Request) {
+export function createCallLogFromUrlAndOptions(url, options) {
 	/** @type {Promise<any>[]} */
 	const pendingPromises = [];
-	if (isRequest(urlOrRequest, Request)) {
-		/** @type {NormalizedRequestOptions} */
-		const derivedOptions = {
-			method: urlOrRequest.method,
-		};
-
-		try {
-			derivedOptions.body = urlOrRequest.clone().text();
-		} catch (err) {}
-
-		if (urlOrRequest.headers) {
-			derivedOptions.headers = normalizeHeaders(urlOrRequest.headers);
-		}
-		const callLog = {
-			arguments: [urlOrRequest, options],
-			url: normalizeUrl(urlOrRequest.url),
-			options: Object.assign(derivedOptions, options || {}),
-			request: urlOrRequest,
-			signal: (options && options.signal) || urlOrRequest.signal,
-			pendingPromises,
-		};
-		return callLog;
-	}
-	if (
-		typeof urlOrRequest === 'string' ||
-		/** @type {object} */ (urlOrRequest) instanceof String ||
-		// horrible URL object duck-typing
-		(typeof urlOrRequest === 'object' && 'href' in urlOrRequest)
-	) {
+	if (typeof url === 'string' || url instanceof String || url instanceof URL) {
 		return {
-			arguments: [urlOrRequest, options],
-			url: normalizeUrl(urlOrRequest),
+			arguments: [url, options],
+			// @ts-ignore - jsdoc doesn't distinguish between string and String, but typechecker complains
+			url: normalizeUrl(url),
 			options: options || {},
 			signal: options && options.signal,
 			pendingPromises,
 		};
 	}
-	if (typeof urlOrRequest === 'object') {
+	if (typeof url === 'object') {
 		throw new TypeError(
 			'fetch-mock: Unrecognised Request object. Read the Config and Installation sections of the docs',
 		);
@@ -95,6 +67,39 @@ export function createCallLog(urlOrRequest, options, Request) {
 		throw new TypeError('fetch-mock: Invalid arguments passed to fetch');
 	}
 }
+
+/**
+ *
+ * @param {Request} request
+ * @param {RequestInit} options
+ * @returns {Promise<CallLog>}
+ */
+export async function createCallLogFromRequest(request, options) {
+	/** @type {Promise<any>[]} */
+	const pendingPromises = [];
+	/** @type {NormalizedRequestOptions} */
+	const derivedOptions = {
+		method: request.method,
+	};
+
+	try {
+		derivedOptions.body = await request.clone().text();
+	} catch (err) {}
+
+	if (request.headers) {
+		derivedOptions.headers = normalizeHeaders(request.headers);
+	}
+	const callLog = {
+		arguments: [request, options],
+		url: normalizeUrl(request.url),
+		options: Object.assign(derivedOptions, options || {}),
+		request: request,
+		signal: (options && options.signal) || request.signal,
+		pendingPromises,
+	};
+	return callLog;
+}
+
 /**
  * @param {string} url
  * @returns {string}

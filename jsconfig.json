@@ -12,14 +12,12 @@
         "noImplicitThis": true,
         "strictNullChecks": false,
         "strictFunctionTypes": true,
-        "types": [   "node"     ],
+        "types": [   "node"  , "./packages/core/types/*.d.ts"   ],
         "downlevelIteration": true,
         "forceConsistentCasingInFileNames": true,
         "declaration": true,
-        "emitDeclarationOnly": true,
-        "outDir": "packages/core/types",
         "skipLibCheck": true,
-        "noEmit": false,
+        "noEmit": true,
         "declarationMap": true
     },
     "include": [

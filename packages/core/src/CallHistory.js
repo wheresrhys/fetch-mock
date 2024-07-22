@@ -1,31 +1,8 @@
 //@type-check
-/** @typedef {import('./Route').RouteConfig} RouteConfig */
-/** @typedef {import('./Route').RouteName} RouteName */
-/** @typedef {import('./RequestUtils').NormalizedRequestOptions} NormalizedRequestOptions */
-/** @typedef {import('./Matchers').RouteMatcher} RouteMatcher */
-/** @typedef {import('./FetchMock').FetchMockConfig} FetchMockConfig */
 import { createCallLogFromUrlAndOptions } from './RequestUtils.js';
 import { isUrlMatcher } from './Matchers.js';
 import Route from './Route.js';
 import Router from './Router.js';
-
-/**
- * @typedef CallLog
- * @property {any[]} arguments
- * @property {string} url
- * @property {NormalizedRequestOptions} options
- * @property {Request} [request]
- * @property {AbortSignal} [signal]
- * @property {Route} [route]
- * @property {Response} [response]
- * @property {Object.<string, string>} [expressParams]
- * @property {Object.<string, string>} [queryParams]
- * @property {Promise<any>[]} pendingPromises
- */
-
-/** @typedef {'matched'} Matched */
-/** @typedef {'unmatched'} Unmatched */
-/** @typedef  {RouteName | Matched| Unmatched| boolean | RouteMatcher } CallHistoryFilter*/
 
 /**
  *

@@ -97,7 +97,6 @@ These are the new methods for resetting fetch mock to its default state. The nam
 
 A replacement for `sandbox()` that eschews all the weird wiring that `.sandbox()` used. Possibly not very useful for the average user, but I use it a lot in my tests for fetch mock, so it stays :-).
 
-
 ## What's still to come
 
 There are a bunch of [breaking changes](https://github.com/wheresrhys/fetch-mock/issues?q=is%3Aopen+is%3Aissue+label%3A%22breaking+change%22) I'd like to ship before getting to v1.0.0. I also want to give users an incentive to migrate so there are a variety of new features I'd like to add and bugs to fix. Have a look at [the issues list](https://github.com/wheresrhys/fetch-mock/issues) and vote for any you like.

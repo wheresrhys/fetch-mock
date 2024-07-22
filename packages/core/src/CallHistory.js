@@ -18,8 +18,8 @@ import Router from './Router.js';
  * @property {AbortSignal} [signal]
  * @property {Route} [route]
  * @property {Response} [response]
- * @property {Object.<string, string>} [expressParameters]
- * @property {Object.<string, string>} [queryParameters]
+ * @property {Object.<string, string>} [expressParams]
+ * @property {Object.<string, string>} [queryParams]
  * @property {Promise<any>[]} pendingPromises
  */
 

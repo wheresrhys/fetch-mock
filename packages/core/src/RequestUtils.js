@@ -66,7 +66,7 @@ export function createCallLog(urlOrRequest, options, Request) {
 		const callLog = {
 			arguments: [urlOrRequest, options],
 			url: normalizeUrl(urlOrRequest.url),
-			options: Object.assign(derivedOptions, options),
+			options: Object.assign(derivedOptions, options || {}),
 			request: urlOrRequest,
 			signal: (options && options.signal) || urlOrRequest.signal,
 			pendingPromises,

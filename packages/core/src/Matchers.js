@@ -169,7 +169,9 @@ const getBodyMatcher = (route) => {
 		let sentBody;
 
 		try {
-			sentBody = JSON.parse(body);
+			if (typeof body === 'string') {
+				sentBody = JSON.parse(body);
+			}
 		} catch (err) {}
 
 		return (

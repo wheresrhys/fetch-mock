@@ -73,7 +73,18 @@ export type FetchMockConfig = {
     Request?: typeof Request;
     Response?: typeof Response;
 };
-export type FetchMockCore = any;
+export type FetchMockCore = {
+    config: FetchMockConfig;
+    router: Router;
+    callHistory: CallHistory;
+    createInstance: () => FetchMock;
+    fetchHandler: (arg0: string | Request, arg1: RequestInit) => Promise<Response>;
+    route: (arg0: any, arg1: any, arg2: any) => FetchMock;
+    catch: (arg0: RouteResponse | undefined) => FetchMock;
+    defineMatcher: (arg0: MatcherDefinition) => void;
+    removeRoutes: (arg0: object) => void;
+    clearHistory: () => void;
+};
 /**
  * }
  */
@@ -82,3 +93,10 @@ export type PresetRoutes = any;
 export type FetchMock = any;
 import * as requestUtils from "./RequestUtils.js";
 import Route from "./Route.js";
+import Router from "./Router.js";
+import CallHistory from "./CallHistory.js";
+/**
+ * @type {FetchMockCore}
+ * @this {FetchMock}
+ * */
+declare const FetchMock: FetchMockCore;

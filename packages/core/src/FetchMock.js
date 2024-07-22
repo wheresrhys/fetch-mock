@@ -36,7 +36,6 @@ const defaultConfig = {
 };
 /**
  * @typedef FetchMockCore
- * @this {FetchMock}
  * @property {FetchMockConfig} config
  * @property {Router} router
  * @property {CallHistory} callHistory
@@ -51,7 +50,10 @@ const defaultConfig = {
 
 const defaultRouter = new Router(defaultConfig);
 
-/** @type {FetchMockCore} */
+/** 
+ * @type {FetchMockCore} 
+ * @this {FetchMock}
+ * */
 const FetchMock = {
 	config: defaultConfig,
 	router: defaultRouter,

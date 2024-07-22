@@ -38,7 +38,7 @@ export function getQuery(url: string): string;
 export function isRequest(urlOrRequest: string | Request, Request: typeof Request): urlOrRequest is Request;
 export function normalizeHeaders(headers: Headers | [string, string][] | Record<string, string> | {
     [x: string]: string | number;
-}): {
+} | HeadersInit): {
     [x: string]: string;
 };
 export type DerivedRequestOptions = {

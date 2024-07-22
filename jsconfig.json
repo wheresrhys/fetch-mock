@@ -13,7 +13,6 @@
         "strictNullChecks": false,
         "strictFunctionTypes": true,
         "types": [
-
         ],
         "downlevelIteration": true,
         "forceConsistentCasingInFileNames": true,

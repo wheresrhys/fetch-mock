@@ -1,38 +1,31 @@
-
-
-/**
- * Mock matcher function
- */
-type RouteMatcherUrl = string | RegExp | URL;
-
-
-
-
-/**
- * Mock matcher. Can be one of following:
- * string: Either
- *   * an exact url to match e.g. 'http://www.site.com/page.html'
- *   * if the string begins with a `^`, the string following the `^` must
- *     begin the url e.g. '^http://www.site.com' would match
- *      'http://www.site.com' or 'http://www.site.com/page.html'
- *    * '*' to match any url
- * RegExp: A regular expression to test the url against
- * Function(url, opts): A function (returning a Boolean) that is passed the
- *  url and opts fetch() is called with (or, if fetch() was called with one,
- *  the Request instance)
- */
-type RouteMatcher = RouteMatcherUrl | RouteMatcherFunction;
-
-type UrlMatcher = (url: string) => boolean;
-
-type UrlMatcherGenerator = (pattern: string) => UrlMatcher;
-
-type RouteMatcherFunction = (url: string, opts: NormalizedRequestOptions, request: Request) => boolean;
-
-type MatcherGenerator = (route: RouteOptions) => RouteMatcherFunction;
-
-type MatcherDefinition = {
+export function isUrlMatcher(matcher: RouteMatcher | RouteConfig): matcher is string | RegExp | URL;
+export function isFunctionMatcher(matcher: RouteMatcher | RouteConfig): matcher is (arg0: CallLog) => boolean;
+/** @type {MatcherDefinition[]} */
+export const builtInMatchers: MatcherDefinition[];
+export type RouteConfig = import("./Route.js").UserRouteConfig & import("./FetchMock.js").FetchMockConfig;
+export type CallLog = {
+    arguments: any[];
+    url: string;
+    options: RequestInit | (RequestInit & import("./RequestUtils.js").DerivedRequestOptions);
+    request?: Request;
+    signal?: AbortSignal;
+    route?: import("./Route.js").default;
+    response?: Response;
+    expressParams?: {
+        [x: string]: string;
+    };
+    queryParams?: {
+        [x: string]: string;
+    };
+    pendingPromises: Promise<any>[];
+};
+export type RouteMatcherUrl = string | RegExp | URL;
+export type UrlMatcherGenerator = (arg0: string) => RouteMatcherFunction;
+export type RouteMatcherFunction = (arg0: CallLog) => boolean;
+export type MatcherGenerator = (arg0: RouteConfig) => RouteMatcherFunction;
+export type RouteMatcher = string | RegExp | URL | ((arg0: CallLog) => boolean);
+export type MatcherDefinition = {
     name: string;
     matcher: MatcherGenerator;
     usesBody?: boolean;
-}
+};

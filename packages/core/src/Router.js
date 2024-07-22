@@ -11,7 +11,11 @@ import { isUrlMatcher, isFunctionMatcher } from './Matchers.js';
 /** @typedef {import('./Matchers').RouteMatcher} RouteMatcher */
 /** @typedef {import('./FetchMock').FetchMockConfig} FetchMockConfig */
 /** @typedef {import('./FetchMock')} FetchMock */
-/** @typedef {import('./CallHistory').CallLog} CallLog */
+/**
+ * @import {
+ *	 CallLog
+ * } from '../types/CallHistory';
+ */
 
 /** @typedef {'body' |'headers' |'throws' |'status' |'redirectUrl' } ResponseConfigProp */
 

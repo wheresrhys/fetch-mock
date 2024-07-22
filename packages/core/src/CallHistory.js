@@ -1,4 +1,26 @@
 //@type-check
+/**
+ * @import {
+ *	 RouteConfig,
+ *   RouteName
+ * } from '../types/Route';
+ */
+
+/**
+ * @import {
+ *	 FetchMockConfig,
+ * } from '../types/FetchMock';
+ */
+
+/**
+ * @import CallHistory, {
+ *	 CallLog,
+ *	 CallHistoryFilter,
+ *	 Matched,
+ *	 Unmatched,
+ * } from '../types/CallHistory';
+ */
+
 import { createCallLogFromUrlAndOptions } from './RequestUtils.js';
 import { isUrlMatcher } from './Matchers.js';
 import Route from './Route.js';
@@ -24,20 +46,12 @@ const isMatchedOrUnmatched = (filter) =>
 	/** @type {CallHistoryFilter[]}*/ (['matched', 'unmatched']).includes(filter);
 
 class CallHistory {
-	/**
-	 * @param {FetchMockConfig} globalConfig
-	 * @param {Router} router
-	 */
 	constructor(globalConfig, router) {
 		/** @type {CallLog[]} */
 		this.callLogs = [];
 		this.config = globalConfig;
 		this.router = router;
 	}
-	/**
-	 *
-	 * @param {CallLog} callLog
-	 */
 	recordCall(callLog) {
 		this.callLogs.push(callLog);
 	}
@@ -46,12 +60,6 @@ class CallHistory {
 		this.callLogs.forEach(({ route }) => route.reset());
 		this.callLogs = [];
 	}
-
-	/**
-	 *
-	 * @param {boolean} [waitForResponseMethods]
-	 * @returns {Promise<void>}
-	 */
 	async flush(waitForResponseMethods) {
 		const queuedPromises = this.callLogs.flatMap(
 			(call) => call.pendingPromises,
@@ -65,13 +73,6 @@ class CallHistory {
 			await this.flush();
 		}
 	}
-
-	/**
-	 *
-	 * @param {CallHistoryFilter} filter
-	 * @param {RouteConfig} options
-	 * @returns {CallLog[]}
-	 */
 	calls(filter, options) {
 		let calls = [...this.callLogs];
 		if (typeof filter === 'undefined' && !options) {
@@ -124,29 +125,12 @@ class CallHistory {
 
 		return calls;
 	}
-	/**
-	 *
-	 * @param {CallHistoryFilter} filter
-	 * @param {RouteConfig} options
-	 * @returns {boolean}
-	 */
 	called(filter, options) {
 		return Boolean(this.calls(filter, options).length);
 	}
-	/**
-	 *
-	 * @param {CallHistoryFilter} filter
-	 * @param {RouteConfig} options
-	 * @returns {CallLog}
-	 */
 	lastCall(filter, options) {
 		return this.calls(filter, options).pop();
 	}
-
-	/**
-	 * @param {RouteName|RouteName[]} [routeNames]
-	 * @returns {boolean}
-	 */
 	done(routeNames) {
 		let routesToCheck = this.router.routes;
 		if (routeNames) {

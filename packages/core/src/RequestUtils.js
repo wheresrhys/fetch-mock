@@ -12,7 +12,12 @@ const protocolRelativeUrlRX = new RegExp('^//', 'i');
  */
 
 /** @typedef {RequestInit | (RequestInit & DerivedRequestOptions) } NormalizedRequestOptions */
-/** @typedef {import('./CallHistory').CallLog} CallLog */
+
+/**
+ * @import {
+ *	 CallLog
+ * } from '../types/CallHistory';
+ */
 
 /**
  * @param {string | string | URL} url

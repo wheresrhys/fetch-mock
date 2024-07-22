@@ -1,4 +1,4 @@
-declare namespace fetchMockCore {
+declare module '@fetch-mock/core' {
 	// CallHistory
 	export type Matched = "matched";
 	export type Unmatched = "unmatched";

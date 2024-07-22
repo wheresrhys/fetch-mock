@@ -1,6 +1,11 @@
 //@type-check
 /** @typedef {import('./Route').RouteConfig} RouteConfig */
-/** @typedef {import('./CallHistory').CallLog} CallLog */
+/**
+ * @import {
+ *	 CallLog,
+ * } from '../types/CallHistory';
+ */
+
 import glob from 'globrex';
 import * as regexparam from 'regexparam';
 import querystring from 'querystring';

@@ -3,11 +3,16 @@ import { builtInMatchers } from './Matchers';
 import statusTextMap from './StatusTextMap';
 
 /** @typedef {import('./Matchers').RouteMatcher} RouteMatcher */
-/** @typedef {import('./CallHistory').CallLog} CallLog */
 /** @typedef {import('./Matchers').RouteMatcherFunction} RouteMatcherFunction */
 /** @typedef {import('./Matchers').RouteMatcherUrl} RouteMatcherUrl */
 /** @typedef {import('./Matchers').MatcherDefinition} MatcherDefinition */
 /** @typedef {import('./FetchMock').FetchMockConfig} FetchMockConfig */
+
+/**
+ * @import {
+ *	 CallLog
+ * } from '../types/CallHistory';
+ */
 
 /**
  * @typedef RouteResponseConfig {

@@ -1,4 +1,5 @@
 //@type-check
+
 import Router from './Router.js';
 import Route from './Route.js';
 import CallHistory from './CallHistory.js';
@@ -8,19 +9,21 @@ import * as requestUtils from './RequestUtils.js';
 /** @typedef {import('./Route').UserRouteConfig} UserRouteConfig */
 /** @typedef {import('./Router').RouteResponse} RouteResponse */
 /** @typedef {import('./Matchers').MatcherDefinition} MatcherDefinition */
-/** @typedef {import('./CallHistory').CallLog} CallLog */
+
 /** @typedef {import('./Route').RouteResponseFunction} RouteResponseFunction */
 
 /**
- * @typedef FetchMockConfig
- * @property {boolean} [sendAsJson]
- * @property {boolean} [includeContentLength]
- * @property {boolean} [warnOnFallback]
- * @property {boolean} [matchPartialBody]
- * @property {function(string | Request, RequestInit): Promise<Response>} [fetch]
- * @property {typeof Headers} [Headers]
- * @property {typeof Request} [Request]
- * @property {typeof Response} [Response]
+ * @import {
+ *	 CallLog
+ * } from '../types/CallHistory';
+ */
+
+/**
+ * @import {
+ *	 FetchMockConfig,
+ *    FetchMockCore,
+ *    FetchMock
+ * } from '../types/FetchMock';
  */
 
 /** @type {FetchMockConfig} */
@@ -34,20 +37,6 @@ const defaultConfig = {
 	Headers: globalThis.Headers,
 	fetch: globalThis.fetch,
 };
-/**
- * @typedef FetchMockCore
- * @this {FetchMock}
- * @property {FetchMockConfig} config
- * @property {Router} router
- * @property {CallHistory} callHistory
- * @property {function():FetchMock} createInstance
- * @property {function(string | Request, RequestInit): Promise<Response>} fetchHandler
- * @property {function(any,any,any): FetchMock} route
- * @property {function(RouteResponse=): FetchMock} catch
- * @property {function(MatcherDefinition):void} defineMatcher
- * @property {function(object): void} removeRoutes
- * @property {function():void} clearHistory
- */
 
 const defaultRouter = new Router(defaultConfig);
 
@@ -66,13 +55,7 @@ const FetchMock = {
 		instance.callHistory = new CallHistory(instance.config, instance.router);
 		return instance;
 	},
-	/**
-	 *
-	 * @param {string | Request} requestInput
-	 * @param {RequestInit} [requestInit]
-	 * @this {FetchMock}
-	 * @returns {Promise<Response>}
-	 */
+
 	async fetchHandler(requestInput, requestInit) {
 		// TODO move into router
 		let callLog;
@@ -93,29 +76,7 @@ const FetchMock = {
 		callLog.pendingPromises.push(responsePromise);
 		return responsePromise;
 	},
-	/**
-	 * @overload
-	 * @param {UserRouteConfig} matcher
-	 * @this {FetchMock}
-	 * @returns {FetchMock}
-	 */
 
-	/**
-	 * @overload
-	 * @param {RouteMatcher } matcher
-	 * @param {RouteResponse} response
-	 * @param {UserRouteConfig | string} [options]
-	 * @this {FetchMock}
-	 * @returns {FetchMock}
-	 */
-
-	/**
-	 * @param {RouteMatcher | UserRouteConfig} matcher
-	 * @param {RouteResponse} [response]
-	 * @param {UserRouteConfig | string} [options]
-	 * @this {FetchMock}
-	 * @returns {FetchMock}
-	 */
 	route(matcher, response, options) {
 		this.router.addRoute(matcher, response, options);
 		return this;

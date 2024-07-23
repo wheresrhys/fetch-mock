@@ -53,7 +53,6 @@ fetchMock.mock('http://my.site', 200);
 
 which keeps fetch-mock's methods much further away from any other library's workings.
 
-
 ## .getAny(), .postAny(), .putAny(), .deleteAny(), .headAny(), .patchAny(), .getAnyOnce(), .postAnyOnce(), .putAnyOnce(), .deleteAnyOnce(), .headAnyOnce(), .patchAnyOnce()
 
 While `.getOnce()` etc feel very useful, the `any` and `anyOnce` variants added a lot of repetition to the code and types, and don't actually add much value.
@@ -61,7 +60,6 @@ While `.getOnce()` etc feel very useful, the `any` and `anyOnce` variants added 
 `.___AnyOnce(response, options)`
 
 Creates a route that responds to any single request using a particular http method.
-
 
 ### Gone, but back soon
 

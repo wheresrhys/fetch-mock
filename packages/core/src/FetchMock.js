@@ -34,38 +34,31 @@ const defaultConfig = {
 	Headers: globalThis.Headers,
 	fetch: globalThis.fetch,
 };
-/**
- * @typedef FetchMockCore
- * @this {FetchMock}
- * @property {FetchMockConfig} config
- * @property {Router} router
- * @property {CallHistory} callHistory
- * @property {function():FetchMock} createInstance
- * @property {function(string | Request, RequestInit): Promise<Response>} fetchHandler
- * @property {function(any,any,any): FetchMock} route
- * @property {function(RouteResponse=): FetchMock} catch
- * @property {function(MatcherDefinition):void} defineMatcher
- * @property {function(object): void} removeRoutes
- * @property {function():void} clearHistory
- */
 
-const defaultRouter = new Router(defaultConfig);
+/** @typedef {FetchMockCore & PresetRoutes} FetchMock*/
 
-/** @type {FetchMockCore} */
-const FetchMock = {
-	config: defaultConfig,
-	router: defaultRouter,
-	callHistory: new CallHistory(defaultConfig, defaultRouter),
-	createInstance() {
-		const instance = Object.create(FetchMock);
-		instance.config = { ...this.config };
-		instance.router = new Router(instance.config, {
-			routes: [...this.router.routes],
-			fallbackRoute: this.router.fallbackRoute,
+class FetchMockCore {
+	/**
+	 *
+	 * @param {FetchMockConfig} config
+	 * @param {Router} [router]
+	 */
+	constructor(config, router) {
+		this.config = config;
+		this.router = new Router(this.config, {
+			routes: router ? [...router.routes] : [],
+			fallbackRoute: router ? router.fallbackRoute : null,
 		});
-		instance.callHistory = new CallHistory(instance.config, instance.router);
-		return instance;
-	},
+		this.callHistory = new CallHistory(this.config, this.router);
+	}
+	/**
+	 *
+	 * @returns {FetchMock}
+	 */
+	createInstance() {
+		const instance = new FetchMockCore({ ...this.config }, this.router);
+		return Object.assign(instance, PresetRoutes);
+	}
 	/**
 	 *
 	 * @param {string | Request} requestInput
@@ -92,7 +85,7 @@ const FetchMock = {
 		const responsePromise = this.router.execute(callLog);
 		callLog.pendingPromises.push(responsePromise);
 		return responsePromise;
-	},
+	}
 	/**
 	 * @overload
 	 * @param {UserRouteConfig} matcher
@@ -119,23 +112,45 @@ const FetchMock = {
 	route(matcher, response, options) {
 		this.router.addRoute(matcher, response, options);
 		return this;
-	},
+	}
+	/**
+	 *
+	 * @param {RouteResponse} [response]
+	 * @returns {FetchMock}
+	 */
 	catch(response) {
 		this.router.setFallback(response);
 		return this;
-	},
+	}
+	/**
+	 *
+	 * @param {MatcherDefinition} matcher
+	 */
+	//eslint-disable-next-line class-methods-use-this
 	defineMatcher(matcher) {
 		Route.defineMatcher(matcher);
-	},
+	}
+	/**
+	 *
+	 * @param {object} [options]
+	 * @param {string[]} [options.names]
+	 * @param {boolean} [options.includeSticky]
+	 * @param {boolean} [options.includeFallback]
+	 * @returns {FetchMock}
+	 */
 	removeRoutes(options) {
 		this.router.removeRoutes(options);
 		return this;
-	},
+	}
+	/**
+	 *
+	 * @returns {FetchMock}
+	 */
 	clearHistory() {
 		this.callHistory.clear();
 		return this;
-	},
-};
+	}
+}
 
 /** @typedef {'get' |'post' |'put' |'delete' |'head' |'patch' |'once' |'sticky' |'any' |'anyOnce' |'getOnce' |'postOnce' |'putOnce' |'deleteOnce' |'headOnce' |'patchOnce' |'getAny' |'postAny' |'putAny' |'deleteAny' |'headAny' |'patchAny' |'getAnyOnce' |'postAnyOnce' |'putAnyOnce' |'deleteAnyOnce' |'headAnyOnce' |'patchAnyOnce'} PresetRouteMethodName} */
 /** @typedef {Object.<PresetRouteMethodName, function(any,any,any): FetchMock>} PresetRoutes */
@@ -221,7 +236,7 @@ defineGreedyShorthand('anyOnce', 'once');
 	);
 });
 
-/** @typedef {FetchMockCore & PresetRoutes} FetchMock*/
-Object.assign(FetchMock, PresetRoutes);
+const fetchMock = new FetchMockCore({ ...defaultConfig }).createInstance();
 
-export default FetchMock.createInstance();
+console.log(fetchMock);
+export default fetchMock;

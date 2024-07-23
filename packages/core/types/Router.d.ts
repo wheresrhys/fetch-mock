@@ -6,12 +6,12 @@ export default class Router {
      * @param {Route} [inheritedRoutes.fallbackRoute]
      */
     constructor(fetchMockConfig: FetchMockConfig, { routes, fallbackRoute }?: {
-        routes: Route[];
-        fallbackRoute: Route;
+        routes?: Route[];
+        fallbackRoute?: Route;
     });
     /** @type {Route[]} */
     routes: Route[];
-    config: import("./FetchMock.js").FetchMockConfig;
+    config: import("./FetchMock").FetchMockConfig;
     fallbackRoute: Route;
     /**
      *
@@ -49,6 +49,7 @@ export default class Router {
      * @param {UserRouteConfig} matcher
      * @returns {void}
      */
+    addRoute(matcher: UserRouteConfig): void;
     /**
      * @overload
      * @param {RouteMatcher } matcher
@@ -56,13 +57,7 @@ export default class Router {
      * @param {UserRouteConfig | string} [nameOrOptions]
      * @returns {void}
      */
-    /**
-     * @param {RouteMatcher | UserRouteConfig} matcher
-     * @param {RouteResponse} [response]
-     * @param {UserRouteConfig | string} [nameOrOptions]
-     * @returns {void}
-     */
-    addRoute(matcher: RouteMatcher | UserRouteConfig, response?: RouteResponse, nameOrOptions?: UserRouteConfig | string): void;
+    addRoute(matcher: RouteMatcher, response: RouteResponse, nameOrOptions?: UserRouteConfig | string): void;
     /**
      * @param {RouteResponse} [response]
      */
@@ -75,102 +70,21 @@ export default class Router {
      * @param {boolean} [options.includeFallback]
      */
     removeRoutes({ names, includeSticky, includeFallback }?: {
-        names: string[];
-        includeSticky: boolean;
-        includeFallback: boolean;
+        names?: string[];
+        includeSticky?: boolean;
+        includeFallback?: boolean;
     }): void;
 }
-export type UserRouteConfig = {
-    name?: string;
-    method?: string;
-    headers?: {
-        [key: string]: string | number;
-    };
-    query?: {
-        [key: string]: string;
-    };
-    params?: {
-        [key: string]: string;
-    };
-    body?: object;
-    matcherFunction?: (arg0: import("./CallHistory.js").CallLog) => boolean;
-    matcher?: string | RegExp | URL | ((arg0: import("./CallHistory.js").CallLog) => boolean);
-    url?: string | RegExp | URL;
-    response?: string | number | object | Response | import("./Route.js").RouteResponseConfig | Promise<string | number | object | Response | import("./Route.js").RouteResponseConfig> | ((arg0: import("./CallHistory.js").CallLog) => string | number | object | Response | import("./Route.js").RouteResponseConfig | Promise<string | number | object | Response | import("./Route.js").RouteResponseConfig>);
-    repeat?: number;
-    delay?: number;
-    /**
-     * - TODO this is global
-     */
-    sendAsJson?: boolean;
-    /**
-     * - TODO this is global
-     */
-    includeContentLength?: boolean;
-    /**
-     * - TODO this is global
-     */
-    matchPartialBody?: boolean;
-    sticky?: boolean;
-    /**
-     * - TODO this shoudl not be in user config
-     */
-    usesBody?: boolean;
-    isFallback?: boolean;
-};
-export type RouteConfig = import("./Route.js").UserRouteConfig & import("./FetchMock.js").FetchMockConfig;
-export type RouteResponse = string | number | object | Response | import("./Route.js").RouteResponseConfig | Promise<string | number | object | Response | import("./Route.js").RouteResponseConfig> | ((arg0: import("./CallHistory.js").CallLog) => string | number | object | Response | import("./Route.js").RouteResponseConfig | Promise<string | number | object | Response | import("./Route.js").RouteResponseConfig>);
-export type RouteResponseData = string | number | object | Response | import("./Route.js").RouteResponseConfig;
-export type RouteResponseObjectData = object | import("./Route.js").RouteResponseConfig;
-export type RouteResponseConfig = {
-    body?: string | {};
-    status?: number;
-    headers?: {
-        [key: string]: string;
-    };
-    throws?: Error;
-    redirectUrl?: string;
-    options?: ResponseInit;
-};
-export type RouteResponseFunction = (arg0: import("./CallHistory.js").CallLog) => string | number | object | Response | import("./Route.js").RouteResponseConfig | Promise<string | number | object | Response | import("./Route.js").RouteResponseConfig>;
-export type RouteMatcher = string | RegExp | URL | ((arg0: import("./CallHistory.js").CallLog) => boolean);
-export type FetchMockConfig = {
-    sendAsJson?: boolean;
-    includeContentLength?: boolean;
-    warnOnFallback?: boolean;
-    matchPartialBody?: boolean;
-    fetch?: (arg0: string | Request, arg1: RequestInit) => Promise<Response>;
-    Headers?: {
-        new (init?: HeadersInit): Headers;
-        prototype: Headers;
-    };
-    Request?: {
-        new (input: string | Request, init?: RequestInit): Request;
-        prototype: Request;
-    };
-    Response?: {
-        new (body?: BodyInit, init?: ResponseInit): Response;
-        prototype: Response;
-        error(): Response;
-        redirect(url: string, status?: number): Response;
-    };
-};
-export type FetchMock = typeof import("./FetchMock.js");
-export type CallLog = {
-    arguments: any[];
-    url: string;
-    options: RequestInit | (RequestInit & import("./RequestUtils.js").DerivedRequestOptions);
-    request?: Request;
-    signal?: AbortSignal;
-    route?: Route;
-    response?: Response;
-    expressParams?: {
-        [x: string]: string;
-    };
-    queryParams?: {
-        [x: string]: string;
-    };
-    pendingPromises: Promise<any>[];
-};
+export type UserRouteConfig = import("./Route").UserRouteConfig;
+export type RouteConfig = import("./Route").RouteConfig;
+export type RouteResponse = import("./Route").RouteResponse;
+export type RouteResponseData = import("./Route").RouteResponseData;
+export type RouteResponseObjectData = import("./Route").RouteResponseObjectData;
+export type RouteResponseConfig = import("./Route").RouteResponseConfig;
+export type RouteResponseFunction = import("./Route").RouteResponseFunction;
+export type RouteMatcher = import("./Matchers").RouteMatcher;
+export type FetchMockConfig = import("./FetchMock").FetchMockConfig;
+export type FetchMock = typeof import("./FetchMock");
+export type CallLog = import("./CallHistory").CallLog;
 export type ResponseConfigProp = "body" | "headers" | "throws" | "status" | "redirectUrl";
-import Route from "./Route.js";
+import Route from './Route.js';

@@ -1,29 +1,9 @@
 export default CallHistory;
-export type RouteConfig = import("./Route.js").UserRouteConfig & import("./FetchMock.js").FetchMockConfig;
-export type RouteName = string;
-export type NormalizedRequestOptions = RequestInit | (RequestInit & import("./RequestUtils.js").DerivedRequestOptions);
-export type RouteMatcher = string | RegExp | URL | ((arg0: CallLog) => boolean);
-export type FetchMockConfig = {
-    sendAsJson?: boolean;
-    includeContentLength?: boolean;
-    warnOnFallback?: boolean;
-    matchPartialBody?: boolean;
-    fetch?: (arg0: string | Request, arg1: RequestInit) => Promise<Response>;
-    Headers?: {
-        new (init?: HeadersInit): Headers;
-        prototype: Headers;
-    };
-    Request?: {
-        new (input: string | Request, init?: RequestInit): Request;
-        prototype: Request;
-    };
-    Response?: {
-        new (body?: BodyInit, init?: ResponseInit): Response;
-        prototype: Response;
-        error(): Response;
-        redirect(url: string, status?: number): Response;
-    };
-};
+export type RouteConfig = import("./Route").RouteConfig;
+export type RouteName = import("./Route").RouteName;
+export type NormalizedRequestOptions = import("./RequestUtils").NormalizedRequestOptions;
+export type RouteMatcher = import("./Matchers").RouteMatcher;
+export type FetchMockConfig = import("./FetchMock").FetchMockConfig;
 export type CallLog = {
     arguments: any[];
     url: string;
@@ -42,7 +22,7 @@ export type CallLog = {
 };
 export type Matched = "matched";
 export type Unmatched = "unmatched";
-export type CallHistoryFilter = string | boolean | RegExp | URL | ((arg0: CallLog) => boolean);
+export type CallHistoryFilter = RouteName | Matched | Unmatched | boolean | RouteMatcher;
 declare class CallHistory {
     /**
      * @param {FetchMockConfig} globalConfig
@@ -51,7 +31,7 @@ declare class CallHistory {
     constructor(globalConfig: FetchMockConfig, router: Router);
     /** @type {CallLog[]} */
     callLogs: CallLog[];
-    config: import("./FetchMock.js").FetchMockConfig;
+    config: import("./FetchMock").FetchMockConfig;
     router: Router;
     /**
      *
@@ -92,5 +72,5 @@ declare class CallHistory {
      */
     done(routeNames?: RouteName | RouteName[]): boolean;
 }
-import Route from "./Route.js";
-import Router from "./Router.js";
+import Route from './Route.js';
+import Router from './Router.js';

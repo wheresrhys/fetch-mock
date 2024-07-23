@@ -1,49 +1,10 @@
 export default Route;
-export type RouteMatcher = string | RegExp | URL | ((arg0: import("./CallHistory").CallLog) => boolean);
-export type CallLog = {
-    arguments: any[];
-    url: string;
-    options: RequestInit | (RequestInit & import("./RequestUtils").DerivedRequestOptions);
-    request?: Request;
-    signal?: AbortSignal;
-    route?: Route;
-    response?: Response;
-    expressParams?: {
-        [x: string]: string;
-    };
-    queryParams?: {
-        [x: string]: string;
-    };
-    pendingPromises: Promise<any>[];
-};
-export type RouteMatcherFunction = (arg0: import("./CallHistory").CallLog) => boolean;
-export type RouteMatcherUrl = string | RegExp | URL;
-export type MatcherDefinition = {
-    name: string;
-    matcher: (arg0: UserRouteConfig & import("./FetchMock").FetchMockConfig) => (arg0: import("./CallHistory").CallLog) => boolean;
-    usesBody?: boolean;
-};
-export type FetchMockConfig = {
-    sendAsJson?: boolean;
-    includeContentLength?: boolean;
-    warnOnFallback?: boolean;
-    matchPartialBody?: boolean;
-    fetch?: (arg0: string | Request, arg1: RequestInit) => Promise<Response>;
-    Headers?: {
-        new (init?: HeadersInit): Headers;
-        prototype: Headers;
-    };
-    Request?: {
-        new (input: string | Request, init?: RequestInit): Request;
-        prototype: Request;
-    };
-    Response?: {
-        new (body?: BodyInit, init?: ResponseInit): Response;
-        prototype: Response;
-        error(): Response;
-        redirect(url: string, status?: number): Response;
-    };
-};
+export type RouteMatcher = import("./Matchers").RouteMatcher;
+export type CallLog = import("./CallHistory").CallLog;
+export type RouteMatcherFunction = import("./Matchers").RouteMatcherFunction;
+export type RouteMatcherUrl = import("./Matchers").RouteMatcherUrl;
+export type MatcherDefinition = import("./Matchers").MatcherDefinition;
+export type FetchMockConfig = import("./FetchMock").FetchMockConfig;
 /**
  * {
  */
@@ -62,11 +23,11 @@ export type ResponseInitUsingHeaders = {
     statusText: string;
     headers: Headers;
 };
-export type RouteResponseObjectData = object | RouteResponseConfig;
-export type RouteResponseData = string | number | object | Response | RouteResponseConfig;
-export type RouteResponsePromise = Promise<string | number | object | Response | RouteResponseConfig>;
+export type RouteResponseObjectData = RouteResponseConfig | object;
+export type RouteResponseData = Response | number | string | RouteResponseObjectData;
+export type RouteResponsePromise = Promise<RouteResponseData>;
 export type RouteResponseFunction = (arg0: CallLog) => (RouteResponseData | RouteResponsePromise);
-export type RouteResponse = string | number | object | Response | RouteResponseConfig | Promise<string | number | object | Response | RouteResponseConfig> | ((arg0: CallLog) => (RouteResponseData | RouteResponsePromise));
+export type RouteResponse = RouteResponseData | RouteResponsePromise | RouteResponseFunction;
 export type RouteName = string;
 export type UserRouteConfig = {
     name?: RouteName;
@@ -106,7 +67,7 @@ export type UserRouteConfig = {
     usesBody?: boolean;
     isFallback?: boolean;
 };
-export type RouteConfig = UserRouteConfig & import("./FetchMock").FetchMockConfig;
+export type RouteConfig = UserRouteConfig & FetchMockConfig;
 /**
  * @class Route
  */

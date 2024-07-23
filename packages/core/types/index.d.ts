@@ -1,2 +1,2 @@
 export default fetchMock;
-import fetchMock from "./FetchMock.js";
+import fetchMock from './FetchMock.js';

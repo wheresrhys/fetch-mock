@@ -93,6 +93,10 @@ function shouldSendAsObject(responseInput) {
 	return true;
 }
 
+/** @typedef {[UserRouteConfig] | [RouteMatcher, RouteResponse, UserRouteConfig | RouteName|void]} RouteParams */
+/** @typedef {[RouteResponse, UserRouteConfig | RouteName | void]} GreedyRouteParams */
+/** @typedef {function(...RouteParams): FetchMock} AddRouteFunction */
+
 /**
  * @param {CallLog} callLog
  * @returns
@@ -289,26 +293,10 @@ export default class Router {
 	}
 
 	/**
-	 * @overload
-	 * @param {UserRouteConfig} matcher
-	 * @returns {void}
+	 * @param {RouteParams} args
 	 */
-
-	/**
-	 * @overload
-	 * @param {RouteMatcher } matcher
-	 * @param {RouteResponse} response
-	 * @param {UserRouteConfig | string} [nameOrOptions]
-	 * @returns {void}
-	 */
-
-	/**
-	 * @param {RouteMatcher | UserRouteConfig} matcher
-	 * @param {RouteResponse} [response]
-	 * @param {UserRouteConfig | string} [nameOrOptions]
-	 * @returns {void}
-	 */
-	addRoute(matcher, response, nameOrOptions) {
+	addRoute(...args) {
+		const [matcher, response, nameOrOptions] = args;
 		/** @type {RouteConfig} */
 		const config = {};
 		if (isUrlMatcher(matcher)) {

@@ -1,10 +1,12 @@
 {
     "compilerOptions": {
         "lib": [
-            "esnext",
+            "es2021",
             "dom",
             "dom.iterable"
         ],
+        "moduleResolution": "nodenext",
+        "module": "NodeNext",
         "allowJs": true,
         "checkJs": true,
         "strict": true,
@@ -20,7 +22,8 @@
         "emitDeclarationOnly": true,
         "outDir": "packages/core/types",
         "skipLibCheck": true,
-        "noEmit": false
+        "noEmit": false,
+        "target": "es2021"
     },
     "include": [
         "./packages/core/src/*.js"

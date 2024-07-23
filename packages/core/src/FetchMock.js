@@ -41,7 +41,7 @@ const defaultConfig = {
  * @property {CallHistory} callHistory
  * @property {function():FetchMock} createInstance
  * @property {function(string | Request, RequestInit): Promise<Response>} fetchHandler
- * @property {function(any,any,any): FetchMock} route
+ * @property {function(...RouteParams): FetchMock} route
  * @property {function(RouteResponse=): FetchMock} catch
  * @property {function(MatcherDefinition):void} defineMatcher
  * @property {function(object): void} removeRoutes
@@ -50,10 +50,14 @@ const defaultConfig = {
 
 const defaultRouter = new Router(defaultConfig);
 
-/** 
- * @type {FetchMockCore} 
+/** @typedef {[UserRouteConfig] | [RouteMatcher, RouteResponse, UserRouteConfig | RouteName|void]} RouteParams */
+/** @typedef {[RouteResponse, UserRouteConfig | RouteName | void]} GreedyRouteParams */
+/** @typedef {function(...RouteParams): FetchMock} AddRouteFunction */
+
+/**
+ * @type {FetchMockCore}
  * @this {FetchMock}
- * */
+ */
 const FetchMock = {
 	config: defaultConfig,
 	router: defaultRouter,
@@ -96,30 +100,10 @@ const FetchMock = {
 		return responsePromise;
 	},
 	/**
-	 * @overload
-	 * @param {UserRouteConfig} matcher
-	 * @this {FetchMock}
-	 * @returns {FetchMock}
+	 * @param {RouteParams} args
 	 */
-
-	/**
-	 * @overload
-	 * @param {RouteMatcher } matcher
-	 * @param {RouteResponse} response
-	 * @param {UserRouteConfig | string} [options]
-	 * @this {FetchMock}
-	 * @returns {FetchMock}
-	 */
-
-	/**
-	 * @param {RouteMatcher | UserRouteConfig} matcher
-	 * @param {RouteResponse} [response]
-	 * @param {UserRouteConfig | string} [options]
-	 * @this {FetchMock}
-	 * @returns {FetchMock}
-	 */
-	route(matcher, response, options) {
-		this.router.addRoute(matcher, response, options);
+	route(...args) {
+		this.router.addRoute(...args);
 		return this;
 	},
 	catch(response) {
@@ -139,43 +123,53 @@ const FetchMock = {
 	},
 };
 
-/** @typedef {'get' |'post' |'put' |'delete' |'head' |'patch' |'once' |'sticky' |'any' |'anyOnce' |'getOnce' |'postOnce' |'putOnce' |'deleteOnce' |'headOnce' |'patchOnce' |'getAny' |'postAny' |'putAny' |'deleteAny' |'headAny' |'patchAny' |'getAnyOnce' |'postAnyOnce' |'putAnyOnce' |'deleteAnyOnce' |'headAnyOnce' |'patchAnyOnce'} PresetRouteMethodName} */
-/** @typedef {Object.<PresetRouteMethodName, function(any,any,any): FetchMock>} PresetRoutes */
-
-/** @type {PresetRoutes} */
-const PresetRoutes = {};
+/** @typedef {'get' |'post' |'put' |'delete' |'head' |'patch' |'once' |'sticky' |'any' |'anyOnce' |'getOnce' |'postOnce' |'putOnce' |'deleteOnce' |'headOnce' |'patchOnce' |'getAny' |'postAny' |'putAny' |'deleteAny' |'headAny' |'patchAny' |'getAnyOnce' |'postAnyOnce' |'putAnyOnce' |'deleteAnyOnce' |'headAnyOnce' |'patchAnyOnce'} AdditionalRouteMethodName */
 /**
- *
- * @param {PresetRouteMethodName} methodName
+ * @typedef AdditionalRouteMethods
+ * @property { AddRouteFunction } get
+ * @property { AddRouteFunction } post
+ * @property { AddRouteFunction } put
+ * @property { AddRouteFunction } delete
+ * @property { AddRouteFunction } head
+ * @property { AddRouteFunction } patch
+ * @property { AddRouteFunction } once
+ * @property { AddRouteFunction } sticky
+ * @property { AddRouteFunction } getOnce
+ * @property { AddRouteFunction } postOnce
+ * @property { AddRouteFunction } putOnce
+ * @property { AddRouteFunction } deleteOnce
+ * @property { AddRouteFunction } headOnce
+ * @property { AddRouteFunction } patchOnce
+ * @property { function(...GreedyRouteParams): FetchMock } any
+ * @property { function(...GreedyRouteParams): FetchMock } anyOnce
+ * @property { function(...GreedyRouteParams): FetchMock } getAny
+ * @property { function(...GreedyRouteParams): FetchMock } postAny
+ * @property { function(...GreedyRouteParams): FetchMock } putAny
+ * @property { function(...GreedyRouteParams): FetchMock } deleteAny
+ * @property { function(...GreedyRouteParams): FetchMock } headAny
+ * @property { function(...GreedyRouteParams): FetchMock } patchAny
+ * @property { function(...GreedyRouteParams): FetchMock } getAnyOnce
+ * @property { function(...GreedyRouteParams): FetchMock } postAnyOnce
+ * @property { function(...GreedyRouteParams): FetchMock } putAnyOnce
+ * @property { function(...GreedyRouteParams): FetchMock } deleteAnyOnce
+ * @property { function(...GreedyRouteParams): FetchMock } headAnyOnce
+ * @property { function(...GreedyRouteParams): FetchMock } patchAnyOnce
+ */
+
+/** @type {AdditionalRouteMethods} */
+// @ts-ignore
+const AdditionalRouteMethods = {};
+
+/**
+ * @param {AdditionalRouteMethodName} methodName
  * @param {string} underlyingMethod
  * @param {UserRouteConfig} shorthandOptions
+ * @returns {void}
  */
 const defineShorthand = (methodName, underlyingMethod, shorthandOptions) => {
-	/**
-	 * @overload
-	 * @param {UserRouteConfig} matcher
-	 * @this {FetchMock}
-	 * @returns {FetchMock}
-	 */
-
-	/**
-	 * @overload
-	 * @param {RouteMatcher } matcher
-	 * @param {RouteResponse} response
-	 * @param {UserRouteConfig | string} [options]
-	 * @this {FetchMock}
-	 * @returns {FetchMock}
-	 */
-
-	/**
-	 * @param {RouteMatcher | UserRouteConfig} matcher
-	 * @param {RouteResponse} [response]
-	 * @param {UserRouteConfig | string} [options]
-	 * @this {FetchMock}
-	 * @returns {FetchMock}
-	 */
-	PresetRoutes[methodName] = function (matcher, response, options) {
-		return this[underlyingMethod](
+	/** @type {AddRouteFunction} */
+	AdditionalRouteMethods[methodName] = function (matcher, response, options) {
+		return /** @type {AddRouteFunction} */ (this[underlyingMethod])(
 			matcher,
 			response,
 			Object.assign(options || {}, shorthandOptions),
@@ -184,7 +178,7 @@ const defineShorthand = (methodName, underlyingMethod, shorthandOptions) => {
 };
 /**
  *
- * @param {PresetRouteMethodName} methodName
+ * @param {AdditionalRouteMethodName} methodName
  * @param {string} underlyingMethod
  */
 const defineGreedyShorthand = (methodName, underlyingMethod) => {
@@ -194,7 +188,7 @@ const defineGreedyShorthand = (methodName, underlyingMethod) => {
 	 * @this {FetchMock}
 	 * @returns {FetchMock}
 	 */
-	PresetRoutes[methodName] = function (response, options) {
+	AdditionalRouteMethods[methodName] = function (response, options) {
 		return this[underlyingMethod]('*', response, options);
 	};
 };
@@ -205,25 +199,25 @@ defineGreedyShorthand('any', 'route');
 defineGreedyShorthand('anyOnce', 'once');
 
 ['get', 'post', 'put', 'delete', 'head', 'patch'].forEach((method) => {
-	defineShorthand(/** @type {PresetRouteMethodName} */ (method), 'route', {
+	defineShorthand(/** @type {AdditionalRouteMethodName} */ (method), 'route', {
 		method,
 	});
 	defineShorthand(
-		/** @type {PresetRouteMethodName} */ (`${method}Once`),
+		/** @type {AdditionalRouteMethodName} */ (`${method}Once`),
 		'once',
 		{ method },
 	);
 	defineGreedyShorthand(
-		/** @type {PresetRouteMethodName} */ (`${method}Any`),
+		/** @type {AdditionalRouteMethodName} */ (`${method}Any`),
 		method,
 	);
 	defineGreedyShorthand(
-		/** @type {PresetRouteMethodName} */ (`${method}AnyOnce`),
+		/** @type {AdditionalRouteMethodName} */ (`${method}AnyOnce`),
 		`${method}Once`,
 	);
 });
 
-/** @typedef {FetchMockCore & PresetRoutes} FetchMock*/
-Object.assign(FetchMock, PresetRoutes);
+/** @typedef {FetchMockCore & AdditionalRouteMethods} FetchMock */
+Object.assign(FetchMock, AdditionalRouteMethods);
 
 export default FetchMock.createInstance();

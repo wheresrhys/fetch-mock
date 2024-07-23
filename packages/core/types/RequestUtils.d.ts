@@ -35,7 +35,7 @@ export function getPath(url: string): string;
  * @returns {string}
  */
 export function getQuery(url: string): string;
-export function isRequest(urlOrRequest: string | Request, Request: typeof Request): urlOrRequest is Request;
+export function isRequest(urlOrRequest: string | Request, Request: typeof globalThis.Request): urlOrRequest is Request;
 export function normalizeHeaders(headers: Headers | [string, string][] | Record<string, string> | {
     [x: string]: string | number;
 } | HeadersInit): {
@@ -49,19 +49,4 @@ export type DerivedRequestOptions = {
     };
 };
 export type NormalizedRequestOptions = RequestInit | (RequestInit & DerivedRequestOptions);
-export type CallLog = {
-    arguments: any[];
-    url: string;
-    options: RequestInit | (RequestInit & DerivedRequestOptions);
-    request?: Request;
-    signal?: AbortSignal;
-    route?: import("./Route").default;
-    response?: Response;
-    expressParams?: {
-        [x: string]: string;
-    };
-    queryParams?: {
-        [x: string]: string;
-    };
-    pendingPromises: Promise<any>[];
-};
+export type CallLog = import("./CallHistory").CallLog;

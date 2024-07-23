@@ -5,6 +5,8 @@
             "dom",
             "dom.iterable"
         ],
+        "moduleResolution": "nodenext",
+        "module": "NodeNext",
         "allowJs": true,
         "checkJs": true,
         "strict": true,
@@ -12,15 +14,22 @@
         "noImplicitThis": true,
         "strictNullChecks": false,
         "strictFunctionTypes": true,
-        "types": [        ],
-        "noEmit": true,
+        "types": [
+        ],
         "downlevelIteration": true,
-        "forceConsistentCasingInFileNames": true
+        "forceConsistentCasingInFileNames": true,
+        "declaration": true,
+        "emitDeclarationOnly": true,
+        "outDir": "packages/core/types",
+        "skipLibCheck": true,
+        "noEmit": false,
+        "target": "es2021"
     },
     "include": [
-        "packages/core/src/*.js",
+        "./packages/core/src/*.js"
     ],
     "exclude": [
-        "node_modules"
+        "node_modules",
+        "packages/**/src/__tests__"
     ]
 }

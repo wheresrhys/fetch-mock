@@ -124,7 +124,7 @@ export function getQuery(url) {
 
 /**
  *
- * @param {Headers | [string, string][] | Record < string, string > | Object.<string, string | number>} headers
+ * @param {Headers | [string, string][] | Record < string, string > | Object.<string, string | number> | HeadersInit} headers
  * @returns {Object.<string, string>}
  */
 export const normalizeHeaders = (headers) => {

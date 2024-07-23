@@ -111,7 +111,6 @@ class Route {
 	/**
 	 * @returns {void}
 	 */
-	// @ts-ignore
 	#validate() {
 		if (['matched', 'unmatched'].includes(this.config.name)) {
 			throw new Error(
@@ -130,7 +129,6 @@ class Route {
 	/**
 	 * @returns {void}
 	 */
-	// @ts-ignore
 	#sanitize() {
 		if (this.config.method) {
 			this.config.method = this.config.method.toLowerCase();
@@ -139,7 +137,6 @@ class Route {
 	/**
 	 * @returns {void}
 	 */
-	// @ts-ignore
 	#generateMatcher() {
 		const activeMatchers = Route.registeredMatchers
 			.filter(({ name }) => name in this.config)
@@ -155,7 +152,6 @@ class Route {
 	/**
 	 * @returns {void}
 	 */
-	// @ts-ignore
 	#limit() {
 		if (!this.config.repeat) {
 			return;
@@ -176,7 +172,6 @@ class Route {
 	/**
 	 * @returns {void}
 	 */
-	// @ts-ignore
 	#delayResponse() {
 		if (this.config.delay) {
 			const { response } = this.config;

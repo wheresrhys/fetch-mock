@@ -56,7 +56,7 @@ const stringMatchers = {
 			url.substr(-targetString.length) === targetString,
 
 	glob: (targetString) => {
-		const urlRX = glob(targetString);
+		const urlRX = /** @type {{regex: RegExp}} */ (glob(targetString));
 		return ({ url }) => urlRX.regex.test(url);
 	},
 	express: (targetString) => {

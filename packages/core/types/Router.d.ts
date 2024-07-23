@@ -1,219 +1,90 @@
-
-
-interface RouteOptionsMethodGet extends RouteOptions {
-    method?: 'GET';
-}
-
-interface RouteOptionsMethodPost extends RouteOptions {
-    method?: 'POST';
-}
-
-interface RouteOptionsMethodPut extends RouteOptions {
-    method?: 'PUT';
-}
-
-interface RouteOptionsMethodDelete extends RouteOptions {
-    method?: 'DELETE';
-}
-
-interface RouteOptionsMethodPatch extends RouteOptions {
-    method?: 'PATCH';
-}
-
-interface RouteOptionsMethodHead extends RouteOptions {
-    method?: 'HEAD';
-}
-
-interface Router {
-
-/**
- * Replaces fetch() with a stub which records its calls, grouped by
- * route, and optionally returns a mocked Response object or passes the
- *  call through to fetch(). Calls to .mock() can be chained.
- * @param matcher Condition for selecting which requests to mock
- * @param response Configures the http response returned by the mock
- * @param [options] Additional properties defining the route to mock
- */
-route(matcher: RouteMatcher | RouteOptions, response: MockResponse | MockResponseFunction, options ?: RouteOptions): this;
-
-/**
- * Replaces fetch() with a stub which records its calls, grouped by
- * route, and optionally returns a mocked Response object or passes the
- *  call through to fetch(). Calls to .mock() can be chained.
- * @param options The route to mock
- */
-route(options: RouteOptions): this;
-
-/**
- * Replaces fetch() with a stub which records its calls, grouped by
- * route, and optionally returns a mocked Response object or passes the
- *  call through to fetch(). Shorthand forroute() which creates a route
- *  that persists even when restore(), reset() or resetbehavior() are called.
- *  Calls to .sticky() can be chained.
- * @param matcher Condition for selecting which requests to mock
- * @param response Configures the http response returned by the mock
- * @param [options] Additional properties defining the route to mock
- */
-sticky(matcher: RouteMatcher | RouteOptions, response: MockResponse | MockResponseFunction, options ?: RouteOptions): this;
-
-/**
- * Replaces fetch() with a stub which records its calls, grouped by
- * route, and optionally returns a mocked Response object or passes the
- *  call through to fetch(). Shorthand forroute() limited to being
- *  called one time only. Calls to .once() can be chained.
- * @param matcher Condition for selecting which requests to mock
- * @param response Configures the http response returned by the mock
- * @param [options] Optional additional properties defining the route to mock
- */
-once(matcher: RouteMatcher | RouteOptions, response: MockResponse | MockResponseFunction, options ?: RouteOptions): this;
-
-/**
- * Replaces fetch() with a stub which records its calls, grouped by
- * route, and optionally returns a mocked Response object or passes the
- *  call through to fetch(). Shorthand forroute() restricted to the GET
- *  method. Calls to .get() can be chained.
- * @param matcher Condition for selecting which requests to mock
- * @param response Configures the http response returned by the mock
- * @param [options] Additional properties defining the route to mock
- */
-get(matcher: RouteMatcher | RouteOptionsMethodGet, response: MockResponse | MockResponseFunction, options ?: RouteOptionsMethodGet): this;
-
-/**
- * Replaces fetch() with a stub which records its calls, grouped by
- * route, and optionally returns a mocked Response object or passes the
- *  call through to fetch(). Shorthand forroute() restricted to the GET
- *  method and limited to being called one time only. Calls to .getOnce()
- *  can be chained.
- * @param matcher Condition for selecting which requests to mock
- * @param response Configures the http response returned by the mock
- * @param [options] Additional properties defining the route to mock
- */
-getOnce(matcher: RouteMatcher | RouteOptionsMethodGet, response: MockResponse | MockResponseFunction, options ?: RouteOptionsMethodGet): this;
-
-/**
- * Replaces fetch() with a stub which records its calls, grouped by
- * route, and optionally returns a mocked Response object or passes the
- *  call through to fetch(). Shorthand forroute() restricted to the POST
- *  method. Calls to .post() can be chained.
- * @param matcher Condition for selecting which requests to mock
- * @param response Configures the http response returned by the mock
- * @param [options] Additional properties defining the route to mock
- */
-post(matcher: RouteMatcher | RouteOptionsMethodPost, response: MockResponse | MockResponseFunction, options ?: RouteOptionsMethodPost): this;
-
-/**
- * Replaces fetch() with a stub which records its calls, grouped by
- * route, and optionally returns a mocked Response object or passes the
- *  call through to fetch(). Shorthand forroute() restricted to the POST
- *  method and limited to being called one time only. Calls to .postOnce()
- *  can be chained.
- * @param matcher Condition for selecting which requests to mock
- * @param response Configures the http response returned by the mock
- * @param [options] Additional properties defining the route to mock
- */
-postOnce(matcher: RouteMatcher | RouteOptionsMethodPost, response: MockResponse | MockResponseFunction, options ?: RouteOptionsMethodPost): this;
-
-/**
- * Replaces fetch() with a stub which records its calls, grouped by
- * route, and optionally returns a mocked Response object or passes the
- *  call through to fetch(). Shorthand forroute() restricted to the PUT
- *  method. Calls to .put() can be chained.
- * @param matcher Condition for selecting which requests to mock
- * @param response Configures the http response returned by the mock
- * @param [options] Additional properties defining the route to mock
- */
-put(matcher: RouteMatcher | RouteOptionsMethodPut, response: MockResponse | MockResponseFunction, options ?: RouteOptionsMethodPut): this;
-
-/**
- * Replaces fetch() with a stub which records its calls, grouped by
- * route, and optionally returns a mocked Response object or passes the
- *  call through to fetch(). Shorthand forroute() restricted to the PUT
- *  method and limited to being called one time only. Calls to .putOnce()
- *  can be chained.
- * @param matcher Condition for selecting which requests to mock
- * @param response Configures the http response returned by the mock
- * @param [options] Additional properties defining the route to mock
- */
-putOnce(matcher: RouteMatcher | RouteOptionsMethodPut, response: MockResponse | MockResponseFunction, options ?: RouteOptionsMethodPut): this;
-
-/**
- * Replaces fetch() with a stub which records its calls, grouped by
- * route, and optionally returns a mocked Response object or passes the
- *  call through to fetch(). Shorthand forroute() restricted to the
- *  DELETE method. Calls to .delete() can be chained.
- * @param matcher Condition for selecting which requests to mock
- * @param response Configures the http response returned by the mock
- * @param [options] Additional properties defining the route to mock
- */
-delete (matcher: RouteMatcher | RouteOptionsMethodDelete, response: MockResponse | MockResponseFunction, options ?: RouteOptionsMethodDelete): this;
-
-/**
- * Replaces fetch() with a stub which records its calls, grouped by
- * route, and optionally returns a mocked Response object or passes the
- *  call through to fetch(). Shorthand forroute() restricted to the
- *  DELETE method and limited to being called one time only. Calls to
- *  .deleteOnce() can be chained.
- * @param matcher Condition for selecting which requests to mock
- * @param response Configures the http response returned by the mock
- * @param [options] Additional properties defining the route to mock
- */
-deleteOnce(matcher: RouteMatcher | RouteOptionsMethodDelete, response: MockResponse | MockResponseFunction, options ?: RouteOptionsMethodDelete): this;
-
-/**
- * Replaces fetch() with a stub which records its calls, grouped by
- * route, and optionally returns a mocked Response object or passes the
- *  call through to fetch(). Shorthand forroute() restricted to the HEAD
- *  method. Calls to .head() can be chained.
- * @param matcher Condition for selecting which requests to mock
- * @param response Configures the http response returned by the mock
- * @param [options] Additional properties defining the route to mock
- */
-head(matcher: RouteMatcher | RouteOptionsMethodHead, response: MockResponse | MockResponseFunction, options ?: RouteOptionsMethodHead): this;
-
-/**
- * Replaces fetch() with a stub which records its calls, grouped by
- * route, and optionally returns a mocked Response object or passes the
- *  call through to fetch(). Shorthand forroute() restricted to the HEAD
- *  method and limited to being called one time only. Calls to .headOnce()
- *  can be chained.
- * @param matcher Condition for selecting which requests to mock
- * @param response Configures the http response returned by the mock
- * @param [options] Additional properties defining the route to mock
- */
-headOnce(matcher: RouteMatcher | RouteOptionsMethodHead, response: MockResponse | MockResponseFunction, options ?: RouteOptionsMethodHead): this;
-
-/**
- * Replaces fetch() with a stub which records its calls, grouped by
- * route, and optionally returns a mocked Response object or passes the
- *  call through to fetch(). Shorthand forroute() restricted to the PATCH
- *  method. Calls to .patch() can be chained.
- * @param matcher Condition for selecting which requests to mock
- * @param response Configures the http response returned by the mock
- * @param [options] Additional properties defining the route to mock
- */
-patch(matcher: RouteMatcher | RouteOptionsMethodPatch, response: MockResponse | MockResponseFunction, options ?: RouteOptionsMethodPatch): this;
-
-/**
- * Replaces fetch() with a stub which records its calls, grouped by
- * route, and optionally returns a mocked Response object or passes the
- *  call through to fetch(). Shorthand forroute() restricted to the PATCH
- *  method and limited to being called one time only. Calls to .patchOnce()
- *  can be chained.
- * @param matcher Condition for selecting which requests to mock
- * @param response Configures the http response returned by the mock
- * @param [options] Additional properties defining the route to mock
- */
-patchOnce(matcher: RouteMatcher | RouteOptionsMethodPatch, response: MockResponse | MockResponseFunction, options ?: RouteOptionsMethodPatch): this;
-
+export default class Router {
     /**
-     * Chainable method that defines how to respond to calls to fetch that
-     * don't match any of the defined mocks. It accepts the same types of
-     * response as a normal call to .mock(matcher, response). It can also
-     * take an arbitrary function to completely customise behaviour of
-     * unmatched calls. If .catch() is called without any parameters then
-     * every unmatched call will receive a 200 response.
-     * @param [response] Configures the http response returned by the mock
+     * @param {FetchMockConfig} fetchMockConfig
+     * @param {object} [inheritedRoutes]
+     * @param {Route[]} [inheritedRoutes.routes]
+     * @param {Route} [inheritedRoutes.fallbackRoute]
      */
-    catch (response?: MockResponse | MockResponseFunction): this;
-
+    constructor(fetchMockConfig: FetchMockConfig, { routes, fallbackRoute }?: {
+        routes?: Route[];
+        fallbackRoute?: Route;
+    });
+    /** @type {Route[]} */
+    routes: Route[];
+    config: import("./FetchMock").FetchMockConfig;
+    fallbackRoute: Route;
+    /**
+     *
+     * @param {Request} request
+     * @returns {boolean}
+     */
+    needsToReadBody(request: Request): boolean;
+    /**
+     * @param {CallLog} callLog
+     * @returns {Promise<Response>}
+     */
+    execute(callLog: CallLog): Promise<Response>;
+    /**
+     *
+     * @param {CallLog} callLog
+     * @returns {Promise<{response: Response, responseOptions: ResponseInit, responseInput: RouteResponseConfig}>}
+     */
+    generateResponse(callLog: CallLog): Promise<{
+        response: Response;
+        responseOptions: ResponseInit;
+        responseInput: RouteResponseConfig;
+    }>;
+    /**
+     *
+     * @param {Response} response
+     * @param {ResponseInit} responseConfig
+     * @param {RouteResponseConfig} responseInput
+     * @param {string} responseUrl
+     * @param {Promise<any>[]} pendingPromises
+     * @returns {Response}
+     */
+    createObservableResponse(response: Response, responseConfig: ResponseInit, responseInput: RouteResponseConfig, responseUrl: string, pendingPromises: Promise<any>[]): Response;
+    /**
+     * @overload
+     * @param {UserRouteConfig} matcher
+     * @returns {void}
+     */
+    addRoute(matcher: UserRouteConfig): void;
+    /**
+     * @overload
+     * @param {RouteMatcher } matcher
+     * @param {RouteResponse} response
+     * @param {UserRouteConfig | string} [nameOrOptions]
+     * @returns {void}
+     */
+    addRoute(matcher: RouteMatcher, response: RouteResponse, nameOrOptions?: UserRouteConfig | string): void;
+    /**
+     * @param {RouteResponse} [response]
+     */
+    setFallback(response?: RouteResponse): void;
+    /**
+     *
+     * @param {object} [options]
+     * @param {string[]} [options.names]
+     * @param {boolean} [options.includeSticky]
+     * @param {boolean} [options.includeFallback]
+     */
+    removeRoutes({ names, includeSticky, includeFallback }?: {
+        names?: string[];
+        includeSticky?: boolean;
+        includeFallback?: boolean;
+    }): void;
 }
+export type UserRouteConfig = import("./Route").UserRouteConfig;
+export type RouteConfig = import("./Route").RouteConfig;
+export type RouteResponse = import("./Route").RouteResponse;
+export type RouteResponseData = import("./Route").RouteResponseData;
+export type RouteResponseObjectData = import("./Route").RouteResponseObjectData;
+export type RouteResponseConfig = import("./Route").RouteResponseConfig;
+export type RouteResponseFunction = import("./Route").RouteResponseFunction;
+export type RouteMatcher = import("./Matchers").RouteMatcher;
+export type FetchMockConfig = import("./FetchMock").FetchMockConfig;
+export type FetchMock = typeof import("./FetchMock");
+export type CallLog = import("./CallHistory").CallLog;
+export type ResponseConfigProp = "body" | "headers" | "throws" | "status" | "redirectUrl";
+import Route from './Route.js';

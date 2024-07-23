@@ -1,6 +1,6 @@
 {
   "name": "fetch-mock",
-  "version": "10.1.0",
+  "version": "10.1.1",
   "description": "Mock http requests made using fetch (or isomorphic-fetch)",
   "main": "./dist/commonjs.js",
   "module": "./src/index.js",

@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.1.1](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v10.1.0...fetch-mock-v10.1.1) (2024-07-23)
+
+
+### Bug Fixes
+
+* change module system declaratuions to avoid top level type: module ([ed00140](https://github.com/wheresrhys/fetch-mock/commit/ed001407792a12b5fec94013aafccbb4bbb63a87))
+
 ## [10.1.0](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v10.0.8...fetch-mock-v10.1.0) (2024-07-18)
 
 

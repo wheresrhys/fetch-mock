@@ -61,18 +61,6 @@ fetchMock.purge = function (matcher, response, options) {
 
 Creates a route that only responds to a single request using a particular http method
 
-## .getAny(), .postAny(), .putAny(), .deleteAny(), .headAny(), .patchAny()
-
-`.___Any(response, options)`
-
-Creates a route that responds to any requests using a particular http method.
-
-## .getAnyOnce(), .postAnyOnce(), .putAnyOnce(), .deleteAnyOnce(), .headAnyOnce(), .patchAnyOnce()
-
-`.___AnyOnce(response, options)`
-
-Creates a route that responds to any single request using a particular http method.
-
 ## .addMatcher(options)
 
 Allows adding your own, reusable custom matchers to fetch-mock, for example a matcher for interacting with GraphQL queries, or an `isAuthorized` matcher that encapsulates the exact authorization conditions for the API you are mocking, and only requires a `true` or `false` to be input

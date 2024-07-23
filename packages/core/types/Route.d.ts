@@ -5,9 +5,6 @@ export type RouteMatcherFunction = import("./Matchers").RouteMatcherFunction;
 export type RouteMatcherUrl = import("./Matchers").RouteMatcherUrl;
 export type MatcherDefinition = import("./Matchers").MatcherDefinition;
 export type FetchMockConfig = import("./FetchMock").FetchMockConfig;
-/**
- * {
- */
 export type RouteResponseConfig = {
     body?: string | {};
     status?: number;
@@ -48,70 +45,27 @@ export type UserRouteConfig = {
     response?: RouteResponse | RouteResponseFunction;
     repeat?: number;
     delay?: number;
-    /**
-     * - TODO this is global
-     */
     sendAsJson?: boolean;
-    /**
-     * - TODO this is global
-     */
     includeContentLength?: boolean;
-    /**
-     * - TODO this is global
-     */
     matchPartialBody?: boolean;
     sticky?: boolean;
-    /**
-     * - TODO this shoudl not be in user config
-     */
     usesBody?: boolean;
     isFallback?: boolean;
 };
 export type RouteConfig = UserRouteConfig & FetchMockConfig;
-/**
- * @class Route
- */
 declare class Route {
-    /**
-     * @param {MatcherDefinition} matcher
-     */
     static defineMatcher(matcher: MatcherDefinition): void;
-    /** @type {MatcherDefinition[]} */
     static registeredMatchers: MatcherDefinition[];
-    /**
-     * @param {RouteConfig} config
-     */
     constructor(config: RouteConfig);
-    /** @type {RouteConfig} */
     config: RouteConfig;
-    /** @type {RouteMatcherFunction=} */
     matcher: RouteMatcherFunction | undefined;
-    /**
-     * @returns {void}
-     */
     reset(): void;
-    /**
-     *
-     * @param {RouteResponseConfig} responseInput
-     * @returns {{response: Response, responseOptions: ResponseInit, responseInput: RouteResponseConfig}}
-     */
     constructResponse(responseInput: RouteResponseConfig): {
         response: Response;
         responseOptions: ResponseInit;
         responseInput: RouteResponseConfig;
     };
-    /**
-     *
-     * @param {RouteResponseConfig} responseInput
-     * @returns {ResponseInitUsingHeaders}
-     */
     constructResponseOptions(responseInput: RouteResponseConfig): ResponseInitUsingHeaders;
-    /**
-     *
-     * @param {RouteResponseConfig} responseInput
-     * @param {ResponseInitUsingHeaders} responseOptions
-     * @returns {string|null}
-     */
     constructResponseBody(responseInput: RouteResponseConfig, responseOptions: ResponseInitUsingHeaders): string | null;
     #private;
 }

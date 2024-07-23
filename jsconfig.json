@@ -23,7 +23,8 @@
         "outDir": "packages/core/types",
         "skipLibCheck": true,
         "noEmit": false,
-        "target": "es2021"
+        "target": "es2021",
+        "removeComments": true
     },
     "include": [
         "./packages/core/src/*.js"

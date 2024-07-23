@@ -1,39 +1,7 @@
-/**
- * @typedef DerivedRequestOptions
- * @property  {string} method
- * @property  {string} [body]
- * @property  {{ [key: string]: string }} [headers]
- */
-/** @typedef {RequestInit | (RequestInit & DerivedRequestOptions) } NormalizedRequestOptions */
-/** @typedef {import('./CallHistory').CallLog} CallLog */
-/**
- * @param {string | string | URL} url
- * @returns {string}
- */
 export function normalizeUrl(url: string | string | URL): string;
-/**
- *
- * @param {string | object} url
- * @param {RequestInit} options
- * @returns {CallLog}
- */
 export function createCallLogFromUrlAndOptions(url: string | object, options: RequestInit): CallLog;
-/**
- *
- * @param {Request} request
- * @param {RequestInit} options
- * @returns {Promise<CallLog>}
- */
 export function createCallLogFromRequest(request: Request, options: RequestInit): Promise<CallLog>;
-/**
- * @param {string} url
- * @returns {string}
- */
 export function getPath(url: string): string;
-/**
- * @param {string} url
- * @returns {string}
- */
 export function getQuery(url: string): string;
 export function isRequest(urlOrRequest: string | Request, Request: typeof globalThis.Request): urlOrRequest is Request;
 export function normalizeHeaders(headers: Headers | [string, string][] | Record<string, string> | {

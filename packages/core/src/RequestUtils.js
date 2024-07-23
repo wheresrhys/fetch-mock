@@ -32,7 +32,6 @@ export function normalizeUrl(url) {
 	return u.pathname + u.search;
 }
 /**
- *
  * @param {string|Request} urlOrRequest
  * @param {typeof Request} Request
  * @returns  {urlOrRequest is Request}

@@ -1,6 +1,5 @@
 export function isUrlMatcher(matcher: RouteMatcher | RouteConfig): matcher is RouteMatcherUrl;
 export function isFunctionMatcher(matcher: RouteMatcher | RouteConfig): matcher is RouteMatcherFunction;
-/** @type {MatcherDefinition[]} */
 export const builtInMatchers: MatcherDefinition[];
 export type RouteConfig = import("./Route").RouteConfig;
 export type CallLog = import("./CallHistory").CallLog;

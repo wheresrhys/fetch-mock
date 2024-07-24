@@ -106,8 +106,6 @@ describe('instance management', () => {
 				.createInstance()
 				.route('http://a.com', 200, 'george')
 				.route('http://b.com', 200, 'best');
-			// TODO overload to also support 'george' or ['george']'
-			// Probably do the normalization at the FM level
 			fm.removeRoutes({ names: ['george'] });
 			expect(fm.router.routes[0].config.name).toBe('best');
 		});

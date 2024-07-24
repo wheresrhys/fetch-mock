@@ -1,1 +1,3 @@
-npm run lint && npm run types:lint && npm run types:check
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+npx lint-staged

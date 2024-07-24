@@ -1,9 +1,9 @@
 //@type-check
-/** @typedef {import('./Route').RouteConfig} RouteConfig */
-/** @typedef {import('./Route').RouteName} RouteName */
-/** @typedef {import('./RequestUtils').NormalizedRequestOptions} NormalizedRequestOptions */
-/** @typedef {import('./Matchers').RouteMatcher} RouteMatcher */
-/** @typedef {import('./FetchMock').FetchMockConfig} FetchMockConfig */
+/** @typedef {import('./Route.js').RouteConfig} RouteConfig */
+/** @typedef {import('./Route.js').RouteName} RouteName */
+/** @typedef {import('./RequestUtils.js').NormalizedRequestOptions} NormalizedRequestOptions */
+/** @typedef {import('./Matchers.js').RouteMatcher} RouteMatcher */
+/** @typedef {import('./FetchMock.js').FetchMockConfig} FetchMockConfig */
 import { createCallLogFromUrlAndOptions } from './RequestUtils.js';
 import { isUrlMatcher } from './Matchers.js';
 import Route from './Route.js';

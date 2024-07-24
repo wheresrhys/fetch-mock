@@ -21,7 +21,7 @@
     "docs"
   ],
   "scripts": {
-    "lint": "eslint --cache --fix --ext .js,.cjs .",
+    "lint": "eslint --cache --fix --ext .js,.cjs",
     "lint:ci": "eslint --ext .js,.cjs .",
     "prettier": "prettier --cache --write *.md \"./**/*.md\"",
     "prettier:ci": "prettier *.md \"./**/*.md\"",
@@ -76,7 +76,7 @@
       "npm run lint"
     ],
     "packages/**/*.js": [
-       "npm run types:check"
+      "npm run types:check"
     ],
     "**/*.md":[
       "npm run prettier"

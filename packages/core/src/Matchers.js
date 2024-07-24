@@ -1,10 +1,10 @@
 //@type-check
-/** @typedef {import('./Route').RouteConfig} RouteConfig */
-/** @typedef {import('./CallHistory').CallLog} CallLog */
+/** @typedef {import('./Route.js').RouteConfig} RouteConfig */
+/** @typedef {import('./CallHistory.js').CallLog} CallLog */
 import glob from 'globrex';
 import * as regexparam from 'regexparam';
 import querystring from 'querystring';
-import isSubset from 'is-subset';
+import { isSubsetOf } from 'is-subset-of';
 import { dequal as isEqual } from 'dequal';
 import {
 	normalizeHeaders,
@@ -177,8 +177,8 @@ const getBodyMatcher = (route) => {
 		return (
 			sentBody &&
 			(route.matchPartialBody
-				? isSubset(sentBody, expectedBody)
-				: isEqual(sentBody, expectedBody))
+				? isSubsetOf(expectedBody, sentBody)
+				: isEqual(expectedBody, sentBody))
 		);
 	};
 };

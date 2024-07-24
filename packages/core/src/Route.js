@@ -2,13 +2,13 @@
 import { builtInMatchers } from './Matchers.js';
 import statusTextMap from './StatusTextMap.js';
 
-/** @typedef {import('./Matchers').RouteMatcher} RouteMatcher */
-/** @typedef {import('./CallHistory').CallLog} CallLog */
-/** @typedef {import('./Matchers').RouteMatcherFunction} RouteMatcherFunction */
-/** @typedef {import('./Matchers').RouteMatcherUrl} RouteMatcherUrl */
-/** @typedef {import('./Matchers').MatcherDefinition} MatcherDefinition */
-/** @typedef {import('./FetchMock').FetchMockGlobalConfig} FetchMockGlobalConfig */
-/** @typedef {import('./FetchMock').FetchImplementations} FetchImplementations */
+/** @typedef {import('./Matchers.js').RouteMatcher} RouteMatcher */
+/** @typedef {import('./CallHistory.js').CallLog} CallLog */
+/** @typedef {import('./Matchers.js').RouteMatcherFunction} RouteMatcherFunction */
+/** @typedef {import('./Matchers.js').RouteMatcherUrl} RouteMatcherUrl */
+/** @typedef {import('./Matchers.js').MatcherDefinition} MatcherDefinition */
+/** @typedef {import('./FetchMock.js').FetchMockGlobalConfig} FetchMockGlobalConfig */
+/** @typedef {import('./FetchMock.js').FetchImplementations} FetchImplementations */
 
 /**
  * @typedef UserRouteConfig

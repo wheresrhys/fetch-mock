@@ -1,11 +1,11 @@
 export default fetchMock;
-export type RouteMatcher = import("./Router").RouteMatcher;
-export type RouteName = import("./Route").RouteName;
-export type UserRouteConfig = import("./Route").UserRouteConfig;
-export type RouteResponse = import("./Router").RouteResponse;
-export type MatcherDefinition = import("./Matchers").MatcherDefinition;
-export type CallLog = import("./CallHistory").CallLog;
-export type RouteResponseFunction = import("./Route").RouteResponseFunction;
+export type RouteMatcher = import("./Router.js").RouteMatcher;
+export type RouteName = import("./Route.js").RouteName;
+export type UserRouteConfig = import("./Route.js").UserRouteConfig;
+export type RouteResponse = import("./Router.js").RouteResponse;
+export type MatcherDefinition = import("./Matchers.js").MatcherDefinition;
+export type CallLog = import("./CallHistory.js").CallLog;
+export type RouteResponseFunction = import("./Route.js").RouteResponseFunction;
 export type FetchMockGlobalConfig = {
     sendAsJson?: boolean;
     includeContentLength?: boolean;

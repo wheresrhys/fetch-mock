@@ -1,11 +1,11 @@
 export default Route;
-export type RouteMatcher = import("./Matchers").RouteMatcher;
-export type CallLog = import("./CallHistory").CallLog;
-export type RouteMatcherFunction = import("./Matchers").RouteMatcherFunction;
-export type RouteMatcherUrl = import("./Matchers").RouteMatcherUrl;
-export type MatcherDefinition = import("./Matchers").MatcherDefinition;
-export type FetchMockGlobalConfig = import("./FetchMock").FetchMockGlobalConfig;
-export type FetchImplementations = import("./FetchMock").FetchImplementations;
+export type RouteMatcher = import("./Matchers.js").RouteMatcher;
+export type CallLog = import("./CallHistory.js").CallLog;
+export type RouteMatcherFunction = import("./Matchers.js").RouteMatcherFunction;
+export type RouteMatcherUrl = import("./Matchers.js").RouteMatcherUrl;
+export type MatcherDefinition = import("./Matchers.js").MatcherDefinition;
+export type FetchMockGlobalConfig = import("./FetchMock.js").FetchMockGlobalConfig;
+export type FetchImplementations = import("./FetchMock.js").FetchImplementations;
 export type UserRouteConfig = {
     name?: RouteName;
     method?: string;

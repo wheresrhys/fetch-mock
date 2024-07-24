@@ -13,7 +13,6 @@ import {
 	normalizeUrl,
 } from './RequestUtils.js';
 
-
 /** @typedef {string | RegExp | URL} RouteMatcherUrl */
 /** @typedef {function(string): RouteMatcherFunction} UrlMatcherGenerator */
 /** @typedef {function(CallLog): boolean} RouteMatcherFunction */

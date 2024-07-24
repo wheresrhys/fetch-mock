@@ -52,7 +52,6 @@ class CallHistory {
 	 * @param {Router} router
 	 */
 	constructor(globalConfig, router) {
-
 		/** @type {CallLog[]} */
 		this.callLogs = [];
 		this.config = globalConfig;

@@ -111,6 +111,19 @@ describe('url matching', () => {
 		expect(route.matcher({ url: 'http://it.at/not/../there/' })).toBe(true);
 	});
 
+	it('match with multiple url patterns at once', () => {
+		const route = new Route({
+			url: {
+				begin: 'http',
+				end: 'jam',
+				path: '/jar/of/jam',
+				express: '/:container/of/:stuff',
+			},
+			response: 200,
+		});
+		expect(route.matcher({ url: 'http://a.com/jar/of/jam' })).toBe(true);
+	});
+
 	describe('host normalisation', () => {
 		it('match exact pathless urls regardless of trailing slash', () => {
 			const route = new Route({ url: 'http://a.com/', response: 200 });

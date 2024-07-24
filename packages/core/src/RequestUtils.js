@@ -31,14 +31,6 @@ export function normalizeUrl(url) {
 	const u = new URL(url, 'http://dummy');
 	return u.pathname + u.search;
 }
-/**
- *
- * @param {string|Request} urlOrRequest
- * @param {typeof Request} Request
- * @returns  {urlOrRequest is Request}
- */
-export const isRequest = (urlOrRequest, Request) =>
-	Request.prototype.isPrototypeOf(urlOrRequest);
 
 /**
  *
@@ -124,7 +116,7 @@ export function getQuery(url) {
 
 /**
  *
- * @param {Headers | [string, string][] | Record < string, string > | Object.<string, string | number>} headers
+ * @param {Headers | [string, string][] | Record < string, string > | Object.<string, string | number> | HeadersInit} headers
  * @returns {Object.<string, string>}
  */
 export const normalizeHeaders = (headers) => {

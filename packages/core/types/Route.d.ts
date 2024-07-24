@@ -1,145 +1,71 @@
-declare class Route {
-    /**
-     * @param {MatcherDefinition} matcher
-     */
-    static defineMatcher(matcher: any): void;
-    /**
-     * @overload
-     * @param {RouteOptions} matcher
-     * @param {undefined} response
-     * @param {undefined} options
-     * @param {FetchMockConfig} globalConfig
-     */
-    /**
-     * @overload
-     * @param {RouteMatcher } matcher
-     * @param {RouteResponse} response
-     * @param {RouteOptions | string} options
-     * @param {FetchMockConfig} globalConfig
-     */
-    /**
-     * @param {RouteMatcher | RouteOptions} matcher
-     * @param {RouteResponse} [response]
-     * @param {RouteOptions | string} [options]
-     * @param {FetchMockConfig} [globalConfig]
-     */
-    constructor(matcher: any | any, response?: any, options?: any | string, globalConfig?: any);
-    originalInput: {
-        matcher: any;
-        response: any;
-        options: any;
+export default Route;
+export type RouteMatcher = import("./Matchers").RouteMatcher;
+export type CallLog = import("./CallHistory").CallLog;
+export type RouteMatcherFunction = import("./Matchers").RouteMatcherFunction;
+export type RouteMatcherUrl = import("./Matchers").RouteMatcherUrl;
+export type MatcherDefinition = import("./Matchers").MatcherDefinition;
+export type FetchMockConfig = import("./FetchMock").FetchMockConfig;
+export type RouteResponseConfig = {
+    body?: string | {};
+    status?: number;
+    headers?: {
+        [key: string]: string;
     };
-    routeOptions: RouteOptions;
-    reset: () => void;
-    response: () => Promise<any>;
-    matcher: RouteMatcherFunction;
-    #private;
-}
-declare namespace Route {
-    export const registeredMatchers: any[];
-}
-
-
-
-
-/**
- * Mock options object
- */
-interface RouteOptions {
-    /**
-     * A unique string naming the route. Used to subsequently retrieve
-     * references to the calls, grouped by name.
-     */
-    name?: string;
-
-    /**
-     * http method to match
-     */
+    throws?: Error;
+    redirectUrl?: string;
+    options?: ResponseInit;
+};
+export type ResponseInitUsingHeaders = {
+    status: number;
+    statusText: string;
+    headers: Headers;
+};
+export type RouteResponseObjectData = RouteResponseConfig | object;
+export type RouteResponseData = Response | number | string | RouteResponseObjectData;
+export type RouteResponsePromise = Promise<RouteResponseData>;
+export type RouteResponseFunction = (arg0: CallLog) => (RouteResponseData | RouteResponsePromise);
+export type RouteResponse = RouteResponseData | RouteResponsePromise | RouteResponseFunction;
+export type RouteName = string;
+export type UserRouteConfig = {
+    name?: RouteName;
     method?: string;
-
-    /**
-     * key/value map of headers to match
-     */
-    headers?: { [key: string]: string | number };
-
-    /**
-     * key/value map of query strings to match, in any order
-     */
-    query?: { [key: string]: string };
-
-    /**
-     * key/value map of express style path params to match
-     */
-    params?: { [key: string]: string };
-
-    /**
-     * JSON serialisable object literal. Allowing any object for now
-     * But in typescript 3.7 will change to JSON
-     */
+    headers?: {
+        [key: string]: string | number;
+    };
+    query?: {
+        [key: string]: string;
+    };
+    params?: {
+        [key: string]: string;
+    };
     body?: object;
-
-    /**
-     * A function for arbitrary matching
-     */
-    functionMatcher?: RouteMatcherFunction;
-
-    /**
-     * as specified above
-     */
+    matcherFunction?: RouteMatcherFunction;
     matcher?: RouteMatcher;
-
     url?: RouteMatcherUrl;
-
-    /**
-     * This option allows for existing routes in a mock to be overwritten.
-     * It’s also possible to define multiple routes with ‘the same’ matcher.
-     * Default behaviour is to error
-     */
-    overwriteRoutes?: boolean;
-
-    /**
-     * as specified above
-     */
     response?: RouteResponse | RouteResponseFunction;
-
-    /**
-     * integer, n, limiting the number of times the matcher can be used.
-     * If the route has already been called n times the route will be
-     * ignored and the call to fetch() will fall through to be handled by
-     * any other routes defined (which may eventually result in an error
-     * if nothing matches it).
-     */
     repeat?: number;
-
-    /**
-     * integer, n, delays responding for the number of milliseconds
-     * specified.
-     */
     delay?: number;
-
-    /**
-     * Convert objects into JSON before delivering as stub responses. Can
-     * be useful to set to false globally if e.g. dealing with a lot of
-     * array buffers. If true, will also add content-type: application/json
-     * header.
-     * @default true
-     */
     sendAsJson?: boolean;
-
-    /**
-     * Automatically sets a content-length header on each response.
-     * @default true
-     */
     includeContentLength?: boolean;
-
-    /**
-     * Match calls that only partially match a specified body json.
-     */
     matchPartialBody?: boolean;
-
-    /**
-     * Avoids a route being removed when reset(), restore() or resetBehavior() are called.
-     * Note - this does not preserve the history of calls to the route
-     */
     sticky?: boolean;
+    usesBody?: boolean;
+    isFallback?: boolean;
+};
+export type RouteConfig = UserRouteConfig & FetchMockConfig;
+declare class Route {
+    static defineMatcher(matcher: MatcherDefinition): void;
+    static registeredMatchers: MatcherDefinition[];
+    constructor(config: RouteConfig);
+    config: RouteConfig;
+    matcher: RouteMatcherFunction | undefined;
+    reset(): void;
+    constructResponse(responseInput: RouteResponseConfig): {
+        response: Response;
+        responseOptions: ResponseInit;
+        responseInput: RouteResponseConfig;
+    };
+    constructResponseOptions(responseInput: RouteResponseConfig): ResponseInitUsingHeaders;
+    constructResponseBody(responseInput: RouteResponseConfig, responseOptions: ResponseInitUsingHeaders): string | null;
+    #private;
 }

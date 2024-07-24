@@ -289,20 +289,6 @@ export default class Router {
 	}
 
 	/**
-	 * @overload
-	 * @param {UserRouteConfig} matcher
-	 * @returns {void}
-	 */
-
-	/**
-	 * @overload
-	 * @param {RouteMatcher } matcher
-	 * @param {RouteResponse} response
-	 * @param {UserRouteConfig | string} [nameOrOptions]
-	 * @returns {void}
-	 */
-
-	/**
 	 * @param {RouteMatcher | UserRouteConfig} matcher
 	 * @param {RouteResponse} [response]
 	 * @param {UserRouteConfig | string} [nameOrOptions]

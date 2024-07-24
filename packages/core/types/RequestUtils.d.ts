@@ -1,12 +1,19 @@
-interface DerivedRequestOptions {
+export function normalizeUrl(url: string | string | URL): string;
+export function createCallLogFromUrlAndOptions(url: string | object, options: RequestInit): CallLog;
+export function createCallLogFromRequest(request: Request, options: RequestInit): Promise<CallLog>;
+export function getPath(url: string): string;
+export function getQuery(url: string): string;
+export function normalizeHeaders(headers: Headers | [string, string][] | Record<string, string> | {
+    [x: string]: string | number;
+} | HeadersInit): {
+    [x: string]: string;
+};
+export type DerivedRequestOptions = {
     method: string;
-    body?: Promise<string>;
-    headers?: { [key: string]: string | [string] }
-}
-type NormalizedRequestOptions = RequestInit | (RequestInit & DerivedRequestOptions)
-interface NormalizedRequest {
-    url: string;
-    options: NormalizedRequestOptions;
-    request?: Request;
-    signal?: AbortSignal;
-}
+    body?: string;
+    headers?: {
+        [key: string]: string;
+    };
+};
+export type NormalizedRequestOptions = RequestInit | (RequestInit & DerivedRequestOptions);
+export type CallLog = import("./CallHistory").CallLog;

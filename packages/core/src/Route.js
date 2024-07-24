@@ -19,18 +19,17 @@ import statusTextMap from './StatusTextMap';
  * @property {{ [key: string]: string }} [params]
  * @property {object} [body]
  * @property {RouteMatcherFunction} [matcherFunction]
- * @property {RouteMatcher} [matcher]
  * @property {RouteMatcherUrl} [url]
  * @property {RouteResponse | RouteResponseFunction} [response]
  * @property {number} [repeat]
  * @property {number} [delay]
  * @property {boolean} [sticky]
- * @property {boolean} [isFallback]
  */
 
 /**
  * @typedef InternalRouteConfig
- * @property {boolean} [usesBody] - TODO this shoudl not be in user config
+ * @property {boolean} [usesBody]
+ * @property {boolean} [isFallback]
  */
 
 /** @typedef {UserRouteConfig & FetchMockGlobalConfig} ExtendedUserRouteConfig */

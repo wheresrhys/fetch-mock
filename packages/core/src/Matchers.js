@@ -3,7 +3,6 @@
 /** @typedef {import('./CallHistory.js').CallLog} CallLog */
 import glob from 'globrex';
 import * as regexparam from 'regexparam';
-import querystring from 'querystring';
 import { isSubsetOf } from 'is-subset-of';
 import { dequal as isEqual } from 'dequal';
 import {
@@ -113,32 +112,58 @@ const getMethodMatcher = ({ method: expectedMethod }) => {
 /**
  * @type {MatcherGenerator}
  */
-const getQueryStringMatcher = ({ query: passedQuery }) => {
+const getQueryParamsMatcher = ({ query: passedQuery }) => {
 	if (!passedQuery) {
 		return;
 	}
-	const expectedQuery = querystring.parse(querystring.stringify(passedQuery));
-	const keys = Object.keys(expectedQuery);
-	return ({ url }) => {
-		const query = querystring.parse(getQuery(url));
-		return keys.every((key) => {
-			if (Array.isArray(query[key])) {
-				if (!Array.isArray(expectedQuery[key])) {
-					return false;
-				}
-				return isEqual(
-					/** @type {string[]}*/ (query[key]).sort(),
-					/** @type {string[]}*/ (expectedQuery[key]).sort(),
+	const expectedQuery = new URLSearchParams();
+	for (const [key, value] of Object.entries(passedQuery)) {
+		if (Array.isArray(value)) {
+			for (const item of value) {
+				expectedQuery.append(
+					key,
+					typeof item === 'object' || typeof item === 'undefined'
+						? ''
+						: item.toString(),
 				);
 			}
-			return query[key] === expectedQuery[key];
+		} else {
+			expectedQuery.append(
+				key,
+				typeof value === 'object' || typeof value === 'undefined'
+					? ''
+					: value.toString(),
+			);
+		}
+	}
+
+	const keys = Array.from(expectedQuery.keys());
+	return ({ url }) => {
+		const queryString = getQuery(url);
+		const query = new URLSearchParams(queryString);
+
+		return keys.every((key) => {
+			const expectedValues = expectedQuery.getAll(key).sort();
+			const actualValues = query.getAll(key).sort();
+
+			if (expectedValues.length !== actualValues.length) {
+				return false;
+			}
+
+			if (Array.isArray(passedQuery[key])) {
+				return expectedValues.every(
+					(expected, index) => expected === actualValues[index],
+				);
+			}
+
+			return isEqual(actualValues, expectedValues);
 		});
 	};
 };
 /**
  * @type {MatcherGenerator}
  */
-const getParamsMatcher = ({ params: expectedParams, url }) => {
+const getExpressParamsMatcher = ({ params: expectedParams, url }) => {
 	if (!expectedParams) {
 		return;
 	}
@@ -248,10 +273,10 @@ const getUrlMatcher = (route) => {
 /** @type {MatcherDefinition[]} */
 export const builtInMatchers = [
 	{ name: 'url', matcher: getUrlMatcher },
-	{ name: 'query', matcher: getQueryStringMatcher },
+	{ name: 'query', matcher: getQueryParamsMatcher },
 	{ name: 'method', matcher: getMethodMatcher },
 	{ name: 'headers', matcher: getHeaderMatcher },
-	{ name: 'params', matcher: getParamsMatcher },
+	{ name: 'params', matcher: getExpressParamsMatcher },
 	{ name: 'body', matcher: getBodyMatcher, usesBody: true },
 	{ name: 'matcherFunction', matcher: getFunctionMatcher },
 ];

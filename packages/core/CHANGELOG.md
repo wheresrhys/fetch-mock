@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.1...core-v0.4.2) (2024-07-24)
+
+
+### Features
+
+* make query parameters available on CallLog ([8ec57ac](https://github.com/wheresrhys/fetch-mock/commit/8ec57acdc2586102fc94a76f3f3328422e43947f))
+
 ## [0.4.0](https://github.com/wheresrhys/fetch-mock/compare/core-v0.3.1...core-v0.4.0) (2024-07-24)
 
 

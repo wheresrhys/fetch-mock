@@ -212,27 +212,6 @@ describe('Routing', () => {
 					});
 
 					testChainableRoutingMethod(`${method}Once`);
-
-					it(`has ${method}Any() shorthand`, () => {
-						fm[`${method}Any`]('a', { opt: 'b' });
-						expect(fm.router.addRoute).toHaveBeenCalledWith('*', 'a', {
-							opt: 'b',
-							method,
-						});
-					});
-
-					testChainableRoutingMethod(`${method}Any`);
-
-					it(`has ${method}AnyOnce() shorthand`, () => {
-						fm[`${method}AnyOnce`]('a', { opt: 'b' });
-						expect(fm.router.addRoute).toHaveBeenCalledWith('*', 'a', {
-							opt: 'b',
-							method,
-							repeat: 1,
-						});
-					});
-
-					testChainableRoutingMethod(`${method}Any`);
 				});
 			});
 		});

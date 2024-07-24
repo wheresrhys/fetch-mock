@@ -13,6 +13,19 @@ import {
 	normalizeUrl,
 } from './RequestUtils.js';
 
+/** @typedef {string | RegExp | URL} RouteMatcherUrl */
+/** @typedef {function(string): RouteMatcherFunction} UrlMatcherGenerator */
+/** @typedef {function(CallLog): boolean} RouteMatcherFunction */
+/** @typedef {function(RouteConfig): RouteMatcherFunction} MatcherGenerator */
+/** @typedef {RouteMatcherUrl | RouteMatcherFunction} RouteMatcher */
+
+/**
+ * @typedef MatcherDefinition
+ * @property {string} name
+ * @property {MatcherGenerator} matcher
+ * @property  {boolean} [usesBody]
+ */
+
 /**
  * @param {RouteMatcher | RouteConfig} matcher
  * @returns {matcher is RouteMatcherUrl}
@@ -28,19 +41,6 @@ export const isUrlMatcher = (matcher) =>
  * @returns {matcher is RouteMatcherFunction}
  */
 export const isFunctionMatcher = (matcher) => typeof matcher === 'function';
-
-/** @typedef {string | RegExp | URL} RouteMatcherUrl */
-/** @typedef {function(string): RouteMatcherFunction} UrlMatcherGenerator */
-/** @typedef {function(CallLog): boolean} RouteMatcherFunction */
-/** @typedef {function(RouteConfig): RouteMatcherFunction} MatcherGenerator */
-/** @typedef {RouteMatcherUrl | RouteMatcherFunction} RouteMatcher */
-
-/**
- * @typedef MatcherDefinition
- * @property {string} name
- * @property {MatcherGenerator} matcher
- * @property  {boolean} [usesBody]
- */
 
 /**
  * @type {Object.<string, UrlMatcherGenerator>}
@@ -182,6 +182,12 @@ const getBodyMatcher = (route) => {
 		);
 	};
 };
+
+/**
+ * @type {MatcherGenerator}
+ */
+const getFunctionMatcher = ({ matcherFunction }) => matcherFunction;
+
 /**
  *
  * @param {RouteConfig} route
@@ -207,10 +213,7 @@ const getFullUrlMatcher = (route, matcherUrl, query) => {
 	};
 };
 
-/**
- * @type {MatcherGenerator}
- */
-const getFunctionMatcher = ({ matcherFunction }) => matcherFunction;
+
 /**
  * @type {MatcherGenerator}
  */

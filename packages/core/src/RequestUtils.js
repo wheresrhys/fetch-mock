@@ -31,13 +31,6 @@ export function normalizeUrl(url) {
 	const u = new URL(url, 'http://dummy');
 	return u.pathname + u.search;
 }
-/**
- * @param {string|Request} urlOrRequest
- * @param {typeof Request} Request
- * @returns  {urlOrRequest is Request}
- */
-export const isRequest = (urlOrRequest, Request) =>
-	Request.prototype.isPrototypeOf(urlOrRequest);
 
 /**
  *

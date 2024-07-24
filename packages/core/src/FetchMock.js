@@ -11,8 +11,6 @@ import * as requestUtils from './RequestUtils.js';
 /** @typedef {import('./CallHistory').CallLog} CallLog */
 /** @typedef {import('./Route').RouteResponseFunction} RouteResponseFunction */
 
-/** @typedef {'get' |'post' |'put' |'delete' |'head' |'patch' |'once' |'sticky' |'any' |'anyOnce' |'getOnce' |'postOnce' |'putOnce' |'deleteOnce' |'headOnce' |'patchOnce' } AdditionalRouteMethodName */
-
 /**
  *
  * @param {UserRouteConfig} shorthandOptions
@@ -125,7 +123,8 @@ class FetchMock {
 	async fetchHandler(requestInput, requestInit) {
 		// TODO move into router
 		let callLog;
-		if (requestUtils.isRequest(requestInput, this.config.Request)) {
+
+		if (requestInput instanceof this.config.Request) {
 			callLog = await requestUtils.createCallLogFromRequest(
 				requestInput,
 				requestInit,

@@ -12,6 +12,34 @@ import * as requestUtils from './RequestUtils.js';
 /** @typedef {import('./Route').RouteResponseFunction} RouteResponseFunction */
 
 /**
+ * @typedef FetchMockGlobalConfig
+ * @property {boolean} [sendAsJson]
+ * @property {boolean} [includeContentLength]
+ * @property {boolean} [matchPartialBody]
+ */
+
+/**
+ * @typedef FetchImplementations
+ * @property {function(string | Request, RequestInit): Promise<Response>} [fetch]
+ * @property {typeof Headers} [Headers]
+ * @property {typeof Request} [Request]
+ * @property {typeof Response} [Response]
+ */
+
+/** @typedef {FetchMockGlobalConfig & FetchImplementations} FetchMockConfig */
+
+/** @type {FetchMockConfig} */
+const defaultConfig = {
+	includeContentLength: true,
+	sendAsJson: true,
+	matchPartialBody: false,
+	Request: globalThis.Request,
+	Response: globalThis.Response,
+	Headers: globalThis.Headers,
+	fetch: globalThis.fetch,
+};
+
+/**
  *
  * @param {UserRouteConfig} shorthandOptions
  */
@@ -66,30 +94,6 @@ const defineGreedyShorthand = (shorthandOptions) => {
 			Object.assign(options || {}, shorthandOptions),
 		);
 	};
-};
-
-/**
- * @typedef FetchMockConfig
- * @property {boolean} [sendAsJson]
- * @property {boolean} [includeContentLength]
- * @property {boolean} [warnOnFallback]
- * @property {boolean} [matchPartialBody]
- * @property {function(string | Request, RequestInit): Promise<Response>} [fetch]
- * @property {typeof Headers} [Headers]
- * @property {typeof Request} [Request]
- * @property {typeof Response} [Response]
- */
-
-/** @type {FetchMockConfig} */
-const defaultConfig = {
-	includeContentLength: true,
-	sendAsJson: true,
-	warnOnFallback: true,
-	matchPartialBody: false,
-	Request: globalThis.Request,
-	Response: globalThis.Response,
-	Headers: globalThis.Headers,
-	fetch: globalThis.fetch,
 };
 
 class FetchMock {

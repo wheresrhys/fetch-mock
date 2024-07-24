@@ -7,7 +7,33 @@ import statusTextMap from './StatusTextMap';
 /** @typedef {import('./Matchers').RouteMatcherFunction} RouteMatcherFunction */
 /** @typedef {import('./Matchers').RouteMatcherUrl} RouteMatcherUrl */
 /** @typedef {import('./Matchers').MatcherDefinition} MatcherDefinition */
-/** @typedef {import('./FetchMock').FetchMockConfig} FetchMockConfig */
+/** @typedef {import('./FetchMock').FetchMockGlobalConfig} FetchMockGlobalConfig */
+/** @typedef {import('./FetchMock').FetchImplementations} FetchImplementations */
+
+/**
+ * @typedef UserRouteConfig
+ * @property {RouteName} [name]
+ * @property {string} [method]
+ * @property {{ [key: string]: string | number  }} [headers]
+ * @property {{ [key: string]: string }} [query]
+ * @property {{ [key: string]: string }} [params]
+ * @property {object} [body]
+ * @property {RouteMatcherFunction} [matcherFunction]
+ * @property {RouteMatcherUrl} [url]
+ * @property {RouteResponse | RouteResponseFunction} [response]
+ * @property {number} [repeat]
+ * @property {number} [delay]
+ * @property {boolean} [sticky]
+ */
+
+/**
+ * @typedef InternalRouteConfig
+ * @property {boolean} [usesBody]
+ * @property {boolean} [isFallback]
+ */
+
+/** @typedef {UserRouteConfig & FetchMockGlobalConfig} ExtendedUserRouteConfig */
+/** @typedef {ExtendedUserRouteConfig & FetchImplementations & InternalRouteConfig} RouteConfig */
 
 /**
  * @typedef RouteResponseConfig {
@@ -33,30 +59,6 @@ import statusTextMap from './StatusTextMap';
 /** @typedef {RouteResponseData | RouteResponsePromise | RouteResponseFunction} RouteResponse*/
 
 /** @typedef {string} RouteName */
-
-/**
- * @typedef UserRouteConfig
- * @property {RouteName} [name]
- * @property {string} [method]
- * @property {{ [key: string]: string | number  }} [headers]
- * @property {{ [key: string]: string }} [query]
- * @property {{ [key: string]: string }} [params]
- * @property {object} [body]
- * @property {RouteMatcherFunction} [matcherFunction]
- * @property {RouteMatcher} [matcher]
- * @property {RouteMatcherUrl} [url]
- * @property {RouteResponse | RouteResponseFunction} [response]
- * @property {number} [repeat]
- * @property {number} [delay]
- * @property {boolean} [sendAsJson] - TODO this is global
- * @property {boolean} [includeContentLength] - TODO this is global
- * @property {boolean} [matchPartialBody] - TODO this is global
- * @property {boolean} [sticky]
- * @property {boolean} [usesBody] - TODO this shoudl not be in user config
- * @property {boolean} [isFallback]
- */
-
-/** @typedef {UserRouteConfig & FetchMockConfig} RouteConfig*/
 
 /**
  *

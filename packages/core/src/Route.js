@@ -1,6 +1,6 @@
 //@type-check
-import { builtInMatchers } from './Matchers';
-import statusTextMap from './StatusTextMap';
+import { builtInMatchers } from './Matchers.js';
+import statusTextMap from './StatusTextMap.js';
 
 /** @typedef {import('./Matchers').RouteMatcher} RouteMatcher */
 /** @typedef {import('./CallHistory').CallLog} CallLog */

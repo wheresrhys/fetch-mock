@@ -11,6 +11,9 @@
     "require": "./dist/commonjs.js"
   },
   "types": "./types/index.d.ts",
+  "scripts": {
+    "build": "rollup -c"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/wheresrhys/fetch-mock.git",

@@ -20,16 +20,15 @@ export type UserRouteConfig = {
     };
     body?: object;
     matcherFunction?: RouteMatcherFunction;
-    matcher?: RouteMatcher;
     url?: RouteMatcherUrl;
     response?: RouteResponse | RouteResponseFunction;
     repeat?: number;
     delay?: number;
     sticky?: boolean;
-    isFallback?: boolean;
 };
 export type InternalRouteConfig = {
     usesBody?: boolean;
+    isFallback?: boolean;
 };
 export type ExtendedUserRouteConfig = UserRouteConfig & FetchMockGlobalConfig;
 export type RouteConfig = ExtendedUserRouteConfig & FetchImplementations & InternalRouteConfig;

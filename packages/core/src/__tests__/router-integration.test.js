@@ -138,4 +138,47 @@ describe('Router', () => {
 			).rejects.toThrow();
 		});
 	});
+
+	describe('making query strings available', () => {
+		it('makes  query string values available to matchers', async () => {
+			const fm = fetchMock.createInstance();
+			fm.route(
+				{ query: { a: ['a-val1', 'a-val2'], b: 'b-val', c: undefined } },
+				200,
+			);
+			const response = await fm.fetchHandler(
+				'http://a.com?a=a-val1&a=a-val2&b=b-val&c=',
+			);
+			expect(response.status).toEqual(200);
+		});
+
+		it('always writes query string values to the callLog when using a URL', async () => {
+			const fm = fetchMock.createInstance();
+			fm.route(
+				{ query: { a: ['a-val1', 'a-val2'], b: 'b-val', c: undefined } },
+				200,
+			);
+			const url = new URL('http://a.com/');
+			url.searchParams.append('a', 'a-val1');
+			url.searchParams.append('a', 'a-val2');
+			url.searchParams.append('b', 'b-val');
+			url.searchParams.append('c', undefined);
+			const response = await fm.fetchHandler(
+				'http://a.com?a=a-val1&a=a-val2&b=b-val&c=',
+			);
+			expect(response.status).toEqual(200);
+		});
+
+		it('always writes query string values to the callLog when using a Request', async () => {
+			const fm = fetchMock.createInstance();
+			fm.route(
+				{ query: { a: ['a-val1', 'a-val2'], b: 'b-val', c: undefined } },
+				200,
+			);
+			const response = await fm.fetchHandler(
+				new Request('http://a.com?a=a-val1&a=a-val2&b=b-val&c='),
+			);
+			expect(response.status).toEqual(200);
+		});
+	});
 });

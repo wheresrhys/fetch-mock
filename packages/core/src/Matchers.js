@@ -5,12 +5,7 @@ import glob from 'globrex';
 import * as regexparam from 'regexparam';
 import { isSubsetOf } from 'is-subset-of';
 import { dequal as isEqual } from 'dequal';
-import {
-	normalizeHeaders,
-	getPath,
-	getQuery,
-	normalizeUrl,
-} from './RequestUtils.js';
+import { normalizeHeaders, getPath, normalizeUrl } from './RequestUtils.js';
 
 /** @typedef {string | RegExp | URL} RouteMatcherUrl */
 /** @typedef {function(string): RouteMatcherFunction} UrlMatcherGenerator */
@@ -138,13 +133,10 @@ const getQueryParamsMatcher = ({ query: passedQuery }) => {
 	}
 
 	const keys = Array.from(expectedQuery.keys());
-	return ({ url }) => {
-		const queryString = getQuery(url);
-		const query = new URLSearchParams(queryString);
-
+	return ({ queryParams }) => {
 		return keys.every((key) => {
 			const expectedValues = expectedQuery.getAll(key).sort();
-			const actualValues = query.getAll(key).sort();
+			const actualValues = queryParams.getAll(key).sort();
 
 			if (expectedValues.length !== actualValues.length) {
 				return false;

@@ -42,10 +42,12 @@ export function createCallLogFromUrlAndOptions(url, options) {
 	/** @type {Promise<any>[]} */
 	const pendingPromises = [];
 	if (typeof url === 'string' || url instanceof String || url instanceof URL) {
+		// @ts-ignore - jsdoc doesn't distinguish between string and String, but typechecker complains
+		url = normalizeUrl(url);
 		return {
 			arguments: [url, options],
-			// @ts-ignore - jsdoc doesn't distinguish between string and String, but typechecker complains
-			url: normalizeUrl(url),
+			url,
+			queryParams: new URLSearchParams(getQuery(url)),
 			options: options || {},
 			signal: options && options.signal,
 			pendingPromises,
@@ -81,9 +83,11 @@ export async function createCallLogFromRequest(request, options) {
 	if (request.headers) {
 		derivedOptions.headers = normalizeHeaders(request.headers);
 	}
+	const url = normalizeUrl(request.url);
 	const callLog = {
 		arguments: [request, options],
-		url: normalizeUrl(request.url),
+		url,
+		queryParams: new URLSearchParams(getQuery(url)),
 		options: Object.assign(derivedOptions, options || {}),
 		request: request,
 		signal: (options && options.signal) || request.signal,

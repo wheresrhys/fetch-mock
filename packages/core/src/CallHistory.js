@@ -19,7 +19,7 @@ import Router from './Router.js';
  * @property {Route} [route]
  * @property {Response} [response]
  * @property {Object.<string, string>} [expressParams]
- * @property {Object.<string, string>} [queryParams]
+ * @property {URLSearchParams} [queryParams]
  * @property {Promise<any>[]} pendingPromises
  */
 

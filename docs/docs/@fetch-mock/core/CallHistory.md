@@ -10,14 +10,15 @@ sidebar_position: 4
 
 Calls are recorded, and returned, in a standard format with the following properties:
 
-- `[string|Request,Object]` - the original arguments passed in to `fetch`
-- `{string} url` - The url being fetched
-- `{NormalizedRequestOptions} options` - The options passed in to the fetch (may be derived from a `Request` if one was used)
-- `{Request} [request]` - The `Request` passed to fetch, if one was used
-- `{Route} [route]` - The route used to handle the request
-- `{Response} [response]` - The `Response` returned to the user
-- `{Object.<string,string>}` - Any express parameters extracted from the `url`
-- `{Promise<any>[]} pendingPromises` - An internal structure used by the `.flush()` method documented below
+- **arguments** `[string|Request,Object]` - the original arguments passed in to `fetch`
+- **url** `{string}` - The url being fetched
+- **options** `{NormalizedRequestOptions}` - The options passed in to the fetch (may be derived from a `Request` if one was used)
+- **request** `{Request}` - The `Request` passed to fetch, if one was used
+- **route** `{Route}` - The route used to handle the request
+- **response** `{Response}` - The `Response` returned to the user
+- **expressParams** `{Object.<string,string>}` - Any express parameters extracted from the `url`
+- **queryParams** `{URLSearchParams}` - Any query parameters extracted from the `url`
+- **pendingPromises** `{Promise<any>[]} ` - An internal structure used by the `.flush()` method documented below
 
 ## Filtering
 

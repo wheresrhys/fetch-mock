@@ -33,7 +33,7 @@
     "packages/core": {},
     "packages/fetch-mock": {}
   },
-  "bootstrap-sha": "29cffe47c853bc398f0b86fdb4f3e6325568bbda",
+  "bootstrap-sha": "812f462efde5ade292394b94c9f2cbe0aedf8e3f",
   "pull-request-title-pattern": "build${scope}: release${component} ${version}",
   "pull-request-header": ":rock: I've created a release for you",
   "prerelease": true,

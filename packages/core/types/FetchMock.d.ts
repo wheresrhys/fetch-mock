@@ -6,7 +6,6 @@ export type RouteResponse = import("./Router").RouteResponse;
 export type MatcherDefinition = import("./Matchers").MatcherDefinition;
 export type CallLog = import("./CallHistory").CallLog;
 export type RouteResponseFunction = import("./Route").RouteResponseFunction;
-export type AdditionalRouteMethodName = "get" | "post" | "put" | "delete" | "head" | "patch" | "once" | "sticky" | "any" | "anyOnce" | "getOnce" | "postOnce" | "putOnce" | "deleteOnce" | "headOnce" | "patchOnce";
 export type FetchMockConfig = {
     sendAsJson?: boolean;
     includeContentLength?: boolean;

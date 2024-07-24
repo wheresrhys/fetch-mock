@@ -3,7 +3,6 @@ export function createCallLogFromUrlAndOptions(url: string | object, options: Re
 export function createCallLogFromRequest(request: Request, options: RequestInit): Promise<CallLog>;
 export function getPath(url: string): string;
 export function getQuery(url: string): string;
-export function isRequest(urlOrRequest: string | Request, Request: typeof globalThis.Request): urlOrRequest is Request;
 export function normalizeHeaders(headers: Headers | [string, string][] | Record<string, string> | {
     [x: string]: string | number;
 } | HeadersInit): {

@@ -13,6 +13,7 @@ import {
 	normalizeUrl,
 } from './RequestUtils.js';
 
+
 /** @typedef {string | RegExp | URL} RouteMatcherUrl */
 /** @typedef {function(string): RouteMatcherFunction} UrlMatcherGenerator */
 /** @typedef {function(CallLog): boolean} RouteMatcherFunction */
@@ -212,7 +213,6 @@ const getFullUrlMatcher = (route, matcherUrl, query) => {
 		return normalizeUrl(url) === expectedUrl;
 	};
 };
-
 
 /**
  * @type {MatcherGenerator}

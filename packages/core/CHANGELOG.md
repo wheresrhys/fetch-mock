@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.4.0](https://github.com/wheresrhys/fetch-mock/compare/core-v0.3.1...core-v0.4.0) (2024-07-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* defined route shorthand methods more declaratively
+
+### refactor
+
+* defined route shorthand methods more declaratively ([f42d240](https://github.com/wheresrhys/fetch-mock/commit/f42d240f8ef5c6a270ee8b355ad5177d8fdadf0b))
+
 ## [0.3.1](https://github.com/wheresrhys/fetch-mock/compare/core-v0.3.0...core-v0.3.1) (2024-07-23)
 
 

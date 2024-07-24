@@ -21,8 +21,10 @@
     "docs"
   ],
   "scripts": {
-    "lint": "eslint --cache --fix --ext .js,.cjs . && prettier --cache --write *.md docs/**/*.md docs/**/**/*.md",
-    "lint:ci": "eslint --ext .js,.cjs . && prettier *.md docs/**/*.md docs/**/**/*.md",
+    "lint": "eslint --cache --fix --ext .js,.cjs .",
+    "lint:ci": "eslint --ext .js,.cjs .",
+    "prettier": "prettier --cache --write *.md \"./**/*.md\"",
+    "prettier:ci": "prettier *.md \"./**/*.md\"",
     "types:check": "tsc --project ./jsconfig.json",
     "types:lint": "dtslint --expectOnly packages/fetch-mock/types",
     "prepare": "husky || echo \"husky not available\"",
@@ -72,6 +74,9 @@
   "lint-staged": {
     "**/*.js": [
       "npm run lint && npm run types:check"
+    ],
+    "**/*.md":[
+      "npm run prettier"
     ]
   }
 }

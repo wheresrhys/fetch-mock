@@ -15,7 +15,6 @@ import * as requestUtils from './RequestUtils.js';
  * @typedef FetchMockGlobalConfig
  * @property {boolean} [sendAsJson]
  * @property {boolean} [includeContentLength]
- * @property {boolean} [warnOnFallback]
  * @property {boolean} [matchPartialBody]
  */
 
@@ -33,7 +32,6 @@ import * as requestUtils from './RequestUtils.js';
 const defaultConfig = {
 	includeContentLength: true,
 	sendAsJson: true,
-	warnOnFallback: true,
 	matchPartialBody: false,
 	Request: globalThis.Request,
 	Response: globalThis.Response,

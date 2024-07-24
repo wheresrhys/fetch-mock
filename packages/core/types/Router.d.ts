@@ -4,7 +4,7 @@ export default class Router {
         fallbackRoute?: Route;
     });
     routes: Route[];
-    config: import("./FetchMock").FetchMockConfig;
+    config: import("./FetchMock.js").FetchMockConfig;
     fallbackRoute: Route;
     needsToReadBody(request: Request): boolean;
     execute(callLog: CallLog): Promise<Response>;
@@ -22,16 +22,16 @@ export default class Router {
         includeFallback?: boolean;
     }): void;
 }
-export type UserRouteConfig = import("./Route").UserRouteConfig;
-export type RouteConfig = import("./Route").RouteConfig;
-export type RouteResponse = import("./Route").RouteResponse;
-export type RouteResponseData = import("./Route").RouteResponseData;
-export type RouteResponseObjectData = import("./Route").RouteResponseObjectData;
-export type RouteResponseConfig = import("./Route").RouteResponseConfig;
-export type RouteResponseFunction = import("./Route").RouteResponseFunction;
-export type RouteMatcher = import("./Matchers").RouteMatcher;
-export type FetchMockConfig = import("./FetchMock").FetchMockConfig;
-export type FetchMock = typeof import("./FetchMock");
-export type CallLog = import("./CallHistory").CallLog;
+export type UserRouteConfig = import("./Route.js").UserRouteConfig;
+export type RouteConfig = import("./Route.js").RouteConfig;
+export type RouteResponse = import("./Route.js").RouteResponse;
+export type RouteResponseData = import("./Route.js").RouteResponseData;
+export type RouteResponseObjectData = import("./Route.js").RouteResponseObjectData;
+export type RouteResponseConfig = import("./Route.js").RouteResponseConfig;
+export type RouteResponseFunction = import("./Route.js").RouteResponseFunction;
+export type RouteMatcher = import("./Matchers.js").RouteMatcher;
+export type FetchMockConfig = import("./FetchMock.js").FetchMockConfig;
+export type FetchMock = typeof import("./FetchMock.js");
+export type CallLog = import("./CallHistory.js").CallLog;
 export type ResponseConfigProp = "body" | "headers" | "throws" | "status" | "redirectUrl";
 import Route from './Route.js';

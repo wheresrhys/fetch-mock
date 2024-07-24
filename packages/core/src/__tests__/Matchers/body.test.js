@@ -211,7 +211,7 @@ describe('body matching', () => {
 			).toBe(true);
 		});
 
-		it('not match when not starting subset of array', () => {
+		it('match when subset of array has gaps', () => {
 			const route = new Route({
 				body: { ham: [1, 3] },
 				matchPartialBody: true,
@@ -225,7 +225,7 @@ describe('body matching', () => {
 						body: JSON.stringify({ ham: [1, 2, 3] }),
 					},
 				}),
-			).toBe(false);
+			).toBe(true);
 		});
 	});
 });

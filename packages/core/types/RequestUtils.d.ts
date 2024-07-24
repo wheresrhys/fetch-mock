@@ -16,4 +16,4 @@ export type DerivedRequestOptions = {
     };
 };
 export type NormalizedRequestOptions = RequestInit | (RequestInit & DerivedRequestOptions);
-export type CallLog = import("./CallHistory").CallLog;
+export type CallLog = import("./CallHistory.js").CallLog;

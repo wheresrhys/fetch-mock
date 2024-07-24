@@ -3,13 +3,13 @@ import Router from './Router.js';
 import Route from './Route.js';
 import CallHistory from './CallHistory.js';
 import * as requestUtils from './RequestUtils.js';
-/** @typedef {import('./Router').RouteMatcher} RouteMatcher */
-/** @typedef {import('./Route').RouteName} RouteName */
-/** @typedef {import('./Route').UserRouteConfig} UserRouteConfig */
-/** @typedef {import('./Router').RouteResponse} RouteResponse */
-/** @typedef {import('./Matchers').MatcherDefinition} MatcherDefinition */
-/** @typedef {import('./CallHistory').CallLog} CallLog */
-/** @typedef {import('./Route').RouteResponseFunction} RouteResponseFunction */
+/** @typedef {import('./Router.js').RouteMatcher} RouteMatcher */
+/** @typedef {import('./Route.js').RouteName} RouteName */
+/** @typedef {import('./Route.js').UserRouteConfig} UserRouteConfig */
+/** @typedef {import('./Router.js').RouteResponse} RouteResponse */
+/** @typedef {import('./Matchers.js').MatcherDefinition} MatcherDefinition */
+/** @typedef {import('./CallHistory.js').CallLog} CallLog */
+/** @typedef {import('./Route.js').RouteResponseFunction} RouteResponseFunction */
 
 /**
  * @typedef FetchMockGlobalConfig

@@ -1,17 +1,17 @@
 //@type-check
 import Route from './Route.js';
 import { isUrlMatcher, isFunctionMatcher } from './Matchers.js';
-/** @typedef {import('./Route').UserRouteConfig} UserRouteConfig */
-/** @typedef {import('./Route').RouteConfig} RouteConfig */
-/** @typedef {import('./Route').RouteResponse} RouteResponse */
-/** @typedef {import('./Route').RouteResponseData} RouteResponseData */
-/** @typedef {import('./Route').RouteResponseObjectData} RouteResponseObjectData */
-/** @typedef {import('./Route').RouteResponseConfig} RouteResponseConfig */
-/** @typedef {import('./Route').RouteResponseFunction} RouteResponseFunction */
-/** @typedef {import('./Matchers').RouteMatcher} RouteMatcher */
-/** @typedef {import('./FetchMock').FetchMockConfig} FetchMockConfig */
-/** @typedef {import('./FetchMock')} FetchMock */
-/** @typedef {import('./CallHistory').CallLog} CallLog */
+/** @typedef {import('./Route.js').UserRouteConfig} UserRouteConfig */
+/** @typedef {import('./Route.js').RouteConfig} RouteConfig */
+/** @typedef {import('./Route.js').RouteResponse} RouteResponse */
+/** @typedef {import('./Route.js').RouteResponseData} RouteResponseData */
+/** @typedef {import('./Route.js').RouteResponseObjectData} RouteResponseObjectData */
+/** @typedef {import('./Route.js').RouteResponseConfig} RouteResponseConfig */
+/** @typedef {import('./Route.js').RouteResponseFunction} RouteResponseFunction */
+/** @typedef {import('./Matchers.js').RouteMatcher} RouteMatcher */
+/** @typedef {import('./FetchMock.js').FetchMockConfig} FetchMockConfig */
+/** @typedef {import('./FetchMock.js')} FetchMock */
+/** @typedef {import('./CallHistory.js').CallLog} CallLog */
 
 /** @typedef {'body' |'headers' |'throws' |'status' |'redirectUrl' } ResponseConfigProp */
 

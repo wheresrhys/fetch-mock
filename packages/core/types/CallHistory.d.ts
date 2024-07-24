@@ -1,9 +1,9 @@
 export default CallHistory;
-export type RouteConfig = import("./Route").RouteConfig;
-export type RouteName = import("./Route").RouteName;
-export type NormalizedRequestOptions = import("./RequestUtils").NormalizedRequestOptions;
-export type RouteMatcher = import("./Matchers").RouteMatcher;
-export type FetchMockConfig = import("./FetchMock").FetchMockConfig;
+export type RouteConfig = import("./Route.js").RouteConfig;
+export type RouteName = import("./Route.js").RouteName;
+export type NormalizedRequestOptions = import("./RequestUtils.js").NormalizedRequestOptions;
+export type RouteMatcher = import("./Matchers.js").RouteMatcher;
+export type FetchMockConfig = import("./FetchMock.js").FetchMockConfig;
 export type CallLog = {
     arguments: any[];
     url: string;
@@ -26,7 +26,7 @@ export type CallHistoryFilter = RouteName | Matched | Unmatched | boolean | Rout
 declare class CallHistory {
     constructor(globalConfig: FetchMockConfig, router: Router);
     callLogs: CallLog[];
-    config: import("./FetchMock").FetchMockConfig;
+    config: import("./FetchMock.js").FetchMockConfig;
     router: Router;
     recordCall(callLog: CallLog): void;
     clear(): void;

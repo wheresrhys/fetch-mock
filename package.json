@@ -73,7 +73,10 @@
   },
   "lint-staged": {
     "**/*.js": [
-      "npm run lint && npm run types:check"
+      "npm run lint"
+    ],
+    "packages/**/*.js": [
+       "npm run types:check"
     ],
     "**/*.md":[
       "npm run prettier"

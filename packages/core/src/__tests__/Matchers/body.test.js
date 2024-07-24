@@ -3,7 +3,6 @@ import Route from '../../Route.js';
 import Router from '../../Router.js';
 import { createCallLogFromRequest } from '../../RequestUtils.js';
 describe('body matching', () => {
-	//TODO add a test for matching an asynchronous body
 	it('should not match if no body provided in request', () => {
 		const route = new Route({ body: { foo: 'bar' }, response: 200 });
 

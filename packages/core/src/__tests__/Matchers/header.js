@@ -62,8 +62,6 @@ describe('header matching', () => {
 			}),
 		).toBe(true);
 	});
-	// TODO Are these gonna be supported?
-	// Should we support it in the fetch-mock matcher API, even though Headers are basically sytrings
 	it('match multivalue headers', () => {
 		const route = new Route({
 			headers: { a: ['b', 'c'] },

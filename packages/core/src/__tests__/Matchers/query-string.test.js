@@ -159,7 +159,6 @@ describe('query string matching', () => {
 		});
 	});
 
-	// TODO may need reform
 	describe('repeated query strings', () => {
 		it('match repeated query strings', () => {
 			const route = new Route({ query: { a: ['b', 'c'] }, response: 200 });

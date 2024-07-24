@@ -181,7 +181,6 @@ class CallHistory {
 				routeNames.includes(name),
 			);
 		}
-		// TODO when checking all routes needs to check against all calls
 		// Can't use array.every because would exit after first failure, which would
 		// break the logging
 		return routesToCheck

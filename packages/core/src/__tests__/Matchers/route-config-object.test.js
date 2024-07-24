@@ -42,19 +42,10 @@ describe('matcher object', () => {
 	});
 
 	// TODO this shoudl probably be an error
-	it.skip('if no url provided, match any url', () => {
-		const route = new Route({ response: 200 });
-		expect(route.matcher({ url: 'http://a.com' })).toBe(true);
-	});
-
-	//TODO be stronger on discouraging this
-	it.skip('deprecated message on using matcherFunction (prefer matcher)', () => {
-		new Route({
-			url: 'end:profile',
-			matcherFunction: (url, opts) =>
-				opts && opts.headers && opts.headers.authorized === true,
-			response: 200,
-		});
+	it('if no url provided, error', () => {
+		expect(() => new Route({ response: 200 })).toThrowError(
+			"fetch-mock: Each route must specify some criteria for matching calls to fetch. To match all calls use '*'",
+		);
 	});
 
 	it('can match Headers', () => {

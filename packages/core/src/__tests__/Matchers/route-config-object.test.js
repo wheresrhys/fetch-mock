@@ -80,8 +80,18 @@ describe('matcher object', () => {
 			response: 200,
 		});
 
-		expect(route.matcher({ url: 'http://a.com' })).toBe(false);
-		expect(route.matcher({ url: 'http://a.com?a=b' })).toBe(true);
+		expect(
+			route.matcher({
+				url: 'http://a.com',
+				queryParams: new URLSearchParams(''),
+			}),
+		).toBe(false);
+		expect(
+			route.matcher({
+				url: 'http://a.com',
+				queryParams: new URLSearchParams('a=b'),
+			}),
+		).toBe(true);
 	});
 
 	it('can match path parameter', () => {

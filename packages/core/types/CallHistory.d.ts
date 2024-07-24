@@ -15,9 +15,7 @@ export type CallLog = {
     expressParams?: {
         [x: string]: string;
     };
-    queryParams?: {
-        [x: string]: string;
-    };
+    queryParams?: URLSearchParams;
     pendingPromises: Promise<any>[];
 };
 export type Matched = "matched";

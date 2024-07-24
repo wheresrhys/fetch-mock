@@ -8,19 +8,18 @@ describe('query string matching', () => {
 			response: 200,
 		});
 
-		expect(route.matcher({ url: 'http://a.com' })).toBe(false);
-		expect(route.matcher({ url: 'http://a.com?a=b&c=d' })).toBe(true);
-	});
-
-	it('match a query string against a URL object', () => {
-		const route = new Route({
-			query: { a: 'b', c: 'd' },
-			response: 200,
-		});
-		const url = new URL('http://a.com/path');
-		url.searchParams.append('a', 'b');
-		url.searchParams.append('c', 'd');
-		expect(route.matcher({ url })).toBe(true);
+		expect(
+			route.matcher({
+				url: 'http://a.com',
+				queryParams: new URLSearchParams(''),
+			}),
+		).toBe(false);
+		expect(
+			route.matcher({
+				url: 'http://a.com',
+				queryParams: new URLSearchParams('a=b&c=d'),
+			}),
+		).toBe(true);
 	});
 
 	it('match a query string against a relative path', () => {
@@ -28,8 +27,12 @@ describe('query string matching', () => {
 			query: { a: 'b' },
 			response: 200,
 		});
-		const url = '/path?a=b';
-		expect(route.matcher({ url })).toBe(true);
+		expect(
+			route.matcher({
+				url: '/path',
+				queryParams: new URLSearchParams('a=b'),
+			}),
+		).toBe(true);
 	});
 
 	it('match multiple query strings', () => {
@@ -38,10 +41,30 @@ describe('query string matching', () => {
 			response: 200,
 		});
 
-		expect(route.matcher({ url: 'http://a.com' })).toBe(false);
-		expect(route.matcher({ url: 'http://a.com?a=b' })).toBe(false);
-		expect(route.matcher({ url: 'http://a.com?a=b&c=d' })).toBe(true);
-		expect(route.matcher({ url: 'http://a.com?c=d&a=b' })).toBe(true);
+		expect(
+			route.matcher({
+				url: 'http://a.com',
+				queryParams: new URLSearchParams(''),
+			}),
+		).toBe(false);
+		expect(
+			route.matcher({
+				url: 'http://a.com',
+				queryParams: new URLSearchParams('a=b'),
+			}),
+		).toBe(false);
+		expect(
+			route.matcher({
+				url: 'http://a.com',
+				queryParams: new URLSearchParams('a=b&c=d'),
+			}),
+		).toBe(true);
+		expect(
+			route.matcher({
+				url: 'http://a.com',
+				queryParams: new URLSearchParams('c=d&a=b'),
+			}),
+		).toBe(true);
 	});
 
 	it('ignore irrelevant query strings', () => {
@@ -50,7 +73,12 @@ describe('query string matching', () => {
 			response: 200,
 		});
 
-		expect(route.matcher({ url: 'http://a.com?a=b&c=d&e=f' })).toBe(true);
+		expect(
+			route.matcher({
+				url: 'http://a.com',
+				queryParams: new URLSearchParams('a=b&c=d&e=f'),
+			}),
+		).toBe(true);
 	});
 	it('match an empty query string', () => {
 		const route = new Route({
@@ -58,8 +86,18 @@ describe('query string matching', () => {
 			response: 200,
 		});
 
-		expect(route.matcher({ url: 'http://a.com' })).toBe(false);
-		expect(route.matcher({ url: 'http://a.com?a=' })).toBe(true);
+		expect(
+			route.matcher({
+				url: 'http://a.com',
+				queryParams: new URLSearchParams(''),
+			}),
+		).toBe(false);
+		expect(
+			route.matcher({
+				url: 'http://a.com',
+				queryParams: new URLSearchParams('a='),
+			}),
+		).toBe(true);
 	});
 
 	describe('value coercion', () => {
@@ -70,8 +108,18 @@ describe('query string matching', () => {
 				},
 				response: 200,
 			});
-			expect(route.matcher({ url: 'http://a.com' })).toBe(false);
-			expect(route.matcher({ url: 'http://a.com?a=1' })).toBe(true);
+			expect(
+				route.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams(''),
+				}),
+			).toBe(false);
+			expect(
+				route.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams('a=1'),
+				}),
+			).toBe(true);
 		});
 
 		it('coerce floats to strings and match', () => {
@@ -81,8 +129,18 @@ describe('query string matching', () => {
 				},
 				response: 200,
 			});
-			expect(route.matcher({ url: 'http://a.com' })).toBe(false);
-			expect(route.matcher({ url: 'http://a.com?a=1.2' })).toBe(true);
+			expect(
+				route.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams(''),
+				}),
+			).toBe(false);
+			expect(
+				route.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams('a=1.2'),
+				}),
+			).toBe(true);
 		});
 
 		it('coerce booleans to strings and match', () => {
@@ -99,10 +157,30 @@ describe('query string matching', () => {
 				response: 200,
 			});
 
-			expect(trueRoute.matcher({ url: 'http://a.com' })).toBe(false);
-			expect(falseRoute.matcher({ url: 'http://a.com' })).toBe(false);
-			expect(trueRoute.matcher({ url: 'http://a.com?a=true' })).toBe(true);
-			expect(falseRoute.matcher({ url: 'http://a.com?b=false' })).toBe(true);
+			expect(
+				trueRoute.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams(''),
+				}),
+			).toBe(false);
+			expect(
+				falseRoute.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams(''),
+				}),
+			).toBe(false);
+			expect(
+				trueRoute.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams('a=true'),
+				}),
+			).toBe(true);
+			expect(
+				falseRoute.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams('b=false'),
+				}),
+			).toBe(true);
 		});
 
 		it('coerce undefined to an empty string and match', () => {
@@ -112,8 +190,18 @@ describe('query string matching', () => {
 				},
 				response: 200,
 			});
-			expect(route.matcher({ url: 'http://a.com' })).toBe(false);
-			expect(route.matcher({ url: 'http://a.com?a=' })).toBe(true);
+			expect(
+				route.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams(''),
+				}),
+			).toBe(false);
+			expect(
+				route.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams('a='),
+				}),
+			).toBe(true);
 		});
 
 		it('coerce null to an empty string and match', () => {
@@ -123,8 +211,18 @@ describe('query string matching', () => {
 				},
 				response: 200,
 			});
-			expect(route.matcher({ url: 'http://a.com' })).toBe(false);
-			expect(route.matcher({ url: 'http://a.com?a=' })).toBe(true);
+			expect(
+				route.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams(''),
+				}),
+			).toBe(false);
+			expect(
+				route.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams('a='),
+				}),
+			).toBe(true);
 		});
 
 		it('coerce an object to an empty string and match', () => {
@@ -134,8 +232,18 @@ describe('query string matching', () => {
 				},
 				response: 200,
 			});
-			expect(route.matcher({ url: 'http://a.com' })).toBe(false);
-			expect(route.matcher({ url: 'http://a.com?a=' })).toBe(true);
+			expect(
+				route.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams(''),
+				}),
+			).toBe(false);
+			expect(
+				route.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams('a='),
+				}),
+			).toBe(true);
 		});
 
 		it('can match a query string with different value types', () => {
@@ -150,10 +258,18 @@ describe('query string matching', () => {
 				},
 			});
 
-			expect(route.matcher({ url: 'http://a.com' })).toBe(false);
 			expect(
 				route.matcher({
-					url: 'http://a.com?t=true&f=false&u=&num=1&arr=a&arr=',
+					url: 'http://a.com',
+					queryParams: new URLSearchParams(''),
+				}),
+			).toBe(false);
+			expect(
+				route.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams(
+						't=true&f=false&u=&num=1&arr=a&arr=',
+					),
 				}),
 			).toBe(true);
 		});
@@ -163,26 +279,76 @@ describe('query string matching', () => {
 		it('match repeated query strings', () => {
 			const route = new Route({ query: { a: ['b', 'c'] }, response: 200 });
 
-			expect(route.matcher({ url: 'http://a.com' })).toBe(false);
-			expect(route.matcher({ url: 'http://a.com?a=b' })).toBe(false);
-			expect(route.matcher({ url: 'http://a.com?a=b&a=c' })).toBe(true);
-			expect(route.matcher({ url: 'http://a.com?a=b&a=c&a=d' })).toBe(false);
+			expect(
+				route.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams(''),
+				}),
+			).toBe(false);
+			expect(
+				route.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams('a=b'),
+				}),
+			).toBe(false);
+			expect(
+				route.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams('a=b&a=c'),
+				}),
+			).toBe(true);
+			expect(
+				route.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams('a=b&a=c&a=d'),
+				}),
+			).toBe(false);
 		});
 
 		it('match repeated query strings in any order', () => {
 			const route = new Route({ query: { a: ['b', 'c'] }, response: 200 });
 
-			expect(route.matcher({ url: 'http://a.com' })).toBe(false);
-			expect(route.matcher({ url: 'http://a.com?a=b&a=c' })).toBe(true);
-			expect(route.matcher({ url: 'http://a.com?a=c&a=b' })).toBe(true);
+			expect(
+				route.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams(''),
+				}),
+			).toBe(false);
+			expect(
+				route.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams('a=b&a=c'),
+				}),
+			).toBe(true);
+			expect(
+				route.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams('a=c&a=b'),
+				}),
+			).toBe(true);
 		});
 
 		it('match a query string array of length 1', () => {
 			const route = new Route({ query: { a: ['b'] }, response: 200 });
 
-			expect(route.matcher({ url: 'http://a.com' })).toBe(false);
-			expect(route.matcher({ url: 'http://a.com?a=b' })).toBe(true);
-			expect(route.matcher({ url: 'http://a.com?a=b&a=c' })).toBe(false);
+			expect(
+				route.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams(''),
+				}),
+			).toBe(false);
+			expect(
+				route.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams('a=b'),
+				}),
+			).toBe(true);
+			expect(
+				route.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams('a=b&a=c'),
+				}),
+			).toBe(false);
 		});
 
 		it('match a repeated query string with an empty value', () => {
@@ -191,9 +357,24 @@ describe('query string matching', () => {
 				response: 200,
 			});
 
-			expect(route.matcher({ url: 'http://a.com' })).toBe(false);
-			expect(route.matcher({ url: 'http://a.com?a=b' })).toBe(false);
-			expect(route.matcher({ url: 'http://a.com?a=b&a=' })).toBe(true);
+			expect(
+				route.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams(''),
+				}),
+			).toBe(false);
+			expect(
+				route.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams('a=b'),
+				}),
+			).toBe(false);
+			expect(
+				route.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams('a=b&a='),
+				}),
+			).toBe(true);
 		});
 	});
 
@@ -201,15 +382,36 @@ describe('query string matching', () => {
 		// TODO - this should probably throw when creating the route... or should it?
 		it.skip('can be used alongside query strings expressed in the url', () => {
 			const route = new Route({
-				url: 'http://a.com/?c=d',
+				url: 'http://a.com',
+				queryParams: new URLSearchParams('/?c=d'),
 				response: 200,
 				query: { a: 'b' },
 			});
 
-			expect(route.matcher({ url: 'http://a.com?c=d' })).toBe(false);
-			expect(route.matcher({ url: 'http://a.com?a=b' })).toBe(false);
-			expect(route.matcher({ url: 'http://a.com?c=d&a=b' })).toBe(true);
-			expect(route.matcher({ url: 'http://a.com?a=b&c=d' })).toBe(true);
+			expect(
+				route.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams('c=d'),
+				}),
+			).toBe(false);
+			expect(
+				route.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams('a=b'),
+				}),
+			).toBe(false);
+			expect(
+				route.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams('c=d&a=b'),
+				}),
+			).toBe(true);
+			expect(
+				route.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams('a=b&c=d'),
+				}),
+			).toBe(true);
 		});
 
 		it('can be used alongside function matchers', () => {
@@ -219,8 +421,18 @@ describe('query string matching', () => {
 				query: { a: 'b' },
 			});
 
-			expect(route.matcher({ url: 'http://a.com' })).toBe(false);
-			expect(route.matcher({ url: 'http://a.com?a=b' })).toBe(true);
+			expect(
+				route.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams(''),
+				}),
+			).toBe(false);
+			expect(
+				route.matcher({
+					url: 'http://a.com',
+					queryParams: new URLSearchParams('a=b'),
+				}),
+			).toBe(true);
 		});
 	});
 });

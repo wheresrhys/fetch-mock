@@ -96,7 +96,7 @@ const defineGreedyShorthand = (shorthandOptions) => {
 	};
 };
 
-class FetchMock {
+export class FetchMock {
 	/**
 	 *
 	 * @param {FetchMockConfig} config

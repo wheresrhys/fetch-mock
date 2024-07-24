@@ -4,7 +4,35 @@ export type CallLog = import("./CallHistory").CallLog;
 export type RouteMatcherFunction = import("./Matchers").RouteMatcherFunction;
 export type RouteMatcherUrl = import("./Matchers").RouteMatcherUrl;
 export type MatcherDefinition = import("./Matchers").MatcherDefinition;
-export type FetchMockConfig = import("./FetchMock").FetchMockConfig;
+export type FetchMockGlobalConfig = import("./FetchMock").FetchMockGlobalConfig;
+export type FetchImplementations = import("./FetchMock").FetchImplementations;
+export type UserRouteConfig = {
+    name?: RouteName;
+    method?: string;
+    headers?: {
+        [key: string]: string | number;
+    };
+    query?: {
+        [key: string]: string;
+    };
+    params?: {
+        [key: string]: string;
+    };
+    body?: object;
+    matcherFunction?: RouteMatcherFunction;
+    matcher?: RouteMatcher;
+    url?: RouteMatcherUrl;
+    response?: RouteResponse | RouteResponseFunction;
+    repeat?: number;
+    delay?: number;
+    sticky?: boolean;
+    isFallback?: boolean;
+};
+export type InternalRouteConfig = {
+    usesBody?: boolean;
+};
+export type ExtendedUserRouteConfig = UserRouteConfig & FetchMockGlobalConfig;
+export type RouteConfig = ExtendedUserRouteConfig & FetchImplementations & InternalRouteConfig;
 export type RouteResponseConfig = {
     body?: string | {};
     status?: number;
@@ -26,33 +54,6 @@ export type RouteResponsePromise = Promise<RouteResponseData>;
 export type RouteResponseFunction = (arg0: CallLog) => (RouteResponseData | RouteResponsePromise);
 export type RouteResponse = RouteResponseData | RouteResponsePromise | RouteResponseFunction;
 export type RouteName = string;
-export type UserRouteConfig = {
-    name?: RouteName;
-    method?: string;
-    headers?: {
-        [key: string]: string | number;
-    };
-    query?: {
-        [key: string]: string;
-    };
-    params?: {
-        [key: string]: string;
-    };
-    body?: object;
-    matcherFunction?: RouteMatcherFunction;
-    matcher?: RouteMatcher;
-    url?: RouteMatcherUrl;
-    response?: RouteResponse | RouteResponseFunction;
-    repeat?: number;
-    delay?: number;
-    sendAsJson?: boolean;
-    includeContentLength?: boolean;
-    matchPartialBody?: boolean;
-    sticky?: boolean;
-    usesBody?: boolean;
-    isFallback?: boolean;
-};
-export type RouteConfig = UserRouteConfig & FetchMockConfig;
 declare class Route {
     static defineMatcher(matcher: MatcherDefinition): void;
     static registeredMatchers: MatcherDefinition[];

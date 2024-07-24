@@ -6,16 +6,19 @@ export type RouteResponse = import("./Router").RouteResponse;
 export type MatcherDefinition = import("./Matchers").MatcherDefinition;
 export type CallLog = import("./CallHistory").CallLog;
 export type RouteResponseFunction = import("./Route").RouteResponseFunction;
-export type FetchMockConfig = {
+export type FetchMockGlobalConfig = {
     sendAsJson?: boolean;
     includeContentLength?: boolean;
     warnOnFallback?: boolean;
     matchPartialBody?: boolean;
+};
+export type FetchImplementations = {
     fetch?: (arg0: string | Request, arg1: RequestInit) => Promise<Response>;
     Headers?: typeof Headers;
     Request?: typeof Request;
     Response?: typeof Response;
 };
+export type FetchMockConfig = FetchMockGlobalConfig & FetchImplementations;
 declare const fetchMock: FetchMock;
 declare class FetchMock {
     constructor(config: FetchMockConfig, router?: Router);

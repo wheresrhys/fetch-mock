@@ -177,10 +177,16 @@ const getExpressParamsMatcher = ({ params: expectedParams, url }) => {
 const getBodyMatcher = (route) => {
 	const { body: expectedBody } = route;
 
+	if (!expectedBody) {
+		return;
+	}
+
 	return ({ options: { body, method = 'get' } }) => {
-		if (method.toLowerCase() === 'get') {
-			// GET requests don’t send a body so the body matcher should be ignored for them
-			return true;
+		if (['get', 'head', 'delete'].includes(method.toLowerCase())) {
+			// GET requests don’t send a body so even if it exists in the options
+			// we treat as no body because it would never actually make it to the server
+			// in the application code
+			return false;
 		}
 
 		let sentBody;

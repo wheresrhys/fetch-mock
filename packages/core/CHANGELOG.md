@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.3](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.2...core-v0.4.3) (2024-07-24)
+
+
+### Bug Fixes
+
+* make a more sensible decision about matching body ([0ef50d6](https://github.com/wheresrhys/fetch-mock/commit/0ef50d62ccaa70ea09b693519ddb80d73530b38f))
+
 ## [0.4.2](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.1...core-v0.4.2) (2024-07-24)
 
 

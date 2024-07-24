@@ -9,7 +9,6 @@ export type RouteResponseFunction = import("./Route").RouteResponseFunction;
 export type FetchMockGlobalConfig = {
     sendAsJson?: boolean;
     includeContentLength?: boolean;
-    warnOnFallback?: boolean;
     matchPartialBody?: boolean;
 };
 export type FetchImplementations = {

@@ -161,15 +161,16 @@ export default class Router {
 						'The operation was aborted.',
 						'AbortError',
 					);
-					reject(error);
 
-					if (request?.body && request.body instanceof ReadableStream) {
-						request.body.cancel(error);
+					const requestBody = request?.body || options?.body;
+					if (requestBody instanceof ReadableStream) {
+						requestBody.cancel(error);
 					}
 
 					if (callLog?.response?.body) {
 						callLog.response.body.cancel(error);
 					}
+					reject(error);
 				};
 				if (callLog.signal.aborted) {
 					abort();

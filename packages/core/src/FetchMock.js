@@ -119,7 +119,7 @@ export class FetchMock {
 	}
 	/**
 	 *
-	 * @param {string | Request} requestInput
+	 * @param {string | URL | Request} requestInput
 	 * @param {RequestInit} [requestInit]
 	 * @this {FetchMock}
 	 * @returns {Promise<Response>}
@@ -162,7 +162,6 @@ export class FetchMock {
 	 * @param {RouteResponse} [response]
 	 * @param {UserRouteConfig | string} [options]
 	 * @this {FetchMock}
-	 * @returns {FetchMock}
 	 */
 	route(matcher, response, options) {
 		this.router.addRoute(matcher, response, options);
@@ -172,7 +171,6 @@ export class FetchMock {
 	 *
 	 * @param {RouteResponse} [response]
 	 * @this {FetchMock}
-	 * @returns {FetchMock}
 	 */
 	catch(response) {
 		this.router.setFallback(response);
@@ -193,15 +191,13 @@ export class FetchMock {
 	 * @param {boolean} [options.includeSticky]
 	 * @param {boolean} [options.includeFallback]
 	 * @this {FetchMock}
-	 * @returns {FetchMock}
 	 */
 	removeRoutes(options) {
 		this.router.removeRoutes(options);
 		return this;
 	}
 	/**
-	 *
-	 * @returns {FetchMock}
+	 * @this {FetchMock}
 	 */
 	clearHistory() {
 		this.callHistory.clear();
@@ -225,6 +221,52 @@ export class FetchMock {
 	patchOnce = defineShorthand({ method: 'patch', repeat: 1 });
 }
 
-const fetchMock = new FetchMock({ ...defaultConfig }).createInstance();
+class FetchMockStandalone extends FetchMock {
+	/** @type {typeof fetch} */
+	#originalFetch = null;
+	/**
+	 * @this {FetchMockStandalone}
+	 */
+	mockGlobal() {
+		this.#originalFetch = globalThis.fetch;
+		globalThis.fetch = this.fetchHandler.bind(this);
+		return this;
+	}
+	/**
+	 * @this {FetchMockStandalone}
+	 */
+	restoreGlobal() {
+		globalThis.fetch = this.#originalFetch;
+		return this;
+	}
+	/**
+	 * @this {FetchMockStandalone}
+	 */
+	spyGlobal() {
+		this.#originalFetch = globalThis.fetch;
+		globalThis.fetch = this.fetchHandler.bind(this);
+		// @ts-ignore
+		this.catch(({ args }) => this.#originalFetch(...args));
+		return this;
+	}
+	/**
+	 * @param {typeof fetch} fetchImplementation
+	 * @this {FetchMockStandalone}
+	 */
+	spyLocal(fetchImplementation) {
+		this.#originalFetch = fetchImplementation;
+		// @ts-ignore
+		this.catch(({ args }) => this.#originalFetch(...args));
+		return this;
+	}
+
+	createInstance() {
+		return new FetchMockStandalone({ ...this.config }, this.router);
+	}
+}
+
+const fetchMock = new FetchMockStandalone({
+	...defaultConfig,
+}).createInstance();
 
 export default fetchMock;

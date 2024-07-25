@@ -45,7 +45,7 @@ export function createCallLogFromUrlAndOptions(url, options) {
 		// @ts-ignore - jsdoc doesn't distinguish between string and String, but typechecker complains
 		url = normalizeUrl(url);
 		return {
-			arguments: [url, options],
+			args: [url, options],
 			url,
 			queryParams: new URLSearchParams(getQuery(url)),
 			options: options || {},
@@ -85,7 +85,7 @@ export async function createCallLogFromRequest(request, options) {
 	}
 	const url = normalizeUrl(request.url);
 	const callLog = {
-		arguments: [request, options],
+		args: [request, options],
 		url,
 		queryParams: new URLSearchParams(getQuery(url)),
 		options: Object.assign(derivedOptions, options || {}),

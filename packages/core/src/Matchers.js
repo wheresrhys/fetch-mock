@@ -7,7 +7,16 @@ import { isSubsetOf } from 'is-subset-of';
 import { dequal as isEqual } from 'dequal';
 import { normalizeHeaders, getPath, normalizeUrl } from './RequestUtils.js';
 
-/** @typedef {string | RegExp | URL} RouteMatcherUrl */
+/**
+ * @typedef URLMatcherObject
+ * @property {string} [begin]
+ * @property {string} [end]
+ * @property {string} [glob]
+ * @property {string} [express]
+ * @property {string} [path]
+ * @property {RegExp} [regexp]
+ */
+/** @typedef {string | RegExp | URL | URLMatcherObject} RouteMatcherUrl */
 /** @typedef {function(string): RouteMatcherFunction} UrlMatcherGenerator */
 /** @typedef {function(CallLog): boolean} RouteMatcherFunction */
 /** @typedef {function(RouteConfig): RouteMatcherFunction} MatcherGenerator */
@@ -212,6 +221,15 @@ const getBodyMatcher = (route) => {
 const getFunctionMatcher = ({ matcherFunction }) => matcherFunction;
 
 /**
+ * @param {RegExp} regexp
+ * @returns {RouteMatcherFunction}
+ */
+const getRegexpMatcher =
+	(regexp) =>
+	({ url }) =>
+		regexp.test(url);
+
+/**
  *
  * @param {RouteConfig} route
  * @param {string} matcherUrl
@@ -247,7 +265,7 @@ const getUrlMatcher = (route) => {
 	}
 
 	if (matcherUrl instanceof RegExp) {
-		return ({ url }) => matcherUrl.test(url);
+		return getRegexpMatcher(matcherUrl);
 	}
 	if (matcherUrl instanceof URL) {
 		if (matcherUrl.href) {
@@ -265,6 +283,20 @@ const getUrlMatcher = (route) => {
 			}
 		}
 		return getFullUrlMatcher(route, matcherUrl, query);
+	}
+
+	if (typeof matcherUrl === 'object') {
+		const matchers = Object.entries(matcherUrl).map(([key, pattern]) => {
+			if (key === 'regexp') {
+				return getRegexpMatcher(pattern);
+			} else if (key in stringMatchers) {
+				return stringMatchers[key](pattern);
+			} else {
+				throw new Error(`unrecognised url matching pattern: ${key}`);
+			}
+		});
+
+		return (route) => matchers.every((matcher) => matcher(route));
 	}
 };
 

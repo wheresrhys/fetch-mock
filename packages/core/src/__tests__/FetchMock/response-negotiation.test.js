@@ -164,60 +164,73 @@ describe('response negotiation', () => {
 		const RESPONSE_DELAY = 50;
 		const ABORT_DELAY = 10;
 
-		const getDelayedOk = () =>
-			new Promise((res) => setTimeout(() => res(200), RESPONSE_DELAY));
-
-		const getDelayedAbortController = () => {
+		const getDelayedAbortController = (delay) => {
 			const controller = new AbortController();
-			setTimeout(() => controller.abort(), ABORT_DELAY);
+			setTimeout(() => controller.abort(), delay);
 			return controller;
 		};
-		const expectAbortError = async (...fetchArgs) => {
-			const result = fm.fetchHandler(...fetchArgs);
-			await expect(result).rejects.toThrowError(
+
+		it('error on signal abort', async () => {
+			fm.route('*', 200, { delay: RESPONSE_DELAY });
+			await expect(
+				fm.fetchHandler('http://a.com', {
+					signal: getDelayedAbortController(ABORT_DELAY).signal,
+				}),
+			).rejects.toThrowError(
 				new DOMException('The operation was aborted.', 'ABortError'),
 			);
-		};
-
-		it('error on signal abort', () => {
-			fm.route('*', getDelayedOk());
-			return expectAbortError('http://a.com', {
-				signal: getDelayedAbortController().signal,
-			});
 		});
 
-		it('error on signal abort for request object', () => {
-			fm.route('*', getDelayedOk());
-			return expectAbortError(
-				new fm.config.Request('http://a.com', {
-					signal: getDelayedAbortController().signal,
-				}),
+		it('error on signal abort for request object', async () => {
+			fm.route('*', 200, { delay: RESPONSE_DELAY });
+			await expect(
+				fm.fetchHandler(
+					new fm.config.Request('http://a.com', {
+						signal: getDelayedAbortController(ABORT_DELAY).signal,
+					}),
+				),
+			).rejects.toThrowError(
+				new DOMException('The operation was aborted.', 'ABortError'),
 			);
 		});
 
-		it('error when signal already aborted', () => {
+		it('error when signal already aborted', async () => {
 			fm.route('*', 200);
 			const controller = new AbortController();
 			controller.abort();
-			return expectAbortError('http://a.com', {
-				signal: controller.signal,
-			});
+			await expect(
+				fm.fetchHandler('http://a.com', {
+					signal: controller.signal,
+				}),
+			).rejects.toThrowError(
+				new DOMException('The operation was aborted.', 'ABortError'),
+			);
 		});
 
 		it('go into `done` state even when aborted', async () => {
-			fm.once('http://a.com', getDelayedOk());
-			await expectAbortError('http://a.com', {
-				signal: getDelayedAbortController().signal,
-			});
+			fm.once('http://a.com', 200, { delay: RESPONSE_DELAY });
+
+			await expect(
+				fm.fetchHandler('http://a.com', {
+					signal: getDelayedAbortController(ABORT_DELAY).signal,
+				}),
+			).rejects.toThrowError(
+				new DOMException('The operation was aborted.', 'ABortError'),
+			);
+
 			expect(fm.callHistory.done()).toBe(true);
 		});
 
 		it('will flush even when aborted', async () => {
-			fm.route('http://a.com', getDelayedOk());
+			fm.route('http://a.com', 200, { delay: RESPONSE_DELAY });
 
-			await expectAbortError('http://a.com', {
-				signal: getDelayedAbortController().signal,
-			});
+			await expect(
+				fm.fetchHandler('http://a.com', {
+					signal: getDelayedAbortController(ABORT_DELAY).signal,
+				}),
+			).rejects.toThrowError(
+				new DOMException('The operation was aborted.', 'ABortError'),
+			);
 			await fm.callHistory.flush();
 			expect(fm.callHistory.done()).toBe(true);
 		});

@@ -249,6 +249,21 @@ class FetchMockStandalone extends FetchMock {
 		this.catch(({ args }) => this.#originalFetch(...args));
 		return this;
 	}
+
+	/**
+	 * @param {RouteMatcher | UserRouteConfig} matcher
+	 * @param {RouteName} [name]
+	 * @this {FetchMockStandalone}
+	 */
+	spyRoute(matcher, name) {
+		if (!this.#originalFetch) {
+			throw new Error('fetch-mock: Cannot spy on a route without first calling .mockGlobal() or .setFetchImplementation() to reference a `fetch` implementation to fall through to')
+		}
+		// @ts-ignore
+		this.route(matcher, ({args}) => this.#originalFetch(...args), name);
+		return this;
+	}
+
 	/**
 	 * @param {typeof fetch} fetchImplementation
 	 * @this {FetchMockStandalone}
@@ -257,6 +272,15 @@ class FetchMockStandalone extends FetchMock {
 		this.#originalFetch = fetchImplementation;
 		// @ts-ignore
 		this.catch(({ args }) => this.#originalFetch(...args));
+		return this;
+	}
+
+	/**
+	 * @param {typeof fetch} fetchImplementation
+	 * @this {FetchMockStandalone}
+	 */
+	setFetchImplementation(fetchImplementation) {
+		this.#originalFetch = fetchImplementation;
 		return this;
 	}
 

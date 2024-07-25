@@ -28,7 +28,7 @@
     "types:check": "tsc --project ./jsconfig.json && echo 'types check done'",
     "types:lint": "dtslint --expectOnly packages/fetch-mock/types",
     "prepare": "husky || echo \"husky not available\"",
-    "build": "npm run build -w=packages/fetch-mock -w=packages/core",
+    "build": "npm run build -w=packages/*",
     "docs": "npm run start -w docs",
     "test:ci": "vitest .",
     "test:legacy": "vitest ./packages/fetch-mock/test/specs",

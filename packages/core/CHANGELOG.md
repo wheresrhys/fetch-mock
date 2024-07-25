@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.4](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.3...core-v0.4.4) (2024-07-25)
+
+
+### Features
+
+* cancel readable streams as effectively as possible ([aa3b899](https://github.com/wheresrhys/fetch-mock/commit/aa3b89989bd223e788db895b03c4fabc56f061d2))
+* support multiple url matchers at once ([c83d9f9](https://github.com/wheresrhys/fetch-mock/commit/c83d9f992337eb6ff79f027a7fc2e6316ce36456))
+
 ## [0.4.3](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.2...core-v0.4.3) (2024-07-24)
 
 

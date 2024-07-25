@@ -157,7 +157,20 @@ export default class Router {
 					// TODO may need to bring that flushy thing back.
 					// Add a test to combvine flush with abort
 					// done();
-					reject(new DOMException('The operation was aborted.', 'AbortError'));
+					const error = new DOMException(
+						'The operation was aborted.',
+						'AbortError',
+					);
+
+					const requestBody = request?.body || options?.body;
+					if (requestBody instanceof ReadableStream) {
+						requestBody.cancel(error);
+					}
+
+					if (callLog?.response?.body) {
+						callLog.response.body.cancel(error);
+					}
+					reject(error);
 				};
 				if (callLog.signal.aborted) {
 					abort();

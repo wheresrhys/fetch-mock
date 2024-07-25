@@ -228,7 +228,6 @@ class FetchMockStandalone extends FetchMock {
 	 * @this {FetchMockStandalone}
 	 */
 	mockGlobal() {
-		this.#originalFetch = globalThis.fetch;
 		globalThis.fetch = this.fetchHandler.bind(this);
 		return this;
 	}
@@ -236,51 +235,23 @@ class FetchMockStandalone extends FetchMock {
 	 * @this {FetchMockStandalone}
 	 */
 	restoreGlobal() {
-		globalThis.fetch = this.#originalFetch;
-		return this;
-	}
-	/**
-	 * @this {FetchMockStandalone}
-	 */
-	spyGlobal() {
-		this.#originalFetch = globalThis.fetch;
-		globalThis.fetch = this.fetchHandler.bind(this);
-		// @ts-ignore
-		this.catch(({ args }) => this.#originalFetch(...args));
+		globalThis.fetch = this.config.fetch;
 		return this;
 	}
 
 	/**
-	 * @param {RouteMatcher | UserRouteConfig} matcher
+	 * @param {RouteMatcher | UserRouteConfig} [matcher]
 	 * @param {RouteName} [name]
 	 * @this {FetchMockStandalone}
 	 */
-	spyRoute(matcher, name) {
-		if (!this.#originalFetch) {
-			throw new Error('fetch-mock: Cannot spy on a route without first calling .mockGlobal() or .setFetchImplementation() to reference a `fetch` implementation to fall through to')
+	spy(matcher, name) {
+		if (matcher) {
+			// @ts-ignore
+			this.route(matcher, ({args}) => this.config.fetch(...args), name);
+		} else {
+			this.catch(({ args }) => this.config.fetch(...args));
 		}
-		// @ts-ignore
-		this.route(matcher, ({args}) => this.#originalFetch(...args), name);
-		return this;
-	}
 
-	/**
-	 * @param {typeof fetch} fetchImplementation
-	 * @this {FetchMockStandalone}
-	 */
-	spyLocal(fetchImplementation) {
-		this.#originalFetch = fetchImplementation;
-		// @ts-ignore
-		this.catch(({ args }) => this.#originalFetch(...args));
-		return this;
-	}
-
-	/**
-	 * @param {typeof fetch} fetchImplementation
-	 * @this {FetchMockStandalone}
-	 */
-	setFetchImplementation(fetchImplementation) {
-		this.#originalFetch = fetchImplementation;
 		return this;
 	}
 

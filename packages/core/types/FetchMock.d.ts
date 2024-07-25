@@ -100,8 +100,7 @@ declare const fetchMock: FetchMockStandalone;
 declare class FetchMockStandalone extends FetchMock {
     mockGlobal(this: FetchMockStandalone): FetchMockStandalone;
     restoreGlobal(this: FetchMockStandalone): FetchMockStandalone;
-    spyGlobal(this: FetchMockStandalone): FetchMockStandalone;
-    spyLocal(this: FetchMockStandalone, fetchImplementation: typeof fetch): FetchMockStandalone;
+    spy(this: FetchMockStandalone, matcher?: RouteMatcher | UserRouteConfig, name?: RouteName): FetchMockStandalone;
     createInstance(): FetchMockStandalone;
     #private;
 }

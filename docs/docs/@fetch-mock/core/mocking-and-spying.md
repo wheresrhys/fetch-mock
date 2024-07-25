@@ -16,33 +16,14 @@ In addition to the @fetch-mock/core API its methods are:
 
 ### mockGlobal()
 
-Replaces `fetch` with `fm.fetchHandler`
-
-### spyGlobal()
-
-Replaces `fetch` with `fm.fetchHandler`, but falls back to the network for any unmatched calls
-
-### spyRoute(matcher, name)
-
-Falls back to `fetch` for a specific route (which can be named). 
-
-This can also be used when using non-global `fetch` (see `setFetchImplementation()` below).
+Replaces `globalThis.fetch` with `fm.fetchHandler`
 
 ### restoreGlobal()
 
-Restores `fetch` to its original state
+Restores `globalThis.fetch` to its original state
 
+### spy(matcher, name)
 
-## When using non-global fetch
+Falls back to the `fetch` implementation set in `fetchMock.config.fetch` for a specific route (which can be named). 
 
-e.g. `const fetch = require('node-fetch')`
-
-Note that none of these methods actually replace your local implementation of `fetch` with `fetchMock.fetchHandler` - that is left to you to implement with the mocking library/approach of your choice.
-
-## spyLocal(fetchImplementation)
-
-Fall back to the provided `fetch` implementation for any calls unmatched by a route. 
-
-## setfetchImplementation(fetchImplementation)
-
-When you wish to use `.spyRoute()` use this function first to provide a `fetch` implementation to use.
+When no arguments are provided it will fallback to the native fetch implementation for all requests, similar to `.catch()`

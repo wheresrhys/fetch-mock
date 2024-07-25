@@ -210,7 +210,6 @@ export default class Router {
 	// eslint-disable-next-line class-methods-use-this
 	async generateResponse(callLog) {
 		const responseInput = await resolveUntilResponseConfig(callLog);
-
 		// If the response is a pre-made Response, respond with it
 		if (responseInput instanceof Response) {
 			return {

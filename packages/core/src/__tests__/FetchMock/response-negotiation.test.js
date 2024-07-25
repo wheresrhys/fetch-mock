@@ -116,18 +116,21 @@ describe('response negotiation', () => {
 	});
 
 	it('Response', async () => {
-		fm.route(
-			'http://a.com/',
-			new fm.config.Response('http://a.com/', { status: 200 }),
-		);
+		fm.route('http://a.com/', new Response('http://a.com/', { status: 200 }));
 		const res = await fm.fetchHandler('http://a.com/');
 		expect(res.status).toEqual(200);
+	});
+
+	it('should work with Response.error()', async () => {
+		fm.route('http://a.com', Response.error());
+		const response = await fm.fetchHandler('http://a.com');
+		expect(response.status).toBe(0);
 	});
 
 	it('function that returns a Response', async () => {
 		fm.route(
 			'http://a.com/',
-			() => new fm.config.Response('http://a.com/', { status: 200 }),
+			() => new Response('http://a.com/', { status: 200 }),
 		);
 		const res = await fm.fetchHandler('http://a.com/');
 		expect(res.status).toEqual(200);
@@ -136,7 +139,7 @@ describe('response negotiation', () => {
 	it('Promise that returns a Response', async () => {
 		fm.route(
 			'http://a.com/',
-			Promise.resolve(new fm.config.Response('http://a.com/', { status: 200 })),
+			Promise.resolve(new Response('http://a.com/', { status: 200 })),
 		);
 		const res = await fm.fetchHandler('http://a.com/');
 		expect(res.status).toEqual(200);

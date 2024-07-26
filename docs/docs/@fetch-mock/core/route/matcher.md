@@ -71,9 +71,9 @@ Match a url that satisfies an [express style path](https://www.npmjs.com/package
 
 When the `express:` keyword is used in a string matcher, it can be combined with the `{params: ...}` matcher to match only requests whose express parameters evaluate to certain values. e.g.
 
-```
+```js
 {
-	express: "/:section/user/:user",
+	url: "express:/:section/user/:user",
 	params: {"section": "feed", "user": "geoff"}
 }
 ```
@@ -82,6 +82,19 @@ The values of express parameters are made available in the `expressParams` prope
 
 - [Inspecting call history](/fetch-mock/docs/@fetch-mock/core/CallHistory#calllog-schema)
 - [Using a function to construct a response](/fetch-mock/docs/@fetch-mock/core/route/response#function)
+
+### Multiple url matchers
+
+All of the above (with the exception of the full url matcher) can be combined in an object in order to match multiple patterns at once e.g.
+
+```js
+{
+	url: {
+		begin: 'https',
+		path: '/could/be/any/host'
+	}
+}
+```
 
 ## Other matching criteria
 

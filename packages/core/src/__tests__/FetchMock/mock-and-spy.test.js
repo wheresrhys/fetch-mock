@@ -27,10 +27,12 @@ describe('mock and spy', () => {
 		testChainableMethod('mockGlobal');
 		testChainableMethod('unmockGlobal');
 
-		it('replaces global fetch with fetchMock.fetchHandler', () => {
+		it('replaces global fetch with fetchMock.fetchHandler', async () => {
 			vi.spyOn(fm, 'fetchHandler');
 			fm.mockGlobal();
-			fetch('http://a.com', { method: 'post' });
+			try {
+				await fetch('http://a.com', { method: 'post' });
+			} catch (err) {}
 			// cannot just check globalThis.fetch === fm.fetchHandler because we apply .bind() to fetchHandler
 			expect(fm.fetchHandler).toHaveBeenCalledWith('http://a.com', {
 				method: 'post',

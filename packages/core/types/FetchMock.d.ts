@@ -88,7 +88,7 @@ export type FetchMockGlobalConfig = {
     matchPartialBody?: boolean;
 };
 export type FetchImplementations = {
-    fetch?: (arg0: string | Request, arg1: RequestInit) => Promise<Response>;
+    fetch?: typeof fetch;
     Headers?: typeof Headers;
     Request?: typeof Request;
     Response?: typeof Response;
@@ -101,6 +101,7 @@ declare class FetchMockStandalone extends FetchMock {
     mockGlobal(this: FetchMockStandalone): FetchMockStandalone;
     unmockGlobal(this: FetchMockStandalone): FetchMockStandalone;
     spy(this: FetchMockStandalone, matcher?: RouteMatcher | UserRouteConfig, name?: RouteName): FetchMockStandalone;
+    spyGlobal(this: FetchMockStandalone): FetchMockStandalone;
     createInstance(): FetchMockStandalone;
     #private;
 }

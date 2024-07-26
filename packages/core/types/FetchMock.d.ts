@@ -99,7 +99,7 @@ import CallHistory from './CallHistory.js';
 declare const fetchMock: FetchMockStandalone;
 declare class FetchMockStandalone extends FetchMock {
     mockGlobal(this: FetchMockStandalone): FetchMockStandalone;
-    restoreGlobal(this: FetchMockStandalone): FetchMockStandalone;
+    unmockGlobal(this: FetchMockStandalone): FetchMockStandalone;
     spy(this: FetchMockStandalone, matcher?: RouteMatcher | UserRouteConfig, name?: RouteName): FetchMockStandalone;
     createInstance(): FetchMockStandalone;
     #private;

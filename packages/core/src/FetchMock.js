@@ -20,7 +20,7 @@ import * as requestUtils from './RequestUtils.js';
 
 /**
  * @typedef FetchImplementations
- * @property {function(string | Request, RequestInit): Promise<Response>} [fetch]
+ * @property {typeof fetch} [fetch]
  * @property {typeof Headers} [Headers]
  * @property {typeof Request} [Request]
  * @property {typeof Response} [Response]
@@ -234,7 +234,7 @@ class FetchMockStandalone extends FetchMock {
 	/**
 	 * @this {FetchMockStandalone}
 	 */
-	restoreGlobal() {
+	unmockGlobal() {
 		globalThis.fetch = this.config.fetch;
 		return this;
 	}
@@ -247,12 +247,20 @@ class FetchMockStandalone extends FetchMock {
 	spy(matcher, name) {
 		if (matcher) {
 			// @ts-ignore
-			this.route(matcher, ({args}) => this.config.fetch(...args), name);
+			this.route(matcher, ({ args }) => this.config.fetch(...args), name);
 		} else {
+			// @ts-ignore
 			this.catch(({ args }) => this.config.fetch(...args));
 		}
 
 		return this;
+	}
+	/**
+	 * @this {FetchMockStandalone}
+	 */
+	spyGlobal() {
+		this.mockGlobal();
+		return this.spy();
 	}
 
 	createInstance() {

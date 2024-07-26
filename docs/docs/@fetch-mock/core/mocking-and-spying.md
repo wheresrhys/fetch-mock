@@ -18,12 +18,16 @@ In addition to the @fetch-mock/core API its methods are:
 
 Replaces `globalThis.fetch` with `fm.fetchHandler`
 
-### restoreGlobal()
+### unmockGlobal()
 
 Restores `globalThis.fetch` to its original state
 
 ### spy(matcher, name)
 
-Falls back to the `fetch` implementation set in `fetchMock.config.fetch` for a specific route (which can be named). 
+Falls back to the `fetch` implementation set in `fetchMock.config.fetch` for a specific route (which can be named).
 
 When no arguments are provided it will fallback to the native fetch implementation for all requests, similar to `.catch()`
+
+### spyGlobal()
+
+Equivalent to calling `.mockGlobal()` followed by `.spy()`

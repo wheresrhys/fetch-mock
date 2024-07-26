@@ -1,2 +1,3 @@
-import fetchMock from './FetchMock.js';
+import fetchMock, { FetchMock } from './FetchMock.js';
 export default fetchMock;
+export { FetchMock };

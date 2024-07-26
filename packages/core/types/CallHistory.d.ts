@@ -5,7 +5,7 @@ export type NormalizedRequestOptions = import("./RequestUtils.js").NormalizedReq
 export type RouteMatcher = import("./Matchers.js").RouteMatcher;
 export type FetchMockConfig = import("./FetchMock.js").FetchMockConfig;
 export type CallLog = {
-    arguments: any[];
+    args: any[];
     url: string;
     options: NormalizedRequestOptions;
     request?: Request;

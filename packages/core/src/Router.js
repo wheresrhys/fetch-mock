@@ -185,7 +185,6 @@ export default class Router {
 				? [...this.routes, this.fallbackRoute]
 				: this.routes;
 			const route = routesToTry.find((route) => route.matcher(callLog));
-
 			if (route) {
 				try {
 					callLog.route = route;

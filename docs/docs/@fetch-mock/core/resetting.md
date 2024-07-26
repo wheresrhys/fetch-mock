@@ -26,6 +26,10 @@ A boolean indicating whether or not to remove the fallback route (added using `.
 
 Clears all data recorded for `fetch`'s calls.
 
+## unmockGlobal()
+
+Restores global `fetch` to its original state if `.mockGlobal()` or `.spyGlobal()` have been used .
+
 ## .createInstance()
 
 Can be used to create a standalone instance of fetch mock that is completely independent of other instances.

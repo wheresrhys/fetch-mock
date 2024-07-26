@@ -20,7 +20,7 @@ import * as requestUtils from './RequestUtils.js';
 
 /**
  * @typedef FetchImplementations
- * @property {function(string | Request, RequestInit): Promise<Response>} [fetch]
+ * @property {typeof fetch} [fetch]
  * @property {typeof Headers} [Headers]
  * @property {typeof Request} [Request]
  * @property {typeof Response} [Response]
@@ -96,7 +96,7 @@ const defineGreedyShorthand = (shorthandOptions) => {
 	};
 };
 
-class FetchMock {
+export class FetchMock {
 	/**
 	 *
 	 * @param {FetchMockConfig} config
@@ -119,7 +119,7 @@ class FetchMock {
 	}
 	/**
 	 *
-	 * @param {string | Request} requestInput
+	 * @param {string | URL | Request} requestInput
 	 * @param {RequestInit} [requestInit]
 	 * @this {FetchMock}
 	 * @returns {Promise<Response>}
@@ -162,7 +162,6 @@ class FetchMock {
 	 * @param {RouteResponse} [response]
 	 * @param {UserRouteConfig | string} [options]
 	 * @this {FetchMock}
-	 * @returns {FetchMock}
 	 */
 	route(matcher, response, options) {
 		this.router.addRoute(matcher, response, options);
@@ -172,7 +171,6 @@ class FetchMock {
 	 *
 	 * @param {RouteResponse} [response]
 	 * @this {FetchMock}
-	 * @returns {FetchMock}
 	 */
 	catch(response) {
 		this.router.setFallback(response);
@@ -193,15 +191,13 @@ class FetchMock {
 	 * @param {boolean} [options.includeSticky]
 	 * @param {boolean} [options.includeFallback]
 	 * @this {FetchMock}
-	 * @returns {FetchMock}
 	 */
 	removeRoutes(options) {
 		this.router.removeRoutes(options);
 		return this;
 	}
 	/**
-	 *
-	 * @returns {FetchMock}
+	 * @this {FetchMock}
 	 */
 	clearHistory() {
 		this.callHistory.clear();
@@ -225,6 +221,55 @@ class FetchMock {
 	patchOnce = defineShorthand({ method: 'patch', repeat: 1 });
 }
 
-const fetchMock = new FetchMock({ ...defaultConfig }).createInstance();
+class FetchMockStandalone extends FetchMock {
+	/** @type {typeof fetch} */
+	#originalFetch = null;
+	/**
+	 * @this {FetchMockStandalone}
+	 */
+	mockGlobal() {
+		globalThis.fetch = this.fetchHandler.bind(this);
+		return this;
+	}
+	/**
+	 * @this {FetchMockStandalone}
+	 */
+	unmockGlobal() {
+		globalThis.fetch = this.config.fetch;
+		return this;
+	}
+
+	/**
+	 * @param {RouteMatcher | UserRouteConfig} [matcher]
+	 * @param {RouteName} [name]
+	 * @this {FetchMockStandalone}
+	 */
+	spy(matcher, name) {
+		if (matcher) {
+			// @ts-ignore
+			this.route(matcher, ({ args }) => this.config.fetch(...args), name);
+		} else {
+			// @ts-ignore
+			this.catch(({ args }) => this.config.fetch(...args));
+		}
+
+		return this;
+	}
+	/**
+	 * @this {FetchMockStandalone}
+	 */
+	spyGlobal() {
+		this.mockGlobal();
+		return this.spy();
+	}
+
+	createInstance() {
+		return new FetchMockStandalone({ ...this.config }, this.router);
+	}
+}
+
+const fetchMock = new FetchMockStandalone({
+	...defaultConfig,
+}).createInstance();
 
 export default fetchMock;

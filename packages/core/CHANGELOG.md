@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.5](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.4...core-v0.4.5) (2024-07-26)
+
+
+### Features
+
+* allow spying on just one route ([a9638fc](https://github.com/wheresrhys/fetch-mock/commit/a9638fc12f60bfa28e6169a9fa736e2bbdc21a8a))
+* rename restoreGlobal to unmockGlobal ([3ad4241](https://github.com/wheresrhys/fetch-mock/commit/3ad4241f409353ac970cf26b1252b32ea6390208))
+
 ## [0.4.4](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.3...core-v0.4.4) (2024-07-25)
 
 

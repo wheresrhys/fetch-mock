@@ -195,4 +195,32 @@ describe('header matching', () => {
 			}),
 		).toBe(true);
 	});
+
+	it('can match against a Headers instance', () => {
+		const route = new Route({
+			headers: { a: 'b' },
+			response: 200,
+		});
+		const headers = new Headers();
+
+		headers.append('a', 'b');
+
+		expect(route.matcher({ url: 'http://a.com/', options: { headers } })).toBe(
+			true,
+		);
+	});
+
+	it('can match against an array of arrays', () => {
+		const route = new Route({
+			headers: { a: 'b' },
+			response: 200,
+		});
+
+		expect(
+			route.matcher({
+				url: 'http://a.com/',
+				options: { headers: [['a', 'b']] },
+			}),
+		).toBe(true);
+	});
 });

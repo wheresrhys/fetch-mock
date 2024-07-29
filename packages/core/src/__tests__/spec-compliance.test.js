@@ -17,9 +17,7 @@ describe('Spec compliance', () => {
 		it('reject on invalid header value', async () => {
 			await expect(
 				fetchMock.fetchHandler('http://a.com', {
-					headers: {
-						header: ['a', 'b'],
-					},
+					headers: [['a', 'b', 'c']],
 				}),
 			).rejects.toThrow(new TypeError('asdasdsa'));
 		});
@@ -36,7 +34,10 @@ describe('Spec compliance', () => {
 				fetchMock.fetchHandler('http://a.com', { mode: 'navigate' }),
 			).rejects.toThrow(new TypeError('asdasdsa'));
 		});
-		it('reject if the request method is GET or HEAD and the body is non-null or not undefined.', async () => {
+		it('reject if the request method is GET or HEAD and the body is non-null.', async () => {
+			await expect(
+				fetchMock.fetchHandler('http://a.com', { body: 'a' }),
+			).rejects.toThrow(new TypeError('asdasdsa'));
 			await expect(
 				fetchMock.fetchHandler('http://a.com', { body: 'a', method: 'GET' }),
 			).rejects.toThrow(new TypeError('asdasdsa'));

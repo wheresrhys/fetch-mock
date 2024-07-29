@@ -93,6 +93,36 @@ function shouldSendAsObject(responseInput) {
 	return true;
 }
 
+function throwSpecExceptions(callLog) {
+	const headers = callLog.options.headers;
+	if (headers) {
+		Object.entries(headers).forEach(([key]) => {
+			if (/\s/.test(key)) {
+				throw new TypeError('no way - space in header');
+			}
+
+			// if (/\s/.test(value)) {
+			// 	throw new TypeError('no way - space in header');
+			// }
+		});
+	}
+	if (/^[a-z]+\:\/\/[^:]+:[^@]+@/.test(callLog.url)) {
+		throw new TypeError('no way - contains credentials');
+	}
+
+	if (['navigate', 'websocket'].includes(callLog.options.mode)) {
+		throw new TypeError('no way - wrong mode');
+	}
+
+	console.log(callLog.options);
+	if (
+		['get', 'head'].includes(callLog.options.method) &&
+		callLog.options.body
+	) {
+		throw new TypeError('no way - wrong method for body');
+	}
+}
+
 /**
  * @param {CallLog} callLog
  * @returns
@@ -149,6 +179,7 @@ export default class Router {
 	 * @returns {Promise<Response>}
 	 */
 	execute(callLog) {
+		throwSpecExceptions(callLog);
 		// TODO make abort vs reject neater
 		return new Promise(async (resolve, reject) => {
 			const { url, options, request, pendingPromises } = callLog;

@@ -44,12 +44,19 @@ export function createCallLogFromUrlAndOptions(url, options) {
 	if (typeof url === 'string' || url instanceof String || url instanceof URL) {
 		// @ts-ignore - jsdoc doesn't distinguish between string and String, but typechecker complains
 		url = normalizeUrl(url);
+		const derivedOptions = options ? { ...options } : {};
+		if (derivedOptions.headers) {
+			derivedOptions.headers = normalizeHeaders(derivedOptions.headers);
+		}
+		derivedOptions.method = derivedOptions.method
+			? derivedOptions.method.toLowerCase()
+			: 'get';
 		return {
 			args: [url, options],
 			url,
 			queryParams: new URLSearchParams(getQuery(url)),
-			options: options || {},
-			signal: options && options.signal,
+			options: derivedOptions,
+			signal: derivedOptions.signal,
 			pendingPromises,
 		};
 	}
@@ -124,10 +131,12 @@ export function getQuery(url) {
  * @returns {Object.<string, string>}
  */
 export const normalizeHeaders = (headers) => {
-	const entries =
-		headers instanceof Headers
-			? [...headers.entries()]
-			: Object.entries(headers);
+	let entries = headers;
+	if (headers instanceof Headers) {
+		entries = [...headers.entries()];
+	} else if (!Array.isArray(headers)) {
+		entries = Object.entries(headers);
+	}
 	return Object.fromEntries(
 		entries.map(([key, val]) => [key.toLowerCase(), String(val).valueOf()]),
 	);

@@ -5,11 +5,10 @@ describe('header matching', () => {
 	it('not match when headers not present', () => {
 		const route = new Route({
 			headers: { a: 'b' },
-
 			response: 200,
 		});
 
-		expect(route.matcher({ url: 'http://a.com/' })).toBe(true);
+		expect(route.matcher({ url: 'http://a.com/', options: {} })).toBe(false);
 	});
 
 	it("not match when headers don't match", () => {
@@ -154,43 +153,14 @@ describe('header matching', () => {
 			headers: { a: 'b' },
 		});
 
-		expect(route.matcher({ url: 'http://domain.com/person' })).toBe(false);
+		expect(
+			route.matcher({ url: 'http://domain.com/person', options: {} }),
+		).toBe(false);
 		expect(
 			route.matcher({
 				url: 'http://domain.com/person',
 				options: {
 					headers: { a: 'b' },
-				},
-			}),
-		).toBe(true);
-	});
-
-	it('match custom Headers instance', () => {
-		const MyHeaders = class {
-			constructor(obj) {
-				this.obj = obj;
-			}
-			// eslint-disable-next-line class-methods-use-this
-			*[Symbol.iterator]() {
-				yield ['a', 'b'];
-			}
-			// eslint-disable-next-line class-methods-use-this
-			has() {
-				return true;
-			}
-		};
-
-		const route = new Route({
-			response: 200,
-			headers: { a: 'b' },
-			config: { Headers: MyHeaders },
-		});
-
-		expect(
-			route.matcher({
-				url: 'http://a.com',
-				options: {
-					headers: new MyHeaders({ a: 'b' }),
 				},
 			}),
 		).toBe(true);

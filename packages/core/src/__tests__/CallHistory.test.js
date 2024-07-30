@@ -9,7 +9,7 @@ describe('CallHistory', () => {
 	});
 
 	const fetchTheseUrls = (...urls) =>
-		Promise.all(urls.map(fm.fetchHandler.bind(fm)));
+		Promise.all(urls.map((url) => fm.fetchHandler(url)));
 
 	describe('helper methods', () => {
 		describe('called()', () => {
@@ -208,8 +208,8 @@ describe('CallHistory', () => {
 				describe('boolean and named route filters', () => {
 					it('can retrieve calls matched by non-fallback routes', async () => {
 						fm.route('http://a.com/', 200).catch();
-
 						await fetchTheseUrls('http://a.com/', 'http://b.com/');
+
 						expectSingleUrl(true)('http://a.com/');
 						expectSingleUrl('matched')('http://a.com/');
 					});
@@ -298,12 +298,13 @@ describe('CallHistory', () => {
 							headers: { a: 'z' },
 						});
 						expect(filteredCalls.length).toEqual(1);
+
 						expect(filteredCalls[0]).toMatchObject(
 							expect.objectContaining({
 								url: 'http://a.com/',
-								options: {
+								options: expect.objectContaining({
 									headers: { a: 'z' },
-								},
+								}),
 							}),
 						);
 					});
@@ -326,9 +327,9 @@ describe('CallHistory', () => {
 						expect(filteredCalls[0]).toMatchObject(
 							expect.objectContaining({
 								url: 'http://b.com/',
-								options: {
+								options: expect.objectContaining({
 									headers: { a: 'z' },
-								},
+								}),
 							}),
 						);
 					});
@@ -347,9 +348,9 @@ describe('CallHistory', () => {
 						expect(filteredCalls[0]).toMatchObject(
 							expect.objectContaining({
 								url: 'http://a.com/',
-								options: {
+								options: expect.objectContaining({
 									headers: { a: 'z' },
-								},
+								}),
 							}),
 						);
 					});

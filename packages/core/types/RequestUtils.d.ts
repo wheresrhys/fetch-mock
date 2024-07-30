@@ -3,9 +3,9 @@ export function createCallLogFromUrlAndOptions(url: string | object, options: Re
 export function createCallLogFromRequest(request: Request, options: RequestInit): Promise<CallLog>;
 export function getPath(url: string): string;
 export function getQuery(url: string): string;
-export function normalizeHeaders(headers: Headers | [string, string][] | Record<string, string> | {
+export function normalizeHeaders(headers: HeadersInit | {
     [x: string]: string | number;
-} | HeadersInit): {
+}): {
     [x: string]: string;
 };
 export type DerivedRequestOptions = {

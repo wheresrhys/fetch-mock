@@ -94,6 +94,30 @@ function shouldSendAsObject(responseInput) {
 }
 
 /**
+ *
+ * @param {CallLog} callLog
+ */
+function throwSpecExceptions({ url, options: { headers, method, body } }) {
+	if (headers) {
+		Object.entries(headers).forEach(([key]) => {
+			if (/\s/.test(key)) {
+				throw new TypeError('Invalid name');
+			}
+		});
+	}
+	const urlObject = new URL(url);
+	if (urlObject.username || urlObject.password) {
+		throw new TypeError(
+			`Request cannot be constructed from a URL that includes credentials: ${url}`,
+		);
+	}
+
+	if (['get', 'head'].includes(method) && body) {
+		throw new TypeError('Request with GET/HEAD method cannot have body.');
+	}
+}
+
+/**
  * @param {CallLog} callLog
  * @returns
  */
@@ -149,6 +173,7 @@ export default class Router {
 	 * @returns {Promise<Response>}
 	 */
 	execute(callLog) {
+		throwSpecExceptions(callLog);
 		// TODO make abort vs reject neater
 		return new Promise(async (resolve, reject) => {
 			const { url, options, request, pendingPromises } = callLog;

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.6](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.5...core-v0.4.6) (2024-07-30)
+
+
+### Bug Fixes
+
+* now more spec compliant on exceptions ([ceec07f](https://github.com/wheresrhys/fetch-mock/commit/ceec07f1c8c1be86111b4feaaab76c103885da4d))
+
 ## [0.4.5](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.4...core-v0.4.5) (2024-07-26)
 
 

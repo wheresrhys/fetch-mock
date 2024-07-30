@@ -127,14 +127,16 @@ export function getQuery(url) {
 
 /**
  *
- * @param {Headers | [string, string][] | Record < string, string > | Object.<string, string | number> | HeadersInit} headers
+ * @param {HeadersInit | Object.<string, string |number>} headers
  * @returns {Object.<string, string>}
  */
 export const normalizeHeaders = (headers) => {
-	let entries = headers;
+	let entries;
 	if (headers instanceof Headers) {
 		entries = [...headers.entries()];
-	} else if (!Array.isArray(headers)) {
+	} else if (Array.isArray(headers)) {
+		entries = headers;
+	} else {
 		entries = Object.entries(headers);
 	}
 	return Object.fromEntries(

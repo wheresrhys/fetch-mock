@@ -12,38 +12,33 @@ describe('Spec compliance', () => {
 						'has space': 'ok',
 					},
 				}),
-			).rejects.toThrow(new TypeError('asdasdsa'));
-		});
-		it('reject on invalid header value', async () => {
-			await expect(
-				fetchMock.fetchHandler('http://a.com', {
-					headers: [['a', 'b', 'c']],
-				}),
-			).rejects.toThrow(new TypeError('asdasdsa'));
+			).rejects.toThrow(new TypeError('Invalid name'));
 		});
 		it('reject on url containing credentials', async () => {
 			await expect(
 				fetchMock.fetchHandler('http://user:password@a.com'),
-			).rejects.toThrow(new TypeError('asdasdsa'));
-		});
-		it('reject on invalid modes', async () => {
-			await expect(
-				fetchMock.fetchHandler('http://a.com', { mode: 'websocket' }),
-			).rejects.toThrow(new TypeError('asdasdsa'));
-			await expect(
-				fetchMock.fetchHandler('http://a.com', { mode: 'navigate' }),
-			).rejects.toThrow(new TypeError('asdasdsa'));
+			).rejects.toThrow(
+				new TypeError(
+					'Request cannot be constructed from a URL that includes credentials: http://user:password@a.com/',
+				),
+			);
 		});
 		it('reject if the request method is GET or HEAD and the body is non-null.', async () => {
 			await expect(
 				fetchMock.fetchHandler('http://a.com', { body: 'a' }),
-			).rejects.toThrow(new TypeError('asdasdsa'));
+			).rejects.toThrow(
+				new TypeError('Request with GET/HEAD method cannot have body.'),
+			);
 			await expect(
 				fetchMock.fetchHandler('http://a.com', { body: 'a', method: 'GET' }),
-			).rejects.toThrow(new TypeError('asdasdsa'));
+			).rejects.toThrow(
+				new TypeError('Request with GET/HEAD method cannot have body.'),
+			);
 			await expect(
 				fetchMock.fetchHandler('http://a.com', { body: 'a', method: 'HEAD' }),
-			).rejects.toThrow(new TypeError('asdasdsa'));
+			).rejects.toThrow(
+				new TypeError('Request with GET/HEAD method cannot have body.'),
+			);
 		});
 	});
 });

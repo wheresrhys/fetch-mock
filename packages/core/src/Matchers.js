@@ -104,6 +104,23 @@ const getHeaderMatcher = ({ headers: expectedHeaders }) => {
 /**
  * @type {MatcherGenerator}
  */
+const getMissingHeaderMatcher = ({
+	missingHeaders: expectedMissingHeaders,
+}) => {
+	if (!expectedMissingHeaders) {
+		return;
+	}
+	const expectation = expectedMissingHeaders.map((header) =>
+		header.toLowerCase(),
+	);
+	return ({ options: { headers = {} } }) => {
+		const lowerCaseHeaders = normalizeHeaders(headers);
+		return expectation.every((headerName) => !(headerName in lowerCaseHeaders));
+	};
+};
+/**
+ * @type {MatcherGenerator}
+ */
 const getMethodMatcher = ({ method: expectedMethod }) => {
 	if (!expectedMethod) {
 		return;
@@ -306,6 +323,7 @@ export const builtInMatchers = [
 	{ name: 'query', matcher: getQueryParamsMatcher },
 	{ name: 'method', matcher: getMethodMatcher },
 	{ name: 'headers', matcher: getHeaderMatcher },
+	{ name: 'missingHeaders', matcher: getMissingHeaderMatcher },
 	{ name: 'params', matcher: getExpressParamsMatcher },
 	{ name: 'body', matcher: getBodyMatcher, usesBody: true },
 	{ name: 'matcherFunction', matcher: getFunctionMatcher },

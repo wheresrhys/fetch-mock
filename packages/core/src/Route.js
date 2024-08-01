@@ -15,6 +15,7 @@ import statusTextMap from './StatusTextMap.js';
  * @property {RouteName} [name]
  * @property {string} [method]
  * @property {{ [key: string]: string | number  }} [headers]
+ * @property {string[]} [missingHeaders]
  * @property {{ [key: string]: string }} [query]
  * @property {{ [key: string]: string }} [params]
  * @property {object} [body]

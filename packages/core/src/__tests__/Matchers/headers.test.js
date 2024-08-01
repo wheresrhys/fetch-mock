@@ -45,6 +45,36 @@ describe('header matching', () => {
 		).toBe(true);
 	});
 
+	it('match missing headers', () => {
+		const route = new Route({
+			missingHeaders: ['a'],
+			response: 200,
+		});
+		expect(
+			route.matcher({
+				url: 'http://a.com/',
+				options: {
+					headers: { b: 'c' },
+				},
+			}),
+		).toBe(true);
+	});
+
+	it('not match present missing header', () => {
+		const route = new Route({
+			missingHeaders: ['a'],
+			response: 200,
+		});
+		expect(
+			route.matcher({
+				url: 'http://a.com/',
+				options: {
+					headers: { a: 'b' },
+				},
+			}),
+		).toBe(false);
+	});
+
 	it('be case insensitive', () => {
 		const route = new Route({
 			headers: { a: 'b' },

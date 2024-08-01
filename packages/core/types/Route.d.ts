@@ -12,6 +12,7 @@ export type UserRouteConfig = {
     headers?: {
         [key: string]: string | number;
     };
+    missingHeaders?: string[];
     query?: {
         [key: string]: string;
     };

@@ -24,9 +24,11 @@
         "skipLibCheck": true,
         "noEmit": false,
         "target": "es2021",
+        "allowImportingTsExtensions": true,
         "removeComments": true
     },
     "include": [
+        "./packages/core/src/*.ts",
         "./packages/core/src/*.js"
     ],
     "exclude": [

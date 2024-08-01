@@ -7,8 +7,6 @@
         ],
         "moduleResolution": "nodenext",
         "module": "NodeNext",
-        "allowJs": true,
-        "checkJs": true,
         "strict": true,
         "noImplicitAny": true,
         "noImplicitThis": true,
@@ -17,6 +15,7 @@
         "types": [
         ],
         "downlevelIteration": true,
+        "allowImportingTsExtensions": true,
         "forceConsistentCasingInFileNames": true,
         "declaration": true,
         "emitDeclarationOnly": true,
@@ -27,7 +26,7 @@
         "removeComments": true
     },
     "include": [
-        "./packages/core/src/*.js"
+        "./packages/core/src/*.ts"
     ],
     "exclude": [
         "node_modules",

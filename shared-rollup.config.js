@@ -6,6 +6,7 @@ export default {
 		dir: './dist',
 		entryFileNames: 'commonjs.js',
 		format: 'commonjs',
+		exports: 'named',
 	},
 	plugins: [
 		nodeResolve({ preferBuiltins: false }),

@@ -4,6 +4,19 @@
 const absoluteUrlRX = new RegExp('^[a-z]+://|^data:', 'i');
 const protocolRelativeUrlRX = new RegExp('^//', 'i');
 
+// class RelativableURL extends URL {
+// 	constructor (url) {
+
+// 	}
+// 	host x
+// hostname x
+// href
+// origin
+// port x
+// protocol x
+
+// }
+
 /**
  * @typedef DerivedRequestOptions
  * @property  {string} method
@@ -22,12 +35,21 @@ export function normalizeUrl(url) {
 	if (url instanceof URL) {
 		return url.href;
 	}
+
+	// This is mainly useful for making sure urls without paths are consistent
+	// as to the presence/absence of a trailing slash
 	if (absoluteUrlRX.test(url)) {
 		return new URL(url).href;
 	}
+	// This is to deal with protocol relative urls without breaking
 	if (protocolRelativeUrlRX.test(url)) {
 		return new URL(url, 'http://dummy').href;
 	}
+	// This is to deal with urls such as /path/../other-path
+	// which should be equivalent to /other-path
+
+	// TODO
+	// handle image.jpg, ./image.jpg, ../image.jpg and /image.jpg
 	const u = new URL(url, 'http://dummy');
 	return u.pathname + u.search;
 }

@@ -44,6 +44,8 @@
     "@commitlint/config-conventional": "^19.2.2",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
+    "@types/events": "^3.0.3",
+    "@types/globrex": "^0.1.4",
     "@types/node": "^20.14.10",
     "@vitest/browser": "^1.1.0",
     "@vitest/coverage-istanbul": "^1.1.0",
@@ -62,12 +64,11 @@
     "lint-staged": "^15.2.7",
     "prettier": "^3.1.1",
     "rollup": "^4.9.1",
+    "ts-node": "^10.9.2",
     "ts-to-jsdoc": "^2.1.0",
     "typescript": "^5.5.3",
     "v8": "^0.1.0",
     "vitest": "^1.1.0",
-    "@types/events": "^3.0.3",
-    "@types/globrex": "^0.1.4",
     "webdriverio": "^8.27.0"
   },
   "volta": {
@@ -80,7 +81,7 @@
     "packages/**/*.js": [
       "npm run types:check"
     ],
-    "**/*.md":[
+    "**/*.md": [
       "npm run prettier"
     ]
   }

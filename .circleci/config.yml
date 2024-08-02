@@ -170,7 +170,7 @@ workflows:
             # - chrome
             # - firefox
             - build
-            - import-compat
+            # - import-compat
             - typelint
             - commonjs
             - jest

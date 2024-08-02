@@ -6,7 +6,7 @@ export type RouteMatcherUrl = import("./Matchers.js").RouteMatcherUrl;
 export type MatcherDefinition = import("./Matchers.js").MatcherDefinition;
 export type FetchMockGlobalConfig = import("./FetchMock.js").FetchMockGlobalConfig;
 export type FetchImplementations = import("./FetchMock.js").FetchImplementations;
-export type UserRouteConfig = {
+export type UserRouteSpecificConfig = {
     name?: RouteName;
     method?: string;
     headers?: {
@@ -30,8 +30,8 @@ export type InternalRouteConfig = {
     usesBody?: boolean;
     isFallback?: boolean;
 };
-export type ExtendedUserRouteConfig = UserRouteConfig & FetchMockGlobalConfig;
-export type RouteConfig = ExtendedUserRouteConfig & FetchImplementations & InternalRouteConfig;
+export type UserRouteConfig = UserRouteSpecificConfig & FetchMockGlobalConfig;
+export type RouteConfig = UserRouteConfig & FetchImplementations & InternalRouteConfig;
 export type RouteResponseConfig = {
     body?: string | {};
     status?: number;

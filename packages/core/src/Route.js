@@ -11,7 +11,7 @@ import statusTextMap from './StatusTextMap.js';
 /** @typedef {import('./FetchMock.js').FetchImplementations} FetchImplementations */
 
 /**
- * @typedef UserRouteConfig
+ * @typedef UserRouteSpecificConfig
  * @property {RouteName} [name]
  * @property {string} [method]
  * @property {{ [key: string]: string | number  }} [headers]
@@ -32,8 +32,8 @@ import statusTextMap from './StatusTextMap.js';
  * @property {boolean} [isFallback]
  */
 
-/** @typedef {UserRouteConfig & FetchMockGlobalConfig} ExtendedUserRouteConfig */
-/** @typedef {ExtendedUserRouteConfig & FetchImplementations & InternalRouteConfig} RouteConfig */
+/** @typedef {UserRouteSpecificConfig & FetchMockGlobalConfig} UserRouteConfig */
+/** @typedef {UserRouteConfig & FetchImplementations & InternalRouteConfig} RouteConfig */
 
 /**
  * @typedef RouteResponseConfig {

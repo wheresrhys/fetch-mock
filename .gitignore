@@ -14,4 +14,5 @@ coverage/
 /docs/fetch-mock/dist/
 /packages/**/dist
 
-import-compat/ts-*.js
+import-compat/*.js
+import-compat/*.mjs

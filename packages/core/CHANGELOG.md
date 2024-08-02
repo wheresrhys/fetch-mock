@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.7](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.6...core-v0.4.7) (2024-08-02)
+
+
+### Bug Fixes
+
+* correct types so that global optiosn can be passed in to route ([13e1fc6](https://github.com/wheresrhys/fetch-mock/commit/13e1fc64ca3a36f54765d588dc61d44cc92cd413))
+
 ## [0.4.6](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.5...core-v0.4.6) (2024-07-30)
 
 

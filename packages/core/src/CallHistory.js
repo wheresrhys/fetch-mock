@@ -48,13 +48,13 @@ const isMatchedOrUnmatched = (filter) =>
 
 class CallHistory {
 	/**
-	 * @param {FetchMockConfig} globalConfig
+	 * @param {FetchMockConfig} config
 	 * @param {Router} router
 	 */
-	constructor(globalConfig, router) {
+	constructor(config, router) {
 		/** @type {CallLog[]} */
 		this.callLogs = [];
-		this.config = globalConfig;
+		this.config = config;
 		this.router = router;
 	}
 	/**

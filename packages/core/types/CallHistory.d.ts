@@ -22,7 +22,7 @@ export type Matched = "matched";
 export type Unmatched = "unmatched";
 export type CallHistoryFilter = RouteName | Matched | Unmatched | boolean | RouteMatcher;
 declare class CallHistory {
-    constructor(globalConfig: FetchMockConfig, router: Router);
+    constructor(config: FetchMockConfig, router: Router);
     callLogs: CallLog[];
     config: import("./FetchMock.js").FetchMockConfig;
     router: Router;

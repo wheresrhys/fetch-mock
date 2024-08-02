@@ -91,6 +91,14 @@ jobs:
       - *workspace
       - run: npm run build
       - run: npm run test:jest
+  import-compat:
+    <<: *nodelts
+    steps:
+      - *workspace
+      - run: npm run compat:ts:cjs -w import-compat
+      - run: npm run compat:js:cjs -w import-compat
+      - run: npm run compat:ts:esm -w import-compat
+      - run: npm run compat:js:esm -w import-compat
   # chrome:
   #   <<: *browsers
   #   steps:
@@ -133,12 +141,10 @@ workflows:
           <<: *triggerable-by-tag
           requires:
             - checkout_code
-      # could be parallel with build, lint, and unit but it's a slow job
-      # And circlecifree tier only has 3 concurrent jobs, so overall faster
-      # to defer
       - typelint:
           <<: *triggerable-by-tag
-          <<: *run-after-first-jobs
+          requires:
+            - checkout_code
       - nodefetch3:
           <<: *triggerable-by-tag
           <<: *run-after-first-jobs
@@ -148,6 +154,10 @@ workflows:
       - jest:
           <<: *triggerable-by-tag
           <<: *run-after-first-jobs
+      - import-compat:
+          <<: *triggerable-by-tag
+          requires:
+            - build
       # - chrome:
       #     <<: *triggerable-by-tag
       #     <<: *run-after-first-jobs
@@ -160,6 +170,7 @@ workflows:
             # - chrome
             # - firefox
             - build
+            - import-compat
             - typelint
             - commonjs
             - jest

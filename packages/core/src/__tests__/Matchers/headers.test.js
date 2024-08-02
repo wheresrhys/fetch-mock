@@ -75,6 +75,20 @@ describe('header matching', () => {
 		).toBe(false);
 	});
 
+	it('not error when request sent without headers', () => {
+		const route = new Route({
+			missingHeaders: ['a'],
+			response: 200,
+		});
+
+		expect(
+			route.matcher({
+				url: 'http://a.com/',
+				options: {},
+			}),
+		).toBe(true);
+	});
+
 	it('be case insensitive', () => {
 		const route = new Route({
 			headers: { a: 'b' },

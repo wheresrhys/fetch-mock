@@ -1,0 +1,10 @@
+{
+  "name": "fetch-mock-compat-tests",
+  "version": "1.0.0",
+  "scripts": {
+    "compat:ts:esm": "tsc ts-esm.ts --target esnext --moduleResolution nodenext --module nodenext && node ts-esm.js",
+    "compat:ts:cjs": "tsc ts-cjs.ts  --target esnext --moduleResolution nodenext --module nodenext && node ts-cjs.js",
+    "compat:js:esm": "node js-esm.mjs",
+    "compat:js:cjs": "node js-cjs.js"
+  }
+}

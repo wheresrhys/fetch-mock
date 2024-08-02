@@ -19,7 +19,7 @@
   "workspaces": [
     "packages/*",
     "docs",
-    "toolchain-compat"
+    "tool-compat"
   ],
   "scripts": {
     "lint:staged": "eslint --cache --fix --ext .js,.cjs",

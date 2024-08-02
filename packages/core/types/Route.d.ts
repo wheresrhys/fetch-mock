@@ -1,12 +1,7 @@
-export default Route;
-export type RouteMatcher = import("./Matchers.ts").RouteMatcher;
-export type CallLog = import("./CallHistory.js").CallLog;
-export type RouteMatcherFunction = import("./Matchers.ts").RouteMatcherFunction;
-export type RouteMatcherUrl = import("./Matchers.ts").RouteMatcherUrl;
-export type MatcherDefinition = import("./Matchers.ts").MatcherDefinition;
-export type FetchMockGlobalConfig = import("./FetchMock.js").FetchMockGlobalConfig;
-export type FetchImplementations = import("./FetchMock.js").FetchImplementations;
-export type UserRouteConfig = {
+import { CallLog } from './CallHistory.ts';
+import { FetchMockGlobalConfig, FetchImplementations } from './FetchMock.ts';
+import { RouteMatcherFunction, RouteMatcherUrl, MatcherDefinition } from './Matchers.ts';
+export interface UserRouteSpecificConfig {
     name?: RouteName;
     method?: string;
     headers?: {
@@ -25,14 +20,14 @@ export type UserRouteConfig = {
     repeat?: number;
     delay?: number;
     sticky?: boolean;
-};
-export type InternalRouteConfig = {
+}
+interface InternalRouteConfig {
     usesBody?: boolean;
     isFallback?: boolean;
-};
-export type ExtendedUserRouteConfig = UserRouteConfig & FetchMockGlobalConfig;
-export type RouteConfig = ExtendedUserRouteConfig & FetchImplementations & InternalRouteConfig;
-export type RouteResponseConfig = {
+}
+export type UserRouteConfig = UserRouteSpecificConfig & FetchMockGlobalConfig;
+export type RouteConfig = UserRouteConfig & FetchImplementations & InternalRouteConfig;
+export interface RouteResponseConfig {
     body?: string | {};
     status?: number;
     headers?: {
@@ -41,24 +36,23 @@ export type RouteResponseConfig = {
     throws?: Error;
     redirectUrl?: string;
     options?: ResponseInit;
-};
-export type ResponseInitUsingHeaders = {
+}
+interface ResponseInitUsingHeaders {
     status: number;
     statusText: string;
     headers: Headers;
-};
+}
 export type RouteResponseObjectData = RouteResponseConfig | object;
 export type RouteResponseData = Response | number | string | RouteResponseObjectData;
-export type RouteResponsePromise = Promise<RouteResponseData>;
-export type RouteResponseFunction = (arg0: CallLog) => (RouteResponseData | RouteResponsePromise);
+type RouteResponsePromise = Promise<RouteResponseData>;
+export type RouteResponseFunction = (callLog: CallLog) => RouteResponseData | RouteResponsePromise;
 export type RouteResponse = RouteResponseData | RouteResponsePromise | RouteResponseFunction;
 export type RouteName = string;
 declare class Route {
-    static defineMatcher(matcher: MatcherDefinition): void;
-    static registeredMatchers: MatcherDefinition[];
-    constructor(config: RouteConfig);
+    #private;
     config: RouteConfig;
-    matcher: RouteMatcherFunction | undefined;
+    matcher: RouteMatcherFunction | null;
+    constructor(config: RouteConfig);
     reset(): void;
     constructResponse(responseInput: RouteResponseConfig): {
         response: Response;
@@ -67,5 +61,7 @@ declare class Route {
     };
     constructResponseOptions(responseInput: RouteResponseConfig): ResponseInitUsingHeaders;
     constructResponseBody(responseInput: RouteResponseConfig, responseOptions: ResponseInitUsingHeaders): string | null;
-    #private;
+    static defineMatcher(matcher: MatcherDefinition): void;
+    static registeredMatchers: MatcherDefinition[];
 }
+export default Route;

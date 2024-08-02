@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import Route from '../../Route.js';
+import Route from '../../Route.ts';
 
 describe('query string matching', () => {
 	it('match a query string', () => {

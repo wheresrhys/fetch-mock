@@ -3,7 +3,7 @@ import * as regexparam from 'regexparam';
 import { isSubsetOf } from 'is-subset-of';
 import { dequal as isEqual } from 'dequal';
 
-import { RouteConfig } from './Route.js';
+import { RouteConfig } from './Route.ts';
 import { CallLog } from './CallHistory.ts';
 import { normalizeHeaders, getPath, normalizeUrl } from './RequestUtils.ts';
 
@@ -15,9 +15,6 @@ interface URLMatcherObject {
   path?: string;
   regexp?: RegExp;
 }
-
-
-
 
 export type RouteMatcherUrl = string | RegExp | URL | URLMatcherObject;
 export type RouteMatcherFunction = (callLog: CallLog) => boolean;

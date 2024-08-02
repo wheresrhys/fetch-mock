@@ -1,5 +1,5 @@
 import Router from './Router.js';
-import { RouteName, UserRouteConfig, RouteResponse } from './Route.js';
+import { RouteName, UserRouteConfig, RouteResponse } from './Route.ts';
 import CallHistory from './CallHistory.ts';
 import { MatcherDefinition, RouteMatcher } from './Matchers.ts';
 export interface FetchMockGlobalConfig {

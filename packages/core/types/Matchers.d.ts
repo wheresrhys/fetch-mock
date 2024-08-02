@@ -1,4 +1,4 @@
-import { RouteConfig } from './Route.js';
+import { RouteConfig } from './Route.ts';
 import { CallLog } from './CallHistory.ts';
 interface URLMatcherObject {
     begin?: string;
@@ -8,10 +8,10 @@ interface URLMatcherObject {
     path?: string;
     regexp?: RegExp;
 }
-type MatcherGenerator = (route: RouteConfig) => RouteMatcherFunction;
 export type RouteMatcherUrl = string | RegExp | URL | URLMatcherObject;
 export type RouteMatcherFunction = (callLog: CallLog) => boolean;
 export type RouteMatcher = RouteMatcherUrl | RouteMatcherFunction;
+type MatcherGenerator = (route: RouteConfig) => RouteMatcherFunction;
 export interface MatcherDefinition {
     name: string;
     matcher: MatcherGenerator;

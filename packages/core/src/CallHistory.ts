@@ -1,7 +1,7 @@
 import { createCallLogFromUrlAndOptions, NormalizedRequestOptions } from './RequestUtils.ts';
 import { isUrlMatcher, RouteMatcher } from './Matchers.ts';
 import { FetchMockConfig } from './FetchMock.ts'
-import Route, { RouteName, RouteConfig } from './Route.js';
+import Route, { RouteName, RouteConfig } from './Route.ts';
 import Router from './Router.js';
 
 export interface CallLog {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import Route from '../../Route.js';
+import Route from '../../Route.ts';
 import Router from '../../Router.js';
 import { createCallLogFromRequest } from '../../RequestUtils.ts';
 describe('body matching', () => {

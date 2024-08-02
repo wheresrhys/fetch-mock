@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import Route from '../../Route.js';
+import Route from '../../Route.ts';
 
 describe('header matching', () => {
 	it('not match when headers not present', () => {

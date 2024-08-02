@@ -14,7 +14,7 @@ export default class Router {
         responseInput: RouteResponseConfig;
     }>;
     createObservableResponse(response: Response, responseConfig: ResponseInit, responseInput: RouteResponseConfig, responseUrl: string, pendingPromises: Promise<any>[]): Response;
-    addRoute(matcher: RouteMatcher | UserRouteConfig, response?: RouteResponse, nameOrOptions?: UserRouteConfig | string): void;
+    addRoute(matcher: RouteMatcher | UserRouteSpecificConfig, response?: RouteResponse, nameOrOptions?: UserRouteSpecificConfig | string): void;
     setFallback(response?: RouteResponse): void;
     removeRoutes({ names, includeSticky, includeFallback }?: {
         names?: string[];
@@ -22,16 +22,16 @@ export default class Router {
         includeFallback?: boolean;
     }): void;
 }
-export type UserRouteConfig = import("./Route.js").UserRouteConfig;
-export type RouteConfig = import("./Route.js").RouteConfig;
-export type RouteResponse = import("./Route.js").RouteResponse;
-export type RouteResponseData = import("./Route.js").RouteResponseData;
-export type RouteResponseObjectData = import("./Route.js").RouteResponseObjectData;
-export type RouteResponseConfig = import("./Route.js").RouteResponseConfig;
-export type RouteResponseFunction = import("./Route.js").RouteResponseFunction;
+export type UserRouteSpecificConfig = import("./Route.ts").UserRouteSpecificConfig;
+export type RouteConfig = import("./Route.ts").RouteConfig;
+export type RouteResponse = import("./Route.ts").RouteResponse;
+export type RouteResponseData = import("./Route.ts").RouteResponseData;
+export type RouteResponseObjectData = import("./Route.ts").RouteResponseObjectData;
+export type RouteResponseConfig = import("./Route.ts").RouteResponseConfig;
+export type RouteResponseFunction = import("./Route.ts").RouteResponseFunction;
 export type RouteMatcher = import("./Matchers.ts").RouteMatcher;
 export type FetchMockConfig = import("./FetchMock.js").FetchMockConfig;
 export type FetchMock = typeof import("./FetchMock.js");
 export type CallLog = import("./CallHistory.js").CallLog;
 export type ResponseConfigProp = "body" | "headers" | "throws" | "status" | "redirectUrl";
-import Route from './Route.js';
+import Route from './Route.ts';

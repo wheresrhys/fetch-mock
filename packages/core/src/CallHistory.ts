@@ -1,4 +1,4 @@
-import { createCallLogFromUrlAndOptions, NormalizedRequestOptions } from './RequestUtils.js';
+import { createCallLogFromUrlAndOptions, NormalizedRequestOptions } from './RequestUtils.ts';
 import { isUrlMatcher, RouteMatcher } from './Matchers.ts';
 import { FetchMockConfig } from './FetchMock.ts'
 import Route, { RouteName, RouteConfig } from './Route.js';

@@ -1,4 +1,4 @@
-import { NormalizedRequestOptions } from './RequestUtils.js';
+import { NormalizedRequestOptions } from './RequestUtils.ts';
 import { RouteMatcher } from './Matchers.ts';
 import { FetchMockConfig } from './FetchMock.ts';
 import Route, { RouteName, RouteConfig } from './Route.js';
@@ -24,7 +24,7 @@ declare class CallHistory {
     callLogs: CallLog[];
     config: FetchMockConfig;
     router: Router;
-    constructor(globalConfig: FetchMockConfig, router: Router);
+    constructor(config: FetchMockConfig, router: Router);
     recordCall(callLog: CallLog): void;
     clear(): void;
     flush(waitForResponseMethods?: boolean): Promise<void>;

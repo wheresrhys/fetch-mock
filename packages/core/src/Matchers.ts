@@ -5,7 +5,7 @@ import { dequal as isEqual } from 'dequal';
 
 import { RouteConfig } from './Route.js';
 import { CallLog } from './CallHistory.ts';
-import { normalizeHeaders, getPath, normalizeUrl } from './RequestUtils.js';
+import { normalizeHeaders, getPath, normalizeUrl } from './RequestUtils.ts';
 
 interface URLMatcherObject {
   begin?: string;
@@ -17,13 +17,13 @@ interface URLMatcherObject {
 }
 
 
-type UrlMatcherGenerator = (targetString: string) => RouteMatcherFunction;
-type MatcherGenerator = (route: RouteConfig) => RouteMatcherFunction;
+
 
 export type RouteMatcherUrl = string | RegExp | URL | URLMatcherObject;
 export type RouteMatcherFunction = (callLog: CallLog) => boolean;
 export type RouteMatcher = RouteMatcherUrl | RouteMatcherFunction;
 
+type MatcherGenerator = (route: RouteConfig) => RouteMatcherFunction;
 export interface MatcherDefinition {
   name: string;
   matcher: MatcherGenerator;
@@ -40,14 +40,16 @@ export function isFunctionMatcher (matcher: RouteMatcher | RouteConfig): matcher
   return typeof matcher === 'function';
 }
 
+type UrlMatcherGenerator = (targetString: string) => RouteMatcherFunction;
+
 const stringMatchers: { [key: string]: UrlMatcherGenerator } = {
-  begin: (targetString: string) => ({ url }) => url.indexOf(targetString) === 0,
-  end: (targetString: string) => ({ url }) => url.substr(-targetString.length) === targetString,
-  glob: (targetString: string) => {
+  begin: (targetString) => ({ url }) => url.indexOf(targetString) === 0,
+  end: (targetString) => ({ url }) => url.substr(-targetString.length) === targetString,
+  glob: (targetString) => {
     const urlRX = glob(targetString) as { regex: RegExp };
     return ({ url }) => urlRX.regex.test(url);
   },
-  express: (targetString: string) => {
+  express: (targetString) => {
     const urlRX = regexparam.parse(targetString);
     return (callLog) => {
       const vals = urlRX.pattern.exec(getPath(callLog.url));
@@ -64,7 +66,7 @@ const stringMatchers: { [key: string]: UrlMatcherGenerator } = {
       return true;
     };
   },
-  path: (targetString: string) => ({ url }) => getPath(url) === targetString,
+  path: (targetString) => ({ url }) => getPath(url) === targetString,
 };
 
 const getHeaderMatcher: MatcherGenerator = ({ headers: expectedHeaders }) => {

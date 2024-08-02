@@ -2,7 +2,7 @@ import Router from './Router.js';
 import Route, { RouteName, UserRouteConfig, RouteResponse } from './Route.js';
 import CallHistory, { CallLog } from './CallHistory.ts';
 import { createCallLogFromRequest, createCallLogFromUrlAndOptions } from './RequestUtils.js';
-import { MatcherDefinition, RouteMatcher } from './Matchers.js'
+import { MatcherDefinition, RouteMatcher } from './Matchers.ts'
 
 export interface FetchMockGlobalConfig {
   sendAsJson?: boolean;

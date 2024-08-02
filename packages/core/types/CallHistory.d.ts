@@ -1,10 +1,9 @@
-export default CallHistory;
-export type RouteConfig = import("./Route.js").RouteConfig;
-export type RouteName = import("./Route.js").RouteName;
-export type NormalizedRequestOptions = import("./RequestUtils.js").NormalizedRequestOptions;
-export type RouteMatcher = import("./Matchers.js").RouteMatcher;
-export type FetchMockConfig = import("./FetchMock.js").FetchMockConfig;
-export type CallLog = {
+import { NormalizedRequestOptions } from './RequestUtils.js';
+import { RouteMatcher } from './Matchers.ts';
+import { FetchMockConfig } from './FetchMock.ts';
+import Route, { RouteName, RouteConfig } from './Route.js';
+import Router from './Router.js';
+export interface CallLog {
     args: any[];
     url: string;
     options: NormalizedRequestOptions;
@@ -13,19 +12,19 @@ export type CallLog = {
     route?: Route;
     response?: Response;
     expressParams?: {
-        [x: string]: string;
+        [key: string]: string;
     };
     queryParams?: URLSearchParams;
     pendingPromises: Promise<any>[];
-};
-export type Matched = "matched";
-export type Unmatched = "unmatched";
-export type CallHistoryFilter = RouteName | Matched | Unmatched | boolean | RouteMatcher;
+}
+type Matched = 'matched';
+type Unmatched = 'unmatched';
+type CallHistoryFilter = RouteName | Matched | Unmatched | boolean | RouteMatcher;
 declare class CallHistory {
-    constructor(globalConfig: FetchMockConfig, router: Router);
     callLogs: CallLog[];
-    config: import("./FetchMock.js").FetchMockConfig;
+    config: FetchMockConfig;
     router: Router;
+    constructor(globalConfig: FetchMockConfig, router: Router);
     recordCall(callLog: CallLog): void;
     clear(): void;
     flush(waitForResponseMethods?: boolean): Promise<void>;
@@ -34,5 +33,4 @@ declare class CallHistory {
     lastCall(filter: CallHistoryFilter, options: RouteConfig): CallLog;
     done(routeNames?: RouteName | RouteName[]): boolean;
 }
-import Route from './Route.js';
-import Router from './Router.js';
+export default CallHistory;

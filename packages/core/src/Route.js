@@ -1,12 +1,12 @@
 //@type-check
-import { builtInMatchers } from './Matchers.js';
+import { builtInMatchers } from './Matchers.ts';
 import statusTextMap from './StatusTextMap.js';
 
-/** @typedef {import('./Matchers.js').RouteMatcher} RouteMatcher */
+/** @typedef {import('./Matchers.ts').RouteMatcher} RouteMatcher */
 /** @typedef {import('./CallHistory.js').CallLog} CallLog */
-/** @typedef {import('./Matchers.js').RouteMatcherFunction} RouteMatcherFunction */
-/** @typedef {import('./Matchers.js').RouteMatcherUrl} RouteMatcherUrl */
-/** @typedef {import('./Matchers.js').MatcherDefinition} MatcherDefinition */
+/** @typedef {import('./Matchers.ts').RouteMatcherFunction} RouteMatcherFunction */
+/** @typedef {import('./Matchers.ts').RouteMatcherUrl} RouteMatcherUrl */
+/** @typedef {import('./Matchers.ts').MatcherDefinition} MatcherDefinition */
 /** @typedef {import('./FetchMock.js').FetchMockGlobalConfig} FetchMockGlobalConfig */
 /** @typedef {import('./FetchMock.js').FetchImplementations} FetchImplementations */
 

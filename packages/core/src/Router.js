@@ -1,6 +1,6 @@
 //@type-check
 import Route from './Route.js';
-import { isUrlMatcher, isFunctionMatcher } from './Matchers.js';
+import { isUrlMatcher, isFunctionMatcher } from './Matchers.ts';
 /** @typedef {import('./Route.js').UserRouteConfig} UserRouteConfig */
 /** @typedef {import('./Route.js').RouteConfig} RouteConfig */
 /** @typedef {import('./Route.js').RouteResponse} RouteResponse */
@@ -8,7 +8,7 @@ import { isUrlMatcher, isFunctionMatcher } from './Matchers.js';
 /** @typedef {import('./Route.js').RouteResponseObjectData} RouteResponseObjectData */
 /** @typedef {import('./Route.js').RouteResponseConfig} RouteResponseConfig */
 /** @typedef {import('./Route.js').RouteResponseFunction} RouteResponseFunction */
-/** @typedef {import('./Matchers.js').RouteMatcher} RouteMatcher */
+/** @typedef {import('./Matchers.ts').RouteMatcher} RouteMatcher */
 /** @typedef {import('./FetchMock.js').FetchMockConfig} FetchMockConfig */
 /** @typedef {import('./FetchMock.js')} FetchMock */
 /** @typedef {import('./CallHistory.js').CallLog} CallLog */

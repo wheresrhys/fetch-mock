@@ -1,7 +1,7 @@
 import Router from './Router.js';
 import { RouteName, UserRouteConfig, RouteResponse } from './Route.js';
-import CallHistory from './CallHistory.js';
-import { MatcherDefinition, RouteMatcher } from './Matchers.js';
+import CallHistory from './CallHistory.ts';
+import { MatcherDefinition, RouteMatcher } from './Matchers.ts';
 export interface FetchMockGlobalConfig {
     sendAsJson?: boolean;
     includeContentLength?: boolean;

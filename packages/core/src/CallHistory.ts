@@ -1,5 +1,5 @@
 import { createCallLogFromUrlAndOptions, NormalizedRequestOptions } from './RequestUtils.js';
-import { isUrlMatcher, RouteMatcher } from './Matchers.js';
+import { isUrlMatcher, RouteMatcher } from './Matchers.ts';
 import { FetchMockConfig } from './FetchMock.ts'
 import Route, { RouteName, RouteConfig } from './Route.js';
 import Router from './Router.js';
@@ -21,23 +21,25 @@ type Matched = 'matched';
 type Unmatched = 'unmatched';
 type CallHistoryFilter = RouteName | Matched | Unmatched | boolean | RouteMatcher;
 
-const isName = (filter: CallHistoryFilter): filter is RouteName =>
-  typeof filter === 'string' &&
+function isName (filter: CallHistoryFilter): filter is RouteName {
+  return typeof filter === 'string' &&
   /^[\da-zA-Z\-]+$/.test(filter) &&
   !['matched', 'unmatched'].includes(filter);
+}
 
-const isMatchedOrUnmatched = (filter: CallHistoryFilter): filter is Matched | Unmatched | boolean =>
-  typeof filter === 'boolean' ||
-  ['matched', 'unmatched'].includes(filter as string);
+function isMatchedOrUnmatched (filter: CallHistoryFilter): filter is Matched | Unmatched | boolean {
+  return typeof filter === 'boolean' ||
+  ['matched', 'unmatched'].includes(filter as string)
+}
 
 class CallHistory {
   callLogs: CallLog[];
   config: FetchMockConfig;
   router: Router;
 
-  constructor(globalConfig: FetchMockConfig, router: Router) {
+  constructor(config: FetchMockConfig, router: Router) {
     this.callLogs = [];
-    this.config = globalConfig;
+    this.config = config;
     this.router = router;
   }
 

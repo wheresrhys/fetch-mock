@@ -110,6 +110,12 @@ Match only requests using this http method. Not case-sensitive, e.g. `{method: "
 
 Match only requests that have these headers set, e.g. `{headers: {"Accepts": "text/html"}}`
 
+#### missingHeaders
+
+`{String[]}`
+
+Matches any requests where **all** of a list of header names are missing on a request e.g. `{missingHeaders: ["Authorization"]}`.
+
 ### query
 
 `{Object}`

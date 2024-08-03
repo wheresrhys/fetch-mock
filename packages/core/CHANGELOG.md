@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.8](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.7...core-v0.4.8) (2024-08-03)
+
+
+### Documentation Changes
+
+* document and test behaviour with multiple missing headers ([88d0440](https://github.com/wheresrhys/fetch-mock/commit/88d0440b814a0f3309f49c30d6c81d899ebc65a6))
+
 ## [0.4.7](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.6...core-v0.4.7) (2024-08-02)
 
 

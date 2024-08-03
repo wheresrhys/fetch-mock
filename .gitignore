@@ -16,3 +16,4 @@ coverage/
 
 import-compat/*.js
 import-compat/*.mjs
+test-results

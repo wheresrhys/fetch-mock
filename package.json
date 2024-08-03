@@ -32,7 +32,7 @@
     "prepare": "husky || echo \"husky not available\"",
     "build": "npm run build -w=packages",
     "docs": "npm run start -w docs",
-    "test:ci": "vitest .",
+    "test:ci": "vitest . --reporter=junit --outputFile=test-results/junit.xml",
     "test:legacy": "vitest ./packages/fetch-mock/test/specs",
     "test": "vitest --ui .",
     "test:coverage": "vitest run --coverage ./packages/**/src/__tests__",

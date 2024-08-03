@@ -1,5 +1,16 @@
 # Changelog
 
+## [11.0.0](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v10.1.1...fetch-mock-v11.0.0) (2024-08-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* force fetch-mock major release
+
+### Bug Fixes
+
+* force fetch-mock major release ([1b31416](https://github.com/wheresrhys/fetch-mock/commit/1b314167607b15887feba2f6124a9af9cca81c47))
+
 ## [10.1.1](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v10.1.0...fetch-mock-v10.1.1) (2024-07-23)
 
 

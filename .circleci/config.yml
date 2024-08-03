@@ -71,6 +71,8 @@ jobs:
     steps:
       - *workspace
       - run: npm run test:ci
+      - store_test_results
+          path: test-results
 
   nodefetch3:
     <<: *nodelts

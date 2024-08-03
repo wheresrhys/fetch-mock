@@ -15,3 +15,4 @@ coverage/
 /packages/**/dist
 
 import-compat/ts-*.js
+test-results

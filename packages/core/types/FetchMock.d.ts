@@ -1,3 +1,4 @@
+export const defaultConfig: FetchMockConfig;
 export class FetchMock {
     constructor(config: FetchMockConfig, router?: Router);
     config: FetchMockConfig;
@@ -15,6 +16,10 @@ export class FetchMock {
         includeFallback?: boolean;
     }): this;
     clearHistory(this: FetchMock): FetchMock;
+    mockGlobal(this: FetchMock): FetchMock;
+    unmockGlobal(this: FetchMock): FetchMock;
+    spy(this: FetchMock, matcher?: RouteMatcher | UserRouteConfig, name?: RouteName): FetchMock;
+    spyGlobal(this: FetchMock): FetchMock;
     sticky: {
         (this: FetchMock, matcher: UserRouteConfig): FetchMock;
         (this: FetchMock, matcher: RouteMatcher, response: RouteResponse, options?: UserRouteConfig | string): FetchMock;
@@ -96,12 +101,4 @@ export type FetchImplementations = {
 export type FetchMockConfig = FetchMockGlobalConfig & FetchImplementations;
 import Router from './Router.js';
 import CallHistory from './CallHistory.js';
-declare const fetchMock: FetchMockStandalone;
-declare class FetchMockStandalone extends FetchMock {
-    mockGlobal(this: FetchMockStandalone): FetchMockStandalone;
-    unmockGlobal(this: FetchMockStandalone): FetchMockStandalone;
-    spy(this: FetchMockStandalone, matcher?: RouteMatcher | UserRouteConfig, name?: RouteName): FetchMockStandalone;
-    spyGlobal(this: FetchMockStandalone): FetchMockStandalone;
-    createInstance(): FetchMockStandalone;
-    #private;
-}
+declare const fetchMock: FetchMock;

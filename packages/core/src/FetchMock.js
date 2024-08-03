@@ -29,7 +29,7 @@ import * as requestUtils from './RequestUtils.js';
 /** @typedef {FetchMockGlobalConfig & FetchImplementations} FetchMockConfig */
 
 /** @type {FetchMockConfig} */
-const defaultConfig = {
+export const defaultConfig = {
 	includeContentLength: true,
 	sendAsJson: true,
 	matchPartialBody: false,
@@ -109,6 +109,8 @@ export class FetchMock {
 			fallbackRoute: router ? router.fallbackRoute : null,
 		});
 		this.callHistory = new CallHistory(this.config, this.router);
+		// @ts-ignore
+		this.fetchHandler.fetchMock = this;
 	}
 	/**
 	 *
@@ -203,6 +205,46 @@ export class FetchMock {
 		this.callHistory.clear();
 		return this;
 	}
+
+	/**
+	 * @this {FetchMock}
+	 */
+	mockGlobal() {
+		globalThis.fetch = this.fetchHandler.bind(this);
+		return this;
+	}
+	/**
+	 * @this {FetchMock}
+	 */
+	unmockGlobal() {
+		globalThis.fetch = this.config.fetch;
+		return this;
+	}
+
+	/**
+	 * @param {RouteMatcher | UserRouteConfig} [matcher]
+	 * @param {RouteName} [name]
+	 * @this {FetchMock}
+	 */
+	spy(matcher, name) {
+		if (matcher) {
+			// @ts-ignore
+			this.route(matcher, ({ args }) => this.config.fetch(...args), name);
+		} else {
+			// @ts-ignore
+			this.catch(({ args }) => this.config.fetch(...args));
+		}
+
+		return this;
+	}
+	/**
+	 * @this {FetchMock}
+	 */
+	spyGlobal() {
+		this.mockGlobal();
+		return this.spy();
+	}
+
 	sticky = defineShorthand({ sticky: true });
 	once = defineShorthand({ repeat: 1 });
 	any = defineGreedyShorthand({});
@@ -221,55 +263,8 @@ export class FetchMock {
 	patchOnce = defineShorthand({ method: 'patch', repeat: 1 });
 }
 
-class FetchMockStandalone extends FetchMock {
-	/** @type {typeof fetch} */
-	#originalFetch = null;
-	/**
-	 * @this {FetchMockStandalone}
-	 */
-	mockGlobal() {
-		globalThis.fetch = this.fetchHandler.bind(this);
-		return this;
-	}
-	/**
-	 * @this {FetchMockStandalone}
-	 */
-	unmockGlobal() {
-		globalThis.fetch = this.config.fetch;
-		return this;
-	}
-
-	/**
-	 * @param {RouteMatcher | UserRouteConfig} [matcher]
-	 * @param {RouteName} [name]
-	 * @this {FetchMockStandalone}
-	 */
-	spy(matcher, name) {
-		if (matcher) {
-			// @ts-ignore
-			this.route(matcher, ({ args }) => this.config.fetch(...args), name);
-		} else {
-			// @ts-ignore
-			this.catch(({ args }) => this.config.fetch(...args));
-		}
-
-		return this;
-	}
-	/**
-	 * @this {FetchMockStandalone}
-	 */
-	spyGlobal() {
-		this.mockGlobal();
-		return this.spy();
-	}
-
-	createInstance() {
-		return new FetchMockStandalone({ ...this.config }, this.router);
-	}
-}
-
-const fetchMock = new FetchMockStandalone({
+const fetchMock = new FetchMock({
 	...defaultConfig,
-}).createInstance();
+});
 
 export default fetchMock;

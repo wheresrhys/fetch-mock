@@ -133,23 +133,6 @@ describe('CallHistory', () => {
 						}),
 					);
 				});
-				it('when called with Request instance and arbitrary option', async () => {
-					fm.catch();
-					const req = new Request('http://a.com/', {
-						method: 'POST',
-					});
-					await fm.fetchHandler(req, { arbitraryOption: true });
-					expect(fm.callHistory.calls()[0]).toEqual(
-						expect.objectContaining({
-							url: 'http://a.com/',
-							options: expect.objectContaining({
-								method: 'POST',
-								arbitraryOption: true,
-							}),
-							request: req,
-						}),
-					);
-				});
 				// Not sure why this was in the old test suite
 				it.skip('Not make default signal available in options when called with Request instance using signal', () => {
 					fm.catch();

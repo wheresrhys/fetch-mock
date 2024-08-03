@@ -72,10 +72,9 @@ export function createCallLogFromUrlAndOptions(url, options) {
 /**
  *
  * @param {Request} request
- * @param {RequestInit} options
  * @returns {Promise<CallLog>}
  */
-export async function createCallLogFromRequest(request, options) {
+export async function createCallLogFromRequest(request) {
 	/** @type {Promise<any>[]} */
 	const pendingPromises = [];
 	/** @type {NormalizedRequestOptions} */
@@ -92,12 +91,12 @@ export async function createCallLogFromRequest(request, options) {
 	}
 	const url = normalizeUrl(request.url);
 	const callLog = {
-		args: [request, options],
+		args: [request],
 		url,
 		queryParams: new URLSearchParams(getQuery(url)),
-		options: Object.assign(derivedOptions, options || {}),
+		options: derivedOptions,
 		request: request,
-		signal: (options && options.signal) || request.signal,
+		signal: request.signal,
 		pendingPromises,
 	};
 	return callLog;

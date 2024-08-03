@@ -11,7 +11,7 @@ import Router from './Router.js';
 
 /**
  * @typedef CallLog
- * @property {any[]} args
+ * @property {[string | URL , RequestInit] | Request[]} args
  * @property {string} url
  * @property {NormalizedRequestOptions} options
  * @property {Request} [request]

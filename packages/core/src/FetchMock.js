@@ -129,10 +129,7 @@ export class FetchMock {
 		let callLog;
 
 		if (requestInput instanceof this.config.Request) {
-			callLog = await requestUtils.createCallLogFromRequest(
-				requestInput,
-				requestInit,
-			);
+			callLog = await requestUtils.createCallLogFromRequest(requestInput);
 		} else {
 			callLog = requestUtils.createCallLogFromUrlAndOptions(
 				requestInput,

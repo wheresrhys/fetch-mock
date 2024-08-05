@@ -101,6 +101,7 @@ jobs:
       - run: npm run compat:js:cjs -w import-compat
       - run: npm run compat:ts:esm -w import-compat
       - run: npm run compat:js:esm -w import-compat
+      - run: npm run compat:mts:esm -w import-compat
   # chrome:
   #   <<: *browsers
   #   steps:

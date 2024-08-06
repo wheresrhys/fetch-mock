@@ -2,14 +2,20 @@
   "name": "@fetch-mock/core",
   "description": "Utility for creating mock fetch implementation",
   "version": "0.4.8",
-  "main": "./dist/commonjs.js",
+  "main": "./dist/commonjs.cjs",
   "module": "./src/index.js",
   "exports": {
-    "types": "./types/index.d.ts",
     "browser": "./src/index.js",
-    "import": "./src/index.js",
-    "require": "./dist/commonjs.js"
+    "import": {
+      "default": "./src/index.js",
+      "types": "./types/index.d.ts"
+    },
+    "require": {
+      "types": "./dist/types/index.d.cts",
+      "default": "./dist/commonjs.cjs"
+    }
   },
+  "type": "module",
   "types": "./types/index.d.ts",
   "scripts": {
     "build": "rollup -c"

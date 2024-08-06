@@ -2,15 +2,21 @@
   "name": "fetch-mock",
   "version": "11.0.0",
   "description": "Mock http requests made using fetch (or isomorphic-fetch)",
-  "main": "./dist/commonjs.js",
+  "main": "./dist/commonjs.cjs",
   "module": "./src/index.js",
   "exports": {
-    "types": "./types/index.d.ts",
     "browser": "./src/index.js",
-    "import": "./src/index.js",
-    "require": "./dist/commonjs.js"
+    "import": {
+      "default": "./src/index.js",
+      "types": "./types/index.d.ts"
+    },
+    "require": {
+      "types": "./dist/types/index.d.cts",
+      "default": "./dist/commonjs.cjs"
+    }
   },
   "types": "./types/index.d.ts",
+  "type": "module",
   "scripts": {
     "build": "rollup -c"
   },

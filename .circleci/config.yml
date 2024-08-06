@@ -97,11 +97,7 @@ jobs:
     <<: *nodelts
     steps:
       - *workspace
-      - run: npm run compat:ts:cjs -w import-compat
-      - run: npm run compat:js:cjs -w import-compat
-      - run: npm run compat:ts:esm -w import-compat
-      - run: npm run compat:js:esm -w import-compat
-      - run: npm run compat:mts:esm -w import-compat
+      - run: npm run compat -w import-compat
   # chrome:
   #   <<: *browsers
   #   steps:

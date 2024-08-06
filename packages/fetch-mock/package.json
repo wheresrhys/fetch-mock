@@ -11,7 +11,7 @@
       "types": "./types/index.d.ts"
     },
     "require": {
-      "types": "./dist/types/index.d.cts",
+      "types": "./dist/types/index.d.ts",
       "default": "./dist/commonjs.cjs"
     }
   },

@@ -7,7 +7,7 @@
     "compat:ts:cjs": "tsc ts-cjs.ts  --target esnext --moduleResolution nodenext --module nodenext && node ts-cjs.js || echo \"\\033[0;31mfailed ts:cjs\\033[0m\"",
     "compat:js:esm": "cp ts-esm.ts js-esm.mjs && node js-esm.mjs || echo \"\\033[0;31mfailed js:esm\\033[0m\"",
     "compat:js:cjs": "cp ts-cjs.ts js-cjs.js && node js-cjs.js || echo \"\\033[0;31mfailed js:cjs\\033[0m\"",
-    "compat": "npm run compat:mts:esm && npm run compat:ts:esm && npm run compat:ts:cjs && npm run compat:js:esm && npm run compat:js:cjs"
+    "compat:module": "npm run compat:mts:esm && npm run compat:ts:esm && npm run compat:ts:cjs && npm run compat:js:esm && npm run compat:js:cjs"
   }
 }
 

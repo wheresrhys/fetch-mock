@@ -5,7 +5,7 @@
             "dom",
             "dom.iterable"
         ],
-        "moduleResolution": "bundler",
+        "moduleResolution": "nodenext",
         "module": "NodeNext",
         "allowJs": true,
         "checkJs": true,

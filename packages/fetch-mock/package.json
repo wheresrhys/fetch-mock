@@ -2,7 +2,7 @@
   "name": "fetch-mock",
   "version": "11.0.0",
   "description": "Mock http requests made using fetch (or isomorphic-fetch)",
-  "main": "./dist/commonjs.cjs",
+  "main": "./dist/commonjs.js",
   "module": "./src/index.js",
   "exports": {
     "browser": "./src/index.js",
@@ -12,7 +12,7 @@
     },
     "require": {
       "types": "./dist/types/index.d.ts",
-      "default": "./dist/commonjs.cjs"
+      "default": "./dist/commonjs.js"
     }
   },
   "types": "./types/index.d.ts",

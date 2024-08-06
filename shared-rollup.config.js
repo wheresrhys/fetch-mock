@@ -19,7 +19,7 @@ export default {
 	input: './src/index.js',
 	output: {
 		dir: './dist',
-		entryFileNames: 'commonjs.cjs',
+		entryFileNames: 'commonjs.js',
 		format: 'commonjs',
 		exports: 'named',
 	},

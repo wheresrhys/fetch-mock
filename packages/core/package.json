@@ -2,7 +2,7 @@
   "name": "@fetch-mock/core",
   "description": "Utility for creating mock fetch implementation",
   "version": "0.4.8",
-  "main": "./dist/commonjs.cjs",
+  "main": "./dist/commonjs.js",
   "module": "./src/index.js",
   "exports": {
     "browser": "./src/index.js",
@@ -12,7 +12,7 @@
     },
     "require": {
       "types": "./dist/types/index.d.ts",
-      "default": "./dist/commonjs.cjs"
+      "default": "./dist/commonjs.js"
     }
   },
   "type": "module",

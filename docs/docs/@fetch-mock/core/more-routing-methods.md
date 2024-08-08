@@ -15,6 +15,8 @@ Specifies how to respond to calls to `fetch` that don't match any routes.
 
 It accepts any [response](#api-mockingmock_response) compatible with `.route()`. If no argument is passed, then every unmatched call will receive a `200` response.
 
+See also [.spy()](/fetch-mock/docs/@fetch-mock/core/mocking-and-spying#spymatcher-name)
+
 ## .sticky()
 
 Shorthand for `mock()` which creates a route that persists even when `restore()`, `reset()` or `resetbehavior()` are called;

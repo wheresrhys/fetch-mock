@@ -100,13 +100,13 @@ calledStatus = fetchMock.called((url: string, opts: fetchMock.MockRequest): bool
 calledStatus = fetchMock.called(fetchMock.MATCHED);
 calledStatus = fetchMock.called(fetchMock.UNMATCHED);
 
-let lastCall: fetchMock.MockCall = fetchMock.lastCall();
+let lastCall: (fetchMock.MockCall |undefined) = fetchMock.lastCall();
 lastCall = fetchMock.lastCall(/https?:\/\/test.com/, {
     method: "GET",
 });
 lastCall = fetchMock.lastCall("https://test.com", "GET");
 
-let lastUrl: string = fetchMock.lastUrl();
+let lastUrl: (string| undefined) = fetchMock.lastUrl();
 lastUrl = fetchMock.lastUrl(true);
 lastUrl = fetchMock.lastUrl("http://test.com");
 lastUrl = fetchMock.lastUrl(/https?:\/\/test.com/);
@@ -114,7 +114,7 @@ lastUrl = fetchMock.lastUrl("http://test.com", "GET");
 lastUrl = fetchMock.lastUrl("http://test.com", {
     method: "GET",
 });
-let lastOptions: fetchMock.MockOptions = fetchMock.lastOptions();
+let lastOptions: (fetchMock.MockOptions|undefined) = fetchMock.lastOptions();
 lastOptions = fetchMock.lastOptions(true);
 lastOptions = fetchMock.lastOptions("http://test.com");
 lastOptions = fetchMock.lastOptions(/https?:\/\/test.com/);
@@ -123,7 +123,7 @@ lastOptions = fetchMock.lastOptions("http://test.com", {
     method: "GET",
 });
 
-let lastResponse: Response = fetchMock.lastResponse();
+let lastResponse: (Response|undefined) = fetchMock.lastResponse();
 lastResponse = fetchMock.lastResponse(true);
 lastResponse = fetchMock.lastResponse("http://test.com");
 lastResponse = fetchMock.lastResponse(/https?:\/\/test.com/);

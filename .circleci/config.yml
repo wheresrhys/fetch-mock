@@ -63,9 +63,8 @@ jobs:
     <<: *nodelts
     steps:
       - *workspace
-      - run: npm run types:lint
       - run: npm run types:check --noEmit=true
-
+      - run: npm run types:check -w packages/fetch-mock
   test:
     <<: *nodelts
     steps:

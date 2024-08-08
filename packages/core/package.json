@@ -5,11 +5,17 @@
   "main": "./dist/commonjs.js",
   "module": "./src/index.js",
   "exports": {
-    "types": "./types/index.d.ts",
     "browser": "./src/index.js",
-    "import": "./src/index.js",
-    "require": "./dist/commonjs.js"
+    "import": {
+      "default": "./src/index.js",
+      "types": "./types/index.d.ts"
+    },
+    "require": {
+      "types": "./dist/types/index.d.ts",
+      "default": "./dist/commonjs.js"
+    }
   },
+  "type": "module",
   "types": "./types/index.d.ts",
   "scripts": {
     "build": "rollup -c"

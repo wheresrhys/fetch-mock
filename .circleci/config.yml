@@ -93,14 +93,11 @@ jobs:
       - *workspace
       - run: npm run build
       - run: npm run test:jest
-  import-compat:
+  module-compat:
     <<: *nodelts
     steps:
       - *workspace
-      - run: npm run compat:ts:cjs -w import-compat
-      - run: npm run compat:js:cjs -w import-compat
-      - run: npm run compat:ts:esm -w import-compat
-      - run: npm run compat:js:esm -w import-compat
+      - run: npm run compat:module
   # chrome:
   #   <<: *browsers
   #   steps:
@@ -156,7 +153,7 @@ workflows:
       - jest:
           <<: *triggerable-by-tag
           <<: *run-after-first-jobs
-      - import-compat:
+      - module-compat:
           <<: *triggerable-by-tag
           requires:
             - build
@@ -172,7 +169,7 @@ workflows:
             # - chrome
             # - firefox
             - build
-            # - import-compat
+            - module-compat
             - typelint
             - commonjs
             - jest

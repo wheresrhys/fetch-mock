@@ -8,17 +8,17 @@
     "browser": "./dist/esm/index.js",
     "import": {
       "default": "./dist/esm/index.js",
-      "types": "./dist/esm/types/index.d.ts"
+      "types": "./dist/esm/index.d.ts"
     },
     "require": {
-      "types": "./dist/cjs/types/index.d.ts",
+      "types": "./dist/cjs/index.d.ts",
       "default": "./dist/cjs/index.js"
     }
   },
   "type": "module",
-  "types": "./dist/esm/types/index.d.ts",
+  "types": "./dist/esm/index.d.ts",
   "scripts": {
-    "build": "rm -rf dist && rollup -c --environment FORMAT:cjs && rollup -c --environment FORMAT:esm"
+    "build": "rm -rf dist && tsc -p tsconfig.esm.json && tsc -p tsconfig.cjs.json && node ./scripts/declare-dist-type.js"
   },
   "repository": {
     "type": "git",

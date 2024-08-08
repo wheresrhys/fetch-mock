@@ -7,11 +7,6 @@ references:
     filters:
       tags:
         only: /.*/
-  run-after-first-jobs: &run-after-first-jobs
-    requires:
-      - test
-      - lint
-      - build
 
   nodelts: &nodelts
     docker:
@@ -31,6 +26,15 @@ references:
       root: .
       paths:
         - .
+  after-build-test-lint: &after-build-test-lint
+    requires:
+      - test
+      - lint
+      - build
+  after-build-lint: &after-build-lint
+    requires:
+      - lint
+      - build
 
 jobs:
   checkout_code:
@@ -134,40 +138,40 @@ workflows:
       - lint:
           <<: *triggerable-by-tag
           requires:
-            - build
+            - checkout_code
       - build:
           <<: *triggerable-by-tag
           requires:
             - checkout_code
       - typecheck:
           <<: *triggerable-by-tag
-          requires:
-            - build
+          <<: *after-build-lint
       - nodefetch3:
           <<: *triggerable-by-tag
-          <<: *run-after-first-jobs
+          <<: *after-build-test-lint
       - commonjs:
           <<: *triggerable-by-tag
-          <<: *run-after-first-jobs
+          <<: *after-build-test-lint
       - jest:
           <<: *triggerable-by-tag
-          <<: *run-after-first-jobs
+          <<: *after-build-lint
       - module-compat:
           <<: *triggerable-by-tag
-          requires:
-            - build
+          <<: *after-build-lint
       # - chrome:
       #     <<: *triggerable-by-tag
-      #     <<: *run-after-first-jobs
+      #     <<: *after-build-test-lint
       # - firefox:
       #     <<: *triggerable-by-tag
-      #     <<: *run-after-first-jobs
+      #     <<: *after-build-test-lint
       - publish:
           requires:
             - nodefetch3
             # - chrome
             # - firefox
             - build
+            - test
+            - lint
             - module-compat
             - typecheck
             - commonjs

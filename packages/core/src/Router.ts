@@ -144,8 +144,9 @@ const resolveUntilResponseConfig = async (callLog) => {
 };
 
 export default class Router {
-	/** @type {Route[]} */
-	routes = [];
+	routes: Route[];
+	config: FetchMockConfig;
+	fallbackRoute: Route;
 	/**
 	 * @param {FetchMockConfig} fetchMockConfig
 	 * @param {object} [inheritedRoutes]
@@ -168,11 +169,7 @@ export default class Router {
 		);
 	}
 
-	/**
-	 * @param {CallLog} callLog
-	 * @returns {Promise<Response>}
-	 */
-	execute(callLog) {
+	execute(callLog: CallLog): Promise<Response> {
 		throwSpecExceptions(callLog);
 		// TODO make abort vs reject neater
 		return new Promise(async (resolve, reject) => {
@@ -389,14 +386,11 @@ export default class Router {
 		});
 		this.fallbackRoute.config.isFallback = true;
 	}
-	/**
-	 *
-	 * @param {object} [options]
-	 * @param {string[]} [options.names]
-	 * @param {boolean} [options.includeSticky]
-	 * @param {boolean} [options.includeFallback]
-	 */
-	removeRoutes({ names, includeSticky, includeFallback } = {}) {
+	removeRoutes({ names, includeSticky, includeFallback }: {
+		names?: string[];
+		includeSticky?: boolean;
+		includeFallback?: boolean;
+	} = {}) {
 		includeFallback = includeFallback ?? true;
 		this.routes = this.routes.filter(({ config: { sticky, name } }) => {
 			if (sticky && !includeSticky) {

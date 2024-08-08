@@ -18,7 +18,7 @@
   "types": "./dist/esm/types/index.d.ts",
   "type": "module",
   "scripts": {
-    "build": "rollup -c --environment FORMAT:cjs && rollup -c --environment FORMAT:esm",
+    "build": "rm -rf dist && rollup -c --environment FORMAT:cjs && rollup -c --environment FORMAT:esm",
     "types:check": "tsd -t types/index.d.ts -f types/index.test-d.ts"
   },
   "repository": {

@@ -1,5 +1,5 @@
 import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
-import fetchMock from '../../FetchMock.js';
+import fetchMock from '../../FetchMock';
 
 describe('mock and spy', () => {
 	let fm;

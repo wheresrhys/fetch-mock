@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.9](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.8...core-v0.4.9) (2024-08-08)
+
+
+### Bug Fixes
+
+* add license file to each package ([9b36f89](https://github.com/wheresrhys/fetch-mock/commit/9b36f892ed19cd381b1f8ebbd94a28773637b9ec))
+
 ## [0.4.8](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.7...core-v0.4.8) (2024-08-03)
 
 

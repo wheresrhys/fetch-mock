@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.10](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.9...core-v0.4.10) (2024-08-08)
+
+
+### Bug Fixes
+
+* fix core package build ([90bbe76](https://github.com/wheresrhys/fetch-mock/commit/90bbe76ab384ec5cefeb17f19ca06ca386cbbde5))
+
 ## [0.4.9](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.8...core-v0.4.9) (2024-08-08)
 
 

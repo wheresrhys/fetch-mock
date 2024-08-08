@@ -44,7 +44,7 @@ describe('mock and spy', () => {
 			const response = await fetch('http://a.com', { method: 'post' });
 			expect(response.status).toEqual(200);
 			const callLog = fm.callHistory.lastCall();
-			expect(callLog.args).toEqual(['http://a.com/', { method: 'post' }]);
+			expect(callLog.args).toEqual(['http://a.com', { method: 'post' }]);
 		});
 
 		it('restores global fetch', () => {

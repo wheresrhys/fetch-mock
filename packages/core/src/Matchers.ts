@@ -22,12 +22,11 @@ export type RouteMatcherFunction = (callLog: CallLog) => boolean;
 type MatcherGenerator = (route: RouteConfig) => RouteMatcherFunction;
 export type RouteMatcher = RouteMatcherUrl | RouteMatcherFunction;
 
-/**
- * @typedef MatcherDefinition
- * @property {string} name
- * @property {MatcherGenerator} matcher
- * @property  {boolean} [usesBody]
- */
+export type MatcherDefinition = {
+	name: string;
+	matcher: MatcherGenerator;
+	usesBody?: boolean;
+};
 
 /**
  * @param {RouteMatcher | RouteConfig} matcher

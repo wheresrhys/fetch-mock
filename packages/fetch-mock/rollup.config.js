@@ -4,8 +4,10 @@ import copy from 'rollup-plugin-copy';
 import { writeFile, mkdir } from 'fs/promises';
 import sourcemaps from 'rollup-plugin-sourcemaps';
 
-function createPackageJson(type, location) {
-	const pkg = { type };
+function createPackageJson() {
+	const pkg = { type: longFormatNames[process.env.FORMAT] };
+
+	const location = `./dist/${process.env.FORMAT}`;
 
 	return {
 		name: 'createPackageJson',
@@ -16,55 +18,32 @@ function createPackageJson(type, location) {
 	};
 }
 
-const configs = {
-	cjs: {
-		input: './src/index.js',
-		output: {
-			sourcemap: true,
-			dir: './dist/cjs',
-			entryFileNames: 'index.js',
-			format: 'cjs',
-			exports: 'named',
-		},
-		plugins: [
-			nodeResolve({ preferBuiltins: false }),
-			commonjs(),
-			sourcemaps(),
-			copy({
-				targets: [
-					{
-						src: './types/*.d.ts',
-						dest: 'dist/cjs/types',
-					},
-				],
-			}),
-			createPackageJson('cjs', './dist/cjs'),
-		],
-	},
-
-	esm: {
-		input: './src/index.js',
-		output: {
-			sourcemap: true,
-			dir: './dist/esm',
-			entryFileNames: 'index.js',
-			format: 'esm',
-			exports: 'named',
-		},
-		plugins: [
-			nodeResolve({ preferBuiltins: false }),
-			commonjs(),
-			copy({
-				targets: [
-					{
-						src: './types/*.d.ts',
-						dest: 'dist/esm/types',
-					},
-				],
-			}),
-			createPackageJson('module', './dist/esm'),
-		],
-	},
+const longFormatNames = {
+	cjs: 'commonjs',
+	esm: 'module',
 };
 
-export default configs[process.env.FORMAT];
+export default {
+	input: './src/index.js',
+	output: {
+		sourcemap: true,
+		dir: `./dist/${process.env.FORMAT}`,
+		entryFileNames: 'index.js',
+		format: process.env.FORMAT,
+		exports: 'named',
+	},
+	plugins: [
+		nodeResolve({ preferBuiltins: false }),
+		commonjs(),
+		sourcemaps(),
+		copy({
+			targets: [
+				{
+					src: './types/*.d.ts',
+					dest: `dist/${process.env.FORMAT}/types`,
+				},
+			],
+		}),
+		createPackageJson(),
+	],
+};

@@ -135,7 +135,7 @@ workflows:
       - lint:
           <<: *triggerable-by-tag
           requires:
-            - checkout_code
+            - build
       - build:
           <<: *triggerable-by-tag
           requires:

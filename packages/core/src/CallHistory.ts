@@ -79,11 +79,11 @@ class CallHistory {
 
 		if (isMatchedOrUnmatched(filter)) {
 			if (
-				([true, 'matched']).includes(filter)
+				([true, 'matched'] as CallHistoryFilter[]).includes(filter)
 			) {
 				calls = calls.filter(({ route }) => !route.config.isFallback);
 			} else if (
-				([false, 'unmatched']).includes(
+				([false, 'unmatched'] as CallHistoryFilter).includes(
 					filter,
 				)
 			) {

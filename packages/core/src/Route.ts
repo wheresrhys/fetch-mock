@@ -9,6 +9,7 @@ import statusTextMap from './StatusTextMap.js';
 /** @typedef {import('./Matchers.js').MatcherDefinition} MatcherDefinition */
 /** @typedef {import('./FetchMock.js').FetchMockGlobalConfig} FetchMockGlobalConfig */
 /** @typedef {import('./FetchMock.js').FetchImplementations} FetchImplementations */
+
 export type UserRouteSpecificConfig = {
   name?: RouteName;
   method?: string;
@@ -86,10 +87,7 @@ e.g. {"body": {"status: "registered"}}`);
  * @class Route
  */
 class Route {
-	/**
-	 * @param {RouteConfig} config
-	 */
-	constructor(config) {
+  constructor(config: RouteConfig) {
 		this.config = config;
 		this.#sanitize();
 		this.#validate();
@@ -98,10 +96,8 @@ class Route {
 		this.#delayResponse();
 	}
 
-	/** @type {RouteConfig} */
-	config = {};
-	/** @type {RouteMatcherFunction=} */
-	matcher = null;
+	config: RouteConfig;
+  matcher: RouteMatcherFunction;
 	/**
 	 * @returns {void}
 	 */

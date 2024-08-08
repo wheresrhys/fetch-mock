@@ -7,11 +7,6 @@ references:
     filters:
       tags:
         only: /.*/
-  run-after-first-jobs: &run-after-first-jobs
-    requires:
-      - test
-      - lint
-      - build
 
   nodelts: &nodelts
     docker:
@@ -31,6 +26,15 @@ references:
       root: .
       paths:
         - .
+  after-build-test-lint: &after-build-test-lint
+    requires:
+      - test
+      - lint
+      - build
+  after-build-lint: &after-build-lint
+    requires:
+      - lint
+      - build
 
 jobs:
   checkout_code:
@@ -59,13 +63,12 @@ jobs:
       - run: npm run lint:ci
       - run: npm run prettier:ci
 
-  typelint:
+  typecheck:
     <<: *nodelts
     steps:
       - *workspace
-      - run: npm run types:lint
       - run: npm run types:check --noEmit=true
-
+      - run: npm run types:check -w packages/fetch-mock
   test:
     <<: *nodelts
     steps:
@@ -140,37 +143,37 @@ workflows:
           <<: *triggerable-by-tag
           requires:
             - checkout_code
-      - typelint:
+      - typecheck:
           <<: *triggerable-by-tag
-          requires:
-            - checkout_code
+          <<: *after-build-lint
       - nodefetch3:
           <<: *triggerable-by-tag
-          <<: *run-after-first-jobs
+          <<: *after-build-test-lint
       - commonjs:
           <<: *triggerable-by-tag
-          <<: *run-after-first-jobs
+          <<: *after-build-test-lint
       - jest:
           <<: *triggerable-by-tag
-          <<: *run-after-first-jobs
+          <<: *after-build-lint
       - module-compat:
           <<: *triggerable-by-tag
-          requires:
-            - build
+          <<: *after-build-lint
       # - chrome:
       #     <<: *triggerable-by-tag
-      #     <<: *run-after-first-jobs
+      #     <<: *after-build-test-lint
       # - firefox:
       #     <<: *triggerable-by-tag
-      #     <<: *run-after-first-jobs
+      #     <<: *after-build-test-lint
       - publish:
           requires:
             - nodefetch3
             # - chrome
             # - firefox
             - build
+            - test
+            - lint
             - module-compat
-            - typelint
+            - typecheck
             - commonjs
             - jest
           filters:

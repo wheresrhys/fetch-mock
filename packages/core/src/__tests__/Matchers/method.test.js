@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import Route from '../../Route.js';
+import Route from '../../Route';
 
 describe('method matching', () => {
 	it('match any method by default', () => {

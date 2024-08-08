@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import fetchMock from '../../FetchMock.js';
+import fetchMock from '../../FetchMock';
 
 describe('Routing', () => {
 	let fm;

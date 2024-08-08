@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import Route from '../../Route.js';
+import Route from '../../Route';
 
 describe('url matching', () => {
 	it('match exact strings', () => {

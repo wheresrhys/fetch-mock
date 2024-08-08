@@ -1,9 +1,3 @@
-//@type-check
-/** @typedef {import('./Route.js').RouteConfig} RouteConfig */
-/** @typedef {import('./Route.js').RouteName} RouteName */
-/** @typedef {import('./RequestUtils.js').NormalizedRequestOptions} NormalizedRequestOptions */
-/** @typedef {import('./Matchers.js').RouteMatcher} RouteMatcher */
-/** @typedef {import('./FetchMock.js').FetchMockConfig} FetchMockConfig */
 import { createCallLogFromUrlAndOptions, NormalizedRequestOptions } from './RequestUtils.js';
 import { isUrlMatcher, RouteMatcher } from './Matchers.js';
 import Route, {RouteConfig, RouteName} from './Route.js';
@@ -36,9 +30,6 @@ const isName = (filter: CallHistoryFilter): filter is RouteName =>
 const isMatchedOrUnmatched = (filter: CallHistoryFilter): filter is (Matched | Unmatched | boolean) =>
 	typeof filter === 'boolean' ||
 	(['matched', 'unmatched']).includes(filter);
-
-
-
 
 class CallHistory {
 	callLogs: CallLog[];

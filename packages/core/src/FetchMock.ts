@@ -11,22 +11,18 @@ import * as requestUtils from './RequestUtils.js';
 /** @typedef {import('./CallHistory.js').CallLog} CallLog */
 /** @typedef {import('./Route.js').RouteResponseFunction} RouteResponseFunction */
 
-/**
- * @typedef FetchMockGlobalConfig
- * @property {boolean} [sendAsJson]
- * @property {boolean} [includeContentLength]
- * @property {boolean} [matchPartialBody]
- */
-
-/**
- * @typedef FetchImplementations
- * @property {typeof fetch} [fetch]
- * @property {typeof Headers} [Headers]
- * @property {typeof Request} [Request]
- * @property {typeof Response} [Response]
- */
-
-/** @typedef {FetchMockGlobalConfig & FetchImplementations} FetchMockConfig */
+export type FetchMockGlobalConfig = {
+	sendAsJson?: boolean;
+	includeContentLength?: boolean;
+	matchPartialBody?: boolean;
+};
+export type FetchImplementations = {
+	fetch?: typeof fetch;
+	Headers?: typeof Headers;
+	Request?: typeof Request;
+	Response?: typeof Response;
+};
+export type FetchMockConfig = FetchMockGlobalConfig & FetchImplementations;
 
 /** @type {FetchMockConfig} */
 const defaultConfig = {

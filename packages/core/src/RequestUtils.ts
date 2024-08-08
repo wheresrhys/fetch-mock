@@ -4,14 +4,14 @@
 const absoluteUrlRX = new RegExp('^[a-z]+://|^data:', 'i');
 const protocolRelativeUrlRX = new RegExp('^//', 'i');
 
-/**
- * @typedef DerivedRequestOptions
- * @property  {string} method
- * @property  {string} [body]
- * @property  {{ [key: string]: string }} [headers]
- */
+interface DerivedRequestOptions {
+	method: string;
+	body?: string;
+	headers?: { [key: string]: string };
+}
 
-/** @typedef {RequestInit | (RequestInit & DerivedRequestOptions) } NormalizedRequestOptions */
+export type NormalizedRequestOptions = RequestInit | (RequestInit & DerivedRequestOptions);
+
 /** @typedef {import('./CallHistory.js').CallLog} CallLog */
 
 /**

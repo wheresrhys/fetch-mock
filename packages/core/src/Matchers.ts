@@ -16,11 +16,11 @@ import { normalizeHeaders, getPath, normalizeUrl } from './RequestUtils.js';
  * @property {string} [path]
  * @property {RegExp} [regexp]
  */
-/** @typedef {string | RegExp | URL | URLMatcherObject} RouteMatcherUrl */
-/** @typedef {function(string): RouteMatcherFunction} UrlMatcherGenerator */
-/** @typedef {function(CallLog): boolean} RouteMatcherFunction */
-/** @typedef {function(RouteConfig): RouteMatcherFunction} MatcherGenerator */
-/** @typedef {RouteMatcherUrl | RouteMatcherFunction} RouteMatcher */
+export type RouteMatcherUrl = string | RegExp | URL | URLMatcherObject;
+type UrlMatcherGenerator = (targetString: string) => RouteMatcherFunction;
+export type RouteMatcherFunction = (callLog: CallLog) => boolean;
+type MatcherGenerator = (route: RouteConfig) => RouteMatcherFunction;
+export type RouteMatcher = RouteMatcherUrl | RouteMatcherFunction;
 
 /**
  * @typedef MatcherDefinition

@@ -10,56 +10,54 @@ import statusTextMap from './StatusTextMap.js';
 /** @typedef {import('./FetchMock.js').FetchMockGlobalConfig} FetchMockGlobalConfig */
 /** @typedef {import('./FetchMock.js').FetchImplementations} FetchImplementations */
 
-/**
- * @typedef UserRouteSpecificConfig
- * @property {RouteName} [name]
- * @property {string} [method]
- * @property {{ [key: string]: string | number  }} [headers]
- * @property {string[]} [missingHeaders]
- * @property {{ [key: string]: string }} [query]
- * @property {{ [key: string]: string }} [params]
- * @property {object} [body]
- * @property {RouteMatcherFunction} [matcherFunction]
- * @property {RouteMatcherUrl} [url]
- * @property {RouteResponse | RouteResponseFunction} [response]
- * @property {number} [repeat]
- * @property {number} [delay]
- * @property {boolean} [sticky]
- */
-
-/**
- * @typedef InternalRouteConfig
- * @property {boolean} [usesBody]
- * @property {boolean} [isFallback]
- */
-
-/** @typedef {UserRouteSpecificConfig & FetchMockGlobalConfig} UserRouteConfig */
-/** @typedef {UserRouteConfig & FetchImplementations & InternalRouteConfig} RouteConfig */
-
-/**
- * @typedef RouteResponseConfig {
- * @property {string | {}} [body]
- * @property {number} [status]
- * @property {{ [key: string]: string }} [headers]
- * @property {Error} [throws]
- * @property {string} [redirectUrl]
- * @property {ResponseInit} [options]
- */
-
-/**
- * @typedef ResponseInitUsingHeaders
- * @property {number} status
- * @property {string} statusText
- * @property {Headers} headers
- */
-
-/** @typedef {RouteResponseConfig | object}  RouteResponseObjectData */
-/** @typedef {Response | number| string | RouteResponseObjectData }  RouteResponseData */
-/** @typedef {Promise<RouteResponseData>}  RouteResponsePromise */
-/** @typedef {function(CallLog): (RouteResponseData|RouteResponsePromise)} RouteResponseFunction */
-/** @typedef {RouteResponseData | RouteResponsePromise | RouteResponseFunction} RouteResponse*/
-
-/** @typedef {string} RouteName */
+export type UserRouteSpecificConfig = {
+  name?: RouteName;
+  method?: string;
+  headers?: {
+    [key: string]: string | number;
+  };
+  missingHeaders?: string[];
+  query?: {
+    [key: string]: string;
+  };
+  params?: {
+    [key: string]: string;
+  };
+  body?: object;
+  matcherFunction?: RouteMatcherFunction;
+  url?: RouteMatcherUrl;
+  response?: RouteResponse | RouteResponseFunction;
+  repeat?: number;
+  delay?: number;
+  sticky?: boolean;
+};
+export type InternalRouteConfig = {
+  usesBody?: boolean;
+  isFallback?: boolean;
+};
+export type UserRouteConfig = UserRouteSpecificConfig & FetchMockGlobalConfig;
+export type RouteConfig = UserRouteConfig & FetchImplementations & InternalRouteConfig;
+export type RouteResponseConfig = {
+  body?: string | {};
+  status?: number;
+  headers?: {
+    [key: string]: string;
+  };
+  throws?: Error;
+  redirectUrl?: string;
+  options?: ResponseInit;
+};
+export type ResponseInitUsingHeaders = {
+  status: number;
+  statusText: string;
+  headers: Headers;
+};
+export type RouteResponseObjectData = RouteResponseConfig | object;
+export type RouteResponseData = Response | number | string | RouteResponseObjectData;
+export type RouteResponsePromise = Promise<RouteResponseData>;
+export type RouteResponseFunction = (arg0: CallLog) => (RouteResponseData | RouteResponsePromise);
+export type RouteResponse = RouteResponseData | RouteResponsePromise | RouteResponseFunction;
+export type RouteName = string;
 
 /**
  *
@@ -89,10 +87,7 @@ e.g. {"body": {"status: "registered"}}`);
  * @class Route
  */
 class Route {
-	/**
-	 * @param {RouteConfig} config
-	 */
-	constructor(config) {
+  constructor(config: RouteConfig) {
 		this.config = config;
 		this.#sanitize();
 		this.#validate();
@@ -101,10 +96,8 @@ class Route {
 		this.#delayResponse();
 	}
 
-	/** @type {RouteConfig} */
-	config = {};
-	/** @type {RouteMatcherFunction=} */
-	matcher = null;
+	config: RouteConfig;
+  matcher: RouteMatcherFunction;
 	/**
 	 * @returns {void}
 	 */

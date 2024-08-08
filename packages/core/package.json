@@ -18,7 +18,7 @@
   "type": "module",
   "types": "./dist/esm/types/index.d.ts",
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c --environment FORMAT:cjs && rollup -c --environment FORMAT:esm"
   },
   "repository": {
     "type": "git",

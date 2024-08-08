@@ -4,12 +4,14 @@ sidebar_position: 5
 
 # Versions
 
-### Version 10
+### Version 10/11
 
-This has 2 major differences from previous versions
+These have 2 major differences from previous versions
 
 1. It is written using ES modules
 2. It uses native fetch in node.js
+
+Version 11 is identical to version 10, with the exception that it changes the commonjs to use `exports.default = fetchMock` instead of `exports=fetchMock`.
 
 If you experience any compatibility issues upgrading from version 9, please either
 

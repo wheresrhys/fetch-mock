@@ -1,6 +1,8 @@
 /* global	jest, it, describe, expect */
-jest.mock('node-fetch', () => require('../../dist/commonjs.js').sandbox());
-const fetchMock = require('../../dist/commonjs.js');
+jest.mock('node-fetch', () =>
+	require('../../dist/cjs/index.js').default.sandbox(),
+);
+const fetchMock = require('../../dist/cjs/index.js').default;
 const nodeFetch = require('node-fetch');
 describe('compatibility with jest', () => {
 	it('works with node-fetch', async () => {

@@ -1,4 +1,4 @@
-import fetchMock from '../../dist/commonjs.js';
+const fetchMock = require('../../dist/cjs/index.js').default;
 globalThis.testGlobals = {
 	fetchMock,
 	fetch: globalThis.fetch,

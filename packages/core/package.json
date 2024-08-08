@@ -1,18 +1,24 @@
 {
   "name": "@fetch-mock/core",
   "description": "Utility for creating mock fetch implementation",
-  "version": "0.4.6",
-  "main": "./dist/commonjs.js",
-  "module": "./src/index.js",
+  "version": "0.4.10",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
   "exports": {
-    "types": "./types/index.d.ts",
-    "browser": "./src/index.js",
-    "import": "./src/index.js",
-    "require": "./dist/commonjs.js"
+    "browser": "./dist/esm/index.js",
+    "import": {
+      "default": "./dist/esm/index.js",
+      "types": "./dist/esm/index.d.ts"
+    },
+    "require": {
+      "types": "./dist/cjs/index.d.ts",
+      "default": "./dist/cjs/index.js"
+    }
   },
-  "types": "./types/index.d.ts",
+  "type": "module",
+  "types": "./dist/esm/index.d.ts",
   "scripts": {
-    "build": "rollup -c"
+    "build": "rm -rf dist && tsc -p tsconfig.esm.json && tsc -p tsconfig.cjs.json && node ./scripts/declare-dist-type.js"
   },
   "repository": {
     "type": "git",

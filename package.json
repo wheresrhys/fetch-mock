@@ -18,7 +18,8 @@
   },
   "workspaces": [
     "packages/*",
-    "docs"
+    "docs",
+    "import-compat"
   ],
   "scripts": {
     "lint:staged": "eslint --cache --fix --ext .js,.cjs",
@@ -27,28 +28,29 @@
     "prettier": "prettier --cache --write *.md \"./**/*.md\"",
     "prettier:ci": "prettier *.md \"./**/*.md\"",
     "types:check": "tsc --project ./jsconfig.json && echo 'types check done'",
-    "types:lint": "dtslint --expectOnly packages/fetch-mock/types",
     "prepare": "husky || echo \"husky not available\"",
     "build": "npm run build -w=packages",
     "docs": "npm run start -w docs",
-    "test:ci": "vitest .",
+    "test:ci": "vitest . --reporter=junit --outputFile=test-results/junit.xml",
     "test:legacy": "vitest ./packages/fetch-mock/test/specs",
     "test": "vitest --ui .",
     "test:coverage": "vitest run --coverage ./packages/**/src/__tests__",
     "test:jest": "jest ./packages/fetch-mock/test/framework-compat/jest.spec.js",
-    "coverage:send": "cat ./coverage/lcov.info | coveralls"
+    "coverage:send": "cat ./coverage/lcov.info | coveralls",
+    "compat:module": "npm run compat:module -w import-compat"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",
     "@commitlint/config-conventional": "^19.2.2",
-    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-commonjs": "^26.0.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
+    "@types/events": "^3.0.3",
+    "@types/globrex": "^0.1.4",
     "@types/node": "^20.14.10",
     "@vitest/browser": "^1.1.0",
     "@vitest/coverage-istanbul": "^1.1.0",
     "@vitest/coverage-v8": "^1.6.0",
     "@vitest/ui": "^1.6.0",
-    "dtslint": "^1.0.2",
     "eslint": "^8.56.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-origami-component": "^2.2.0",
@@ -61,12 +63,13 @@
     "lint-staged": "^15.2.7",
     "prettier": "^3.1.1",
     "rollup": "^4.9.1",
+    "rollup-plugin-copy": "^3.5.0",
+    "rollup-plugin-sourcemaps": "^0.6.3",
     "ts-to-jsdoc": "^2.1.0",
+    "tsd": "^0.31.1",
     "typescript": "^5.5.3",
     "v8": "^0.1.0",
     "vitest": "^1.1.0",
-    "@types/events": "^3.0.3",
-    "@types/globrex": "^0.1.4",
     "webdriverio": "^8.27.0"
   },
   "volta": {
@@ -79,7 +82,7 @@
     "packages/**/*.js": [
       "npm run types:check"
     ],
-    "**/*.md":[
+    "**/*.md": [
       "npm run prettier"
     ]
   }

@@ -1,5 +1,30 @@
 # Changelog
 
+## [11.0.2](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v11.0.1...fetch-mock-v11.0.2) (2024-08-08)
+
+
+### Bug Fixes
+
+* add license file to each package ([9b36f89](https://github.com/wheresrhys/fetch-mock/commit/9b36f892ed19cd381b1f8ebbd94a28773637b9ec))
+
+## [11.0.1](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v11.0.0...fetch-mock-v11.0.1) (2024-08-08)
+
+
+### Bug Fixes
+
+* fixes importimng into .mts files ([98ad40e](https://github.com/wheresrhys/fetch-mock/commit/98ad40ee5351f1f2f16edf1bbcc626ce94d0d629))
+
+## [11.0.0](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v10.1.1...fetch-mock-v11.0.0) (2024-08-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* force fetch-mock major release
+
+### Bug Fixes
+
+* force fetch-mock major release ([1b31416](https://github.com/wheresrhys/fetch-mock/commit/1b314167607b15887feba2f6124a9af9cca81c47))
+
 ## [10.1.1](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v10.1.0...fetch-mock-v10.1.1) (2024-07-23)
 
 

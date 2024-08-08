@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.4.10](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.9...core-v0.4.10) (2024-08-08)
+
+
+### Bug Fixes
+
+* fix core package build ([90bbe76](https://github.com/wheresrhys/fetch-mock/commit/90bbe76ab384ec5cefeb17f19ca06ca386cbbde5))
+
+## [0.4.9](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.8...core-v0.4.9) (2024-08-08)
+
+
+### Bug Fixes
+
+* add license file to each package ([9b36f89](https://github.com/wheresrhys/fetch-mock/commit/9b36f892ed19cd381b1f8ebbd94a28773637b9ec))
+
+## [0.4.8](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.7...core-v0.4.8) (2024-08-03)
+
+
+### Documentation Changes
+
+* document and test behaviour with multiple missing headers ([88d0440](https://github.com/wheresrhys/fetch-mock/commit/88d0440b814a0f3309f49c30d6c81d899ebc65a6))
+
+## [0.4.7](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.6...core-v0.4.7) (2024-08-02)
+
+
+### Bug Fixes
+
+* correct types so that global optiosn can be passed in to route ([13e1fc6](https://github.com/wheresrhys/fetch-mock/commit/13e1fc64ca3a36f54765d588dc61d44cc92cd413))
+
 ## [0.4.6](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.5...core-v0.4.6) (2024-07-30)
 
 

@@ -40,7 +40,7 @@ class CallHistory {
 		this.config = config;
 		this.router = router;
 	}
-	recordCall(callLog: CallLog): void {
+	recordCall(callLog: CallLog) {
 		this.callLogs.push(callLog);
 	}
 

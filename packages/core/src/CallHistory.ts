@@ -29,7 +29,7 @@ const isName = (filter: CallHistoryFilter): filter is RouteName =>
 
 const isMatchedOrUnmatched = (filter: CallHistoryFilter): filter is (Matched | Unmatched | boolean) =>
 	typeof filter === 'boolean' ||
-	(['matched', 'unmatched']).includes(filter);
+	(['matched', 'unmatched']).includes(filter as string);
 
 class CallHistory {
 	callLogs: CallLog[];
@@ -74,7 +74,7 @@ class CallHistory {
 			) {
 				calls = calls.filter(({ route }) => !route.config.isFallback);
 			} else if (
-				([false, 'unmatched'] as CallHistoryFilter).includes(
+				([false, 'unmatched'] as CallHistoryFilter[]).includes(
 					filter,
 				)
 			) {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import Route from '../../Route.ts';
+import Route from '../../Route';
 
 describe('url matching', () => {
 	it('match exact strings', () => {
@@ -56,28 +56,28 @@ describe('url matching', () => {
 	});
 
 	it('match glob: keyword', () => {
-		const route = new Route({ url: 'glob:/its/*/*', response: 200 });
-		expect(route.matcher({ url: '/its/alive' })).toBe(false);
-		expect(route.matcher({ url: '/its/a/boy' })).toBe(true);
-		expect(route.matcher({ url: '/its/a/girl' })).toBe(true);
+		const route = new Route({ url: 'glob://*/*', response: 200 });
+		expect(route.matcher({ url: '//alive' })).toBe(false);
+		expect(route.matcher({ url: '//a/boy' })).toBe(true);
+		expect(route.matcher({ url: '//a/girl' })).toBe(true);
 	});
 
 	it('match express: keyword', () => {
-		const route = new Route({ url: 'express:/its/:word', response: 200 });
+		const route = new Route({ url: 'express://:word', response: 200 });
 
-		expect(route.matcher({ url: '/its' })).toBe(false);
-		expect(route.matcher({ url: '/its/' })).toBe(false);
-		expect(route.matcher({ url: '/its/a/girl' })).toBe(false);
-		expect(route.matcher({ url: '/its/alive' })).toBe(true);
+		expect(route.matcher({ url: '/' })).toBe(false);
+		expect(route.matcher({ url: '//' })).toBe(false);
+		expect(route.matcher({ url: '//a/girl' })).toBe(false);
+		expect(route.matcher({ url: '//alive' })).toBe(true);
 	});
 
 	it('match path: keyword', () => {
-		const route = new Route({ url: 'path:/its/:word', response: 200 });
+		const route = new Route({ url: 'path://:word', response: 200 });
 
-		expect(route.matcher({ url: '/its/boy' })).toBe(false);
-		expect(route.matcher({ url: '/its/:word/still' })).toBe(false);
-		expect(route.matcher({ url: '/its/:word' })).toBe(true);
-		expect(route.matcher({ url: '/its/:word?brain=false' })).toBe(true);
+		expect(route.matcher({ url: '//boy' })).toBe(false);
+		expect(route.matcher({ url: '//:word/still' })).toBe(false);
+		expect(route.matcher({ url: '//:word' })).toBe(true);
+		expect(route.matcher({ url: '//:word?brain=false' })).toBe(true);
 	});
 
 	it('match wildcard string', () => {

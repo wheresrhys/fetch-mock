@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import Route from '../../Route.ts';
+import Route from '../../Route';
 
 describe('express path parameter matching', () => {
 	it('can match a path parameters', () => {

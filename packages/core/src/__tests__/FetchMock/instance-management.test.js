@@ -86,7 +86,7 @@ describe('instance management', () => {
 		});
 	});
 	describe('resetting', () => {
-		it('can have all its routes removed', async () => {
+		it('can have all .js routes removed', async () => {
 			const fm = fetchMock
 				.createInstance()
 				.route('http://a.com', 200)
@@ -129,7 +129,7 @@ describe('instance management', () => {
 			expect(fm.router.routes.length).toBe(0);
 		});
 
-		it('can have its call history wiped', async () => {
+		it('can have .js call history wiped', async () => {
 			const fm = fetchMock.createInstance().route('http://a.com', 200);
 			await fm.fetchHandler('http://a.com');
 			fm.clearHistory();

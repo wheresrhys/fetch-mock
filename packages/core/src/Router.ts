@@ -1,14 +1,14 @@
 //@type-check
-import Route from './Route.ts';
-import { isUrlMatcher, isFunctionMatcher } from './Matchers.ts';
-/** @typedef {import('./Route.ts').UserRouteSpecificConfig} UserRouteSpecificConfig */
-/** @typedef {import('./Route.ts').RouteConfig} RouteConfig */
-/** @typedef {import('./Route.ts').RouteResponse} RouteResponse */
-/** @typedef {import('./Route.ts').RouteResponseData} RouteResponseData */
-/** @typedef {import('./Route.ts').RouteResponseObjectData} RouteResponseObjectData */
-/** @typedef {import('./Route.ts').RouteResponseConfig} RouteResponseConfig */
-/** @typedef {import('./Route.ts').RouteResponseFunction} RouteResponseFunction */
-/** @typedef {import('./Matchers.ts').RouteMatcher} RouteMatcher */
+import Route from './Route.js';
+import { isUrlMatcher, isFunctionMatcher } from './Matchers.js';
+/** @typedef {import('./Route.js').UserRouteSpecificConfig} UserRouteSpecificConfig */
+/** @typedef {import('./Route.js').RouteConfig} RouteConfig */
+/** @typedef {import('./Route.js').RouteResponse} RouteResponse */
+/** @typedef {import('./Route.js').RouteResponseData} RouteResponseData */
+/** @typedef {import('./Route.js').RouteResponseObjectData} RouteResponseObjectData */
+/** @typedef {import('./Route.js').RouteResponseConfig} RouteResponseConfig */
+/** @typedef {import('./Route.js').RouteResponseFunction} RouteResponseFunction */
+/** @typedef {import('./Matchers.js').RouteMatcher} RouteMatcher */
 /** @typedef {import('./FetchMock.js').FetchMockConfig} FetchMockConfig */
 /** @typedef {import('./FetchMock.js')} FetchMock */
 /** @typedef {import('./CallHistory.js').CallLog} CallLog */

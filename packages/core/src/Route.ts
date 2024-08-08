@@ -1,8 +1,7 @@
-import { builtInMatchers } from './Matchers.ts';
 import statusTextMap from './StatusTextMap.js';
-import { CallLog } from './CallHistory.ts';
-import { FetchMockGlobalConfig, FetchImplementations } from './FetchMock.ts';
-import { RouteMatcher,RouteMatcherFunction,RouteMatcherUrl,MatcherDefinition} from './Matchers.ts'
+import { CallLog } from './CallHistory.js';
+import { FetchMockGlobalConfig, FetchImplementations } from './FetchMock.js';
+import { RouteMatcher, RouteMatcherFunction, RouteMatcherUrl, MatcherDefinition, builtInMatchers } from './Matchers.js'
 
 export interface UserRouteSpecificConfig {
   name?: RouteName;

@@ -3,9 +3,9 @@ import * as regexparam from 'regexparam';
 import { isSubsetOf } from 'is-subset-of';
 import { dequal as isEqual } from 'dequal';
 
-import { RouteConfig } from './Route.ts';
-import { CallLog } from './CallHistory.ts';
-import { normalizeHeaders, getPath, normalizeUrl } from './RequestUtils.ts';
+import { RouteConfig } from './Route.js';
+import { CallLog } from './CallHistory.js';
+import { normalizeHeaders, getPath, normalizeUrl } from './RequestUtils.js';
 
 interface URLMatcherObject {
   begin?: string;

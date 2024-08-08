@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.0.2](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v11.0.1...fetch-mock-v11.0.2) (2024-08-08)
+
+
+### Bug Fixes
+
+* add license file to each package ([9b36f89](https://github.com/wheresrhys/fetch-mock/commit/9b36f892ed19cd381b1f8ebbd94a28773637b9ec))
+
 ## [11.0.1](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v11.0.0...fetch-mock-v11.0.1) (2024-08-08)
 
 

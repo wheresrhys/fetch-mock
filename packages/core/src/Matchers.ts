@@ -1,21 +1,19 @@
-//@type-check
-/** @typedef {import('./Route.js').RouteConfig} RouteConfig */
-/** @typedef {import('./CallHistory.js').CallLog} CallLog */
+import { RouteConfig} from './Route.js';
+import { CallLog } from './CallHistory.js';
 import glob from 'globrex';
 import * as regexparam from 'regexparam';
 import { isSubsetOf } from 'is-subset-of';
 import { dequal as isEqual } from 'dequal';
 import { normalizeHeaders, getPath, normalizeUrl } from './RequestUtils.js';
 
-/**
- * @typedef URLMatcherObject
- * @property {string} [begin]
- * @property {string} [end]
- * @property {string} [glob]
- * @property {string} [express]
- * @property {string} [path]
- * @property {RegExp} [regexp]
- */
+export type URLMatcherObject = {
+	begin?: string;
+	end?: string;
+	glob?: string;
+	express?: string;
+	path?: string;
+	regexp?: RegExp;
+};
 export type RouteMatcherUrl = string | RegExp | URL | URLMatcherObject;
 type UrlMatcherGenerator = (targetString: string) => RouteMatcherFunction;
 export type RouteMatcherFunction = (callLog: CallLog) => boolean;
@@ -28,26 +26,14 @@ export type MatcherDefinition = {
 	usesBody?: boolean;
 };
 
-/**
- * @param {RouteMatcher | RouteConfig} matcher
- * @returns {matcher is RouteMatcherUrl}
- */
-export const isUrlMatcher = (matcher) =>
+export const isUrlMatcher = (matcher: RouteMatcher | RouteConfig): matcher is RouteMatcherUrl =>
 	matcher instanceof RegExp ||
 	typeof matcher === 'string' ||
 	(typeof matcher === 'object' && 'href' in matcher);
 
-/**
- *
- * @param {RouteMatcher| RouteConfig} matcher
- * @returns {matcher is RouteMatcherFunction}
- */
-export const isFunctionMatcher = (matcher) => typeof matcher === 'function';
+export const isFunctionMatcher = (matcher: RouteMatcher | RouteConfig): matcher is RouteMatcherFunction => typeof matcher === 'function';
 
-/**
- * @type {Object.<string, UrlMatcherGenerator>}
- */
-const stringMatchers = {
+const stringMatchers: { [key: string]: UrlMatcherGenerator } = {
 	begin:
 		(targetString) =>
 		({ url }) =>
@@ -84,10 +70,7 @@ const stringMatchers = {
 		({ url }) =>
 			getPath(url) === targetString,
 };
-/**
- * @type {MatcherGenerator}
- */
-const getHeaderMatcher = ({ headers: expectedHeaders }) => {
+const getHeaderMatcher: MatcherGenerator = ({ headers: expectedHeaders }) => {
 	if (!expectedHeaders) {
 		return;
 	}
@@ -100,10 +83,8 @@ const getHeaderMatcher = ({ headers: expectedHeaders }) => {
 		);
 	};
 };
-/**
- * @type {MatcherGenerator}
- */
-const getMissingHeaderMatcher = ({
+
+const getMissingHeaderMatcher: MatcherGenerator = ({
 	missingHeaders: expectedMissingHeaders,
 }) => {
 	if (!expectedMissingHeaders) {
@@ -117,10 +98,8 @@ const getMissingHeaderMatcher = ({
 		return expectation.every((headerName) => !(headerName in lowerCaseHeaders));
 	};
 };
-/**
- * @type {MatcherGenerator}
- */
-const getMethodMatcher = ({ method: expectedMethod }) => {
+
+const getMethodMatcher: MatcherGenerator = ({ method: expectedMethod }) => {
 	if (!expectedMethod) {
 		return;
 	}
@@ -129,10 +108,8 @@ const getMethodMatcher = ({ method: expectedMethod }) => {
 		return expectedMethod === actualMethod;
 	};
 };
-/**
- * @type {MatcherGenerator}
- */
-const getQueryParamsMatcher = ({ query: passedQuery }) => {
+
+const getQueryParamsMatcher: MatcherGenerator = ({ query: passedQuery }) => {
 	if (!passedQuery) {
 		return;
 	}
@@ -177,10 +154,8 @@ const getQueryParamsMatcher = ({ query: passedQuery }) => {
 		});
 	};
 };
-/**
- * @type {MatcherGenerator}
- */
-const getExpressParamsMatcher = ({ params: expectedParams, url }) => {
+
+const getExpressParamsMatcher: MatcherGenerator = ({ params: expectedParams, url }) => {
 	if (!expectedParams) {
 		return;
 	}
@@ -196,10 +171,8 @@ const getExpressParamsMatcher = ({ params: expectedParams, url }) => {
 		);
 	};
 };
-/**
- * @type {MatcherGenerator}
- */
-const getBodyMatcher = (route) => {
+
+const getBodyMatcher: MatcherGenerator = (route) => {
 	const { body: expectedBody } = route;
 
 	if (!expectedBody) {
@@ -231,28 +204,15 @@ const getBodyMatcher = (route) => {
 	};
 };
 
-/**
- * @type {MatcherGenerator}
- */
-const getFunctionMatcher = ({ matcherFunction }) => matcherFunction;
 
-/**
- * @param {RegExp} regexp
- * @returns {RouteMatcherFunction}
- */
+const getFunctionMatcher: MatcherGenerator = ({ matcherFunction }) => matcherFunction;
+
 const getRegexpMatcher =
-	(regexp) =>
+	(regexp: RegExp): RouteMatcherFunction =>
 	({ url }) =>
 		regexp.test(url);
 
-/**
- *
- * @param {RouteConfig} route
- * @param {string} matcherUrl
- * @param {Object.<string,string>} query
- * @returns {RouteMatcherFunction}
- */
-const getFullUrlMatcher = (route, matcherUrl, query) => {
+const getFullUrlMatcher = (route: RouteConfig, matcherUrl: string, query: { [key: string]: string }): RouteMatcherFunction => {
 	// if none of the special syntaxes apply, it's just a simple string match
 	// but we have to be careful to normalize the url we check and the name
 	// of the route to allow for e.g. http://it.at.there being indistinguishable
@@ -270,10 +230,7 @@ const getFullUrlMatcher = (route, matcherUrl, query) => {
 	};
 };
 
-/**
- * @type {MatcherGenerator}
- */
-const getUrlMatcher = (route) => {
+const getUrlMatcher: MatcherGenerator = (route) => {
 	const { url: matcherUrl, query } = route;
 
 	if (matcherUrl === '*') {
@@ -316,8 +273,7 @@ const getUrlMatcher = (route) => {
 	}
 };
 
-/** @type {MatcherDefinition[]} */
-export const builtInMatchers = [
+export const builtInMatchers: MatcherDefinition[] = [
 	{ name: 'url', matcher: getUrlMatcher },
 	{ name: 'query', matcher: getQueryParamsMatcher },
 	{ name: 'method', matcher: getMethodMatcher },

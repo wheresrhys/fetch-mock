@@ -1,5 +1,4 @@
 import type { CallLog } from './CallHistory.js';
-
 // https://stackoverflow.com/a/19709846/308237 plus data: scheme
 // split into 2 code paths as URL constructor does not support protocol-relative urls
 const absoluteUrlRX = new RegExp('^[a-z]+://|^data:', 'i');
@@ -13,7 +12,8 @@ interface DerivedRequestOptions {
 
 export type NormalizedRequestOptions = RequestInit | (RequestInit & DerivedRequestOptions);
 
-export function normalizeUrl(url: string | string | URL) {
+
+export function normalizeUrl(url: string | String | URL) {
 	if (url instanceof URL) {
 		return url.href;
 	}
@@ -29,10 +29,9 @@ export function normalizeUrl(url: string | string | URL) {
 	return urlInstance.pathname + urlInstance.search;
 }
 
-export function createCallLogFromUrlAndOptions(url: string | string | object, options: RequestInit): CallLog {
-	const pendingPromises: Promise<any>[]  = [];
+export function createCallLogFromUrlAndOptions(url: string | String | object, options: RequestInit): CallLog {
+	const pendingPromises: Promise<unknown>[]  = [];
 	if (typeof url === 'string' || url instanceof String || url instanceof URL) {
-		// @ts-ignore - jsdoc doesn't distinguish between string and String, but typechecker complains
 		const normalizedUrl: string = normalizeUrl(url);
 		const derivedOptions = options ? { ...options } : {};
 		if (derivedOptions.headers) {
@@ -60,14 +59,14 @@ export function createCallLogFromUrlAndOptions(url: string | string | object, op
 }
 
 export async function createCallLogFromRequest(request: Request, options: RequestInit): Promise<CallLog> {
-	const pendingPromises: Promise<any>[] = [];
+	const pendingPromises: Promise<unknown>[] = [];
 	const derivedOptions: NormalizedRequestOptions = {
 		method: request.method,
 	};
 
 	try {
 		derivedOptions.body = await request.clone().text();
-	} catch (err) {}
+	} catch {} // eslint-disable-line no-empty
 
 	if (request.headers) {
 		derivedOptions.headers = normalizeHeaders(request.headers);

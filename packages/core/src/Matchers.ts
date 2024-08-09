@@ -193,7 +193,7 @@ const getBodyMatcher: MatcherGenerator = (route) => {
 			if (typeof body === 'string') {
 				sentBody = JSON.parse(body);
 			}
-		} catch (err) {}
+		} catch {} //eslint-disable-line no-empty
 
 		return (
 			sentBody &&

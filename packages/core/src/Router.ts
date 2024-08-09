@@ -1,8 +1,8 @@
 //@type-check
-import Route, { UserRouteConfig, RouteResponsePromise, RouteConfig, RouteResponse, RouteResponseData, RouteResponseObjectData, RouteResponseConfig, RouteResponseFunction } from './Route.js';
+import Route, { UserRouteConfig, RouteResponsePromise, RouteConfig, RouteResponse, RouteResponseData, RouteResponseConfig } from './Route.js';
 import { isUrlMatcher, isFunctionMatcher } from './Matchers.js';
 import { RouteMatcher } from './Matchers.js';
-import { FetchMockConfig, FetchMock } from './FetchMock.js';
+import { FetchMockConfig } from './FetchMock.js';
 import type { CallLog } from './CallHistory.js';
 
 export type ResponseConfigProp = "body" | "headers" | "throws" | "status" | "redirectUrl";
@@ -20,7 +20,7 @@ function nameToOptions (options: RouteConfig | string): RouteConfig {
 }
 
 function isPromise (response: RouteResponse): response is RouteResponsePromise {
-	return typeof (response as Promise<any>).then === 'function';
+	return typeof (response as Promise<unknown>).then === 'function';
 }
 
 function normalizeResponseInput(responseInput: RouteResponseData): RouteResponseConfig {
@@ -127,6 +127,7 @@ export default class Router {
 	execute(callLog: CallLog): Promise<Response> {
 		throwSpecExceptions(callLog);
 		// TODO make abort vs reject neater
+		// eslint-disable-next-line no-async-promise-executor
 		return new Promise(async (resolve, reject) => {
 			const { url, options, request, pendingPromises } = callLog;
 			if (callLog.signal) {
@@ -216,7 +217,7 @@ export default class Router {
 		responseConfig: ResponseInit,
 		responseInput: RouteResponseConfig,
 		responseUrl: string,
-		pendingPromises: Promise<any>[],
+		pendingPromises: Promise<unknown>[],
 	): Response {
 		// Using a proxy means we can set properties that may not be writable on
 		// the original Response. It also means we can track the resolution of
@@ -239,15 +240,16 @@ export default class Router {
 						return false;
 					}
 				}
-				//@ts-ignore
+				// TODO fix these types properly
+				//@ts-expect-error TODO probably make use of generics here
 				if (typeof response[name] === 'function') {
-					//@ts-ignore
+					//@ts-expect-error TODO probably make use of generics here
 					return new Proxy(response[name], {
 						apply: (matcherFunction, thisArg, args) => {
 							const result = matcherFunction.apply(response, args);
 							if (result.then) {
 								pendingPromises.push(
-									//@ts-ignore
+									//@ts-expect-error TODO probably make use of generics here
 									result.catch(() => undefined),
 								);
 							}
@@ -255,7 +257,7 @@ export default class Router {
 						},
 					});
 				}
-				//@ts-ignore
+				//@ts-expect-error TODO probably make use of generics here
 				return originalResponse[name];
 			},
 		});

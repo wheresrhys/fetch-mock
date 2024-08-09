@@ -1,7 +1,7 @@
 import Router from './Router.js';
-import Route, { RouteName, UserRouteConfig, RouteResponseFunction, RouteResponse } from './Route.js';
+import Route, { RouteName, UserRouteConfig, RouteResponse } from './Route.js';
 import { MatcherDefinition, RouteMatcher } from './Matchers.js';
-import CallHistory, {CallLog} from './CallHistory.js';
+import CallHistory from './CallHistory.js';
 import * as requestUtils from './RequestUtils.js';
 
 export type FetchMockGlobalConfig = {
@@ -35,7 +35,7 @@ const defineShorthand = (shorthandOptions: UserRouteConfig) => {
 	function shorthand (this: FetchMock, matcher: (RouteMatcher | UserRouteConfig), response?: RouteResponse, options?: (UserRouteConfig | string)): FetchMock {
 
 		return this.route(
-			//@ts-ignore
+			//@ts-expect-error TODO research how to overload an overload
 			matcher,
 			response,
 			Object.assign(options || {}, shorthandOptions),
@@ -148,10 +148,10 @@ class FetchMockStandalone extends FetchMock {
 
 	spy(this: FetchMockStandalone, matcher?: RouteMatcher | UserRouteConfig, name?: RouteName): FetchMockStandalone {
 		if (matcher) {
-			// @ts-ignore
+			//@ts-expect-error TODO findo out how to overload an overload
 			this.route(matcher, ({ args }) => this.config.fetch(...args), name);
 		} else {
-			// @ts-ignore
+			//@ts-expect-error TODO findo out how to overload an overload
 			this.catch(({ args }) => this.config.fetch(...args));
 		}
 

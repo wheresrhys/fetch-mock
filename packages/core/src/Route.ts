@@ -1,7 +1,7 @@
 //@type-check
 import { builtInMatchers } from './Matchers.js';
 import statusTextMap from './StatusTextMap.js';
-import {RouteMatcher, RouteMatcherFunction, RouteMatcherUrl, MatcherDefinition} from './Matchers.js';
+import {RouteMatcherFunction, RouteMatcherUrl, MatcherDefinition} from './Matchers.js';
 import type { FetchMockGlobalConfig, FetchImplementations } from './FetchMock.js';
 import type  { CallLog } from './CallHistory.js';
 
@@ -33,7 +33,7 @@ export type InternalRouteConfig = {
 export type UserRouteConfig = UserRouteSpecificConfig & FetchMockGlobalConfig;
 export type RouteConfig = UserRouteConfig & FetchImplementations & InternalRouteConfig;
 export type RouteResponseConfig = {
-  body?: string | {};
+  body?: string | object;
   status?: number;
   headers?: {
     [key: string]: string;
@@ -194,7 +194,7 @@ class Route {
 			}
 			return body;
 		}
-		// @ts-ignore
+		// @ts-expect-error TODO need to implement handling of non-string bodies properlyy
 		return body || null;
 	}
 

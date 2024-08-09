@@ -87,7 +87,7 @@ describe('url matching', () => {
 	});
 
 	it('match regular expressions', () => {
-		const rx = /http\:\/\/a\.com\/\d+/;
+		const rx = /http:\/\/a\.com\/\d+/;
 		const route = new Route({ url: rx, response: 200 });
 
 		expect(route.matcher({ url: 'http://a.com/' })).toBe(false);
@@ -193,7 +193,7 @@ describe('url matching', () => {
 			expect(route.matcher({ url: 'data:text/plain,path' })).toBe(true);
 		});
 		it('match regular expressions', () => {
-			const rx = /data\:text\/plain,\d+/;
+			const rx = /data:text\/plain,\d+/;
 			const route = new Route({ url: rx, response: 200 });
 			expect(route.matcher({ url: 'data:text/html,12345' })).toBe(false);
 			expect(route.matcher({ url: 'data:text/plain,path' })).toBe(false);

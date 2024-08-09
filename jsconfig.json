@@ -19,10 +19,8 @@
         "downlevelIteration": true,
         "forceConsistentCasingInFileNames": true,
         "declaration": true,
-        "emitDeclarationOnly": true,
-        "outDir": "packages/core/types",
         "skipLibCheck": true,
-        "noEmit": false,
+        "noEmit": true,
         "target": "es2021",
         "allowImportingTsExtensions": true,
         "removeComments": true

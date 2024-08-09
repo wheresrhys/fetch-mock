@@ -8,7 +8,7 @@ export type Matched = "matched";
 export type Unmatched = "unmatched";
 export type CallHistoryFilter = RouteName | Matched | Unmatched | boolean | RouteMatcher;
 export type CallLog = {
-	args: any[];
+	args: unknown[];
 	url: string;
 	options: NormalizedRequestOptions;
 	request?: Request;
@@ -19,7 +19,7 @@ export type CallLog = {
 		[x: string]: string;
 	};
 	queryParams?: URLSearchParams;
-	pendingPromises: Promise<any>[];
+	pendingPromises: Promise<unknown>[];
 };
 
 const isName = (filter: CallHistoryFilter): filter is RouteName =>

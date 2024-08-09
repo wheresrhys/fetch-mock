@@ -19,7 +19,7 @@ const resolve = async (
 	// Because of this we can't safely check for function before Promisey-ness,
 	// or vice versa. So to keep it DRY, and flexible, we keep trying until we
 	// have something that looks like neither Promise nor function
-	//eslint-disable-next-line no-constant-condition
+	 
 	while (true) {
 		if (typeof response === 'function') {
 			debug('  Response is a function');
@@ -38,7 +38,7 @@ const resolve = async (
 		} else if (typeof response.then === 'function') {
 			debug('  Response is a promise');
 			debug('  -> Resolving promise');
-			response = await response; // eslint-disable-line  no-await-in-loop
+			response = await response;  
 		} else {
 			debug('  Response is not a function or a promise');
 			debug('  -> Exiting response resolution recursion');
@@ -168,7 +168,7 @@ FetchMock.executeRouter = function (url, options, request) {
 	}
 
 	if (this.getOption('warnOnFallback')) {
-		console.warn(`Unmatched ${(options && options.method) || 'GET'} to ${url}`); // eslint-disable-line
+		console.warn(`Unmatched ${(options && options.method) || 'GET'} to ${url}`);  
 	}
 
 	if (this.fallbackResponse) {

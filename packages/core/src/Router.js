@@ -129,14 +129,14 @@ const resolveUntilResponseConfig = async (callLog) => {
 	// Because of this we can't safely check for function before Promisey-ness,
 	// or vice versa. So to keep it DRY, and flexible, we keep trying until we
 	// have something that looks like neither Promise nor function
-	//eslint-disable-next-line no-constant-condition
+	 
 	let response = callLog.route.config.response;
-	// eslint-disable-next-line  no-constant-condition
+	 
 	while (true) {
 		if (typeof response === 'function') {
 			response = response(callLog);
 		} else if (isPromise(response)) {
-			response = await response; // eslint-disable-line  no-await-in-loop
+			response = await response;  
 		} else {
 			return response;
 		}
@@ -244,7 +244,7 @@ export default class Router {
 	 * @param {CallLog} callLog
 	 * @returns {Promise<{response: Response, responseOptions: ResponseInit, responseInput: RouteResponseConfig}>}
 	 */
-	// eslint-disable-next-line class-methods-use-this
+	 
 	async generateResponse(callLog) {
 		const responseInput = await resolveUntilResponseConfig(callLog);
 		// If the response is a pre-made Response, respond with it
@@ -274,7 +274,7 @@ export default class Router {
 	 * @param {Promise<any>[]} pendingPromises
 	 * @returns {Response}
 	 */
-	// eslint-disable-next-line class-methods-use-this
+	 
 	createObservableResponse(
 		response,
 		responseConfig,
@@ -379,7 +379,7 @@ export default class Router {
 		if (this.fallbackRoute) {
 			console.warn(
 				'calling fetchMock.catch() twice - are you sure you want to overwrite the previous fallback response',
-			); // eslint-disable-line
+			);  
 		}
 
 		this.fallbackRoute = new Route({

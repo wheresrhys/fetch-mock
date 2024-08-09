@@ -77,19 +77,6 @@ jobs:
       - store_test_results:
           path: test-results
 
-  nodefetch3:
-    <<: *nodelts
-    steps:
-      - *workspace
-      - run: npm install node-fetch@3
-      - run: TESTING_ENV=node-fetch npm run test:legacy
-
-  commonjs:
-    <<: *nodelts
-    steps:
-      - *workspace
-      - run: npm run build
-      - run: TESTING_ENV=commonjs npm run test:legacy
   jest:
     <<: *nodelts
     steps:
@@ -146,12 +133,6 @@ workflows:
       - typecheck:
           <<: *triggerable-by-tag
           <<: *after-build-lint
-      - nodefetch3:
-          <<: *triggerable-by-tag
-          <<: *after-build-test-lint
-      - commonjs:
-          <<: *triggerable-by-tag
-          <<: *after-build-test-lint
       - jest:
           <<: *triggerable-by-tag
           <<: *after-build-lint
@@ -166,7 +147,6 @@ workflows:
       #     <<: *after-build-test-lint
       - publish:
           requires:
-            - nodefetch3
             # - chrome
             # - firefox
             - build
@@ -174,7 +154,6 @@ workflows:
             - lint
             - module-compat
             - typecheck
-            - commonjs
             - jest
           filters:
             branches:

@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, beforeAll } from 'vitest';
 import { URL } from 'node:url';
 
-const { fetchMock } = testGlobals;
+import fetchMock from '../../../src/index.js'
 
 describe('url matching', () => {
 	let fm;

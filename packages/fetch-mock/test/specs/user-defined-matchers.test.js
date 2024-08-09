@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-const { fetchMock } = testGlobals;
+import fetchMock from '../../src/index.js'
 describe('user defined matchers', () => {
 	it('match on sync property', async () => {
 		const fm = fetchMock.createInstance();

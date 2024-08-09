@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { Readable, Writable } from 'stream';
-const { fetchMock } = testGlobals;
+import fetchMock from '../../../src/index.js'
 describe('nodejs only tests', () => {
 	describe('support for nodejs body types', () => {
 		afterEach(() => fetchMock.reset());

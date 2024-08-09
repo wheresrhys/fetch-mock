@@ -32,7 +32,6 @@
     "build": "npm run build -w=packages",
     "docs": "npm run start -w docs",
     "test:ci": "vitest . --reporter=junit --outputFile=test-results/junit.xml",
-    "test:legacy": "vitest ./packages/fetch-mock/test/specs",
     "test": "vitest --ui .",
     "test:browser": "vitest --workspace=vitest.workspace.ts",
     "test:coverage": "vitest run --coverage ./packages/**/src/__tests__",

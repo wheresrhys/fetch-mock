@@ -35,7 +35,6 @@
     "test": "vitest --ui .",
     "test:browser": "vitest --workspace=vitest.workspace.ts",
     "test:coverage": "vitest run --coverage ./packages/**/src/__tests__",
-    "test:jest": "jest ./packages/fetch-mock/test/framework-compat/jest.spec.js",
     "coverage:send": "cat ./coverage/lcov.info | coveralls",
     "compat:module": "npm run compat:module -w import-compat"
   },

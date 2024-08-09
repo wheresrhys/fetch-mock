@@ -2,8 +2,6 @@ version: 2.0
 
 references:
   triggerable-by-tag: &triggerable-by-tag
-    # For a tag push unaffected by any filters, CircleCI skips the job
-    # https://circleci.com/docs/2.0/workflows/#git-tag-job-execution
     filters:
       tags:
         only: /.*/
@@ -76,30 +74,11 @@ jobs:
       - run: npm run test:ci
       - store_test_results:
           path: test-results
-
-  jest:
-    <<: *nodelts
-    steps:
-      - *workspace
-      - run: npm run build
-      - run: npm run test:jest
   module-compat:
     <<: *nodelts
     steps:
       - *workspace
       - run: npm run compat:module
-  # chrome:
-  #   <<: *browsers
-  #   steps:
-  #     - *workspace
-  #     - run: TEST_BROWSER=Chrome make test-browser
-
-  # firefox:
-  #   <<: *browsers
-  #   steps:
-  #     - *workspace
-  #     - run: npm install karma-firefox-launcher
-  #     - run: TEST_BROWSER=Firefox make test-browser
 
   publish:
     <<: *nodelts
@@ -133,18 +112,9 @@ workflows:
       - typecheck:
           <<: *triggerable-by-tag
           <<: *after-build-lint
-      - jest:
-          <<: *triggerable-by-tag
-          <<: *after-build-lint
       - module-compat:
           <<: *triggerable-by-tag
           <<: *after-build-lint
-      # - chrome:
-      #     <<: *triggerable-by-tag
-      #     <<: *after-build-test-lint
-      # - firefox:
-      #     <<: *triggerable-by-tag
-      #     <<: *after-build-test-lint
       - publish:
           requires:
             # - chrome

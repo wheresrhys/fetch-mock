@@ -1,4 +1,4 @@
-import fetchMock from '../../src/index.js';
+import fetchMock from '../../dist/esm/index.js';
 
 globalThis.testGlobals = {
 	fetchMock,

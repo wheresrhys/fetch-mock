@@ -14,6 +14,9 @@ import {
 
 const { fetchMock } = testGlobals;
 
+console.log(window.location)
+
+
 expect.extend({
 	toReturnCalls(callsArray, expectedCalls) {
 		// looks like it does noting, but it makes sure a bunch of irrelevant internals

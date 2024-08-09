@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import Route from '../../Route.js';
-import Router from '../../Router.js';
-import { createCallLogFromRequest } from '../../RequestUtils.js';
+import Route from '../../Route';
+import Router from '../../Router';
+import { createCallLogFromRequest } from '../../RequestUtils';
 describe('body matching', () => {
 	it('should not match if no body provided in request', () => {
 		const route = new Route({ body: { foo: 'bar' }, response: 200 });

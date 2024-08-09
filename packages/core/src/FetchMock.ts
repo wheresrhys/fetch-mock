@@ -1,0 +1,174 @@
+import Router from './Router.js';
+import Route, { RouteName, UserRouteConfig, RouteResponse } from './Route.js';
+import { MatcherDefinition, RouteMatcher } from './Matchers.js';
+import CallHistory from './CallHistory.js';
+import * as requestUtils from './RequestUtils.js';
+
+export type FetchMockGlobalConfig = {
+	sendAsJson?: boolean;
+	includeContentLength?: boolean;
+	matchPartialBody?: boolean;
+};
+export type FetchImplementations = {
+	fetch?: typeof fetch;
+	Headers?: typeof Headers;
+	Request?: typeof Request;
+	Response?: typeof Response;
+};
+export type FetchMockConfig = FetchMockGlobalConfig & FetchImplementations;
+
+/** @type {FetchMockConfig} */
+const defaultConfig = {
+	includeContentLength: true,
+	sendAsJson: true,
+	matchPartialBody: false,
+	Request: globalThis.Request,
+	Response: globalThis.Response,
+	Headers: globalThis.Headers,
+	fetch: globalThis.fetch,
+};
+
+const defineShorthand = (shorthandOptions: UserRouteConfig) => {
+
+	function shorthand (this: FetchMock, matcher: UserRouteConfig): FetchMock;
+	function shorthand (this: FetchMock, matcher: RouteMatcher, response: RouteResponse, options?: UserRouteConfig | string): FetchMock;
+	function shorthand (this: FetchMock, matcher: (RouteMatcher | UserRouteConfig), response?: RouteResponse, options?: (UserRouteConfig | string)): FetchMock {
+
+		return this.route(
+			//@ts-expect-error TODO research how to overload an overload
+			matcher,
+			response,
+			Object.assign(options || {}, shorthandOptions),
+		);
+	};
+
+	return shorthand;
+};
+const defineGreedyShorthand = (shorthandOptions: UserRouteConfig) => {
+	return function(this: FetchMock, response: RouteResponse, options?: UserRouteConfig | string): FetchMock {
+		return this.route(
+			'*',
+			response,
+			Object.assign(options || {}, shorthandOptions),
+		);
+	};
+};
+
+export class FetchMock {
+
+	config: FetchMockConfig;
+	router: Router;
+	callHistory: CallHistory;
+
+	constructor(config: FetchMockConfig, router?: Router) {
+		this.config = config;
+		this.router = new Router(this.config, {
+			routes: router ? [...router.routes] : [],
+			fallbackRoute: router ? router.fallbackRoute : null,
+		});
+		this.callHistory = new CallHistory(this.config, this.router);
+	}
+	createInstance(): FetchMock {
+		return new FetchMock({ ...this.config }, this.router);
+	}
+	async fetchHandler(this: FetchMock, requestInput: string | URL | Request, requestInit?: RequestInit): Promise<Response> {
+		// TODO move into router
+		let callLog;
+
+		if (requestInput instanceof this.config.Request) {
+			callLog = await requestUtils.createCallLogFromRequest(
+				requestInput,
+				requestInit,
+			);
+		} else {
+			callLog = requestUtils.createCallLogFromUrlAndOptions(
+				requestInput,
+				requestInit,
+			);
+		}
+
+		this.callHistory.recordCall(callLog);
+		const responsePromise = this.router.execute(callLog);
+		callLog.pendingPromises.push(responsePromise);
+		return responsePromise;
+	}
+
+	route( matcher: UserRouteConfig): FetchMock;
+	route( matcher: RouteMatcher, response: RouteResponse, options?: UserRouteConfig | string): FetchMock;
+	route( matcher: (RouteMatcher | UserRouteConfig), response?: RouteResponse, options?: (UserRouteConfig | string)): FetchMock {
+		this.router.addRoute(matcher, response, options);
+		return this;
+	}
+	catch(response?: RouteResponse): FetchMock {
+		this.router.setFallback(response);
+		return this;
+	}
+	defineMatcher(matcher: MatcherDefinition) {
+		Route.defineMatcher(matcher);
+	}
+	removeRoutes(options?: {
+		names?: string[];
+		includeSticky?: boolean;
+		includeFallback?: boolean;
+	}):FetchMock {
+		this.router.removeRoutes(options);
+		return this;
+	}
+	clearHistory():FetchMock {
+		this.callHistory.clear();
+		return this;
+	}
+	sticky = defineShorthand({ sticky: true });
+	once = defineShorthand({ repeat: 1 });
+	any = defineGreedyShorthand({});
+	anyOnce = defineGreedyShorthand({ repeat: 1 });
+	get = defineShorthand({ method: 'get' });
+	getOnce = defineShorthand({ method: 'get', repeat: 1 });
+	post = defineShorthand({ method: 'post' });
+	postOnce = defineShorthand({ method: 'post', repeat: 1 });
+	put = defineShorthand({ method: 'put' });
+	putOnce = defineShorthand({ method: 'put', repeat: 1 });
+	delete = defineShorthand({ method: 'delete' });
+	deleteOnce = defineShorthand({ method: 'delete', repeat: 1 });
+	head = defineShorthand({ method: 'head' });
+	headOnce = defineShorthand({ method: 'head', repeat: 1 });
+	patch = defineShorthand({ method: 'patch' });
+	patchOnce = defineShorthand({ method: 'patch', repeat: 1 });
+}
+
+class FetchMockStandalone extends FetchMock {
+	mockGlobal(this: FetchMockStandalone): FetchMockStandalone {
+		globalThis.fetch = this.fetchHandler.bind(this);
+		return this;
+	}
+	unmockGlobal(this: FetchMockStandalone): FetchMockStandalone {
+		globalThis.fetch = this.config.fetch;
+		return this;
+	}
+
+	spy(this: FetchMockStandalone, matcher?: RouteMatcher | UserRouteConfig, name?: RouteName): FetchMockStandalone {
+		if (matcher) {
+			//@ts-expect-error TODO findo out how to overload an overload
+			this.route(matcher, ({ args }) => this.config.fetch(...args), name);
+		} else {
+			//@ts-expect-error TODO findo out how to overload an overload
+			this.catch(({ args }) => this.config.fetch(...args));
+		}
+
+		return this;
+	}
+	spyGlobal(this: FetchMockStandalone): FetchMockStandalone {
+		this.mockGlobal();
+		return this.spy();
+	}
+
+	createInstance(): FetchMockStandalone {
+		return new FetchMockStandalone({ ...this.config }, this.router);
+	}
+}
+
+const fetchMock = new FetchMockStandalone({
+	...defaultConfig,
+}).createInstance();
+
+export default fetchMock;

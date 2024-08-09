@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import fetchMock from '../../FetchMock.js';
+import fetchMock from '../../FetchMock';
 
 describe('Routing', () => {
 	let fm;
@@ -83,7 +83,7 @@ describe('Routing', () => {
 				try {
 					await fm.fetchHandler('http://a.com/');
 					expect.unreachable('Previous line should throw');
-				} catch (err) {}
+				} catch {} // eslint-disable-line no-empty
 			});
 		});
 

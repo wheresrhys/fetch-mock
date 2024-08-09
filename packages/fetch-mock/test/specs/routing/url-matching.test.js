@@ -25,7 +25,7 @@ describe('url matching', () => {
 
 	it('match string objects', async () => {
 		fm.mock('http://a.com/path', 200).catch();
-		await fm.fetchHandler(new String('http://a.com/path')); // eslint-disable-line no-new-wrappers
+		await fm.fetchHandler(new String('http://a.com/path'));
 		expect(fm.calls(true).length).toEqual(1);
 	});
 
@@ -112,7 +112,7 @@ describe('url matching', () => {
 	});
 
 	it('match regular expressions', async () => {
-		const rx = /http\:\/\/a\.com\/\d+/;
+		const rx = /http:\/\/a\.com\/\d+/;
 		fm.mock(rx, 200).catch();
 
 		await fm.fetchHandler('http://a.com/');
@@ -196,7 +196,7 @@ describe('url matching', () => {
 			expect(fm.calls(true).length).to.equal(1);
 		});
 		it('match regular expressions', async () => {
-			const rx = /data\:text\/plain,\d+/;
+			const rx = /data:text\/plain,\d+/;
 			fm.mock(rx, 200).catch();
 			await fm.fetchHandler('data:text/html,12345');
 			expect(fm.calls(true).length).to.equal(0);

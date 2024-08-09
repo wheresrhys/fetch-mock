@@ -81,7 +81,7 @@ declare namespace fetchMock {
         /**
          * Set the response body
          */
-        body?: string | {};
+        body?: string | object;
 
         /**
          * Set the response status
@@ -120,7 +120,7 @@ declare namespace fetchMock {
     type MockResponse = Response | Promise<Response>
                         | number | Promise<number>
                         | string | Promise<string>
-                        | {} | Promise<{}>
+                        | object | Promise<object>
                         | MockResponseObject | Promise<MockResponseObject>;
 
     /**

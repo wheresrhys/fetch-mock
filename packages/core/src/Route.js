@@ -108,7 +108,7 @@ class Route {
 	/**
 	 * @returns {void}
 	 */
-	// eslint-disable-next-line class-methods-use-this
+	 
 	reset() {}
 
 	/**
@@ -228,7 +228,7 @@ class Route {
 		if (typeof body === 'object') {
 			if (
 				this.config.sendAsJson &&
-				responseInput.body != null //eslint-disable-line
+				responseInput.body != null  
 			) {
 				body = JSON.stringify(body);
 				if (!responseOptions.headers.has('Content-Type')) {

@@ -1,5 +1,4 @@
 import { afterEach, describe, expect, it, beforeAll } from 'vitest';
-import { URL } from 'node:url';
 
 import fetchMock from '../../../src/index.js'
 describe('query string matching', () => {

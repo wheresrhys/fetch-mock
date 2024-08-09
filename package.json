@@ -32,7 +32,7 @@
     "build": "npm run build -w=packages",
     "docs": "npm run start -w docs",
     "test:ci": "vitest . --reporter=junit --outputFile=test-results/junit.xml",
-    "test": "vitest --ui .",
+    "test": "vitest",
     "test:browser": "vitest --workspace=vitest.workspace.ts",
     "test:coverage": "vitest run --coverage ./packages/**/src/__tests__",
     "coverage:send": "cat ./coverage/lcov.info | coveralls",

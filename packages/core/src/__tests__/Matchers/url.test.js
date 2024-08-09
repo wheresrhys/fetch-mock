@@ -13,7 +13,7 @@ describe('url matching', () => {
 
 	it('match string objects', () => {
 		const route = new Route({ url: 'http://a.com/path', response: 200 });
-		expect(route.matcher({ url: new String('http://a.com/path') })).toBe(true); // eslint-disable-line no-new-wrappers
+		expect(route.matcher({ url: new String('http://a.com/path') })).toBe(true);  
 	});
 
 	it('match exact strings with relative url', () => {

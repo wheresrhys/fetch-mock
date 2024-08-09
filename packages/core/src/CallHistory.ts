@@ -34,7 +34,7 @@ import Router from './Router.js';
  */
 const isName = (filter) =>
 	typeof filter === 'string' &&
-	/^[\da-zA-Z\-]+$/.test(filter) &&
+	/^[\da-zA-Z-]+$/.test(filter) &&
 	!['matched', 'unmatched'].includes(filter);
 
 /**
@@ -190,7 +190,7 @@ class CallHistory {
 						({ route: routeApplied }) => routeApplied === route,
 					);
 					if (!calls.length) {
-						console.warn(`Warning: ${route.config.name} not called`); // eslint-disable-line
+						console.warn(`Warning: ${route.config.name} not called`);
 						return false;
 					}
 
@@ -204,7 +204,7 @@ class CallHistory {
 					if (expectedTimes > actualTimes) {
 						console.warn(
 							`Warning: ${route.config.name} only called ${actualTimes} times, but ${expectedTimes} expected`,
-						); // eslint-disable-line
+						);
 						return false;
 					}
 					return true;

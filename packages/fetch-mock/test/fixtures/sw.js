@@ -6,7 +6,7 @@ self.addEventListener('install', (ev) => {
 		fetch('http://egg.on.face/')
 			.then((res) => {
 				if (res.status !== 203) {
-					console.log('Fetch mock not behaving as expected');//eslint-disable-line
+					console.log('Fetch mock not behaving as expected'); 
 					throw 'Unexpected status';
 				}
 			})

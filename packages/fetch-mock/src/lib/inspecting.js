@@ -4,7 +4,7 @@ import Route from '../Route/index.js';
 
 const FetchMock = {};
 const isName = (nameOrMatcher) =>
-	typeof nameOrMatcher === 'string' && /^[\da-zA-Z\-]+$/.test(nameOrMatcher);
+	typeof nameOrMatcher === 'string' && /^[\da-zA-Z-]+$/.test(nameOrMatcher);
 
 const filterCallsWithMatcher = function (matcher, options = {}, calls) {
 	({ matcher } = new Route([{ matcher, response: 'ok', ...options }], this));
@@ -104,7 +104,7 @@ FetchMock.lastResponse = formatDebug(function (nameOrMatcher, options) {
 	try {
 		const clonedResponse = response.clone();
 		return clonedResponse;
-	} catch (err) {
+	} catch {
 		Object.entries(response._fmResults).forEach(([name, result]) => {
 			response[name] = () => result;
 		});
@@ -162,7 +162,7 @@ FetchMock.done = formatDebug(function (nameOrMatcher) {
 		.map(({ identifier }) => {
 			if (!this.called(identifier)) {
 				debug('No calls made for route:', identifier);
-				console.warn(`Warning: ${identifier} not called`); // eslint-disable-line
+				console.warn(`Warning: ${identifier} not called`);
 				return false;
 			}
 
@@ -187,7 +187,7 @@ FetchMock.done = formatDebug(function (nameOrMatcher) {
 				);
 				console.warn(
 					`Warning: ${identifier} only called ${actualTimes} times, but ${expectedTimes} expected`,
-				); // eslint-disable-line
+				);
 				return false;
 			}
 			return true;

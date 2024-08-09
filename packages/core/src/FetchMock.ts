@@ -180,7 +180,7 @@ export class FetchMock {
 	 *
 	 * @param {MatcherDefinition} matcher
 	 */
-	//eslint-disable-next-line class-methods-use-this
+	 
 	defineMatcher(matcher) {
 		Route.defineMatcher(matcher);
 	}

@@ -105,7 +105,7 @@ e.g. {"body": {"status: "registered"}}`);
 		// convert to json if we need to
 		if (
 			this.getOption('sendAsJson') &&
-			this.responseConfig.body != null && //eslint-disable-line
+			this.responseConfig.body != null &&  
 			typeof this.body === 'object'
 		) {
 			this.debug('Stringifying JSON response body');

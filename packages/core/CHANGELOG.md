@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.11](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.10...core-v0.4.11) (2024-08-09)
+
+
+### Bug Fixes
+
+* force release of core ([6bf9b87](https://github.com/wheresrhys/fetch-mock/commit/6bf9b87f0598cb5a142d623c6285b0dca6c619d5))
+
 ## [0.4.10](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.9...core-v0.4.10) (2024-08-08)
 
 

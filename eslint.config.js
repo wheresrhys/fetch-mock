@@ -18,7 +18,7 @@ export default tseslint.config(
 	{
 		rules: {
 			'no-prototype-builtins': 0,
-			'no-new-wrappers': 0
+			'@typescript-eslint/no-wrapper-object-types': 0
 		},
 		languageOptions: {
 			globals: {

@@ -32,7 +32,7 @@ describe('mock and spy', () => {
 			fm.mockGlobal();
 			try {
 				await fetch('http://a.com', { method: 'post' });
-			} catch (err) {}
+			} catch {} //eslint-disable-line no-empty
 			// cannot just check globalThis.fetch === fm.fetchHandler because we apply .bind() to fetchHandler
 			expect(fm.fetchHandler).toHaveBeenCalledWith('http://a.com', {
 				method: 'post',
@@ -44,7 +44,7 @@ describe('mock and spy', () => {
 			const response = await fetch('http://a.com', { method: 'post' });
 			expect(response.status).toEqual(200);
 			const callLog = fm.callHistory.lastCall();
-			expect(callLog.args).toEqual(['http://a.com/', { method: 'post' }]);
+			expect(callLog.args).toEqual(['http://a.com', { method: 'post' }]);
 		});
 
 		it('restores global fetch', () => {
@@ -60,7 +60,7 @@ describe('mock and spy', () => {
 			fm.spy();
 			try {
 				await fm.fetchHandler('http://a.com/', { method: 'post' });
-			} catch (err) {}
+			} catch {} //eslint-disable-line no-empty
 			expect(fm.config.fetch).toHaveBeenCalledWith('http://a.com/', {
 				method: 'post',
 			});
@@ -72,7 +72,7 @@ describe('mock and spy', () => {
 			try {
 				await fm.fetchHandler('http://a.com/', { method: 'post' });
 				await fm.fetchHandler('http://b.com/', { method: 'post' });
-			} catch (err) {}
+			} catch {} //eslint-disable-line no-empty
 
 			expect(fm.config.fetch).toHaveBeenCalledTimes(1);
 			expect(fm.config.fetch).toHaveBeenCalledWith('http://a.com/', {
@@ -90,7 +90,7 @@ describe('mock and spy', () => {
 					method: 'delete',
 					headers: { check: 'this' },
 				});
-			} catch (err) {}
+			} catch {} //eslint-disable-line no-empty
 			expect(fm.config.fetch).toHaveBeenCalledTimes(1);
 			expect(fm.config.fetch).toHaveBeenCalledWith('http://a.com/', {
 				method: 'delete',
@@ -103,7 +103,7 @@ describe('mock and spy', () => {
 			fm.spy('http://a.com/', 'myroute').catch();
 			try {
 				await fm.fetchHandler('http://a.com/');
-			} catch (err) {}
+			} catch {} //eslint-disable-line no-empty
 			expect(fm.callHistory.called('myroute')).toBe(true);
 		});
 
@@ -112,7 +112,7 @@ describe('mock and spy', () => {
 			fm.mockGlobal().spy('http://a.com', 200);
 			try {
 				await fm.fetchHandler('http://a.com/', { method: 'post' });
-			} catch (err) {}
+			} catch {} //eslint-disable-line no-empty
 			expect(fm.config.fetch).toHaveBeenCalledTimes(1);
 			expect(fm.config.fetch).toHaveBeenCalledWith('http://a.com/', {
 				method: 'post',
@@ -124,7 +124,7 @@ describe('mock and spy', () => {
 			fm.spyGlobal();
 			try {
 				await fm.fetchHandler('http://a.com/', { method: 'post' });
-			} catch (err) {}
+			} catch {} //eslint-disable-line no-empty
 			expect(fm.config.fetch).toHaveBeenCalledTimes(1);
 			expect(fm.config.fetch).toHaveBeenCalledWith('http://a.com/', {
 				method: 'post',

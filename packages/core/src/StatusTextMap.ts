@@ -1,8 +1,4 @@
-//@type-check
-/**
- * @type {Object.<number, string>}
- */
-const statusTextMap = {
+const statusTextMap: {[key: number]: string} = {
 	100: 'Continue',
 	101: 'Switching Protocols',
 	102: 'Processing',

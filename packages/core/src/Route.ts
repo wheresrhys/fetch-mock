@@ -1,72 +1,60 @@
 //@type-check
 import { builtInMatchers } from './Matchers.js';
 import statusTextMap from './StatusTextMap.js';
+import {RouteMatcher, RouteMatcherFunction, RouteMatcherUrl, MatcherDefinition} from './Matchers.js';
+import type { FetchMockGlobalConfig, FetchImplementations } from './FetchMock.js';
+import type  { CallLog } from './CallHistory.js';
 
-/** @typedef {import('./Matchers.js').RouteMatcher} RouteMatcher */
-/** @typedef {import('./CallHistory.js').CallLog} CallLog */
-/** @typedef {import('./Matchers.js').RouteMatcherFunction} RouteMatcherFunction */
-/** @typedef {import('./Matchers.js').RouteMatcherUrl} RouteMatcherUrl */
-/** @typedef {import('./Matchers.js').MatcherDefinition} MatcherDefinition */
-/** @typedef {import('./FetchMock.js').FetchMockGlobalConfig} FetchMockGlobalConfig */
-/** @typedef {import('./FetchMock.js').FetchImplementations} FetchImplementations */
+export type UserRouteSpecificConfig = {
+  name?: RouteName;
+  method?: string;
+  headers?: {
+    [key: string]: string | number;
+  };
+  missingHeaders?: string[];
+  query?: {
+    [key: string]: string;
+  };
+  params?: {
+    [key: string]: string;
+  };
+  body?: object;
+  matcherFunction?: RouteMatcherFunction;
+  url?: RouteMatcherUrl;
+  response?: RouteResponse | RouteResponseFunction;
+  repeat?: number;
+  delay?: number;
+  sticky?: boolean;
+};
+export type InternalRouteConfig = {
+  usesBody?: boolean;
+  isFallback?: boolean;
+};
+export type UserRouteConfig = UserRouteSpecificConfig & FetchMockGlobalConfig;
+export type RouteConfig = UserRouteConfig & FetchImplementations & InternalRouteConfig;
+export type RouteResponseConfig = {
+  body?: string | {};
+  status?: number;
+  headers?: {
+    [key: string]: string;
+  };
+  throws?: Error;
+  redirectUrl?: string;
+  options?: ResponseInit;
+};
+export type ResponseInitUsingHeaders = {
+  status: number;
+  statusText: string;
+  headers: Headers;
+};
+export type RouteResponseObjectData = RouteResponseConfig | object;
+export type RouteResponseData = Response | number | string | RouteResponseObjectData;
+export type RouteResponsePromise = Promise<RouteResponseData>;
+export type RouteResponseFunction = (arg0: CallLog) => (RouteResponseData | RouteResponsePromise);
+export type RouteResponse = RouteResponseData | RouteResponsePromise | RouteResponseFunction;
+export type RouteName = string;
 
-/**
- * @typedef UserRouteSpecificConfig
- * @property {RouteName} [name]
- * @property {string} [method]
- * @property {{ [key: string]: string | number  }} [headers]
- * @property {string[]} [missingHeaders]
- * @property {{ [key: string]: string }} [query]
- * @property {{ [key: string]: string }} [params]
- * @property {object} [body]
- * @property {RouteMatcherFunction} [matcherFunction]
- * @property {RouteMatcherUrl} [url]
- * @property {RouteResponse | RouteResponseFunction} [response]
- * @property {number} [repeat]
- * @property {number} [delay]
- * @property {boolean} [sticky]
- */
-
-/**
- * @typedef InternalRouteConfig
- * @property {boolean} [usesBody]
- * @property {boolean} [isFallback]
- */
-
-/** @typedef {UserRouteSpecificConfig & FetchMockGlobalConfig} UserRouteConfig */
-/** @typedef {UserRouteConfig & FetchImplementations & InternalRouteConfig} RouteConfig */
-
-/**
- * @typedef RouteResponseConfig {
- * @property {string | {}} [body]
- * @property {number} [status]
- * @property {{ [key: string]: string }} [headers]
- * @property {Error} [throws]
- * @property {string} [redirectUrl]
- * @property {ResponseInit} [options]
- */
-
-/**
- * @typedef ResponseInitUsingHeaders
- * @property {number} status
- * @property {string} statusText
- * @property {Headers} headers
- */
-
-/** @typedef {RouteResponseConfig | object}  RouteResponseObjectData */
-/** @typedef {Response | number| string | RouteResponseObjectData }  RouteResponseData */
-/** @typedef {Promise<RouteResponseData>}  RouteResponsePromise */
-/** @typedef {function(CallLog): (RouteResponseData|RouteResponsePromise)} RouteResponseFunction */
-/** @typedef {RouteResponseData | RouteResponsePromise | RouteResponseFunction} RouteResponse*/
-
-/** @typedef {string} RouteName */
-
-/**
- *
- * @param {number} [status]
- * @returns {number}
- */
-function sanitizeStatus(status) {
+function sanitizeStatus(status?: number): number {
 	if (!status) {
 		return 200;
 	}
@@ -85,14 +73,12 @@ To respond with a JSON object that has status as a property assign the object to
 e.g. {"body": {"status: "registered"}}`);
 }
 
-/**
- * @class Route
- */
 class Route {
-	/**
-	 * @param {RouteConfig} config
-	 */
-	constructor(config) {
+
+  config: RouteConfig;
+  matcher: RouteMatcherFunction;
+
+  constructor(config: RouteConfig) {
 		this.config = config;
 		this.#sanitize();
 		this.#validate();
@@ -101,19 +87,7 @@ class Route {
 		this.#delayResponse();
 	}
 
-	/** @type {RouteConfig} */
-	config = {};
-	/** @type {RouteMatcherFunction=} */
-	matcher = null;
-	/**
-	 * @returns {void}
-	 */
-	 
-	reset() {}
-
-	/**
-	 * @returns {void}
-	 */
+  reset() {}
 	#validate() {
 		if (['matched', 'unmatched'].includes(this.config.name)) {
 			throw new Error(
@@ -129,17 +103,11 @@ class Route {
 			);
 		}
 	}
-	/**
-	 * @returns {void}
-	 */
 	#sanitize() {
 		if (this.config.method) {
 			this.config.method = this.config.method.toLowerCase();
 		}
 	}
-	/**
-	 * @returns {void}
-	 */
 	#generateMatcher() {
 		const activeMatchers = Route.registeredMatchers
 			.filter(({ name }) => name in this.config)
@@ -152,9 +120,6 @@ class Route {
 		this.matcher = (normalizedRequest) =>
 			activeMatchers.every(({ matcher }) => matcher(normalizedRequest));
 	}
-	/**
-	 * @returns {void}
-	 */
 	#limit() {
 		if (!this.config.repeat) {
 			return;
@@ -172,9 +137,6 @@ class Route {
 			timesLeft = this.config.repeat;
 		};
 	}
-	/**
-	 * @returns {void}
-	 */
 	#delayResponse() {
 		if (this.config.delay) {
 			const { response } = this.config;
@@ -186,12 +148,7 @@ class Route {
 		}
 	}
 
-	/**
-	 *
-	 * @param {RouteResponseConfig} responseInput
-	 * @returns {{response: Response, responseOptions: ResponseInit, responseInput: RouteResponseConfig}}
-	 */
-	constructResponse(responseInput) {
+  constructResponse(responseInput: RouteResponseConfig): { response: Response, responseOptions: ResponseInit, responseInput: RouteResponseConfig } {
 		const responseOptions = this.constructResponseOptions(responseInput);
 		const body = this.constructResponseBody(responseInput, responseOptions);
 
@@ -201,34 +158,24 @@ class Route {
 			responseInput,
 		};
 	}
-	/**
-	 *
-	 * @param {RouteResponseConfig} responseInput
-	 * @returns {ResponseInitUsingHeaders}
-	 */
-	constructResponseOptions(responseInput) {
+
+  constructResponseOptions(responseInput: RouteResponseConfig): ResponseInitUsingHeaders {
 		const options = responseInput.options || {};
 		options.status = sanitizeStatus(responseInput.status);
 		options.statusText = statusTextMap[options.status];
 		// we use Headers rather than an object because it allows us to add
 		// to them without worrying about case sensitivity of keys
 		options.headers = new this.config.Headers(responseInput.headers);
-		return /** @type {ResponseInitUsingHeaders} */ (options);
+    return options as ResponseInitUsingHeaders;
 	}
-	/**
-	 *
-	 * @param {RouteResponseConfig} responseInput
-	 * @param {ResponseInitUsingHeaders} responseOptions
-	 * @returns {string|null}
-	 */
-	constructResponseBody(responseInput, responseOptions) {
+  constructResponseBody(responseInput: RouteResponseConfig, responseOptions: ResponseInitUsingHeaders): string | null {
 		// start to construct the body
 		let body = responseInput.body;
 		// convert to json if we need to
 		if (typeof body === 'object') {
 			if (
 				this.config.sendAsJson &&
-				responseInput.body != null  
+				responseInput.body != null
 			) {
 				body = JSON.stringify(body);
 				if (!responseOptions.headers.has('Content-Type')) {
@@ -251,14 +198,10 @@ class Route {
 		return body || null;
 	}
 
-	/**
-	 * @param {MatcherDefinition} matcher
-	 */
-	static defineMatcher(matcher) {
+  static defineMatcher(matcher: MatcherDefinition) {
 		Route.registeredMatchers.push(matcher);
 	}
-	/** @type {MatcherDefinition[]} */
-	static registeredMatchers = [];
+  static registeredMatchers: MatcherDefinition[] = [];
 }
 
 builtInMatchers.forEach(Route.defineMatcher);

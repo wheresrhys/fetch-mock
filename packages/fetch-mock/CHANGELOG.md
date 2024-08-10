@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.1.0](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v11.0.2...fetch-mock-v11.1.0) (2024-08-10)
+
+
+### Features
+
+* remove debug mode from fetch-mock ([89890b6](https://github.com/wheresrhys/fetch-mock/commit/89890b6ec39077b769617f02bdf5de7b971fc52c))
+
 ## [11.0.2](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v11.0.1...fetch-mock-v11.0.2) (2024-08-08)
 
 

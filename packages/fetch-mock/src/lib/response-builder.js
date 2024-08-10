@@ -1,4 +1,3 @@
-import { getDebug } from './debug.js';
 
 const responseConfigProps = [
 	'body',
@@ -10,13 +9,10 @@ const responseConfigProps = [
 
 class ResponseBuilder {
 	constructor(options) {
-		this.debug = getDebug('ResponseBuilder()');
-		this.debug('Response builder created with options', options);
 		Object.assign(this, options);
 	}
 
 	exec() {
-		this.debug('building response');
 		this.normalizeResponseConfig();
 		this.constructFetchOpts();
 		this.constructResponseBody();
@@ -47,14 +43,12 @@ class ResponseBuilder {
 	normalizeResponseConfig() {
 		// If the response config looks like a status, start to generate a simple response
 		if (typeof this.responseConfig === 'number') {
-			this.debug('building response using status', this.responseConfig);
 			this.responseConfig = {
 				status: this.responseConfig,
 			};
 			// If the response config is not an object, or is an object that doesn't use
 			// any reserved properties, assume it is meant to be the body of the response
 		} else if (typeof this.responseConfig === 'string' || this.sendAsObject()) {
-			this.debug('building text response from', this.responseConfig);
 			this.responseConfig = {
 				body: this.responseConfig,
 			};
@@ -63,7 +57,6 @@ class ResponseBuilder {
 
 	validateStatus(status) {
 		if (!status) {
-			this.debug('No status provided. Defaulting to 200');
 			return 200;
 		}
 
@@ -73,7 +66,6 @@ class ResponseBuilder {
 				status >= 200) ||
 			status < 600
 		) {
-			this.debug('Valid status provided', status);
 			return status;
 		}
 
@@ -108,7 +100,6 @@ e.g. {"body": {"status: "registered"}}`);
 			this.responseConfig.body != null &&  
 			typeof this.body === 'object'
 		) {
-			this.debug('Stringifying JSON response body');
 			this.body = JSON.stringify(this.body);
 			if (!this.options.headers.has('Content-Type')) {
 				this.options.headers.set('Content-Type', 'application/json');
@@ -123,7 +114,6 @@ e.g. {"body": {"status: "registered"}}`);
 			typeof this.body === 'string' &&
 			!this.options.headers.has('Content-Length')
 		) {
-			this.debug('Setting content-length header:', this.body.length.toString());
 			this.options.headers.set('Content-Length', this.body.length.toString());
 		}
 	}
@@ -141,26 +131,19 @@ e.g. {"body": {"status: "registered"}}`);
 		// Using a proxy means we can set properties that may not be writable on
 		// the original Response. It also means we can track the resolution of
 		// promises returned by res.json(), res.text() etc
-		this.debug('Wrapping Response in ES proxy for observability');
 		return new Proxy(response, {
 			get: (originalResponse, name) => {
 				if (this.responseConfig.redirectUrl) {
 					if (name === 'url') {
-						this.debug(
-							'Retrieving redirect url',
-							this.responseConfig.redirectUrl,
-						);
 						return this.responseConfig.redirectUrl;
 					}
 
 					if (name === 'redirected') {
-						this.debug('Retrieving redirected status', true);
 						return true;
 					}
 				}
 
 				if (typeof originalResponse[name] === 'function') {
-					this.debug('Wrapping body promises in ES proxies for observability');
 					return new Proxy(originalResponse[name], {
 						apply: (func, thisArg, args) => {
 							const result = func.apply(response, args);

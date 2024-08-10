@@ -42,7 +42,6 @@
   },
   "homepage": "http://www.wheresrhys.co.uk/fetch-mock",
   "dependencies": {
-    "debug": "^4.1.1",
     "dequal": "^2.0.3",
     "globrex": "^0.1.2",
     "is-subset": "^0.1.1",

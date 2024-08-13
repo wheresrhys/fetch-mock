@@ -47,7 +47,6 @@
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@types/eslint__js": "^8.42.3",
     "@types/events": "^3.0.3",
-    "@types/globrex": "^0.1.4",
     "@types/node": "^20.14.10",
     "@vitest/browser": "^1.1.0",
     "@vitest/coverage-istanbul": "^1.1.0",

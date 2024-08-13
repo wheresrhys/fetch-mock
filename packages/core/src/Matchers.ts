@@ -1,6 +1,6 @@
 import { RouteConfig} from './Route.js';
 import { CallLog } from './CallHistory.js';
-import glob from 'globrex';
+import glob from 'glob-to-regexp';
 import * as regexparam from 'regexparam';
 import { isSubsetOf } from 'is-subset-of';
 import { dequal as isEqual } from 'dequal';
@@ -44,8 +44,8 @@ const stringMatchers: { [key: string]: UrlMatcherGenerator } = {
 			url.substr(-targetString.length) === targetString,
 
 	glob: (targetString) => {
-		const urlRX = /** @type {{regex: RegExp}} */ (glob(targetString));
-		return ({ url }) => urlRX.regex.test(url);
+		const urlRX = glob(targetString);
+		return ({ url }) => urlRX.test(url);
 	},
 	express: (targetString) => {
 		const urlRX = regexparam.parse(targetString);
@@ -56,7 +56,6 @@ const stringMatchers: { [key: string]: UrlMatcherGenerator } = {
 				return false;
 			}
 			vals.shift();
-			/** @type {Object.<string,string>} */
 			callLog.expressParams = urlRX.keys.reduce(
 				(map, paramName, i) =>
 					vals[i] ? Object.assign(map, { [paramName]: vals[i] }) : map,

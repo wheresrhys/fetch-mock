@@ -32,8 +32,9 @@
   "homepage": "https://github.com/wheresrhys/fetch-mock#readme",
   "dependencies": {
     "dequal": "^2.0.3",
-    "globrex": "^0.1.2",
+    "glob-to-regexp": "^0.4.1",
     "is-subset-of": "^3.1.10",
-    "regexparam": "^3.0.0"
+    "regexparam": "^3.0.0",
+    "@types/glob-to-regexp": "^0.4.4"
   }
 }

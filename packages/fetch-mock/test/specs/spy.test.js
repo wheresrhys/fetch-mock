@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-const { fetchMock } = testGlobals;
+import fetchMock from '../../src/index.js'
 describe('spy()', () => {
 	it('when mocking globally, spy falls through to global fetch', async () => {
 		const originalFetch = globalThis.fetch;

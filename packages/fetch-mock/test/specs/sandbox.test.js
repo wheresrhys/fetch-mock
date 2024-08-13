@@ -1,6 +1,6 @@
 import { describe, expect, it, beforeAll, vi } from 'vitest';
 
-const { fetchMock } = testGlobals;
+import fetchMock from '../../src/index.js'
 describe('sandbox', () => {
 	let originalFetch;
 

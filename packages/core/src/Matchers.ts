@@ -64,12 +64,13 @@ const stringMatchers: { [key: string]: UrlMatcherGenerator } = {
 			return true;
 		};
 	},
-	path:
-		(targetString) => {const dotlessTargetString = getPath(targetString);
-
-		return ({ url }) =>
-			getPath(url) === targetString || getPath(url) === dotlessTargetString;
+	path: (targetString) => {
+		const dotlessTargetString = getPath(targetString);
+		return ({ url }) => {
+			const path = getPath(url)
+			return path === targetString || path === dotlessTargetString;
 		}
+	}
 };
 const getHeaderMatcher: MatcherGenerator = ({ headers: expectedHeaders }) => {
 	if (!expectedHeaders) {

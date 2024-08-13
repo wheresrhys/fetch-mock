@@ -5,10 +5,7 @@ export default defineConfig({
 		coverage: {
 			provider: 'istanbul',
 		},
-		exclude: [
-			'packages/standalone/*.test.js',
-			'packages/fetch-mock/test/framework-compat/jest.spec.js',
-			'**/node_modules/**',
-		],
 	},
 });
+
+

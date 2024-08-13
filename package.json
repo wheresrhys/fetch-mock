@@ -31,10 +31,9 @@
     "prepare": "husky || echo \"husky not available\"",
     "build": "npm run build -w=packages",
     "docs": "npm run start -w docs",
-    "test:ci": "vitest . --reporter=junit --outputFile=test-results/junit.xml",
     "test": "vitest",
-    "test:browser": "vitest --workspace=vitest.workspace.ts",
-    "test:coverage": "vitest run --coverage ./packages/**/src/__tests__",
+    "test:ci": "vitest . --reporter=junit --outputFile=test-results/junit.xml",
+    "test:browser": "vitest --browser.enabled --browser.name chromium --browser.provider playwright",
     "coverage:send": "cat ./coverage/lcov.info | coveralls",
     "compat:module": "npm run compat:module -w import-compat"
   },

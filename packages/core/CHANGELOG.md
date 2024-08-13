@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.12](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.11...core-v0.4.12) (2024-08-13)
+
+
+### Bug Fixes
+
+* roll back to glob-to-regexp ([b114124](https://github.com/wheresrhys/fetch-mock/commit/b11412452ed376ab2e20e03a51f0dc1de1dcdb90))
+
 ## [0.4.11](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.10...core-v0.4.11) (2024-08-09)
 
 

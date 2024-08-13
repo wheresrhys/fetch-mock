@@ -1,5 +1,19 @@
 # Changelog
 
+## [11.1.1](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v11.1.0...fetch-mock-v11.1.1) (2024-08-13)
+
+
+### Bug Fixes
+
+* roll back to glob-to-regexp ([b114124](https://github.com/wheresrhys/fetch-mock/commit/b11412452ed376ab2e20e03a51f0dc1de1dcdb90))
+
+## [11.1.0](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v11.0.2...fetch-mock-v11.1.0) (2024-08-10)
+
+
+### Features
+
+* remove debug mode from fetch-mock ([89890b6](https://github.com/wheresrhys/fetch-mock/commit/89890b6ec39077b769617f02bdf5de7b971fc52c))
+
 ## [11.0.2](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v11.0.1...fetch-mock-v11.0.2) (2024-08-08)
 
 

@@ -1,6 +1,6 @@
 {
   "name": "fetch-mock",
-  "version": "11.0.2",
+  "version": "11.1.1",
   "description": "Mock http requests made using fetch (or isomorphic-fetch)",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
@@ -42,9 +42,9 @@
   },
   "homepage": "http://www.wheresrhys.co.uk/fetch-mock",
   "dependencies": {
-    "debug": "^4.1.1",
     "dequal": "^2.0.3",
-    "globrex": "^0.1.2",
+    "glob-to-regexp": "^0.4.1",
+    "@types/glob-to-regexp": "^0.4.4",
     "is-subset": "^0.1.1",
     "regexparam": "^3.0.0"
   },

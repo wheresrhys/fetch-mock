@@ -47,7 +47,6 @@
     "@testing-library/dom": "^10.4.0",
     "@types/eslint__js": "^8.42.3",
     "@types/events": "^3.0.3",
-    "@types/globrex": "^0.1.4",
     "@types/node": "^20.14.10",
     "@vitest/browser": "^2.0.5",
     "@vitest/coverage-istanbul": "^2.0.5",

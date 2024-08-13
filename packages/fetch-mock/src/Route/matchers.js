@@ -1,4 +1,4 @@
-import glob from 'globrex';
+import glob from 'glob-to-regexp';
 import * as regexparam from 'regexparam';
 import isSubset from 'is-subset';
 import { dequal as isEqual } from 'dequal';
@@ -22,7 +22,7 @@ const stringMatchers = {
 		),
 	glob: (targetString) => {
 		const urlRX = glob(targetString);
-		return debuggableUrlFunc((url) => urlRX.regex.test(url));
+		return debuggableUrlFunc((url) => urlRX.test(url));
 	},
 	express: (targetString) => {
 		const urlRX = regexparam.parse(targetString);

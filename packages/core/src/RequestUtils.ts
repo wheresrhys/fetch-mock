@@ -29,8 +29,13 @@ export function normalizeUrl(url: string | String | URL) {
 	if (protocolRelativeUrlRX.test(primitiveUrl)) {
 		return new URL(primitiveUrl, 'http://dummy').href.replace(/^[a-z]+:/, '');
 	}
-	const urlInstance = new URL(primitiveUrl, 'http://dummy');
-	return urlInstance.pathname + urlInstance.search;
+
+	if ('location' in globalThis) {
+		const urlInstance = new URL(primitiveUrl, 'http://dummy');
+		return urlInstance.pathname + urlInstance.search;
+	} else {
+		throw new Error('bluip9o')
+	}
 }
 
 export function createCallLogFromUrlAndOptions(url: string | String | object, options: RequestInit): CallLog {

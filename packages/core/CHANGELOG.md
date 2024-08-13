@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.5.0](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.12...core-v0.5.0) (2024-08-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* implemented desired behaviour for dot path matching
+* implemented desired behaviour for protocol relative urls
+
+### Features
+
+* implemented desired behaviour for dot path matching ([b2fe6f8](https://github.com/wheresrhys/fetch-mock/commit/b2fe6f894b337ed213f55fed47f611acbdecd84f))
+* implemented desired behaviour for protocol relative urls ([06e6260](https://github.com/wheresrhys/fetch-mock/commit/06e62607dbfc7b71936b8a691e37ef9275e7cc11))
+
 ## [0.4.12](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.11...core-v0.4.12) (2024-08-13)
 
 

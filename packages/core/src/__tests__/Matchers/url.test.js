@@ -235,11 +235,11 @@ describe('url matching', () => {
 			if (!globalThis.location) {
 				describe('when not in browser environment', () => {
 					it('error on page relative url if not in the browser', () => {
-						expect(new Route({ url: 'image.jpg', response: 200 })).toThrow('asdsa')
+						expect(() => new Route({ url: 'image.jpg', response: 200 })).toThrow('Relative urls are not support by default in node.js tests. Either use a utility such as jsdom to define globalThis.location or set `fetchMock.config.allowRelativeUrls = true`')
 					});
 
 					it('error on origin relative url if not in the browser', () => {
-						expect(new Route({ url: '/image.jpg', response: 200 })).toThrow('asdsa')
+						expect(() => new Route({ url: '/image.jpg', response: 200 })).toThrow("Relative urls are not support by default in node.js tests. Either use a utility such as jsdom to define globalThis.location or set `fetchMock.config.allowRelativeUrls = true`")
 					});
 
 					it('not error if jsdom used not in the browser', () => {
@@ -247,17 +247,17 @@ describe('url matching', () => {
 						  url: "https://a.com/path",
 						});
 						globalThis.location = dom.window.location;
-						expect(new Route({ url: 'image.jpg', response: 200 })).not.toThrow()
-						expect(new Route({ url: '/image.jpg', response: 200 })).not.toThrow()
+						expect(() => new Route({ url: 'image.jpg', response: 200 })).not.toThrow()
+						expect(() => new Route({ url: '/image.jpg', response: 200 })).not.toThrow()
 						delete globalThis.location
 					});
 
 					it('match unqualified host relative urls if "allowRelativeUrls" flag is on', () => {
-						const route = new Route({ url: '/image.jpg', response: 200 });
+						const route = new Route({ url: '/image.jpg', response: 200, allowRelativeUrls: true });
 						expect(route.matcher({ url: '/image.jpg' })).toBe(true);
 					})
 					it('match unqualified page relative urls if "allowRelativeUrls" flag is on', () => {
-						const route = new Route({ url: 'image.jpg', response: 200 });
+						const route = new Route({ url: 'image.jpg', response: 200, allowRelativeUrls: true });
 						expect(route.matcher({ url: 'image.jpg' })).toBe(true);
 					})
 				});

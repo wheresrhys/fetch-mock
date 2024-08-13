@@ -219,7 +219,7 @@ const getFullUrlMatcher = (route: RouteConfig, matcherUrl: string, query: { [key
 	// but we have to be careful to normalize the url we check and the name
 	// of the route to allow for e.g. http://it.at.there being indistinguishable
 	// from http://it.at.there/ once we start generating Request/Url objects
-	const expectedUrl = normalizeUrl(matcherUrl);
+	const expectedUrl = normalizeUrl(matcherUrl, route.allowRelativeUrls);
 	if (route.url === matcherUrl) {
 		route.url = expectedUrl;
 	}
@@ -228,7 +228,10 @@ const getFullUrlMatcher = (route: RouteConfig, matcherUrl: string, query: { [key
 		if (query && expectedUrl.indexOf('?')) {
 			return getPath(url) === getPath(expectedUrl);
 		}
-		return normalizeUrl(url) === expectedUrl;
+		// set the allowRelatievUrls option to true because, even if the option is not
+		// set by the user to true it is nevertheless possible that their application
+		// might use relative urls
+		return normalizeUrl(url, true) === expectedUrl;
 	};
 };
 

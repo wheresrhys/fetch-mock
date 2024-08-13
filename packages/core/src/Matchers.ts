@@ -65,9 +65,11 @@ const stringMatchers: { [key: string]: UrlMatcherGenerator } = {
 		};
 	},
 	path:
-		(targetString) =>
-		({ url }) =>
-			getPath(url) === targetString,
+		(targetString) => {const dotlessTargetString = getPath(targetString);
+
+		return ({ url }) =>
+			getPath(url) === targetString || getPath(url) === dotlessTargetString;
+		}
 };
 const getHeaderMatcher: MatcherGenerator = ({ headers: expectedHeaders }) => {
 	if (!expectedHeaders) {

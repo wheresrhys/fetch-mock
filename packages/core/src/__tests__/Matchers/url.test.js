@@ -8,7 +8,6 @@ describe('url matching', () => {
 		expect(route.matcher({ url: 'http://a.com/paths' })).toBe(false);
 		expect(route.matcher({ url: 'http://a.co/path' })).toBe(false);
 		expect(route.matcher({ url: 'http://a.com/path' })).toBe(true);
-		expect(route.matcher({ url: '//a.com/path' })).toBe(true);
 	});
 
 	it('match string objects', () => {
@@ -113,18 +112,7 @@ describe('url matching', () => {
 		expect(route.matcher({ url: 'http://a.com/jar/of/jam' })).toBe(true);
 	});
 
-	describe('host normalisation', () => {
-		it('match exact pathless urls regardless of trailing slash', () => {
-			const route = new Route({ url: 'http://a.com/', response: 200 });
 
-			expect(route.matcher({ url: 'http://a.com/' })).toBe(true);
-			expect(route.matcher({ url: 'http://a.com' })).toBe(true);
-
-			const route2 = new Route({ url: 'http://b.com', response: 200 });
-			expect(route2.matcher({ url: 'http://b.com/' })).toBe(true);
-			expect(route2.matcher({ url: 'http://b.com' })).toBe(true);
-		});
-	});
 
 	describe('data: URLs', () => {
 		it('match exact strings', () => {
@@ -191,6 +179,19 @@ describe('url matching', () => {
 	});
 
 	describe('url resolution and normalisation', () => {
+	describe('trailing slashes', () => {
+		it('match exact pathless urls regardless of trailing slash', () => {
+			const route = new Route({ url: 'http://a.com/', response: 200 });
+
+			expect(route.matcher({ url: 'http://a.com/' })).toBe(true);
+			expect(route.matcher({ url: 'http://a.com' })).toBe(true);
+
+			const route2 = new Route({ url: 'http://b.com', response: 200 });
+			expect(route2.matcher({ url: 'http://b.com/' })).toBe(true);
+			expect(route2.matcher({ url: 'http://b.com' })).toBe(true);
+		});
+	});
+
 		describe('protocol agnostic urls', () => {
 			it('protocol agnostic url matches protocol agnostic url', () => {
 				const route = new Route({ url: '//a.com', response: 200 });

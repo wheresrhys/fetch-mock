@@ -12,6 +12,10 @@ interface DerivedRequestOptions {
 
 export type NormalizedRequestOptions = RequestInit | (RequestInit & DerivedRequestOptions);
 
+export function hasCredentialsInUrl (url: string): boolean {
+	const urlObject = new URL(url, protocolRelativeUrlRX.test(url) ? 'http://dummy' :  undefined);
+	return Boolean(urlObject.username || urlObject.password);
+}
 
 export function normalizeUrl(url: string | String | URL) {
 	if (url instanceof URL) {
@@ -23,7 +27,7 @@ export function normalizeUrl(url: string | String | URL) {
 		return new URL(primitiveUrl).href;
 	}
 	if (protocolRelativeUrlRX.test(primitiveUrl)) {
-		return new URL(primitiveUrl, 'http://dummy').href;
+		return new URL(primitiveUrl, 'http://dummy').href.replace(/^[a-z]+:/, '');
 	}
 	const urlInstance = new URL(primitiveUrl, 'http://dummy');
 	return urlInstance.pathname + urlInstance.search;

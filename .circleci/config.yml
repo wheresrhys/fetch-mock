@@ -9,9 +9,9 @@ references:
   nodelts: &nodelts
     docker:
       - image: cimg/node:lts
-  # browsers: &browsers
-  #   docker:
-  #     - image: circleci/node:12.18.3-browsers
+  browsers: &browsers
+    docker:
+      - image: cimg/node:18.20-browsers
   nodecurrent: &nodecurrent
     docker:
       - image: cimg/node:current
@@ -74,6 +74,11 @@ jobs:
       - run: npm run test:ci
       - store_test_results:
           path: test-results
+  browser:
+    <<: *browsers
+    steps:
+      - *workspace
+      - run: npm run test:browser
   module-compat:
     <<: *nodelts
     steps:
@@ -112,19 +117,22 @@ workflows:
       - typecheck:
           <<: *triggerable-by-tag
           <<: *after-build-lint
+      - browser:
+          <<: *triggerable-by-tag
+          requires:
+            - checkout_code
+          # <<: *after-build-test-lint
       - module-compat:
           <<: *triggerable-by-tag
           <<: *after-build-lint
       - publish:
           requires:
-            # - chrome
-            # - firefox
+            - browser
             - build
             - test
             - lint
             - module-compat
             - typecheck
-            - jest
           filters:
             branches:
               ignore: /.*/

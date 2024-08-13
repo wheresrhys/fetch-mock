@@ -100,17 +100,6 @@ describe('url matching', () => {
 		expect(route.matcher({ url: '/a.com/' })).toBe(true);
 	});
 
-	it('match relative urls with dots', () => {
-		const route = new Route({ url: '/it.at/there/', response: 200 });
-		expect(route.matcher({ url: '/it.at/not/../there/' })).toBe(true);
-		expect(route.matcher({ url: './it.at/there/' })).toBe(true);
-	});
-
-	it('match absolute urls with dots', () => {
-		const route = new Route({ url: 'http://it.at/there/', response: 200 });
-		expect(route.matcher({ url: 'http://it.at/not/../there/' })).toBe(true);
-	});
-
 	it('match with multiple url patterns at once', () => {
 		const route = new Route({
 			url: {
@@ -200,4 +189,66 @@ describe('url matching', () => {
 			expect(route.matcher({ url: 'data:text/plain,12345' })).toBe(true);
 		});
 	});
+
+	describe('url resolution and normalisation', () => {
+		describe('protocol agnostic urls', () => {
+			it('protocol agnostic url matches protocol agnostic url', () => {
+				const route = new Route({ url: '//a.com', response: 200 });
+				expect(route.matcher({ url: '//a.com' })).toBe(true);
+			});
+			it('protocol agnostic url does not match protocol specific url', () => {
+				const route = new Route({ url: '//a.com', response: 200 });
+				expect(route.matcher({ url: 'http://a.com' })).toBe(false);
+			});
+			it('protocol specific url does not match protocol agnostic url', () => {
+				const route = new Route({ url: 'http://a.com', response: 200 });
+				expect(route.matcher({ url: '//a.com' })).toBe(false);
+			});
+			it('protocol agnostic url matches beginning of protocol agnostic url', () => {
+				const route = new Route({ url: 'begin://a.com', response: 200 });
+				expect(route.matcher({ url: '//a.com/path' })).toBe(true);
+			});
+			it('protocol agnostic url does not match beginning of protocol specific url', () => {
+				const route = new Route({ url: 'begin://a.com', response: 200 });
+				expect(route.matcher({ url: 'http://a.com/path' })).toBe(false);
+			});
+			it('protocol specific url does not match beginning of protocol agnostic url', () => {
+				const route = new Route({ url: 'begin:http://a.com', response: 200 });
+				expect(route.matcher({ url: '//a.com/path' })).toBe(false);
+			});
+		})
+		describe('dot segments', () => {
+			it('dot segmented url matches dot segmented url', () => {
+				const relativeRoute = new Route({ url: '/it.at/not/../there', response: 200 });
+				expect(relativeRoute.matcher({ url: '/it.at/not/../there' })).toBe(true);
+				const absoluteRoute = new Route({ url: 'http://it.at/not/../there', response: 200 });
+				expect(absoluteRoute.matcher({ url: 'http:///it.at/not/../there' })).toBe(true);
+			});
+			it('dot segmented url matches dot segmentless url', () => {
+				const relativeRoute = new Route({ url: '/it.at/not/../there', response: 200 });
+				expect(relativeRoute.matcher({ url: '/it.at/there' })).toBe(true);
+				const absoluteRoute = new Route({ url: 'http://it.at/not/../there', response: 200 });
+				expect(absoluteRoute.matcher({ url: 'http:///it.at/there' })).toBe(true);
+			});
+			it('dot segmentless url matches dot segmented url', () => {
+				const relativeRoute = new Route({ url: '/it.at/there', response: 200 });
+				expect(relativeRoute.matcher({ url: '/it.at/not/../there' })).toBe(true);
+				const absoluteRoute = new Route({ url: 'http://it.at/there', response: 200 });
+				expect(absoluteRoute.matcher({ url: 'http:///it.at/not/../there' })).toBe(true);
+			});
+			it('dot segmented path matches dot segmented path', () => {
+				const relativeRoute = new Route({ url: 'path:/it.at/not/../there', response: 200 });
+				expect(relativeRoute.matcher({ url: '/it.at/not/../there' })).toBe(true);
+			});
+			it('dot segmented path matches dot segmentless path', () => {
+				const relativeRoute = new Route({ url: 'path:/it.at/not/../there', response: 200 });
+				expect(relativeRoute.matcher({ url: '/it.at/there' })).toBe(true);
+			});
+			it('dot segmentless path matches dot segmented path', () => {
+				const relativeRoute = new Route({ url: 'path:/it.at/there', response: 200 });
+				expect(relativeRoute.matcher({ url: '/it.at/not/../there' })).toBe(true);
+			});
+		})
+
+	})
 });

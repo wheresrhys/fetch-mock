@@ -31,7 +31,13 @@ export function normalizeUrl(url: string | String | URL, allowRelativeUrls: bool
 		return new URL(primitiveUrl, 'http://dummy').href.replace(/^[a-z]+:/, '');
 	}
 
-	if ('location' in globalThis || allowRelativeUrls) {
+	if ('location' in globalThis) {
+		if (primitiveUrl.startsWith('/')) {
+			return `${globalThis.location.origin}${primitiveUrl}`;
+		} else {
+			return `${globalThis.location.href}/${primitiveUrl}`;
+		}
+	} else if (allowRelativeUrls) {
 		const urlInstance = new URL(primitiveUrl, 'http://dummy');
 		return urlInstance.pathname + urlInstance.search;
 	} else {

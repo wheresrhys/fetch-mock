@@ -26,7 +26,9 @@ All of the following can be passed in directly as the `matcher` argument or as t
 1. Trailing slashes are ignored i.e. `http://thing` is treated the same as `http://thing/` ([read the spec](https://url.spec.whatwg.org/#url-equivalence))
 2. When using dot segments in urls `fetch-mock` will match both the full path containing dot segments, and the path ot resolves to e.g. `/path/../other-path` will match `/path/../other-path` and `/other-path` ([read the spec](https://github.com/wheresrhys/fetch-mock/issues/763#:~:text=resolved%20as%20per-,the%20spec,-before%20attempting%20to))
 3. `fetch` will convert any protocol-relative urls to ones using the protocol of the current page e.g. if the browser is at `**http:**//a.com` and your application calls `fetch('//some.url')`, a request will be made to `**http:**//some.url`. However, to discourage writing tests that pass in one environment but not another, `fetch-mock` **will only** match requests where the protocol (or lack of) is exactly the same as the route. e.g. `begin://a.com` will match `//a.com/path` but not `http://a.com/path`
-4. Fetches for urls relative to the current page e.g. `fetch('image.jpg)` are currently poorly supported. [This issue](https://github.com/wheresrhys/fetch-mock/issues/763) contains a proposal of how to deal with them.
+4. Fetches of relative urls e.g. `fetch('image.jg')` or `fetch('/path')` are technically not supported in node.js at all. However, `fetch-mock` will handle them if either
+   a) The global `fetch-mock` option `fetchMock.config.allowRelativeUrls = true` is set
+   b) [jsdom](https://www.npmjs.com/package/jsdom) or similar is used to set `globalThis.location` to an instance of the DOM class `Location`. If this approach is taken then - similar to the treatment of dot segments described above - the fully resolved url and relative urls can be matched interchangably e.g. `fetch('image.jpg')` on the page `http://a.com/path` will be matched by `image.jpg` and by `http://a.com/path/image.jpg`
 
 ### Full url
 

@@ -8,6 +8,7 @@ export type FetchMockGlobalConfig = {
 	sendAsJson?: boolean;
 	includeContentLength?: boolean;
 	matchPartialBody?: boolean;
+	allowRelativeUrls?: boolean;
 };
 export type FetchImplementations = {
 	fetch?: typeof fetch;
@@ -17,8 +18,7 @@ export type FetchImplementations = {
 };
 export type FetchMockConfig = FetchMockGlobalConfig & FetchImplementations;
 
-/** @type {FetchMockConfig} */
-const defaultConfig = {
+const defaultConfig: FetchMockConfig = {
 	includeContentLength: true,
 	sendAsJson: true,
 	matchPartialBody: false,

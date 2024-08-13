@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, beforeAll, afterAll } from 'vitest';
 import Route from '../../Route';
+import {JSDOM} from 'jsdom';
 
 describe('url matching', () => {
 	it('match exact strings', () => {
@@ -13,13 +14,6 @@ describe('url matching', () => {
 	it('match string objects', () => {
 		const route = new Route({ url: 'http://a.com/path', response: 200 });
 		expect(route.matcher({ url: new String('http://a.com/path') })).toBe(true);  
-	});
-
-	it('match exact strings with relative url', () => {
-		const route = new Route({ url: '/path', response: 200 });
-		expect(route.matcher({ url: '/pat' })).toBe(false);
-		expect(route.matcher({ url: '/paths' })).toBe(false);
-		expect(route.matcher({ url: '/path' })).toBe(true);
 	});
 
 	it('match exact string against URL object', () => {
@@ -94,11 +88,6 @@ describe('url matching', () => {
 		expect(route.matcher({ url: 'http://a.com/12345' })).toBe(true);
 	});
 
-	it('match relative urls', () => {
-		const route = new Route({ url: '/a.com/', response: 200 });
-		expect(route.matcher({ url: '/a.com/' })).toBe(true);
-	});
-
 	it('match with multiple url patterns at once', () => {
 		const route = new Route({
 			url: {
@@ -111,8 +100,6 @@ describe('url matching', () => {
 		});
 		expect(route.matcher({ url: 'http://a.com/jar/of/jam' })).toBe(true);
 	});
-
-
 
 	describe('data: URLs', () => {
 		it('match exact strings', () => {
@@ -220,20 +207,14 @@ describe('url matching', () => {
 		})
 		describe('dot segments', () => {
 			it('dot segmented url matches dot segmented url', () => {
-				const relativeRoute = new Route({ url: '/it.at/not/../there', response: 200 });
-				expect(relativeRoute.matcher({ url: '/it.at/not/../there' })).toBe(true);
 				const absoluteRoute = new Route({ url: 'http://it.at/not/../there', response: 200 });
 				expect(absoluteRoute.matcher({ url: 'http:///it.at/not/../there' })).toBe(true);
 			});
 			it('dot segmented url matches dot segmentless url', () => {
-				const relativeRoute = new Route({ url: '/it.at/not/../there', response: 200 });
-				expect(relativeRoute.matcher({ url: '/it.at/there' })).toBe(true);
 				const absoluteRoute = new Route({ url: 'http://it.at/not/../there', response: 200 });
 				expect(absoluteRoute.matcher({ url: 'http:///it.at/there' })).toBe(true);
 			});
 			it('dot segmentless url matches dot segmented url', () => {
-				const relativeRoute = new Route({ url: '/it.at/there', response: 200 });
-				expect(relativeRoute.matcher({ url: '/it.at/not/../there' })).toBe(true);
 				const absoluteRoute = new Route({ url: 'http://it.at/there', response: 200 });
 				expect(absoluteRoute.matcher({ url: 'http:///it.at/not/../there' })).toBe(true);
 			});
@@ -249,6 +230,90 @@ describe('url matching', () => {
 				const relativeRoute = new Route({ url: 'path:/it.at/there', response: 200 });
 				expect(relativeRoute.matcher({ url: '/it.at/not/../there' })).toBe(true);
 			});
+		})
+		describe('page-relative urls', () => {
+			if (!globalThis.location) {
+				describe('when not in browser environment', () => {
+					it('error on page relative url if not in the browser', () => {
+						expect(() => new Route({ url: 'image.jpg', response: 200 })).toThrow('Relative urls are not support by default in node.js tests. Either use a utility such as jsdom to define globalThis.location or set `fetchMock.config.allowRelativeUrls = true`')
+					});
+
+					it('error on origin relative url if not in the browser', () => {
+						expect(() => new Route({ url: '/image.jpg', response: 200 })).toThrow("Relative urls are not support by default in node.js tests. Either use a utility such as jsdom to define globalThis.location or set `fetchMock.config.allowRelativeUrls = true`")
+					});
+
+					it('not error if jsdom used not in the browser', () => {
+						const dom = new JSDOM(``, {
+						  url: "https://a.com/path",
+						});
+						globalThis.location = dom.window.location;
+						expect(() => new Route({ url: 'image.jpg', response: 200 })).not.toThrow()
+						expect(() => new Route({ url: '/image.jpg', response: 200 })).not.toThrow()
+						delete globalThis.location
+					});
+
+					it('match unqualified host relative urls if "allowRelativeUrls" flag is on', () => {
+						const route = new Route({ url: '/image.jpg', response: 200, allowRelativeUrls: true });
+						expect(route.matcher({ url: '/image.jpg' })).toBe(true);
+					})
+					it('match unqualified page relative urls if "allowRelativeUrls" flag is on', () => {
+						const route = new Route({ url: 'image.jpg', response: 200, allowRelativeUrls: true });
+						expect(route.matcher({ url: 'image.jpg' })).toBe(true);
+					})
+				});
+			}
+
+			describe('when in browser environment', () => {
+				let location;
+				let origin;
+				beforeAll(() => {
+					if (!globalThis.location) {
+						const dom = new JSDOM(``, {
+						  url: "https://a.com/path",
+						});
+						globalThis.location = dom.window.location;
+					}
+					location = globalThis.location.href;
+					origin = globalThis.location.origin;
+				});
+				afterAll(() => {
+					delete globalThis.location
+				})
+				it('page relative url matches page relative url', () => {
+					const route = new Route({ url: 'image.jpg', response: 200 });
+					expect(route.matcher({ url: 'image.jpg' })).toBe(true);
+				});
+
+				it('fully qualified url matches page relative url', () => {
+					const route = new Route({ url: `${location}/image.jpg`, response: 200 });
+					expect(route.matcher({ url: 'image.jpg' })).toBe(true);
+				});
+
+				it('page relative url matches fully qualified url', () => {
+					const route = new Route({ url: 'image.jpg', response: 200 });
+					expect(route.matcher({ url: `${location}/image.jpg` })).toBe(true);
+				});
+
+				it('origin relative url matches origin relative url', () => {
+					const route = new Route({ url: '/image.jpg', response: 200 });
+					expect(route.matcher({ url: '/image.jpg' })).toBe(true);
+				});
+
+				it('fully qualified url matches origin relative url', () => {
+					const route = new Route({ url: `${origin}/image.jpg`, response: 200 });
+					expect(route.matcher({ url: '/image.jpg' })).toBe(true);
+				});
+
+				it('origin relative url matches fully qualified url', () => {
+					const route = new Route({ url: '/image.jpg', response: 200 });
+					expect(route.matcher({ url: `${origin}/image.jpg` })).toBe(true);
+				});
+			})
+
+
+
+
+
 		})
 
 	})

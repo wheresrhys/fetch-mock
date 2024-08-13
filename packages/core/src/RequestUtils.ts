@@ -17,7 +17,7 @@ export function hasCredentialsInUrl (url: string): boolean {
 	return Boolean(urlObject.username || urlObject.password);
 }
 
-export function normalizeUrl(url: string | String | URL) {
+export function normalizeUrl(url: string | String | URL, allowRelativeUrls: boolean) {
 	if (url instanceof URL) {
 		return url.href;
 	}
@@ -29,14 +29,25 @@ export function normalizeUrl(url: string | String | URL) {
 	if (protocolRelativeUrlRX.test(primitiveUrl)) {
 		return new URL(primitiveUrl, 'http://dummy').href.replace(/^[a-z]+:/, '');
 	}
-	const urlInstance = new URL(primitiveUrl, 'http://dummy');
-	return urlInstance.pathname + urlInstance.search;
+
+	if ('location' in globalThis) {
+		if (primitiveUrl.startsWith('/')) {
+			return `${globalThis.location.origin}${primitiveUrl}`;
+		} else {
+			return `${globalThis.location.href}/${primitiveUrl}`;
+		}
+	} else if (allowRelativeUrls) {
+		const urlInstance = new URL(primitiveUrl, 'http://dummy');
+		return urlInstance.pathname + urlInstance.search;
+	} else {
+		throw new Error("Relative urls are not support by default in node.js tests. Either use a utility such as jsdom to define globalThis.location or set `fetchMock.config.allowRelativeUrls = true`")
+	}
 }
 
 export function createCallLogFromUrlAndOptions(url: string | String | object, options: RequestInit): CallLog {
 	const pendingPromises: Promise<unknown>[]  = [];
 	if (typeof url === 'string' || url instanceof String || url instanceof URL) {
-		const normalizedUrl: string = normalizeUrl(url);
+		const normalizedUrl: string = normalizeUrl(url, true);
 		const derivedOptions = options ? { ...options } : {};
 		if (derivedOptions.headers) {
 			derivedOptions.headers = normalizeHeaders(derivedOptions.headers);
@@ -75,7 +86,7 @@ export async function createCallLogFromRequest(request: Request, options: Reques
 	if (request.headers) {
 		derivedOptions.headers = normalizeHeaders(request.headers);
 	}
-	const url = normalizeUrl(request.url);
+	const url = normalizeUrl(request.url, true);
 	const callLog = {
 		args: [request, options],
 		url,

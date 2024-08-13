@@ -8,7 +8,7 @@ import {
 	vi,
 } from 'vitest';
 
-const { fetchMock } = testGlobals;
+import fetchMock from '../../src/index.js'
 describe('Set up and tear down', () => {
 	let fm;
 	beforeAll(() => {

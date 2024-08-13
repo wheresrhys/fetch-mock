@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.6.0](https://github.com/wheresrhys/fetch-mock/compare/core-v0.5.0...core-v0.6.0) (2024-08-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* force a major release due to breaking nature of relative url API changes
+
+### Features
+
+* implemented allowRelativeUrls option ([f32bd6e](https://github.com/wheresrhys/fetch-mock/commit/f32bd6e6ba7aed03ec0fd0c7361097e85c84224a))
+
+
+### Bug Fixes
+
+* all relative url behaviour is as expected now; ([dc99eb7](https://github.com/wheresrhys/fetch-mock/commit/dc99eb783e64c8c101c9d15fc59cccc7f7ad174d))
+* force a major release due to breaking nature of relative url API changes ([6f29db8](https://github.com/wheresrhys/fetch-mock/commit/6f29db8ff79a8c7a50ad03f4c1547d8716ffb298))
+
 ## [0.5.0](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.12...core-v0.5.0) (2024-08-13)
 
 

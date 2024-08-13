@@ -3,6 +3,7 @@ import Route, { UserRouteConfig, RouteResponsePromise, RouteConfig, RouteRespons
 import { isUrlMatcher, isFunctionMatcher } from './Matchers.js';
 import { RouteMatcher } from './Matchers.js';
 import { FetchMockConfig } from './FetchMock.js';
+import { hasCredentialsInUrl } from './RequestUtils.js';
 import type { CallLog } from './CallHistory.js';
 
 export type ResponseConfigProp = "body" | "headers" | "throws" | "status" | "redirectUrl";
@@ -74,8 +75,7 @@ function throwSpecExceptions({ url, options: { headers, method, body } }: CallLo
 			}
 		});
 	}
-	const urlObject = new URL(url);
-	if (urlObject.username || urlObject.password) {
+	if (hasCredentialsInUrl(url)) {
 		throw new TypeError(
 			`Request cannot be constructed from a URL that includes credentials: ${url}`,
 		);

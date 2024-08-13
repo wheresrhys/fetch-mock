@@ -1,5 +1,4 @@
 import type { CallLog } from './CallHistory.js';
-import type {FetchMockConfig} from "./FetchMock.js";
 // https://stackoverflow.com/a/19709846/308237 plus data: scheme
 // split into 2 code paths as URL constructor does not support protocol-relative urls
 const absoluteUrlRX = new RegExp('^[a-z]+://|^data:', 'i');

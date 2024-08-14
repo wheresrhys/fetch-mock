@@ -7,7 +7,11 @@ import { hasCredentialsInUrl } from './RequestUtils.js';
 import type { CallLog } from './CallHistory.js';
 
 export type ResponseConfigProp = "body" | "headers" | "throws" | "status" | "redirectUrl";
-
+export type RemoveRouteOptions = {
+	includeSticky?: boolean;
+	includeFallback?: boolean;
+	names?: string[];
+}
 const responseConfigProps: ResponseConfigProp[] = [
 	'body',
 	'headers',
@@ -320,11 +324,7 @@ export default class Router {
 		});
 		this.fallbackRoute.config.isFallback = true;
 	}
-	removeRoutes({ names, includeSticky, includeFallback }: {
-		names?: string[];
-		includeSticky?: boolean;
-		includeFallback?: boolean;
-	} = {}) {
+	removeRoutes({ names, includeSticky, includeFallback }: RemoveRouteOptions = {}) {
 		includeFallback = includeFallback ?? true;
 		this.routes = this.routes.filter(({ config: { sticky, name } }) => {
 			if (sticky && !includeSticky) {

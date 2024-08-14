@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import { FetchMock, defaultConfig } from '@fetch-mock/core';
+import { FetchMock, defaultConfig, RemoveRouteOptions } from '@fetch-mock/core';
 import './vitest-extensions';
 
 class FetchMockVitest extends FetchMock {
@@ -7,11 +7,11 @@ class FetchMockVitest extends FetchMock {
 		this.callHistory.clear();
 		return this
 	}
-	mockReset ({includeSticky=false, includeFallback=true} = {}) {
-		this.router.removeRoutes({includeSticky, includeFallback});
+	mockReset(options?: RemoveRouteOptions) {
+		this.router.removeRoutes(options);
 		return this.mockClear();
 	}
-	mockRestore(options) {
+	mockRestore(options?: RemoveRouteOptions) {
 		this.unmockGlobal();
 		return this.mockReset(options)
 	}
@@ -28,16 +28,19 @@ export function hookIntoVitestMockResetMethods() {
 	vi.clearAllMocks = () => {
 		clearAllMocks.apply(vi);
 		fetchMockVitest.mockClear();
+		return vi;
 	}
 
-	vi.resetAllMocks = (options) => {
+	vi.resetAllMocks = (options?: RemoveRouteOptions) => {
 		resetAllMocks.apply(vi);
 		fetchMockVitest.mockReset(options);
+		return vi;
 	}
 
-	vi.restoreAllMocks = (options) => {
+	vi.restoreAllMocks = (options?: RemoveRouteOptions) => {
 		restoreAllMocks.apply(vi);
 		fetchMockVitest.mockRestore(options);
+		return vi;
 	}
 }
 

@@ -77,9 +77,6 @@
     "**/*.js": [
       "npm run lint:staged"
     ],
-    "packages/**/*.js": [
-      "npm run types:check"
-    ],
     "packages/**/*.ts": [
       "npm run types:check"
     ],

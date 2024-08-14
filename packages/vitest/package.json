@@ -12,8 +12,9 @@
   },
   "types": "./types/index.d.ts",
   "scripts": {
-    "build": "rollup -c"
+    "build": "rm -rf dist && tsc -p tsconfig.esm.json && tsc -p tsconfig.cjs.json && node ./scripts/declare-dist-type.js"
   },
+  "type": "module",
   "author": "",
   "license": "ISC",
   "dependencies": {

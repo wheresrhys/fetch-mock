@@ -1,33 +1,13 @@
 {
+    "extends": "./tsconfig.base.json",
+    "rootDir": "src",
     "compilerOptions": {
-        "lib": [
-            "es2021",
-            "dom",
-            "dom.iterable"
-        ],
-        "moduleResolution": "nodenext",
         "module": "NodeNext",
-        "allowJs": true,
-        "checkJs": true,
-        "strict": true,
-        "noImplicitAny": true,
-        "noImplicitThis": true,
-        "strictNullChecks": false,
-        "strictFunctionTypes": true,
-        "types": [
-        ],
-        "downlevelIteration": true,
-        "forceConsistentCasingInFileNames": true,
-        "declaration": true,
-        "skipLibCheck": true,
         "noEmit": true,
         "target": "es2021",
-        "allowImportingTsExtensions": true,
-        "removeComments": true
     },
     "include": [
-        "./packages/core/src/*.js",
-        "./packages/core/src/*.ts"
+        "./packages/**/src/*.ts"
     ],
     "exclude": [
         "node_modules",

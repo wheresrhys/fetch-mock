@@ -5,7 +5,6 @@
         "listFiles": false,
         "pretty": true,
         "traceResolution": false,
-        "rootDir": "src",
         "lib": [
             "es2021",
             "dom",
@@ -26,9 +25,7 @@
         "declaration": true,
         "removeComments": true
     },
-    "compileOnSave": false,
-    "exclude": ["node_modules", "src/__tests__"],
-    "include": ["src"]
+    "compileOnSave": false
 }
 
 

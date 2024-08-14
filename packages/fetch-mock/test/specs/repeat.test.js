@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, beforeAll, vi } from 'vitest';
 
-import fetchMock from '../../src/index.js'
+import fetchMock from '../../src/index.js';
 describe('repeat and done()', () => {
 	let fm;
 	beforeAll(() => {
@@ -132,18 +132,22 @@ describe('repeat and done()', () => {
 
 		fm.fetchHandler('http://b.com/');
 		fm.done();
-		expect(console.warn).toHaveBeenCalledWith('Warning: http://a.com/ not called')
+		expect(console.warn).toHaveBeenCalledWith(
+			'Warning: http://a.com/ not called',
+		);
 		expect(console.warn).toHaveBeenCalledWith(
 			'Warning: http://b.com/ only called 1 times, but 2 expected',
-			);
+		);
 
 		console.warn.mockClear();
 		fm.done('http://a.com/');
-		expect(console.warn).toHaveBeenCalledWith('Warning: http://a.com/ not called');
+		expect(console.warn).toHaveBeenCalledWith(
+			'Warning: http://a.com/ not called',
+		);
 		expect(console.warn).not.toHaveBeenCalledWith(
 			'Warning: http://b.com/ only called 1 times, but 2 expected',
-			)
-			console.warn.mockRestore();
+		);
+		console.warn.mockRestore();
 	});
 
 	describe('sandbox isolation', () => {

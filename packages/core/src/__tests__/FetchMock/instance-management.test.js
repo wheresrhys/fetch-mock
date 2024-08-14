@@ -16,7 +16,7 @@ describe('instance management', () => {
 
 		it('implement full fetch-mock api', () => {
 			const child = fetchMock.createInstance();
-			 
+
 			for (const key in fetchMock) {
 				expect(typeof child[key]).toEqual(typeof fetchMock[key]);
 			}

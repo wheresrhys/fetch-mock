@@ -1,12 +1,20 @@
-import { createCallLogFromUrlAndOptions, NormalizedRequestOptions } from './RequestUtils.js';
+import {
+	createCallLogFromUrlAndOptions,
+	NormalizedRequestOptions,
+} from './RequestUtils.js';
 import { isUrlMatcher, RouteMatcher } from './Matchers.js';
-import Route, {RouteConfig, RouteName} from './Route.js';
+import Route, { RouteConfig, RouteName } from './Route.js';
 import Router from './Router.js';
-import type { FetchMockConfig } from "./FetchMock.js";
+import type { FetchMockConfig } from './FetchMock.js';
 
-export type Matched = "matched";
-export type Unmatched = "unmatched";
-export type CallHistoryFilter = RouteName | Matched | Unmatched | boolean | RouteMatcher;
+export type Matched = 'matched';
+export type Unmatched = 'unmatched';
+export type CallHistoryFilter =
+	| RouteName
+	| Matched
+	| Unmatched
+	| boolean
+	| RouteMatcher;
 export type CallLog = {
 	args: unknown[];
 	url: string;
@@ -27,9 +35,11 @@ const isName = (filter: CallHistoryFilter): filter is RouteName =>
 	/^[\da-zA-Z-]+$/.test(filter) &&
 	!['matched', 'unmatched'].includes(filter);
 
-const isMatchedOrUnmatched = (filter: CallHistoryFilter): filter is (Matched | Unmatched | boolean) =>
+const isMatchedOrUnmatched = (
+	filter: CallHistoryFilter,
+): filter is Matched | Unmatched | boolean =>
 	typeof filter === 'boolean' ||
-	(['matched', 'unmatched']).includes(filter as string);
+	['matched', 'unmatched'].includes(filter as string);
 
 class CallHistory {
 	callLogs: CallLog[];
@@ -62,21 +72,17 @@ class CallHistory {
 			await this.flush();
 		}
 	}
-	calls(filter: CallHistoryFilter, options: RouteConfig): CallLog[]{
+	calls(filter: CallHistoryFilter, options: RouteConfig): CallLog[] {
 		let calls = [...this.callLogs];
 		if (typeof filter === 'undefined' && !options) {
 			return calls;
 		}
 
 		if (isMatchedOrUnmatched(filter)) {
-			if (
-				([true, 'matched'] as CallHistoryFilter[]).includes(filter)
-			) {
+			if (([true, 'matched'] as CallHistoryFilter[]).includes(filter)) {
 				calls = calls.filter(({ route }) => !route.config.isFallback);
 			} else if (
-				([false, 'unmatched'] as CallHistoryFilter[]).includes(
-					filter,
-				)
+				([false, 'unmatched'] as CallHistoryFilter[]).includes(filter)
 			) {
 				calls = calls.filter(({ route }) => Boolean(route.config.isFallback));
 			}

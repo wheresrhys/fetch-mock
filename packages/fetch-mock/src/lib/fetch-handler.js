@@ -16,7 +16,7 @@ const resolve = async (
 	// Because of this we can't safely check for function before Promisey-ness,
 	// or vice versa. So to keep it DRY, and flexible, we keep trying until we
 	// have something that looks like neither Promise nor function
-	 
+
 	while (true) {
 		if (typeof response === 'function') {
 			// in the case of falling back to the network we need to make sure we're using
@@ -29,7 +29,7 @@ const resolve = async (
 			}
 			response = response(url, options, request);
 		} else if (typeof response.then === 'function') {
-			response = await response;  
+			response = await response;
 		} else {
 			return response;
 		}
@@ -41,13 +41,11 @@ FetchMock.needsAsyncBodyExtraction = function ({ request }) {
 };
 
 FetchMock.fetchHandler = function (url, options) {
-
 	const normalizedRequest = requestUtils.normalizeRequest(
 		url,
 		options,
 		this.config.Request,
 	);
-
 
 	if (this.needsAsyncBodyExtraction(normalizedRequest)) {
 		return this._extractBodyThenHandle(normalizedRequest);
@@ -95,7 +93,7 @@ FetchMock._fetchHandler = function ({ url, options, request, signal }) {
 			callLog,
 		})
 			.then(res, rej)
-			.then(done, done)
+			.then(done, done);
 	});
 };
 
@@ -134,7 +132,7 @@ FetchMock.executeRouter = function (url, options, request) {
 	}
 
 	if (this.getOption('warnOnFallback')) {
-		console.warn(`Unmatched ${(options && options.method) || 'GET'} to ${url}`);  
+		console.warn(`Unmatched ${(options && options.method) || 'GET'} to ${url}`);
 	}
 
 	if (this.fallbackResponse) {

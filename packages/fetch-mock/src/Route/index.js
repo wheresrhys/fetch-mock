@@ -60,7 +60,6 @@ class Route {
 	}
 
 	sanitize() {
-
 		if (this.method) {
 			this.method = this.method.toLowerCase();
 		}
@@ -75,7 +74,6 @@ class Route {
 	}
 
 	generateMatcher() {
-
 		const activeMatchers = Route.registeredMatchers
 			.map(
 				({ name, matcher, usesBody }) =>

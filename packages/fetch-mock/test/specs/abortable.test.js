@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 const RESPONSE_DELAY = 50;
 const ABORT_DELAY = 10;
 
-import fetchMock from '../../src/index.js'
+import fetchMock from '../../src/index.js';
 const getDelayedOk = () =>
 	new Promise((res) => setTimeout(() => res(200), RESPONSE_DELAY));
 

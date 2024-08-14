@@ -91,7 +91,6 @@ FetchMock.called = formatDebug(function (nameOrMatcher, options) {
 });
 
 FetchMock.flush = formatDebug(async function (waitForResponseMethods) {
-
 	const queuedPromises = this._holdingPromises;
 	this._holdingPromises = [];
 

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import fetchMock from '../../../src/index.js'
+import fetchMock from '../../../src/index.js';
 describe('custom implementations', () => {
 	let fm;
 	beforeEach(() => {

@@ -186,13 +186,21 @@ describe('Routing', () => {
 					it(`has ${method}() shorthand`, () => {
 						fm[method]('http://a.com', 'b');
 						fm[method]('http://c.com', 'd', { opt: 'e' });
-						expect(fm.router.addRoute).toHaveBeenCalledWith('http://a.com', 'b', {
-							method,
-						});
-						expect(fm.router.addRoute).toHaveBeenCalledWith('http://c.com', 'd', {
-							opt: 'e',
-							method,
-						});
+						expect(fm.router.addRoute).toHaveBeenCalledWith(
+							'http://a.com',
+							'b',
+							{
+								method,
+							},
+						);
+						expect(fm.router.addRoute).toHaveBeenCalledWith(
+							'http://c.com',
+							'd',
+							{
+								opt: 'e',
+								method,
+							},
+						);
 					});
 
 					testChainableRoutingMethod(method);
@@ -200,15 +208,23 @@ describe('Routing', () => {
 					it(`has ${method}Once() shorthand`, () => {
 						fm[`${method}Once`]('http://a.com', 'b');
 						fm[`${method}Once`]('http://c.com', 'd', { opt: 'e' });
-						expect(fm.router.addRoute).toHaveBeenCalledWith('http://a.com', 'b', {
-							method,
-							repeat: 1,
-						});
-						expect(fm.router.addRoute).toHaveBeenCalledWith('http://c.com', 'd', {
-							opt: 'e',
-							method,
-							repeat: 1,
-						});
+						expect(fm.router.addRoute).toHaveBeenCalledWith(
+							'http://a.com',
+							'b',
+							{
+								method,
+								repeat: 1,
+							},
+						);
+						expect(fm.router.addRoute).toHaveBeenCalledWith(
+							'http://c.com',
+							'd',
+							{
+								opt: 'e',
+								method,
+								repeat: 1,
+							},
+						);
 					});
 
 					testChainableRoutingMethod(`${method}Once`);

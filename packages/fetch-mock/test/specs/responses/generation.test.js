@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, beforeAll } from 'vitest';
 
-import fetchMock from '../../../src/index.js'
+import fetchMock from '../../../src/index.js';
 
 describe('response generation', () => {
 	let fm;

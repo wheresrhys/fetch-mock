@@ -86,6 +86,7 @@ jobs:
     <<: *browsers
     steps:
       - *workspace
+      - run: npx playwright install
       - run: npm run test:browser
   module-compat:
     <<: *nodelts

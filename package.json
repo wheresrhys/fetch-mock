@@ -32,8 +32,8 @@
     "build": "npm run build -w=packages",
     "docs": "npm run start -w docs",
     "test": "vitest",
-    "test:ci": "vitest . --reporter=junit --outputFile=test-results/junit.xml",
-    "test:browser": "vitest --browser.enabled --browser.name chromium --browser.provider playwright",
+    "test:ci": "vitest . --reporter=junit --outputFile=test-results/junit.xml --coverage.provider=istanbul",
+    "test:browser": "vitest . --browser.enabled --browser.name chromium --browser.provider playwright",
     "coverage:send": "cat ./coverage/lcov.info | coveralls",
     "compat:module": "npm run compat:module -w import-compat"
   },

@@ -80,6 +80,9 @@
     "packages/**/*.js": [
       "npm run types:check"
     ],
+    "packages/**/*.ts": [
+      "npm run types:check"
+    ],
     "**/*.md": [
       "npm run prettier"
     ]

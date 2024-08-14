@@ -67,12 +67,12 @@ export class FetchMock {
 			fallbackRoute: router ? router.fallbackRoute : null,
 		});
 		this.callHistory = new CallHistory(this.config, this.router);
-		this.fetchHandler.fetchMock = this;
+		this.fetchHandler = Object.assign(this.fetchHandler, {fetchMock: this});
 	}
 	createInstance(): FetchMock {
 		return new FetchMock({ ...this.config }, this.router);
 	}
-	async fetchHandler(this: FetchMock, requestInput: string | URL | Request, requestInit?: RequestInit): Promise<Response> {
+	async fetchHandler (this: FetchMock, requestInput: string | URL | Request, requestInit?: RequestInit): Promise<Response> {
 		// TODO move into router
 		let callLog;
 
@@ -142,10 +142,6 @@ export class FetchMock {
 	spyGlobal(this: FetchMock): FetchMock {
 		this.mockGlobal();
 		return this.spy();
-	}
-
-	createInstance(): FetchMock {
-		return new FetchMock({ ...this.config }, this.router);
 	}
 
 	sticky = defineShorthand({ sticky: true });

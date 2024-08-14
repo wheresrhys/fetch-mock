@@ -1,6 +1,5 @@
 import { describe, expect, it, beforeAll, afterAll } from 'vitest';
 import Route from '../../Route';
-import {JSDOM} from 'jsdom';
 
 describe('url matching', () => {
 	it('match exact strings', () => {
@@ -166,6 +165,8 @@ describe('url matching', () => {
 	});
 
 	describe('url resolution and normalisation', () => {
+
+
 	describe('trailing slashes', () => {
 		it('match exact pathless urls regardless of trailing slash', () => {
 			const route = new Route({ url: 'http://a.com/', response: 200 });
@@ -231,8 +232,20 @@ describe('url matching', () => {
 				expect(relativeRoute.matcher({ url: '/it.at/not/../there' })).toBe(true);
 			});
 		})
-		describe('page-relative urls', () => {
-			if (!globalThis.location) {
+		describe('relative urls', () => {
+			const isBrowser = Boolean(globalThis.location);
+			let JSDOM;
+			async function importJSDOM () {
+				 const jsdomModule = await import('jsdom');
+				 JSDOM = jsdomModule.JSDOM
+			}
+			beforeAll(() => {
+				if (!isBrowser) {
+					return importJSDOM()
+				}
+			})
+
+			if (!isBrowser) {
 				describe('when not in browser environment', () => {
 					it('error on page relative url if not in the browser', () => {
 						expect(() => new Route({ url: 'image.jpg', response: 200 })).toThrow('Relative urls are not support by default in node.js tests. Either use a utility such as jsdom to define globalThis.location or set `fetchMock.config.allowRelativeUrls = true`')
@@ -267,7 +280,7 @@ describe('url matching', () => {
 				let location;
 				let origin;
 				beforeAll(() => {
-					if (!globalThis.location) {
+					if (!isBrowser) {
 						const dom = new JSDOM(``, {
 						  url: "https://a.com/path",
 						});
@@ -277,7 +290,9 @@ describe('url matching', () => {
 					origin = globalThis.location.origin;
 				});
 				afterAll(() => {
-					delete globalThis.location
+					if (!isBrowser) {
+						delete globalThis.location
+					}
 				})
 				it('page relative url matches page relative url', () => {
 					const route = new Route({ url: 'image.jpg', response: 200 });

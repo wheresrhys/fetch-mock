@@ -4,7 +4,7 @@ sidebar_position: 5
 
 # Versions
 
-### Version 10/11
+## Version 10/11
 
 These have 2 major differences from previous versions
 
@@ -18,9 +18,20 @@ If you experience any compatibility issues upgrading from version 9, please eith
 - try the approaches iom the troubleshooting section of these docs
 - downgrade to v9 again
 
-I intend to keep version 10 and above r4easonably clean, with as few workarounds for different toolchains as possible. Hopefully, as other toolchains gradually migrate to ESM and native fetch then fetch-mock will eventually be compatible with their latest versions.
+I intend to keep version 10 and above reasonably clean, with as few workarounds for different toolchains as possible. Hopefully, as other toolchains gradually migrate to ESM and native fetch then fetch-mock will eventually be compatible with their latest versions.
 
-### Version 9 and below
+### Differences
+
+#### Not set as a global in the browser
+
+Previously the browser buiodl of fetch-mock set `window.fetchMock`. This is no longer the case. If your testing toolchain requires it's available as a global you may import a `fetch-mock-wrapper.js` file, defined as follows, rather than `fetch-mock` directly:
+
+```js
+import fetchMock from 'fetch-mock';
+window.fetchMock = fetchMock;
+```
+
+## Version 9 and below
 
 v7, v8 & v9 are practically identical, only differing in their treatment of a few edge cases, or in compatibility with other libraries and environments.
 

@@ -2,23 +2,19 @@ version: 2.0
 
 references:
   triggerable-by-tag: &triggerable-by-tag
-    # For a tag push unaffected by any filters, CircleCI skips the job
-    # https://circleci.com/docs/2.0/workflows/#git-tag-job-execution
     filters:
       tags:
         only: /.*/
-  run-after-first-jobs: &run-after-first-jobs
-    requires:
-      - test
-      - lint
-      - build
 
+  node18: &node18
+    docker:
+      - image: cimg/node:18.0
   nodelts: &nodelts
     docker:
       - image: cimg/node:lts
-  # browsers: &browsers
-  #   docker:
-  #     - image: circleci/node:12.18.3-browsers
+  browsers: &browsers
+    docker:
+      - image: cimg/node:lts-browsers
   nodecurrent: &nodecurrent
     docker:
       - image: cimg/node:current
@@ -31,6 +27,15 @@ references:
       root: .
       paths:
         - .
+  after-build-test-lint: &after-build-test-lint
+    requires:
+      - test
+      - lint
+      - build
+  after-build-lint: &after-build-lint
+    requires:
+      - lint
+      - build
 
 jobs:
   checkout_code:
@@ -59,13 +64,12 @@ jobs:
       - run: npm run lint:ci
       - run: npm run prettier:ci
 
-  typelint:
+  typecheck:
     <<: *nodelts
     steps:
       - *workspace
-      - run: npm run types:lint
       - run: npm run types:check --noEmit=true
-
+      - run: npm run types:check -w packages/fetch-mock
   test:
     <<: *nodelts
     steps:
@@ -73,46 +77,22 @@ jobs:
       - run: npm run test:ci
       - store_test_results:
           path: test-results
-
-  nodefetch3:
+  test-node18:
+    <<: *node18
+    steps:
+      - *workspace
+      - run: npm run test:ci
+  test-browser:
+    <<: *browsers
+    steps:
+      - *workspace
+      - run: npx playwright install
+      - run: npm run test:browser
+  module-compat:
     <<: *nodelts
     steps:
       - *workspace
-      - run: npm install node-fetch@3
-      - run: TESTING_ENV=node-fetch npm run test:legacy
-
-  commonjs:
-    <<: *nodelts
-    steps:
-      - *workspace
-      - run: npm run build
-      - run: TESTING_ENV=commonjs npm run test:legacy
-  jest:
-    <<: *nodelts
-    steps:
-      - *workspace
-      - run: npm run build
-      - run: npm run test:jest
-  import-compat:
-    <<: *nodelts
-    steps:
-      - *workspace
-      - run: npm run compat:ts:cjs -w import-compat
-      - run: npm run compat:js:cjs -w import-compat
-      - run: npm run compat:ts:esm -w import-compat
-      - run: npm run compat:js:esm -w import-compat
-  # chrome:
-  #   <<: *browsers
-  #   steps:
-  #     - *workspace
-  #     - run: TEST_BROWSER=Chrome make test-browser
-
-  # firefox:
-  #   <<: *browsers
-  #   steps:
-  #     - *workspace
-  #     - run: npm install karma-firefox-launcher
-  #     - run: TEST_BROWSER=Firefox make test-browser
+      - run: npm run compat:module
 
   publish:
     <<: *nodelts
@@ -143,39 +123,27 @@ workflows:
           <<: *triggerable-by-tag
           requires:
             - checkout_code
-      - typelint:
+      - typecheck:
           <<: *triggerable-by-tag
-          requires:
-            - checkout_code
-      - nodefetch3:
+          <<: *after-build-lint
+      - test-browser:
           <<: *triggerable-by-tag
-          <<: *run-after-first-jobs
-      - commonjs:
+          <<: *after-build-test-lint
+      - test-node18:
           <<: *triggerable-by-tag
-          <<: *run-after-first-jobs
-      - jest:
+          <<: *after-build-test-lint
+      - module-compat:
           <<: *triggerable-by-tag
-          <<: *run-after-first-jobs
-      - import-compat:
-          <<: *triggerable-by-tag
-          requires:
-            - build
-      # - chrome:
-      #     <<: *triggerable-by-tag
-      #     <<: *run-after-first-jobs
-      # - firefox:
-      #     <<: *triggerable-by-tag
-      #     <<: *run-after-first-jobs
+          <<: *after-build-lint
       - publish:
           requires:
-            - nodefetch3
-            # - chrome
-            # - firefox
+            - test-node18
+            - test-browser
             - build
-            # - import-compat
-            - typelint
-            - commonjs
-            - jest
+            - test
+            - lint
+            - module-compat
+            - typecheck
           filters:
             branches:
               ignore: /.*/

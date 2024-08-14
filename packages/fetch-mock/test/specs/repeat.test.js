@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, beforeAll, vi } from 'vitest';
 
-const { fetchMock } = testGlobals;
+import fetchMock from '../../src/index.js'
 describe('repeat and done()', () => {
 	let fm;
 	beforeAll(() => {
@@ -97,7 +97,7 @@ describe('repeat and done()', () => {
 		try {
 			await fm.fetchHandler('http://a.com/');
 			expect.unreachable('Previous line should throw');
-		} catch (err) {}
+		} catch {} // eslint-disable-line no-empty
 	});
 
 	it('falls back to second route if first route already done', async () => {
@@ -125,25 +125,25 @@ describe('repeat and done()', () => {
 	});
 
 	it('logs unmatched calls', () => {
-		vi.spyOn(console, 'warn'); //eslint-disable-line
+		vi.spyOn(console, 'warn');
 		fm.mock('http://a.com/', 200).mock('http://b.com/', 200, {
 			repeat: 2,
 		});
 
 		fm.fetchHandler('http://b.com/');
 		fm.done();
-		expect(console.warn).toHaveBeenCalledWith('Warning: http://a.com/ not called') //eslint-disable-line
+		expect(console.warn).toHaveBeenCalledWith('Warning: http://a.com/ not called')
 		expect(console.warn).toHaveBeenCalledWith(
 			'Warning: http://b.com/ only called 1 times, but 2 expected',
-			); //eslint-disable-line
+			);
 
-		console.warn.mockClear(); //eslint-disable-line
+		console.warn.mockClear();
 		fm.done('http://a.com/');
-		expect(console.warn).toHaveBeenCalledWith('Warning: http://a.com/ not called'); //eslint-disable-line
+		expect(console.warn).toHaveBeenCalledWith('Warning: http://a.com/ not called');
 		expect(console.warn).not.toHaveBeenCalledWith(
 			'Warning: http://b.com/ only called 1 times, but 2 expected',
-			)//eslint-disable-line
-			console.warn.mockRestore(); //eslint-disable-line
+			)
+			console.warn.mockRestore();
 	});
 
 	describe('sandbox isolation', () => {

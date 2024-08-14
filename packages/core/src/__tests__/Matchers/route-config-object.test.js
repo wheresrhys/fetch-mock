@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import Route from '../../Route.js';
+import Route from '../../Route';
 
 // TODO should this whole thing be integration tests on router
 // as it's mainly about the shape of optiosn passed into to addRoute

@@ -1,18 +1,25 @@
 {
   "name": "fetch-mock",
-  "version": "11.0.0",
+  "version": "11.1.1",
   "description": "Mock http requests made using fetch (or isomorphic-fetch)",
-  "main": "./dist/commonjs.js",
-  "module": "./src/index.js",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
   "exports": {
-    "types": "./types/index.d.ts",
-    "browser": "./src/index.js",
-    "import": "./src/index.js",
-    "require": "./dist/commonjs.js"
+    "browser": "./dist/esm/index.js",
+    "import": {
+      "default": "./dist/esm/index.js",
+      "types": "./dist/esm/types/index.d.ts"
+    },
+    "require": {
+      "types": "./dist/cjs/types/index.d.ts",
+      "default": "./dist/cjs/index.js"
+    }
   },
-  "types": "./types/index.d.ts",
+  "types": "./dist/esm/types/index.d.ts",
+  "type": "module",
   "scripts": {
-    "build": "rollup -c"
+    "build": "rm -rf dist && rollup -c --environment FORMAT:cjs && rollup -c --environment FORMAT:esm",
+    "types:check": "tsd -t types/index.d.ts -f types/index.test-d.ts"
   },
   "repository": {
     "type": "git",
@@ -35,9 +42,9 @@
   },
   "homepage": "http://www.wheresrhys.co.uk/fetch-mock",
   "dependencies": {
-    "debug": "^4.1.1",
     "dequal": "^2.0.3",
-    "globrex": "^0.1.2",
+    "glob-to-regexp": "^0.4.1",
+    "@types/glob-to-regexp": "^0.4.4",
     "is-subset": "^0.1.1",
     "regexparam": "^3.0.0"
   },

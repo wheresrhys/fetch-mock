@@ -1,6 +1,6 @@
 import { describe, expect, it, beforeAll, vi } from 'vitest';
 
-const { fetchMock } = testGlobals;
+import fetchMock from '../../src/index.js'
 describe('sandbox', () => {
 	let originalFetch;
 
@@ -20,7 +20,7 @@ describe('sandbox', () => {
 
 	it('implement full fetch-mock api', () => {
 		const sbx = fetchMock.sandbox();
-		//eslint-disable-next-line guard-for-in
+		 
 		for (const key in fetchMock) {
 			expect(typeof sbx[key]).toEqual(typeof fetchMock[key]);
 		}

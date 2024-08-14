@@ -1,22 +1,14 @@
 //@type-check
-import Route from './Route.js';
+import Route, { UserRouteConfig, RouteResponsePromise, RouteConfig, RouteResponse, RouteResponseData, RouteResponseConfig } from './Route.js';
 import { isUrlMatcher, isFunctionMatcher } from './Matchers.js';
-/** @typedef {import('./Route.js').UserRouteConfig} UserRouteConfig */
-/** @typedef {import('./Route.js').RouteConfig} RouteConfig */
-/** @typedef {import('./Route.js').RouteResponse} RouteResponse */
-/** @typedef {import('./Route.js').RouteResponseData} RouteResponseData */
-/** @typedef {import('./Route.js').RouteResponseObjectData} RouteResponseObjectData */
-/** @typedef {import('./Route.js').RouteResponseConfig} RouteResponseConfig */
-/** @typedef {import('./Route.js').RouteResponseFunction} RouteResponseFunction */
-/** @typedef {import('./Matchers.js').RouteMatcher} RouteMatcher */
-/** @typedef {import('./FetchMock.js').FetchMockConfig} FetchMockConfig */
-/** @typedef {import('./FetchMock.js')} FetchMock */
-/** @typedef {import('./CallHistory.js').CallLog} CallLog */
+import { RouteMatcher } from './Matchers.js';
+import { FetchMockConfig } from './FetchMock.js';
+import { hasCredentialsInUrl } from './RequestUtils.js';
+import type { CallLog } from './CallHistory.js';
 
-/** @typedef {'body' |'headers' |'throws' |'status' |'redirectUrl' } ResponseConfigProp */
+export type ResponseConfigProp = "body" | "headers" | "throws" | "status" | "redirectUrl";
 
-/** @type {ResponseConfigProp[]} */
-const responseConfigProps = [
+const responseConfigProps: ResponseConfigProp[] = [
 	'body',
 	'headers',
 	'throws',
@@ -24,28 +16,15 @@ const responseConfigProps = [
 	'redirectUrl',
 ];
 
-/**
- *
- * @param {RouteConfig | string} options
- * @returns {RouteConfig}
- */
-const nameToOptions = (options) =>
-	typeof options === 'string' ? { name: options } : options;
+function nameToOptions (options: RouteConfig | string): RouteConfig {
+	return typeof options === 'string' ? { name: options } : options;
+}
 
-/**
- *
- * @param {RouteResponse} response
- * @returns {RouteResponse is RouteResponseFunction}
- */
-const isPromise = (response) =>
-	typeof (/** @type {Promise<any>} */ (response).then) === 'function';
+function isPromise (response: RouteResponse): response is RouteResponsePromise {
+	return typeof (response as Promise<unknown>).then === 'function';
+}
 
-/**
- *
- * @param {RouteResponseData} responseInput
- * @returns {RouteResponseConfig}
- */
-function normalizeResponseInput(responseInput) {
+function normalizeResponseInput(responseInput: RouteResponseData): RouteResponseConfig {
 	// If the response config looks like a status, start to generate a simple response
 	if (typeof responseInput === 'number') {
 		return {
@@ -61,15 +40,10 @@ function normalizeResponseInput(responseInput) {
 			body: responseInput,
 		};
 	}
-	return /** @type{RouteResponseConfig} */ (responseInput);
+	return responseInput as RouteResponseConfig;
 }
 
-/**
- *
- * @param {RouteResponseData} responseInput
- * @returns {boolean}
- */
-function shouldSendAsObject(responseInput) {
+function shouldSendAsObject(responseInput: RouteResponseData): boolean {
 	// if (Object.keys(responseInput).some(key => responseConfigProps.includes(key)) {
 	// 	if (Object.keys(responseInput).some(key => !responseConfigProps.includes(key)) {
 	// 		throw new Error(`Ambiguous whether response is a configuration object `)
@@ -78,12 +52,12 @@ function shouldSendAsObject(responseInput) {
 	// TODO improve this... make it less hacky and magic
 	if (
 		responseConfigProps.some(
-			(prop) => /** @type {RouteResponseConfig}*/ (responseInput)[prop],
+			(prop) => (responseInput as RouteResponseConfig)[prop],
 		)
 	) {
 		if (
 			Object.keys(responseInput).every((key) =>
-				responseConfigProps.includes(/** @type {ResponseConfigProp} */ (key)),
+				responseConfigProps.includes(key as ResponseConfigProp),
 			)
 		) {
 			return false;
@@ -93,11 +67,7 @@ function shouldSendAsObject(responseInput) {
 	return true;
 }
 
-/**
- *
- * @param {CallLog} callLog
- */
-function throwSpecExceptions({ url, options: { headers, method, body } }) {
+function throwSpecExceptions({ url, options: { headers, method, body } }: CallLog) {
 	if (headers) {
 		Object.entries(headers).forEach(([key]) => {
 			if (/\s/.test(key)) {
@@ -105,8 +75,7 @@ function throwSpecExceptions({ url, options: { headers, method, body } }) {
 			}
 		});
 	}
-	const urlObject = new URL(url);
-	if (urlObject.username || urlObject.password) {
+	if (hasCredentialsInUrl(url)) {
 		throw new TypeError(
 			`Request cannot be constructed from a URL that includes credentials: ${url}`,
 		);
@@ -117,11 +86,7 @@ function throwSpecExceptions({ url, options: { headers, method, body } }) {
 	}
 }
 
-/**
- * @param {CallLog} callLog
- * @returns
- */
-const resolveUntilResponseConfig = async (callLog) => {
+const resolveUntilResponseConfig = async (callLog: CallLog) => {
 	// We want to allow things like
 	// - function returning a Promise for a response
 	// - delaying (using a timeout Promise) a function's execution to generate
@@ -129,14 +94,14 @@ const resolveUntilResponseConfig = async (callLog) => {
 	// Because of this we can't safely check for function before Promisey-ness,
 	// or vice versa. So to keep it DRY, and flexible, we keep trying until we
 	// have something that looks like neither Promise nor function
-	//eslint-disable-next-line no-constant-condition
+
 	let response = callLog.route.config.response;
-	// eslint-disable-next-line  no-constant-condition
+
 	while (true) {
 		if (typeof response === 'function') {
 			response = response(callLog);
 		} else if (isPromise(response)) {
-			response = await response; // eslint-disable-line  no-await-in-loop
+			response = await response;
 		} else {
 			return response;
 		}
@@ -144,37 +109,25 @@ const resolveUntilResponseConfig = async (callLog) => {
 };
 
 export default class Router {
-	/** @type {Route[]} */
-	routes = [];
-	/**
-	 * @param {FetchMockConfig} fetchMockConfig
-	 * @param {object} [inheritedRoutes]
-	 * @param {Route[]} [inheritedRoutes.routes]
-	 * @param {Route} [inheritedRoutes.fallbackRoute]
-	 */
-	constructor(fetchMockConfig, { routes, fallbackRoute } = {}) {
+	routes: Route[];
+	config: FetchMockConfig;
+	fallbackRoute: Route;
+	constructor(fetchMockConfig: FetchMockConfig, { routes, fallbackRoute }: { routes?: Route[], fallbackRoute?: Route } = {}) {
 		this.config = fetchMockConfig;
 		this.routes = routes || []; // TODO deep clone this??
 		this.fallbackRoute = fallbackRoute;
 	}
-	/**
-	 *
-	 * @param {Request} request
-	 * @returns {boolean}
-	 */
-	needsToReadBody(request) {
+
+	needsToReadBody(request: Request): boolean {
 		return Boolean(
 			request && this.routes.some((route) => route.config.usesBody),
 		);
 	}
 
-	/**
-	 * @param {CallLog} callLog
-	 * @returns {Promise<Response>}
-	 */
-	execute(callLog) {
+	execute(callLog: CallLog): Promise<Response> {
 		throwSpecExceptions(callLog);
 		// TODO make abort vs reject neater
+		// eslint-disable-next-line no-async-promise-executor
 		return new Promise(async (resolve, reject) => {
 			const { url, options, request, pendingPromises } = callLog;
 			if (callLog.signal) {
@@ -239,13 +192,7 @@ export default class Router {
 		});
 	}
 
-	/**
-	 *
-	 * @param {CallLog} callLog
-	 * @returns {Promise<{response: Response, responseOptions: ResponseInit, responseInput: RouteResponseConfig}>}
-	 */
-	// eslint-disable-next-line class-methods-use-this
-	async generateResponse(callLog) {
+	async generateResponse(callLog: CallLog): Promise<{ response: Response, responseOptions: ResponseInit, responseInput: RouteResponseConfig }> {
 		const responseInput = await resolveUntilResponseConfig(callLog);
 		// If the response is a pre-made Response, respond with it
 		if (responseInput instanceof Response) {
@@ -265,23 +212,13 @@ export default class Router {
 
 		return callLog.route.constructResponse(responseConfig);
 	}
-	/**
-	 *
-	 * @param {Response} response
-	 * @param {ResponseInit} responseConfig
-	 * @param {RouteResponseConfig} responseInput
-	 * @param {string} responseUrl
-	 * @param {Promise<any>[]} pendingPromises
-	 * @returns {Response}
-	 */
-	// eslint-disable-next-line class-methods-use-this
 	createObservableResponse(
-		response,
-		responseConfig,
-		responseInput,
-		responseUrl,
-		pendingPromises,
-	) {
+		response: Response,
+		responseConfig: ResponseInit,
+		responseInput: RouteResponseConfig,
+		responseUrl: string,
+		pendingPromises: Promise<unknown>[],
+	): Response {
 		// Using a proxy means we can set properties that may not be writable on
 		// the original Response. It also means we can track the resolution of
 		// promises returned by res.json(), res.text() etc
@@ -303,36 +240,33 @@ export default class Router {
 						return false;
 					}
 				}
-				//@ts-ignore
+				// TODO fix these types properly
+				//@ts-expect-error TODO probably make use of generics here
 				if (typeof response[name] === 'function') {
-					//@ts-ignore
+					//@ts-expect-error TODO probably make use of generics here
 					return new Proxy(response[name], {
 						apply: (matcherFunction, thisArg, args) => {
 							const result = matcherFunction.apply(response, args);
 							if (result.then) {
 								pendingPromises.push(
-									result.catch(/** @type {function(): void} */ () => undefined),
+									//@ts-expect-error TODO probably make use of generics here
+									result.catch(() => undefined),
 								);
 							}
 							return result;
 						},
 					});
 				}
-				//@ts-ignore
+				//@ts-expect-error TODO probably make use of generics here
 				return originalResponse[name];
 			},
 		});
 	}
 
-	/**
-	 * @param {RouteMatcher | UserRouteConfig} matcher
-	 * @param {RouteResponse} [response]
-	 * @param {UserRouteConfig | string} [nameOrOptions]
-	 * @returns {void}
-	 */
-	addRoute(matcher, response, nameOrOptions) {
-		/** @type {RouteConfig} */
-		const config = {};
+	// addRoute(matcher: UserRouteConfig): void;
+	// addRoute(matcher: RouteMatcher, response: RouteResponse, nameOrOptions?: UserRouteConfig | string): void;
+	addRoute(matcher: (RouteMatcher | UserRouteConfig), response?: RouteResponse, nameOrOptions?: (UserRouteConfig | string)): void {
+		const config: RouteConfig = {};
 		if (isUrlMatcher(matcher)) {
 			config.url = matcher;
 		} else if (isFunctionMatcher(matcher)) {
@@ -372,14 +306,11 @@ export default class Router {
 		}
 		this.routes.push(route);
 	}
-	/**
-	 * @param {RouteResponse} [response]
-	 */
-	setFallback(response) {
+	setFallback(response?: RouteResponse) {
 		if (this.fallbackRoute) {
 			console.warn(
 				'calling fetchMock.catch() twice - are you sure you want to overwrite the previous fallback response',
-			); // eslint-disable-line
+			);
 		}
 
 		this.fallbackRoute = new Route({
@@ -389,14 +320,11 @@ export default class Router {
 		});
 		this.fallbackRoute.config.isFallback = true;
 	}
-	/**
-	 *
-	 * @param {object} [options]
-	 * @param {string[]} [options.names]
-	 * @param {boolean} [options.includeSticky]
-	 * @param {boolean} [options.includeFallback]
-	 */
-	removeRoutes({ names, includeSticky, includeFallback } = {}) {
+	removeRoutes({ names, includeSticky, includeFallback }: {
+		names?: string[];
+		includeSticky?: boolean;
+		includeFallback?: boolean;
+	} = {}) {
 		includeFallback = includeFallback ?? true;
 		this.routes = this.routes.filter(({ config: { sticky, name } }) => {
 			if (sticky && !includeSticky) {

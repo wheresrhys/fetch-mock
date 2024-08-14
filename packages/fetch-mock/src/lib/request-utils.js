@@ -21,7 +21,7 @@ export function normalizeUrl(url) {
 	if (
 		typeof url === 'function' ||
 		url instanceof RegExp ||
-		/^(begin|end|glob|express|path)\:/.test(url)
+		/^(begin|end|glob|express|path):/.test(url)
 	) {
 		return url;
 	}
@@ -45,7 +45,7 @@ export function normalizeRequest(url, options, Request) {
 
 		try {
 			derivedOptions.body = url.clone().text();
-		} catch (err) {}
+		} catch {} // eslint-disable-line no-empty
 
 		const normalizedRequestObject = {
 			url: normalizeUrl(url.url),

@@ -1,84 +1,55 @@
-//@type-check
-/** @typedef {import('./Route.js').RouteConfig} RouteConfig */
-/** @typedef {import('./Route.js').RouteName} RouteName */
-/** @typedef {import('./RequestUtils.js').NormalizedRequestOptions} NormalizedRequestOptions */
-/** @typedef {import('./Matchers.js').RouteMatcher} RouteMatcher */
-/** @typedef {import('./FetchMock.js').FetchMockConfig} FetchMockConfig */
-import { createCallLogFromUrlAndOptions } from './RequestUtils.js';
-import { isUrlMatcher } from './Matchers.js';
-import Route from './Route.js';
+import { createCallLogFromUrlAndOptions, NormalizedRequestOptions } from './RequestUtils.js';
+import { isUrlMatcher, RouteMatcher } from './Matchers.js';
+import Route, {RouteConfig, RouteName} from './Route.js';
 import Router from './Router.js';
+import type { FetchMockConfig } from "./FetchMock.js";
 
-/**
- * @typedef CallLog
- * @property {any[]} args
- * @property {string} url
- * @property {NormalizedRequestOptions} options
- * @property {Request} [request]
- * @property {AbortSignal} [signal]
- * @property {Route} [route]
- * @property {Response} [response]
- * @property {Object.<string, string>} [expressParams]
- * @property {URLSearchParams} [queryParams]
- * @property {Promise<any>[]} pendingPromises
- */
+export type Matched = "matched";
+export type Unmatched = "unmatched";
+export type CallHistoryFilter = RouteName | Matched | Unmatched | boolean | RouteMatcher;
+export type CallLog = {
+	args: unknown[];
+	url: string;
+	options: NormalizedRequestOptions;
+	request?: Request;
+	signal?: AbortSignal;
+	route?: Route;
+	response?: Response;
+	expressParams?: {
+		[x: string]: string;
+	};
+	queryParams?: URLSearchParams;
+	pendingPromises: Promise<unknown>[];
+};
 
-/** @typedef {'matched'} Matched */
-/** @typedef {'unmatched'} Unmatched */
-/** @typedef  {RouteName | Matched| Unmatched| boolean | RouteMatcher } CallHistoryFilter*/
-
-/**
- *
- * @param {CallHistoryFilter} filter
- * @returns {filter is RouteName}
- */
-const isName = (filter) =>
+const isName = (filter: CallHistoryFilter): filter is RouteName =>
 	typeof filter === 'string' &&
-	/^[\da-zA-Z\-]+$/.test(filter) &&
+	/^[\da-zA-Z-]+$/.test(filter) &&
 	!['matched', 'unmatched'].includes(filter);
 
-/**
- *
- * @param {CallHistoryFilter} filter
- * @returns {filter is (Matched| Unmatched| boolean)}
- */
-const isMatchedOrUnmatched = (filter) =>
+const isMatchedOrUnmatched = (filter: CallHistoryFilter): filter is (Matched | Unmatched | boolean) =>
 	typeof filter === 'boolean' ||
-	/** @type {CallHistoryFilter[]}*/ (['matched', 'unmatched']).includes(filter);
+	(['matched', 'unmatched']).includes(filter as string);
 
 class CallHistory {
-	/**
-	 * @param {FetchMockConfig} config
-	 * @param {Router} router
-	 */
-	constructor(config, router) {
-		/** @type {CallLog[]} */
+	callLogs: CallLog[];
+	config: FetchMockConfig;
+	router: Router;
+	constructor(config: FetchMockConfig, router: Router) {
 		this.callLogs = [];
 		this.config = config;
 		this.router = router;
 	}
-	/**
-	 *
-	 * @param {CallLog} callLog
-	 */
-	recordCall(callLog) {
+	recordCall(callLog: CallLog) {
 		this.callLogs.push(callLog);
 	}
 
-	/**
-	 * @returns {void}
-	 */
 	clear() {
 		this.callLogs.forEach(({ route }) => route.reset());
 		this.callLogs = [];
 	}
 
-	/**
-	 *
-	 * @param {boolean} [waitForResponseMethods]
-	 * @returns {Promise<void>}
-	 */
-	async flush(waitForResponseMethods) {
+	async flush(waitForResponseMethods?: boolean): Promise<void> {
 		const queuedPromises = this.callLogs.flatMap(
 			(call) => call.pendingPromises,
 		);
@@ -91,14 +62,7 @@ class CallHistory {
 			await this.flush();
 		}
 	}
-
-	/**
-	 *
-	 * @param {CallHistoryFilter} filter
-	 * @param {RouteConfig} options
-	 * @returns {CallLog[]}
-	 */
-	calls(filter, options) {
+	calls(filter: CallHistoryFilter, options: RouteConfig): CallLog[]{
 		let calls = [...this.callLogs];
 		if (typeof filter === 'undefined' && !options) {
 			return calls;
@@ -106,11 +70,11 @@ class CallHistory {
 
 		if (isMatchedOrUnmatched(filter)) {
 			if (
-				/** @type {CallHistoryFilter[]} */ ([true, 'matched']).includes(filter)
+				([true, 'matched'] as CallHistoryFilter[]).includes(filter)
 			) {
 				calls = calls.filter(({ route }) => !route.config.isFallback);
 			} else if (
-				/** @type {CallHistoryFilter[]} */ ([false, 'unmatched']).includes(
+				([false, 'unmatched'] as CallHistoryFilter[]).includes(
 					filter,
 				)
 			) {
@@ -150,30 +114,14 @@ class CallHistory {
 
 		return calls;
 	}
-	/**
-	 *
-	 * @param {CallHistoryFilter} filter
-	 * @param {RouteConfig} options
-	 * @returns {boolean}
-	 */
-	called(filter, options) {
+	called(filter: CallHistoryFilter, options: RouteConfig): boolean {
 		return Boolean(this.calls(filter, options).length);
 	}
-	/**
-	 *
-	 * @param {CallHistoryFilter} filter
-	 * @param {RouteConfig} options
-	 * @returns {CallLog}
-	 */
-	lastCall(filter, options) {
+	lastCall(filter: CallHistoryFilter, options: RouteConfig): CallLog | void {
 		return this.calls(filter, options).pop();
 	}
 
-	/**
-	 * @param {RouteName|RouteName[]} [routeNames]
-	 * @returns {boolean}
-	 */
-	done(routeNames) {
+	done(routeNames?: RouteName | RouteName[]): boolean {
 		let routesToCheck = this.router.routes;
 		if (routeNames) {
 			routeNames = Array.isArray(routeNames) ? routeNames : [routeNames];
@@ -190,7 +138,7 @@ class CallHistory {
 						({ route: routeApplied }) => routeApplied === route,
 					);
 					if (!calls.length) {
-						console.warn(`Warning: ${route.config.name} not called`); // eslint-disable-line
+						console.warn(`Warning: ${route.config.name} not called`);
 						return false;
 					}
 
@@ -204,7 +152,7 @@ class CallHistory {
 					if (expectedTimes > actualTimes) {
 						console.warn(
 							`Warning: ${route.config.name} only called ${actualTimes} times, but ${expectedTimes} expected`,
-						); // eslint-disable-line
+						);
 						return false;
 					}
 					return true;

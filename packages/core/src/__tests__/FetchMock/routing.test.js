@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import fetchMock from '../../FetchMock.js';
+import fetchMock from '../../FetchMock';
 
 describe('Routing', () => {
 	let fm;
@@ -83,7 +83,7 @@ describe('Routing', () => {
 				try {
 					await fm.fetchHandler('http://a.com/');
 					expect.unreachable('Previous line should throw');
-				} catch (err) {}
+				} catch {} // eslint-disable-line no-empty
 			});
 		});
 
@@ -120,12 +120,12 @@ describe('Routing', () => {
 
 		describe('FetchMock.sticky()', () => {
 			it('has sticky() shorthand method', () => {
-				fm.sticky('a', 'b');
-				fm.sticky('c', 'd', { opt: 'e' });
-				expect(fm.router.addRoute).toHaveBeenCalledWith('a', 'b', {
+				fm.sticky('http://a.com', 'b');
+				fm.sticky('http://c.com', 'd', { opt: 'e' });
+				expect(fm.router.addRoute).toHaveBeenCalledWith('http://a.com', 'b', {
 					sticky: true,
 				});
-				expect(fm.router.addRoute).toHaveBeenCalledWith('c', 'd', {
+				expect(fm.router.addRoute).toHaveBeenCalledWith('http://c.com', 'd', {
 					opt: 'e',
 					sticky: true,
 				});
@@ -136,12 +136,12 @@ describe('Routing', () => {
 		describe('FetchMock.once()', () => {
 			testChainableRoutingMethod('once');
 			it('has once() shorthand method', () => {
-				fm.once('a', 'b');
-				fm.once('c', 'd', { opt: 'e' });
-				expect(fm.router.addRoute).toHaveBeenCalledWith('a', 'b', {
+				fm.once('http://a.com', 'b');
+				fm.once('http://c.com', 'd', { opt: 'e' });
+				expect(fm.router.addRoute).toHaveBeenCalledWith('http://a.com', 'b', {
 					repeat: 1,
 				});
-				expect(fm.router.addRoute).toHaveBeenCalledWith('c', 'd', {
+				expect(fm.router.addRoute).toHaveBeenCalledWith('http://c.com', 'd', {
 					opt: 'e',
 					repeat: 1,
 				});
@@ -156,8 +156,8 @@ describe('Routing', () => {
 
 		describe('FetchMock.any()', () => {
 			it('has any() shorthand method', () => {
-				fm.any('a', { opt: 'b' });
-				expect(fm.router.addRoute).toHaveBeenCalledWith('*', 'a', {
+				fm.any('http://a.com', { opt: 'b' });
+				expect(fm.router.addRoute).toHaveBeenCalledWith('*', 'http://a.com', {
 					opt: 'b',
 				});
 			});
@@ -170,8 +170,8 @@ describe('Routing', () => {
 
 		describe('FetchMock.anyOnce()', () => {
 			it('has anyOnce() shorthand method', () => {
-				fm.anyOnce('a', { opt: 'b' });
-				expect(fm.router.addRoute).toHaveBeenCalledWith('*', 'a', {
+				fm.anyOnce('http://a.com', { opt: 'b' });
+				expect(fm.router.addRoute).toHaveBeenCalledWith('*', 'http://a.com', {
 					opt: 'b',
 					repeat: 1,
 				});
@@ -184,12 +184,12 @@ describe('Routing', () => {
 			['get', 'post', 'put', 'delete', 'head', 'patch'].forEach((method) => {
 				describe(method.toUpperCase(), () => {
 					it(`has ${method}() shorthand`, () => {
-						fm[method]('a', 'b');
-						fm[method]('c', 'd', { opt: 'e' });
-						expect(fm.router.addRoute).toHaveBeenCalledWith('a', 'b', {
+						fm[method]('http://a.com', 'b');
+						fm[method]('http://c.com', 'd', { opt: 'e' });
+						expect(fm.router.addRoute).toHaveBeenCalledWith('http://a.com', 'b', {
 							method,
 						});
-						expect(fm.router.addRoute).toHaveBeenCalledWith('c', 'd', {
+						expect(fm.router.addRoute).toHaveBeenCalledWith('http://c.com', 'd', {
 							opt: 'e',
 							method,
 						});
@@ -198,13 +198,13 @@ describe('Routing', () => {
 					testChainableRoutingMethod(method);
 
 					it(`has ${method}Once() shorthand`, () => {
-						fm[`${method}Once`]('a', 'b');
-						fm[`${method}Once`]('c', 'd', { opt: 'e' });
-						expect(fm.router.addRoute).toHaveBeenCalledWith('a', 'b', {
+						fm[`${method}Once`]('http://a.com', 'b');
+						fm[`${method}Once`]('http://c.com', 'd', { opt: 'e' });
+						expect(fm.router.addRoute).toHaveBeenCalledWith('http://a.com', 'b', {
 							method,
 							repeat: 1,
 						});
-						expect(fm.router.addRoute).toHaveBeenCalledWith('c', 'd', {
+						expect(fm.router.addRoute).toHaveBeenCalledWith('http://c.com', 'd', {
 							opt: 'e',
 							method,
 							repeat: 1,

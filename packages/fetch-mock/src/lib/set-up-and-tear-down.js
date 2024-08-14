@@ -1,9 +1,6 @@
-import { debug, setDebugPhase } from './debug.js';
-
 const FetchMock = {};
 
 FetchMock.mock = function (...args) {
-	setDebugPhase('setup');
 	if (args.length) {
 		this.addRoute(args);
 	}
@@ -12,7 +9,6 @@ FetchMock.mock = function (...args) {
 };
 
 FetchMock.addRoute = function (uncompiledRoute) {
-	debug('Adding route', uncompiledRoute);
 	const route = this.compileRoute(uncompiledRoute);
 	const clashes = this.routes.filter(({ identifier, method }) => {
 		const isMatch =
@@ -52,7 +48,6 @@ FetchMock._mock = function () {
 		this.realFetch = this.realFetch || globalThis.fetch;
 		globalThis.fetch = this.fetchHandler;
 	}
-	setDebugPhase();
 	return this;
 };
 
@@ -60,7 +55,7 @@ FetchMock.catch = function (response) {
 	if (this.fallbackResponse) {
 		console.warn(
 			'calling fetchMock.catch() twice - are you sure you want to overwrite the previous fallback response',
-		); // eslint-disable-line
+		);  
 	}
 	this.fallbackResponse = response || 'ok';
 	return this._mock();

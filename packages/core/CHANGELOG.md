@@ -1,5 +1,63 @@
 # Changelog
 
+## [0.6.0](https://github.com/wheresrhys/fetch-mock/compare/core-v0.5.0...core-v0.6.0) (2024-08-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* force a major release due to breaking nature of relative url API changes
+
+### Features
+
+* implemented allowRelativeUrls option ([f32bd6e](https://github.com/wheresrhys/fetch-mock/commit/f32bd6e6ba7aed03ec0fd0c7361097e85c84224a))
+
+
+### Bug Fixes
+
+* all relative url behaviour is as expected now; ([dc99eb7](https://github.com/wheresrhys/fetch-mock/commit/dc99eb783e64c8c101c9d15fc59cccc7f7ad174d))
+* force a major release due to breaking nature of relative url API changes ([6f29db8](https://github.com/wheresrhys/fetch-mock/commit/6f29db8ff79a8c7a50ad03f4c1547d8716ffb298))
+
+## [0.5.0](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.12...core-v0.5.0) (2024-08-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* implemented desired behaviour for dot path matching
+* implemented desired behaviour for protocol relative urls
+
+### Features
+
+* implemented desired behaviour for dot path matching ([b2fe6f8](https://github.com/wheresrhys/fetch-mock/commit/b2fe6f894b337ed213f55fed47f611acbdecd84f))
+* implemented desired behaviour for protocol relative urls ([06e6260](https://github.com/wheresrhys/fetch-mock/commit/06e62607dbfc7b71936b8a691e37ef9275e7cc11))
+
+## [0.4.12](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.11...core-v0.4.12) (2024-08-13)
+
+
+### Bug Fixes
+
+* roll back to glob-to-regexp ([b114124](https://github.com/wheresrhys/fetch-mock/commit/b11412452ed376ab2e20e03a51f0dc1de1dcdb90))
+
+## [0.4.11](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.10...core-v0.4.11) (2024-08-09)
+
+
+### Bug Fixes
+
+* force release of core ([6bf9b87](https://github.com/wheresrhys/fetch-mock/commit/6bf9b87f0598cb5a142d623c6285b0dca6c619d5))
+
+## [0.4.10](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.9...core-v0.4.10) (2024-08-08)
+
+
+### Bug Fixes
+
+* fix core package build ([90bbe76](https://github.com/wheresrhys/fetch-mock/commit/90bbe76ab384ec5cefeb17f19ca06ca386cbbde5))
+
+## [0.4.9](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.8...core-v0.4.9) (2024-08-08)
+
+
+### Bug Fixes
+
+* add license file to each package ([9b36f89](https://github.com/wheresrhys/fetch-mock/commit/9b36f892ed19cd381b1f8ebbd94a28773637b9ec))
+
 ## [0.4.8](https://github.com/wheresrhys/fetch-mock/compare/core-v0.4.7...core-v0.4.8) (2024-08-03)
 
 

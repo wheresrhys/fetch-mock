@@ -18,7 +18,7 @@ export type FetchImplementations = {
 };
 export type FetchMockConfig = FetchMockGlobalConfig & FetchImplementations;
 
-export const defaultConfig: FetchMockConfig = {
+export const defaultFetchMockConfig: FetchMockConfig = {
 	includeContentLength: true,
 	sendAsJson: true,
 	matchPartialBody: false,
@@ -191,7 +191,7 @@ export class FetchMock {
 }
 
 const fetchMock = new FetchMock({
-	...defaultConfig,
+	...defaultFetchMockConfig,
 });
 
 export default fetchMock;

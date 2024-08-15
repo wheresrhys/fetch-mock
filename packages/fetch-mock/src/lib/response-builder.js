@@ -1,4 +1,3 @@
-
 const responseConfigProps = [
 	'body',
 	'headers',
@@ -97,7 +96,7 @@ e.g. {"body": {"status: "registered"}}`);
 		// convert to json if we need to
 		if (
 			this.getOption('sendAsJson') &&
-			this.responseConfig.body != null &&  
+			this.responseConfig.body != null &&
 			typeof this.body === 'object'
 		) {
 			this.body = JSON.stringify(this.body);

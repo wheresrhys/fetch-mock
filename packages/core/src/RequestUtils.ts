@@ -10,14 +10,22 @@ interface DerivedRequestOptions {
 	headers?: { [key: string]: string };
 }
 
-export type NormalizedRequestOptions = RequestInit | (RequestInit & DerivedRequestOptions);
+export type NormalizedRequestOptions =
+	| RequestInit
+	| (RequestInit & DerivedRequestOptions);
 
-export function hasCredentialsInUrl (url: string): boolean {
-	const urlObject = new URL(url, protocolRelativeUrlRX.test(url) ? 'http://dummy' :  undefined);
+export function hasCredentialsInUrl(url: string): boolean {
+	const urlObject = new URL(
+		url,
+		protocolRelativeUrlRX.test(url) ? 'http://dummy' : undefined,
+	);
 	return Boolean(urlObject.username || urlObject.password);
 }
 
-export function normalizeUrl(url: string | String | URL, allowRelativeUrls: boolean) {
+export function normalizeUrl(
+	url: string | String | URL,
+	allowRelativeUrls: boolean,
+) {
 	if (url instanceof URL) {
 		return url.href;
 	}
@@ -40,12 +48,17 @@ export function normalizeUrl(url: string | String | URL, allowRelativeUrls: bool
 		const urlInstance = new URL(primitiveUrl, 'http://dummy');
 		return urlInstance.pathname + urlInstance.search;
 	} else {
-		throw new Error("Relative urls are not support by default in node.js tests. Either use a utility such as jsdom to define globalThis.location or set `fetchMock.config.allowRelativeUrls = true`")
+		throw new Error(
+			'Relative urls are not support by default in node.js tests. Either use a utility such as jsdom to define globalThis.location or set `fetchMock.config.allowRelativeUrls = true`',
+		);
 	}
 }
 
-export function createCallLogFromUrlAndOptions(url: string | String | object, options: RequestInit): CallLog {
-	const pendingPromises: Promise<unknown>[]  = [];
+export function createCallLogFromUrlAndOptions(
+	url: string | String | object,
+	options: RequestInit,
+): CallLog {
+	const pendingPromises: Promise<unknown>[] = [];
 	if (typeof url === 'string' || url instanceof String || url instanceof URL) {
 		const normalizedUrl: string = normalizeUrl(url, true);
 		const derivedOptions = options ? { ...options } : {};
@@ -73,7 +86,10 @@ export function createCallLogFromUrlAndOptions(url: string | String | object, op
 	}
 }
 
-export async function createCallLogFromRequest(request: Request, options: RequestInit): Promise<CallLog> {
+export async function createCallLogFromRequest(
+	request: Request,
+	options: RequestInit,
+): Promise<CallLog> {
 	const pendingPromises: Promise<unknown>[] = [];
 	const derivedOptions: NormalizedRequestOptions = {
 		method: request.method,
@@ -113,7 +129,9 @@ export function getQuery(url: string): string {
 	return u.search ? u.search.substr(1) : '';
 }
 
-export function normalizeHeaders(headers: HeadersInit | { [key: string]: string | number }): { [key: string]: string } {
+export function normalizeHeaders(
+	headers: HeadersInit | { [key: string]: string | number },
+): { [key: string]: string } {
 	let entries;
 	if (headers instanceof Headers) {
 		entries = [...headers.entries()];
@@ -125,4 +143,4 @@ export function normalizeHeaders(headers: HeadersInit | { [key: string]: string 
 	return Object.fromEntries(
 		entries.map(([key, val]) => [key.toLowerCase(), String(val).valueOf()]),
 	);
-};
+}

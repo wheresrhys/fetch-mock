@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, beforeAll, vi } from 'vitest';
 
-import fetchMock from '../../src/index.js'
+import fetchMock from '../../src/index.js';
 
 describe('sticky routes', () => {
 	describe('effect on routes', () => {

@@ -1,4 +1,4 @@
-import { RouteConfig} from './Route.js';
+import { RouteConfig } from './Route.js';
 import { CallLog } from './CallHistory.js';
 import glob from 'glob-to-regexp';
 import * as regexparam from 'regexparam';
@@ -26,12 +26,16 @@ export type MatcherDefinition = {
 	usesBody?: boolean;
 };
 
-export const isUrlMatcher = (matcher: RouteMatcher | RouteConfig): matcher is RouteMatcherUrl =>
+export const isUrlMatcher = (
+	matcher: RouteMatcher | RouteConfig,
+): matcher is RouteMatcherUrl =>
 	matcher instanceof RegExp ||
 	typeof matcher === 'string' ||
 	(typeof matcher === 'object' && 'href' in matcher);
 
-export const isFunctionMatcher = (matcher: RouteMatcher | RouteConfig): matcher is RouteMatcherFunction => typeof matcher === 'function';
+export const isFunctionMatcher = (
+	matcher: RouteMatcher | RouteConfig,
+): matcher is RouteMatcherFunction => typeof matcher === 'function';
 
 const stringMatchers: { [key: string]: UrlMatcherGenerator } = {
 	begin:
@@ -67,10 +71,10 @@ const stringMatchers: { [key: string]: UrlMatcherGenerator } = {
 	path: (targetString) => {
 		const dotlessTargetString = getPath(targetString);
 		return ({ url }) => {
-			const path = getPath(url)
+			const path = getPath(url);
 			return path === targetString || path === dotlessTargetString;
-		}
-	}
+		};
+	},
 };
 const getHeaderMatcher: MatcherGenerator = ({ headers: expectedHeaders }) => {
 	if (!expectedHeaders) {
@@ -157,7 +161,10 @@ const getQueryParamsMatcher: MatcherGenerator = ({ query: passedQuery }) => {
 	};
 };
 
-const getExpressParamsMatcher: MatcherGenerator = ({ params: expectedParams, url }) => {
+const getExpressParamsMatcher: MatcherGenerator = ({
+	params: expectedParams,
+	url,
+}) => {
 	if (!expectedParams) {
 		return;
 	}
@@ -206,15 +213,19 @@ const getBodyMatcher: MatcherGenerator = (route) => {
 	};
 };
 
-
-const getFunctionMatcher: MatcherGenerator = ({ matcherFunction }) => matcherFunction;
+const getFunctionMatcher: MatcherGenerator = ({ matcherFunction }) =>
+	matcherFunction;
 
 const getRegexpMatcher =
 	(regexp: RegExp): RouteMatcherFunction =>
 	({ url }) =>
 		regexp.test(url);
 
-const getFullUrlMatcher = (route: RouteConfig, matcherUrl: string, query: { [key: string]: string }): RouteMatcherFunction => {
+const getFullUrlMatcher = (
+	route: RouteConfig,
+	matcherUrl: string,
+	query: { [key: string]: string },
+): RouteMatcherFunction => {
 	// if none of the special syntaxes apply, it's just a simple string match
 	// but we have to be careful to normalize the url we check and the name
 	// of the route to allow for e.g. http://it.at.there being indistinguishable

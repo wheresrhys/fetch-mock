@@ -8,7 +8,7 @@ import {
 	vi,
 } from 'vitest';
 
-import fetchMock from '../../src/index.js'
+import fetchMock from '../../src/index.js';
 describe('shorthands', () => {
 	let fm;
 	let expectRoute;

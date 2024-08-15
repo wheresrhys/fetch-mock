@@ -3,10 +3,10 @@
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import globals from 'globals';
+import eslintConfigPrettier from 'eslint-config-prettier';
+import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 
-export default tseslint.config(
-	eslint.configs.recommended,
-	...tseslint.configs.recommended,
+export default [
 	{
 		ignores: [
 			'docs/**/*.js',
@@ -15,42 +15,48 @@ export default tseslint.config(
 			'packages/fetch-mock/types/index.test-d.ts',
 		],
 	},
+	eslint.configs.recommended,
+	...tseslint.configs.recommended,
+	eslintConfigPrettier,
 	{
 		rules: {
 			'no-prototype-builtins': 0,
-			'@typescript-eslint/no-wrapper-object-types': 0
+			'@typescript-eslint/no-wrapper-object-types': 0,
 		},
 		languageOptions: {
 			globals: {
 				...globals.node,
-			}
-		}
+			},
+		},
 	},
 	{
-			files: [
-				'import-compat/*',
-				'**/*.cjs',
-				'packages/fetch-mock/test/framework-compat/jest.spec.js',
-				'packages/fetch-mock/test/fixtures/fetch-proxy.js'
-			],
-			rules: {
-				'@typescript-eslint/no-require-imports': 0
-			},
-
+		files: [
+			'import-compat/*',
+			'**/*.cjs',
+			'packages/fetch-mock/test/fixtures/fetch-proxy.js',
+		],
+		rules: {
+			'@typescript-eslint/no-require-imports': 0,
 		},
-		{
-			files: ['packages/fetch-mock/test/**/*.js'],
-			languageOptions: {globals: {
+	},
+	{
+		files: ['packages/fetch-mock/test/**/*.js'],
+		languageOptions: {
+			globals: {
 				testGlobals: 'writable',
-			}},
+			},
 		},
-		{
-			files: ['packages/fetch-mock/test/fixtures/sw.js'],
-			languageOptions: {globals: {
-				...globals.browser
-			}},
-		}
-);
+	},
+	{
+		files: ['packages/fetch-mock/test/fixtures/sw.js'],
+		languageOptions: {
+			globals: {
+				...globals.browser,
+			},
+		},
+	},
+	eslintPluginPrettierRecommended,
+];
 
 // module.exports = {
 // 	env: {

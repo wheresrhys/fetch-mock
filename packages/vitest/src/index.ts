@@ -1,5 +1,9 @@
 import { vi } from 'vitest';
-import { FetchMock, defaultConfig, RemoveRouteOptions } from '@fetch-mock/core';
+import {
+	FetchMock,
+	defaultFetchMockConfig,
+	RemoveRouteOptions,
+} from '@fetch-mock/core';
 import './vitest-extensions';
 
 class FetchMockVitest extends FetchMock {
@@ -40,7 +44,7 @@ export function hookIntoVitestMockResetMethods() {
 }
 
 const fetchMockVitest = new FetchMockVitest({
-	...defaultConfig,
+	...defaultFetchMockConfig,
 });
 
 export default fetchMockVitest;

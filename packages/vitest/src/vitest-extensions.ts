@@ -4,13 +4,13 @@ import type {
 	FetchMock,
 	RouteName,
 	CallHistoryFilter,
-	RouteConfig,
+	UserRouteConfig,
 } from '@fetch-mock/core';
 const methodlessExtensions = {
 	toHaveFetched: (
 		{ fetchMock }: { fetchMock: FetchMock },
 		filter: CallHistoryFilter,
-		options: RouteConfig,
+		options: UserRouteConfig,
 	): SyncExpectationResult => {
 		if (fetchMock.callHistory.called(filter, options)) {
 			return { pass: true, message: () => 'fetch was called as expected' };
@@ -24,7 +24,7 @@ const methodlessExtensions = {
 	toHaveLastFetched: (
 		{ fetchMock }: { fetchMock: FetchMock },
 		filter: CallHistoryFilter,
-		options: RouteConfig,
+		options: UserRouteConfig,
 	): SyncExpectationResult => {
 		const allCalls = fetchMock.callHistory.calls();
 		if (!allCalls.length) {
@@ -51,7 +51,7 @@ const methodlessExtensions = {
 		{ fetchMock }: { fetchMock: FetchMock },
 		n: number,
 		filter: CallHistoryFilter,
-		options: RouteConfig,
+		options: UserRouteConfig,
 	): SyncExpectationResult => {
 		const nthCall = fetchMock.callHistory.calls()[n - 1];
 		const matchingCalls = fetchMock.callHistory.calls(filter, options);
@@ -68,17 +68,17 @@ const methodlessExtensions = {
 		};
 	},
 
-	// toHaveFetchedTimes: ({ fetchMock }: { fetchMock: FetchMock }, times: number, filter: CallHistoryFilter, options: RouteConfig): SyncExpectationResult => {
-	// 	const calls = fetchMock.callHistory.calls(filter, options);
-	// 	if (calls.length === times) {
-	// 		return { pass: true, message: () => `fetch was called ${n} times as expected` };
-	// 	}
-	// 	return {
-	// 		pass: false,
-	// 		message: () =>
-	// 			`fetch should have made ${times} calls matching ${filter} and ${JSON.stringify(options)}, but it only made ${calls.length}`,
-	// 	};
-	// },
+	toHaveFetchedTimes: ({ fetchMock }: { fetchMock: FetchMock }, times: number, filter: CallHistoryFilter, options: UserRouteConfig): SyncExpectationResult => {
+		const calls = fetchMock.callHistory.calls(filter, options);
+		if (calls.length === times) {
+			return { pass: true, message: () => `fetch was called ${times} times as expected` };
+		}
+		return {
+			pass: false,
+			message: () =>
+				`fetch should have made ${times} calls matching ${filter} and ${JSON.stringify(options)}, but it only made ${calls.length}`,
+		};
+	},
 };
 
 expect.extend(methodlessExtensions);
@@ -112,7 +112,7 @@ expect.extend({
 ].forEach((verbs) => {
 	const [humanVerb, method] = verbs.split(':');
 
-	const extensions = Object.entries(methodlessExtensions)
+	const extensions = Object.fromEntries(Object.entries(methodlessExtensions)
 		.map(([name, func]) => {
 			return [
 				(name = name.replace('Fetched', humanVerb)),
@@ -122,8 +122,7 @@ expect.extend({
 					return func(...args);
 				},
 			];
-		})
-		.reduce((obj, [name, func]) => ({ ...obj, [name]: func }), {});
+		}))
 
 	expect.extend(extensions);
 });

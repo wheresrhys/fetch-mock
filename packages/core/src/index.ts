@@ -1,7 +1,4 @@
-import fetchMock, {
-	FetchMockConfig,
-	FetchMock,
-} from './FetchMock.js';
+import fetchMock, { FetchMockConfig, FetchMock } from './FetchMock.js';
 import { CallHistoryFilter, CallLog } from './CallHistory.js';
 import { RouteMatcher, MatcherDefinition } from './Matchers.js';
 import { UserRouteConfig, RouteResponse, RouteName } from './Route.js';

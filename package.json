@@ -44,6 +44,7 @@
     "@rollup/plugin-commonjs": "^26.0.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@testing-library/dom": "^10.4.0",
+    "@types/chai": "^4.3.17",
     "@types/eslint__js": "^8.42.3",
     "@types/events": "^3.0.3",
     "@types/node": "^20.14.10",

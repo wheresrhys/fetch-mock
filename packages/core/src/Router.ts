@@ -1,17 +1,29 @@
 //@type-check
-import Route, { UserRouteConfig, RouteResponsePromise, RouteConfig, RouteResponse, RouteResponseData, RouteResponseConfig } from './Route.js';
+import Route, {
+	UserRouteConfig,
+	RouteResponsePromise,
+	RouteConfig,
+	RouteResponse,
+	RouteResponseData,
+	RouteResponseConfig,
+} from './Route.js';
 import { isUrlMatcher, isFunctionMatcher } from './Matchers.js';
 import { RouteMatcher } from './Matchers.js';
 import { FetchMockConfig } from './FetchMock.js';
 import { hasCredentialsInUrl } from './RequestUtils.js';
 import type { CallLog } from './CallHistory.js';
 
-export type ResponseConfigProp = "body" | "headers" | "throws" | "status" | "redirectUrl";
+export type ResponseConfigProp =
+	| 'body'
+	| 'headers'
+	| 'throws'
+	| 'status'
+	| 'redirectUrl';
 export type RemoveRouteOptions = {
 	includeSticky?: boolean;
 	includeFallback?: boolean;
 	names?: string[];
-}
+};
 const responseConfigProps: ResponseConfigProp[] = [
 	'body',
 	'headers',
@@ -20,15 +32,17 @@ const responseConfigProps: ResponseConfigProp[] = [
 	'redirectUrl',
 ];
 
-function nameToOptions (options: RouteConfig | string): RouteConfig {
+function nameToOptions(options: RouteConfig | string): RouteConfig {
 	return typeof options === 'string' ? { name: options } : options;
 }
 
-function isPromise (response: RouteResponse): response is RouteResponsePromise {
+function isPromise(response: RouteResponse): response is RouteResponsePromise {
 	return typeof (response as Promise<unknown>).then === 'function';
 }
 
-function normalizeResponseInput(responseInput: RouteResponseData): RouteResponseConfig {
+function normalizeResponseInput(
+	responseInput: RouteResponseData,
+): RouteResponseConfig {
 	// If the response config looks like a status, start to generate a simple response
 	if (typeof responseInput === 'number') {
 		return {
@@ -71,7 +85,10 @@ function shouldSendAsObject(responseInput: RouteResponseData): boolean {
 	return true;
 }
 
-function throwSpecExceptions({ url, options: { headers, method, body } }: CallLog) {
+function throwSpecExceptions({
+	url,
+	options: { headers, method, body },
+}: CallLog) {
 	if (headers) {
 		Object.entries(headers).forEach(([key]) => {
 			if (/\s/.test(key)) {
@@ -116,7 +133,10 @@ export default class Router {
 	routes: Route[];
 	config: FetchMockConfig;
 	fallbackRoute: Route;
-	constructor(fetchMockConfig: FetchMockConfig, { routes, fallbackRoute }: { routes?: Route[], fallbackRoute?: Route } = {}) {
+	constructor(
+		fetchMockConfig: FetchMockConfig,
+		{ routes, fallbackRoute }: { routes?: Route[]; fallbackRoute?: Route } = {},
+	) {
 		this.config = fetchMockConfig;
 		this.routes = routes || []; // TODO deep clone this??
 		this.fallbackRoute = fallbackRoute;
@@ -196,7 +216,11 @@ export default class Router {
 		});
 	}
 
-	async generateResponse(callLog: CallLog): Promise<{ response: Response, responseOptions: ResponseInit, responseInput: RouteResponseConfig }> {
+	async generateResponse(callLog: CallLog): Promise<{
+		response: Response;
+		responseOptions: ResponseInit;
+		responseInput: RouteResponseConfig;
+	}> {
 		const responseInput = await resolveUntilResponseConfig(callLog);
 		// If the response is a pre-made Response, respond with it
 		if (responseInput instanceof Response) {
@@ -269,7 +293,11 @@ export default class Router {
 
 	// addRoute(matcher: UserRouteConfig): void;
 	// addRoute(matcher: RouteMatcher, response: RouteResponse, nameOrOptions?: UserRouteConfig | string): void;
-	addRoute(matcher: (RouteMatcher | UserRouteConfig), response?: RouteResponse, nameOrOptions?: (UserRouteConfig | string)): void {
+	addRoute(
+		matcher: RouteMatcher | UserRouteConfig,
+		response?: RouteResponse,
+		nameOrOptions?: UserRouteConfig | string,
+	): void {
 		const config: RouteConfig = {};
 		if (isUrlMatcher(matcher)) {
 			config.url = matcher;
@@ -324,7 +352,11 @@ export default class Router {
 		});
 		this.fallbackRoute.config.isFallback = true;
 	}
-	removeRoutes({ names, includeSticky, includeFallback }: RemoveRouteOptions = {}) {
+	removeRoutes({
+		names,
+		includeSticky,
+		includeFallback,
+	}: RemoveRouteOptions = {}) {
 		includeFallback = includeFallback ?? true;
 		this.routes = this.routes.filter(({ config: { sticky, name } }) => {
 			if (sticky && !includeSticky) {

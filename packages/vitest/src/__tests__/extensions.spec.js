@@ -1,4 +1,4 @@
-import {describe, it, beforeAll, afterAll, expect} from 'vitest';
+import { describe, it, beforeAll, afterAll, expect } from 'vitest';
 
 import fetchMock from '../index';
 describe('expect extensions', () => {
@@ -13,7 +13,6 @@ describe('expect extensions', () => {
 	].forEach((verbs) => {
 		const [humanVerb, method] = verbs.split(':');
 		describe(`${humanVerb} expectations`, () => {
-
 			describe('when no calls', () => {
 				beforeAll(() => {
 					fetchMock.mockGlobal().route('*', 200, 'my-route');
@@ -24,18 +23,24 @@ describe('expect extensions', () => {
 				});
 
 				it(`toHaveLast${humanVerb} should be falsy`, () => {
-					expect(fetch).not[`toHaveLast${humanVerb}`]('http://example.com/path');
+					expect(fetch).not[`toHaveLast${humanVerb}`](
+						'http://example.com/path',
+					);
 				});
 
 				it(`toHaveNth${humanVerb} should be falsy`, () => {
-					expect(fetch).not[`toHaveNth${humanVerb}`](1, 'http://example.com/path');
+					expect(fetch).not[`toHaveNth${humanVerb}`](
+						1,
+						'http://example.com/path',
+					);
 				});
 
 				it(`toHave${humanVerb}Times should be falsy`, () => {
-					expect(fetch).not[`toHave${humanVerb}Times`](1, 'http://example.com/path');
+					expect(fetch).not[`toHave${humanVerb}Times`](
+						1,
+						'http://example.com/path',
+					);
 				});
-
-
 			});
 			describe(`toHave${humanVerb}`, () => {
 				beforeAll(() => {
@@ -80,11 +85,14 @@ describe('expect extensions', () => {
 				});
 
 				it("doesn't match if options but not matcher is correct", () => {
-					expect(fetch).not[`toHave${humanVerb}`]('http://example-no.com/path', {
-						headers: {
-							test: 'header',
+					expect(fetch).not[`toHave${humanVerb}`](
+						'http://example-no.com/path',
+						{
+							headers: {
+								test: 'header',
+							},
 						},
-					});
+					);
 				});
 			});
 			describe(`toHaveLast${humanVerb}`, () => {
@@ -104,7 +112,9 @@ describe('expect extensions', () => {
 				});
 
 				it('matches with fetch-mock matcher', () => {
-					expect(fetch)[`toHaveLast${humanVerb}`]('begin:http://example.com/path');
+					expect(fetch)[`toHaveLast${humanVerb}`](
+						'begin:http://example.com/path',
+					);
 				});
 
 				it('matches with matcher and options', () => {
@@ -116,19 +126,25 @@ describe('expect extensions', () => {
 				});
 
 				it("doesn't match if matcher but not options is correct", () => {
-					expect(fetch).not[`toHaveLast${humanVerb}`]('http://example.com/path', {
-						headers: {
-							test: 'not-header',
+					expect(fetch).not[`toHaveLast${humanVerb}`](
+						'http://example.com/path',
+						{
+							headers: {
+								test: 'not-header',
+							},
 						},
-					});
+					);
 				});
 
 				it("doesn't match if options but not matcher is correct", () => {
-					expect(fetch).not[`toHaveLast${humanVerb}`]('http://example-no.com/path', {
-						headers: {
-							test: 'header',
+					expect(fetch).not[`toHaveLast${humanVerb}`](
+						'http://example-no.com/path',
+						{
+							headers: {
+								test: 'header',
+							},
 						},
-					});
+					);
 				});
 			});
 
@@ -155,35 +171,53 @@ describe('expect extensions', () => {
 				});
 
 				it('matches with fetch-mock matcher', () => {
-					expect(fetch)[`toHaveNth${humanVerb}`](2, 'begin:http://example2.com/path');
+					expect(fetch)[`toHaveNth${humanVerb}`](
+						2,
+						'begin:http://example2.com/path',
+					);
 				});
 
 				it('matches with matcher and options', () => {
-					expect(fetch)[`toHaveNth${humanVerb}`](2, 'http://example2.com/path', {
-						headers: {
-							test: 'header',
+					expect(fetch)[`toHaveNth${humanVerb}`](
+						2,
+						'http://example2.com/path',
+						{
+							headers: {
+								test: 'header',
+							},
 						},
-					});
+					);
 				});
 
 				it("doesn't match if matcher but not options is correct", () => {
-					expect(fetch).not[`toHaveNth${humanVerb}`](2, 'http://example2.com/path', {
-						headers: {
-							test: 'not-header',
+					expect(fetch).not[`toHaveNth${humanVerb}`](
+						2,
+						'http://example2.com/path',
+						{
+							headers: {
+								test: 'not-header',
+							},
 						},
-					});
+					);
 				});
 
 				it("doesn't match if options but not matcher is correct", () => {
-					expect(fetch).not[`toHaveNth${humanVerb}`](2, 'http://example-no.com/path', {
-						headers: {
-							test: 'header',
+					expect(fetch).not[`toHaveNth${humanVerb}`](
+						2,
+						'http://example-no.com/path',
+						{
+							headers: {
+								test: 'header',
+							},
 						},
-					});
+					);
 				});
 
 				it("doesn't match if wrong n", () => {
-					expect(fetch).not[`toHaveNth${humanVerb}`](1, 'http://example2.com/path');
+					expect(fetch).not[`toHaveNth${humanVerb}`](
+						1,
+						'http://example2.com/path',
+					);
 				});
 			});
 
@@ -206,52 +240,75 @@ describe('expect extensions', () => {
 				afterAll(() => fetchMock.mockReset());
 
 				it('matches with just url', () => {
-					expect(fetch)[`toHave${humanVerb}Times`](2, 'http://example.com/path');
+					expect(fetch)[`toHave${humanVerb}Times`](
+						2,
+						'http://example.com/path',
+					);
 				});
 
 				it('matches with fetch-mock matcher', () => {
-					expect(fetch)[`toHave${humanVerb}Times`](2, 'begin:http://example.com/path');
+					expect(fetch)[`toHave${humanVerb}Times`](
+						2,
+						'begin:http://example.com/path',
+					);
 				});
 
 				it('matches with matcher and options', () => {
-					expect(fetch)[`toHave${humanVerb}Times`](2, 'http://example.com/path', {
-						headers: {
-							test: 'header',
+					expect(fetch)[`toHave${humanVerb}Times`](
+						2,
+						'http://example.com/path',
+						{
+							headers: {
+								test: 'header',
+							},
 						},
-					});
+					);
 				});
 
 				it("doesn't match if matcher but not options is correct", () => {
-					expect(fetch).not[`toHave${humanVerb}Times`](2, 'http://example.com/path', {
-						headers: {
-							test: 'not-header',
+					expect(fetch).not[`toHave${humanVerb}Times`](
+						2,
+						'http://example.com/path',
+						{
+							headers: {
+								test: 'not-header',
+							},
 						},
-					});
+					);
 				});
 
 				it("doesn't match if options but not matcher is correct", () => {
-					expect(fetch).not[`toHave${humanVerb}Times`](2, 'http://example-no.com/path', {
-						headers: {
-							test: 'header',
+					expect(fetch).not[`toHave${humanVerb}Times`](
+						2,
+						'http://example-no.com/path',
+						{
+							headers: {
+								test: 'header',
+							},
 						},
-					});
+					);
 				});
 
 				it("doesn't match if too few calls", () => {
-					expect(fetch).not[`toHave${humanVerb}Times`](1, 'http://example.com/path');
+					expect(fetch).not[`toHave${humanVerb}Times`](
+						1,
+						'http://example.com/path',
+					);
 				});
 
 				it("doesn't match if too many calls", () => {
-					expect(fetch).not[`toHave${humanVerb}Times`](3, 'http://example.com/path');
+					expect(fetch).not[`toHave${humanVerb}Times`](
+						3,
+						'http://example.com/path',
+					);
 				});
 			});
-
-			
-		})
-	})
+		});
+	});
 	describe('toBeDone', () => {
 		beforeAll(() => {
-			fetchMock.mockGlobal()
+			fetchMock
+				.mockGlobal()
 				.once('http://example.com/path', 200, 'route1')
 				.route('http://example2.com/path', 200, { name: 'route2', repeat: 2 });
 			fetch('http://example.com/path', {
@@ -278,5 +335,4 @@ describe('expect extensions', () => {
 			expect(fetch).not.toBeDone('route2');
 		});
 	});
-
 });

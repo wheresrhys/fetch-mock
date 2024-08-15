@@ -1,6 +1,17 @@
-import fetchMock, { FetchMock , defaultConfig} from './FetchMock.js';
-import { RemoveRouteOptions } from './Router.js';
-import { RouteName, RouteConfig } from './Route.js';
-import { CallHistoryFilter } from './CallHistory.js';
+import fetchMock, { FetchMockConfig, FetchMock } from './FetchMock.js';
+import { CallHistoryFilter, CallLog } from './CallHistory.js';
+import { RouteMatcher, MatcherDefinition } from './Matchers.js';
+import { UserRouteConfig, RouteResponse, RouteName } from './Route.js';
+
+export {
+	FetchMockConfig,
+	FetchMock,
+	CallHistoryFilter,
+	CallLog,
+	RouteMatcher,
+	MatcherDefinition,
+	UserRouteConfig,
+	RouteResponse,
+	RouteName,
+};
 export default fetchMock;
-export { FetchMock, defaultConfig, RemoveRouteOptions, RouteName, CallHistoryFilter, RouteConfig };

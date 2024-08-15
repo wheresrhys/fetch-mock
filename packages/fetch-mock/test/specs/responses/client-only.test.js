@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 // const chai = require('chai');
 // const chaiAsPromised = require('chai-as-promised');
 // chai.use(chaiAsPromised);
-import fetchMock from '../../../src/index.js'
+import fetchMock from '../../../src/index.js';
 
 describe.skip('client-side only tests', () => {
 	afterEach(() => fetchMock.restore());

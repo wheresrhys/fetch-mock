@@ -122,6 +122,7 @@ class CallHistory {
 	}
 
 	done(routeNames?: RouteName | RouteName[]): boolean {
+		
 		let routesToCheck = this.router.routes;
 		if (routeNames) {
 			routeNames = Array.isArray(routeNames) ? routeNames : [routeNames];
@@ -129,6 +130,7 @@ class CallHistory {
 				routeNames.includes(name),
 			);
 		}
+		// TODO what should be the behaviour if no routes defined? Error?
 		// Can't use array.every because would exit after first failure, which would
 		// break the logging
 		return routesToCheck

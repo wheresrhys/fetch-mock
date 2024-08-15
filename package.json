@@ -31,7 +31,7 @@
     "prepare": "husky || echo \"husky not available\"",
     "build": "npm run build -w=packages",
     "docs": "npm run start -w docs",
-    "test": "vitest",
+    "test": "vitest . --ui",
     "test:ci": "vitest . --reporter=junit --outputFile=test-results/junit.xml --coverage.provider=istanbul",
     "test:browser": "vitest . --browser.enabled --browser.name chromium --browser.provider playwright",
     "coverage:send": "cat ./coverage/lcov.info | coveralls",

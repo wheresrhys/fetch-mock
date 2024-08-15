@@ -17,10 +17,6 @@ class FetchMockVitest extends FetchMock {
 	}
 }
 
-const fetchMockVitest = new FetchMockVitest({
-	...defaultConfig,
-})
-
 
 export function hookIntoVitestMockResetMethods() {
 	const { clearAllMocks, resetAllMocks, restoreAllMocks } = vi;
@@ -43,5 +39,10 @@ export function hookIntoVitestMockResetMethods() {
 		return vi;
 	}
 }
+
+
+const fetchMockVitest = new FetchMockVitest({
+	...defaultConfig,
+})
 
 export default fetchMockVitest;

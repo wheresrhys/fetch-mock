@@ -2,7 +2,7 @@ import {expect} from "vitest";
 
 const methodlessExtensions = {
 	toHaveFetched: ({fetchMock}, matcher, options) => {
-		if (fetchMock.called(matcher, options)) {
+		if (fetchMock.callHistory.called(matcher, options)) {
 			return { pass: true };
 		}
 		return {

@@ -67,7 +67,8 @@ export class FetchMock {
 			fallbackRoute: router ? router.fallbackRoute : null,
 		});
 		this.callHistory = new CallHistory(this.config, this.router);
-		this.fetchHandler = Object.assign(this.fetchHandler, {fetchMock: this});
+		this.fetchHandler = this.fetchHandler.bind(this);
+		Object.assign(this.fetchHandler, {fetchMock: this});
 	}
 	createInstance(): FetchMock {
 		return new FetchMock({ ...this.config }, this.router);
@@ -120,7 +121,7 @@ export class FetchMock {
 		return this;
 	}
 	mockGlobal(this: FetchMock): FetchMock {
-		globalThis.fetch = this.fetchHandler.bind(this);
+		globalThis.fetch = this.fetchHandler;
 		return this;
 	}
 	unmockGlobal(this: FetchMock): FetchMock {

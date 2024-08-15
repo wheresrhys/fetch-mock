@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/wheresrhys/fetch-mock/compare/core-v0.6.0...core-v0.6.1) (2024-08-15)
+
+
+### Features
+
+* export more types from @fetch-mock/core ([2bff326](https://github.com/wheresrhys/fetch-mock/commit/2bff326063a362ea4ce0adc1102130bd1c31ac9e))
+
 ## [0.6.0](https://github.com/wheresrhys/fetch-mock/compare/core-v0.5.0...core-v0.6.0) (2024-08-13)
 
 

@@ -1,7 +1,7 @@
 {
   "name": "@fetch-mock/core",
   "description": "Utility for creating mock fetch implementation",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
   "exports": {

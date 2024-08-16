@@ -72,7 +72,7 @@ class CallHistory {
 			await this.flush();
 		}
 	}
-	calls(filter: CallHistoryFilter, options: RouteConfig): CallLog[] {
+	calls(filter?: CallHistoryFilter, options?: RouteConfig): CallLog[] {
 		let calls = [...this.callLogs];
 		if (typeof filter === 'undefined' && !options) {
 			return calls;
@@ -120,10 +120,10 @@ class CallHistory {
 
 		return calls;
 	}
-	called(filter: CallHistoryFilter, options: RouteConfig): boolean {
+	called(filter?: CallHistoryFilter, options?: RouteConfig): boolean {
 		return Boolean(this.calls(filter, options).length);
 	}
-	lastCall(filter: CallHistoryFilter, options: RouteConfig): CallLog | void {
+	lastCall(filter?: CallHistoryFilter, options?: RouteConfig): CallLog | void {
 		return this.calls(filter, options).pop();
 	}
 
@@ -135,6 +135,7 @@ class CallHistory {
 				routeNames.includes(name),
 			);
 		}
+		// TODO what should be the behaviour if no routes defined? Error?
 		// Can't use array.every because would exit after first failure, which would
 		// break the logging
 		return routesToCheck

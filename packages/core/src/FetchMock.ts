@@ -18,7 +18,7 @@ export type FetchImplementations = {
 };
 export type FetchMockConfig = FetchMockGlobalConfig & FetchImplementations;
 
-const defaultConfig: FetchMockConfig = {
+export const defaultFetchMockConfig: FetchMockConfig = {
 	includeContentLength: true,
 	sendAsJson: true,
 	matchPartialBody: false,
@@ -78,6 +78,8 @@ export class FetchMock {
 			fallbackRoute: router ? router.fallbackRoute : null,
 		});
 		this.callHistory = new CallHistory(this.config, this.router);
+		this.fetchHandler = this.fetchHandler.bind(this);
+		Object.assign(this.fetchHandler, { fetchMock: this });
 	}
 	createInstance(): FetchMock {
 		return new FetchMock({ ...this.config }, this.router);
@@ -141,6 +143,35 @@ export class FetchMock {
 		this.callHistory.clear();
 		return this;
 	}
+	mockGlobal(this: FetchMock): FetchMock {
+		globalThis.fetch = this.fetchHandler;
+		return this;
+	}
+	unmockGlobal(this: FetchMock): FetchMock {
+		globalThis.fetch = this.config.fetch;
+		return this;
+	}
+
+	spy(
+		this: FetchMock,
+		matcher?: RouteMatcher | UserRouteConfig,
+		name?: RouteName,
+	): FetchMock {
+		if (matcher) {
+			//@ts-expect-error TODO findo out how to overload an overload
+			this.route(matcher, ({ args }) => this.config.fetch(...args), name);
+		} else {
+			//@ts-expect-error TODO findo out how to overload an overload
+			this.catch(({ args }) => this.config.fetch(...args));
+		}
+
+		return this;
+	}
+	spyGlobal(this: FetchMock): FetchMock {
+		this.mockGlobal();
+		return this.spy();
+	}
+
 	sticky = defineShorthand({ sticky: true });
 	once = defineShorthand({ repeat: 1 });
 	any = defineGreedyShorthand({});
@@ -159,43 +190,8 @@ export class FetchMock {
 	patchOnce = defineShorthand({ method: 'patch', repeat: 1 });
 }
 
-class FetchMockStandalone extends FetchMock {
-	mockGlobal(this: FetchMockStandalone): FetchMockStandalone {
-		globalThis.fetch = this.fetchHandler.bind(this);
-		return this;
-	}
-	unmockGlobal(this: FetchMockStandalone): FetchMockStandalone {
-		globalThis.fetch = this.config.fetch;
-		return this;
-	}
-
-	spy(
-		this: FetchMockStandalone,
-		matcher?: RouteMatcher | UserRouteConfig,
-		name?: RouteName,
-	): FetchMockStandalone {
-		if (matcher) {
-			//@ts-expect-error TODO findo out how to overload an overload
-			this.route(matcher, ({ args }) => this.config.fetch(...args), name);
-		} else {
-			//@ts-expect-error TODO findo out how to overload an overload
-			this.catch(({ args }) => this.config.fetch(...args));
-		}
-
-		return this;
-	}
-	spyGlobal(this: FetchMockStandalone): FetchMockStandalone {
-		this.mockGlobal();
-		return this.spy();
-	}
-
-	createInstance(): FetchMockStandalone {
-		return new FetchMockStandalone({ ...this.config }, this.router);
-	}
-}
-
-const fetchMock = new FetchMockStandalone({
-	...defaultConfig,
-}).createInstance();
+const fetchMock = new FetchMock({
+	...defaultFetchMockConfig,
+});
 
 export default fetchMock;

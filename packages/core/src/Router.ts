@@ -19,7 +19,11 @@ export type ResponseConfigProp =
 	| 'throws'
 	| 'status'
 	| 'redirectUrl';
-
+export type RemoveRouteOptions = {
+	includeSticky?: boolean;
+	includeFallback?: boolean;
+	names?: string[];
+};
 const responseConfigProps: ResponseConfigProp[] = [
 	'body',
 	'headers',
@@ -352,11 +356,7 @@ export default class Router {
 		names,
 		includeSticky,
 		includeFallback,
-	}: {
-		names?: string[];
-		includeSticky?: boolean;
-		includeFallback?: boolean;
-	} = {}) {
+	}: RemoveRouteOptions = {}) {
 		includeFallback = includeFallback ?? true;
 		this.routes = this.routes.filter(({ config: { sticky, name } }) => {
 			if (sticky && !includeSticky) {

@@ -1,0 +1,23 @@
+{
+  "name": "@fetch-mock/vitest",
+  "version": "0.0.0",
+  "description": "Vitest wrapper for fetch-mock",
+  "main": "./dist/commonjs.js",
+  "module": "./src/index.js",
+  "exports": {
+    "types": "./types/index.d.ts",
+    "browser": "./src/index.js",
+    "import": "./src/index.js",
+    "require": "./dist/commonjs.js"
+  },
+  "types": "./types/index.d.ts",
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.esm.json && tsc -p tsconfig.cjs.json && node ../../scripts/declare-dist-type.js"
+  },
+  "type": "module",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fetch-mock/core": "^0.6.0"
+  }
+}

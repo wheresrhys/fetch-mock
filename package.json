@@ -31,7 +31,7 @@
     "prepare": "husky || echo \"husky not available\"",
     "build": "npm run build -w=packages",
     "docs": "npm run start -w docs",
-    "test": "vitest",
+    "test": "vitest . --ui",
     "test:ci": "vitest . --reporter=junit --outputFile=test-results/junit.xml --coverage.provider=istanbul",
     "test:browser": "vitest . --browser.enabled --browser.name chromium --browser.provider playwright",
     "coverage:send": "cat ./coverage/lcov.info | coveralls",
@@ -44,6 +44,7 @@
     "@rollup/plugin-commonjs": "^26.0.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@testing-library/dom": "^10.4.0",
+    "@types/chai": "^4.3.17",
     "@types/eslint__js": "^8.42.3",
     "@types/events": "^3.0.3",
     "@types/node": "^20.14.10",
@@ -79,7 +80,7 @@
     "**/*.js": [
       "npm run lint:staged"
     ],
-    "packages/**/*.js": [
+    "packages/**/*.ts": [
       "npm run types:check"
     ],
     "**/*.md": [

@@ -68,10 +68,18 @@ const methodlessExtensions = {
 		};
 	},
 
-	toHaveFetchedTimes: ({ fetchMock }: { fetchMock: FetchMock }, times: number, filter: CallHistoryFilter, options: UserRouteConfig): SyncExpectationResult => {
+	toHaveFetchedTimes: (
+		{ fetchMock }: { fetchMock: FetchMock },
+		times: number,
+		filter: CallHistoryFilter,
+		options: UserRouteConfig,
+	): SyncExpectationResult => {
 		const calls = fetchMock.callHistory.calls(filter, options);
 		if (calls.length === times) {
-			return { pass: true, message: () => `fetch was called ${times} times as expected` };
+			return {
+				pass: true,
+				message: () => `fetch was called ${times} times as expected`,
+			};
 		}
 		return {
 			pass: false,
@@ -101,6 +109,21 @@ expect.extend({
 		};
 	},
 });
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function scopeExpectationFunctionToMethod<Args extends any[]>(
+	func: (...args: Args) => SyncExpectationResult,
+	method: string,
+): (...args: Args) => SyncExpectationResult {
+	return (...args) => {
+		const opts = args[func.length - 1] || {};
+		args[func.length - 1] = { ...opts, method };
+		return func(...args);
+	};
+}
+
+function scopeExpectationNameToMethod(name: string, humanVerb: string): string {
+	return name.replace('Fetched', humanVerb);
+}
 
 [
 	'Got:get',
@@ -112,17 +135,12 @@ expect.extend({
 ].forEach((verbs) => {
 	const [humanVerb, method] = verbs.split(':');
 
-	const extensions = Object.fromEntries(Object.entries(methodlessExtensions)
-		.map(([name, func]) => {
-			return [
-				(name = name.replace('Fetched', humanVerb)),
-				(...args) => {
-					const opts = args[func.length - 1] || {};
-					args[func.length - 1] = { ...opts, method };
-					return func(...args);
-				},
-			];
-		}))
+	const extensions = Object.fromEntries(
+		Object.entries(methodlessExtensions).map(([name, func]) => [
+			scopeExpectationNameToMethod(name, humanVerb),
+			scopeExpectationFunctionToMethod(func, method),
+		]),
+	);
 
 	expect.extend(extensions);
 });

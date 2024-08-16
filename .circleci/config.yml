@@ -114,7 +114,9 @@ workflows:
       - test:
           <<: *triggerable-by-tag
           requires:
-            - checkout_code
+            // because in the monorepo any package that requires another can
+            // only do so after build
+            - build
       - lint:
           <<: *triggerable-by-tag
           requires:

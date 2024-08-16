@@ -89,6 +89,7 @@ const methodlessExtensions = {
 	},
 };
 
+//@ts-expect-error awaiting this fix https://github.com/vitest-dev/vitest/pull/6351
 expect.extend(methodlessExtensions);
 
 expect.extend({
@@ -138,6 +139,7 @@ function scopeExpectationNameToMethod(name: string, humanVerb: string): string {
 	const extensions = Object.fromEntries(
 		Object.entries(methodlessExtensions).map(([name, func]) => [
 			scopeExpectationNameToMethod(name, humanVerb),
+			//@ts-expect-error awaiting this fix https://github.com/vitest-dev/vitest/pull/6351
 			scopeExpectationFunctionToMethod(func, method),
 		]),
 	);

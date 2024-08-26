@@ -90,7 +90,7 @@ declare namespace fetchMock {
 		/**
 		 * Set the response headers.
 		 */
-		headers?: { [key: string]: string };
+		headers?: Headers;
 
 		/**
 		 * If this property is present then a Promise rejected with the value

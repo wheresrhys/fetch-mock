@@ -1,6 +1,6 @@
 {
   "name": "@fetch-mock/vitest",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Vitest wrapper for fetch-mock",
   "main": "./dist/commonjs.js",
   "module": "./src/index.js",

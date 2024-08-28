@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.1.2](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v11.1.1...fetch-mock-v11.1.2) (2024-08-28)
+
+
+### Bug Fixes
+
+* lastOptions returns RequestInit not MockOptions ([591926a](https://github.com/wheresrhys/fetch-mock/commit/591926a7c524650ccb82b16611fc8882c4a8a2b6))
+
 ## [11.1.1](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v11.1.0...fetch-mock-v11.1.1) (2024-08-13)
 
 

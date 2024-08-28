@@ -655,7 +655,7 @@ declare namespace fetchMock {
 		lastOptions(
 			filter?: InspectionFilter,
 			options?: InspectionOptions,
-		): MockOptions | undefined;
+		): RequestInit | undefined;
 
 		/**
          * Returns the options for the call to fetch matching the given filter.

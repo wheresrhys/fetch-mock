@@ -113,7 +113,7 @@ lastUrl = fetchMock.lastUrl("http://test.com", "GET");
 lastUrl = fetchMock.lastUrl("http://test.com", {
     method: "GET",
 });
-let lastOptions: (fetchMock.MockOptions|undefined) = fetchMock.lastOptions();
+let lastOptions: (RequestInit|undefined) = fetchMock.lastOptions();
 lastOptions = fetchMock.lastOptions(true);
 lastOptions = fetchMock.lastOptions("http://test.com");
 lastOptions = fetchMock.lastOptions(/https?:\/\/test.com/);

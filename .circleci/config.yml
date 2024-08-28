@@ -111,12 +111,6 @@ workflows:
   fetch-mock-ci-cd:
     jobs:
       - checkout_code: *triggerable-by-tag
-      - test:
-          <<: *triggerable-by-tag
-          requires:
-            // because in the monorepo any package that requires another can
-            // only do so after build
-            - build
       - lint:
           <<: *triggerable-by-tag
           requires:
@@ -125,6 +119,10 @@ workflows:
           <<: *triggerable-by-tag
           requires:
             - checkout_code
+      - test:
+          <<: *triggerable-by-tag
+          requires:
+            - build
       - typecheck:
           <<: *triggerable-by-tag
           <<: *after-build-lint

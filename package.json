@@ -1,7 +1,7 @@
 {
 	"name": "fetch-mock-monorepo",
-	"version": "1.0.0",
 	"description": "Mock http requests made using fetch (or isomorphic-fetch)",
+  "version": "1.0.0",
 	"type": "module",
 	"repository": {
 		"type": "git",

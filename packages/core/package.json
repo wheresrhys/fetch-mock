@@ -48,5 +48,5 @@
 	},
 	"type": "module",
 	"types": "./dist/esm/index.d.ts",
-	"version": "0.6.1"
+	"version": "0.6.2"
 }

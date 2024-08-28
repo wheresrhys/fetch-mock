@@ -54,5 +54,5 @@
 	},
 	"type": "module",
 	"types": "./dist/esm/types/index.d.ts",
-	"version": "11.1.2"
+	"version": "11.1.3"
 }

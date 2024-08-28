@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.1.3](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v11.1.2...fetch-mock-v11.1.3) (2024-08-28)
+
+
+### Bug Fixes
+
+* add missing metadata to package.json files ([4ab78b9](https://github.com/wheresrhys/fetch-mock/commit/4ab78b9429a376230da2ce57bd320031c53f06ef))
+
 ## [11.1.2](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v11.1.1...fetch-mock-v11.1.2) (2024-08-28)
 
 

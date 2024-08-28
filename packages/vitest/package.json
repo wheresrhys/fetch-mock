@@ -4,7 +4,7 @@
 		"url": "https://github.com/wheresrhys/fetch-mock/issues"
 	},
 	"dependencies": {
-		"@fetch-mock/core": "^0.6.0"
+		"@fetch-mock/core": "^0.6.2"
 	},
 	"description": "Vitest wrapper for fetch-mock",
 	"engines": {
@@ -24,7 +24,7 @@
 		"testing",
 		"spy",
 		"stub",
-    "vitest"
+		"vitest"
 	],
 	"license": "ISC",
 	"main": "./dist/commonjs.js",

@@ -23,7 +23,8 @@
 		"mock",
 		"testing",
 		"spy",
-		"stub"
+		"stub",
+    "vitest"
 	],
 	"license": "ISC",
 	"main": "./dist/commonjs.js",

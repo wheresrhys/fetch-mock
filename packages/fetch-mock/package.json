@@ -1,19 +1,7 @@
 {
-	"author": "Rhys Evans",
-	"bugs": {
-		"url": "https://github.com/wheresrhys/fetch-mock/issues"
-	},
-	"dependencies": {
-		"@types/glob-to-regexp": "^0.4.4",
-		"dequal": "^2.0.3",
-		"glob-to-regexp": "^0.4.1",
-		"is-subset": "^0.1.1",
-		"regexparam": "^3.0.0"
-	},
+	"name": "fetch-mock",
 	"description": "Mock http requests made using fetch",
-	"engines": {
-		"node": ">=8.0.0"
-	},
+	"version": "11.1.2",
 	"exports": {
 		"browser": "./dist/esm/index.js",
 		"import": {
@@ -25,19 +13,20 @@
 			"types": "./dist/cjs/types/index.d.ts"
 		}
 	},
-	"homepage": "http://www.wheresrhys.co.uk/fetch-mock",
-	"keywords": [
-		"fetch",
-		"http",
-		"mock",
-		"testing",
-		"spy",
-		"stub"
-	],
-	"license": "MIT",
 	"main": "./dist/cjs/index.js",
 	"module": "./dist/esm/index.js",
-	"name": "fetch-mock",
+	"types": "./dist/esm/types/index.d.ts",
+	"type": "module",
+	"engines": {
+		"node": ">=8.0.0"
+	},
+	"dependencies": {
+		"@types/glob-to-regexp": "^0.4.4",
+		"dequal": "^2.0.3",
+		"glob-to-regexp": "^0.4.1",
+		"is-subset": "^0.1.1",
+		"regexparam": "^3.0.0"
+	},
 	"peerDependenciesMeta": {
 		"node-fetch": {
 			"optional": true
@@ -52,7 +41,18 @@
 		"build": "rm -rf dist && rollup -c --environment FORMAT:cjs && rollup -c --environment FORMAT:esm",
 		"types:check": "tsd -t types/index.d.ts -f types/index.test-d.ts"
 	},
-	"type": "module",
-	"types": "./dist/esm/types/index.d.ts",
-	"version": "11.1.2"
+	"license": "MIT",
+	"author": "Rhys Evans",
+	"bugs": {
+		"url": "https://github.com/wheresrhys/fetch-mock/issues"
+	},
+	"homepage": "http://www.wheresrhys.co.uk/fetch-mock",
+	"keywords": [
+		"fetch",
+		"http",
+		"mock",
+		"testing",
+		"spy",
+		"stub"
+	]
 }

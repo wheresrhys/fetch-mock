@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.2](https://github.com/wheresrhys/fetch-mock/compare/core-v0.6.1...core-v0.6.2) (2024-08-28)
+
+
+### Bug Fixes
+
+* add missing metadata to package.json files ([4ab78b9](https://github.com/wheresrhys/fetch-mock/commit/4ab78b9429a376230da2ce57bd320031c53f06ef))
+
 ## [0.6.1](https://github.com/wheresrhys/fetch-mock/compare/core-v0.6.0...core-v0.6.1) (2024-08-15)
 
 

@@ -16,7 +16,7 @@
 		"node": ">=18.0.0"
 	},
 	"dependencies": {
-		"@fetch-mock/core": "^0.6.0"
+		"@fetch-mock/core": "^0.6.2"
 	},
 	"repository": {
 		"directory": "packages/vitest",

@@ -1,45 +1,43 @@
 {
-  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
-  "release-type": "node",
-  "separate-pull-requests": false,
-  "changelog-type": "default",
-  "changelog-sections": [
-    {
-      "type": "feat",
-      "section": "Features",
-      "hidden": false
-    },
-    {
-      "type": "fix",
-      "section": "Bug Fixes",
-      "hidden": false
-    },
-    {
-      "type": "docs",
-      "section": "Documentation Changes",
-      "hidden": false
-    },
-    {
-      "type": "chore",
-      "section": "Miscellaneous",
-      "hidden": true
-    }
-  ],
+	"$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+	"release-type": "node",
+	"separate-pull-requests": false,
+	"changelog-type": "default",
+	"changelog-sections": [
+		{
+			"type": "feat",
+			"section": "Features",
+			"hidden": false
+		},
+		{
+			"type": "fix",
+			"section": "Bug Fixes",
+			"hidden": false
+		},
+		{
+			"type": "docs",
+			"section": "Documentation Changes",
+			"hidden": false
+		},
+		{
+			"type": "chore",
+			"section": "Miscellaneous",
+			"hidden": true
+		}
+	],
 
-  "plugins": [
-    "node-workspace"
-  ],
-  "packages": {
-    "packages/core": {},
-    "packages/vitest": {
-      "release-as": "0.1.0"
-    },
-    "packages/fetch-mock": {}
-  },
-  "bootstrap-sha": "812f462efde5ade292394b94c9f2cbe0aedf8e3f",
-  "pull-request-title-pattern": "build${scope}: release${component} ${version}",
-  "pull-request-header": ":rock: I've created a release for you",
-  "prerelease": true,
-  "bump-minor-pre-major": true,
-  "bump-patch-for-minor-pre-major": true
+	"plugins": ["node-workspace"],
+	"packages": {
+		"packages/core": {},
+		"packages/vitest": {
+			"release-as": "0.1.0"
+		},
+		"packages/fetch-mock": {}
+	},
+	"bootstrap-sha": "812f462efde5ade292394b94c9f2cbe0aedf8e3f",
+	"pull-request-title-pattern": "build${scope}: release${component} ${version}",
+	"pull-request-header": ":rock: I've created a release for you",
+	"prerelease": true,
+	"bump-minor-pre-major": true,
+	"bump-patch-for-minor-pre-major": true
 }

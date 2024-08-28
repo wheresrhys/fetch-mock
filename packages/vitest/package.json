@@ -1,23 +1,50 @@
 {
-  "name": "@fetch-mock/vitest",
-  "version": "0.1.0",
-  "description": "Vitest wrapper for fetch-mock",
-  "main": "./dist/commonjs.js",
-  "module": "./src/index.js",
-  "exports": {
+    "author": "",
+    "bugs":
+    {
+        "url": "https://github.com/wheresrhys/fetch-mock/issues"
+    },
+    "dependencies":
+    {
+        "@fetch-mock/core": "^0.6.0"
+    },
+    "description": "Vitest wrapper for fetch-mock",
+    "engines":
+    {
+        "node": ">=18.0.0"
+    },
+    "exports":
+    {
+        "browser": "./src/index.js",
+        "import": "./src/index.js",
+        "require": "./dist/commonjs.js",
+        "types": "./types/index.d.ts"
+    },
+    "homepage": "http://www.wheresrhys.co.uk/fetch-mock",
+    "keywords":
+    [
+        "fetch",
+        "http",
+        "mock",
+        "testing",
+        "spy",
+        "stub"
+    ],
+    "license": "ISC",
+    "main": "./dist/commonjs.js",
+    "module": "./src/index.js",
+    "name": "@fetch-mock/vitest",
+    "repository":
+    {
+        "directory": "packages/vitest",
+        "type": "git",
+        "url": "git+https://github.com/wheresrhys/fetch-mock.git"
+    },
+    "scripts":
+    {
+        "build": "rm -rf dist && tsc -p tsconfig.esm.json && tsc -p tsconfig.cjs.json && node ../../scripts/declare-dist-type.js"
+    },
+    "type": "module",
     "types": "./types/index.d.ts",
-    "browser": "./src/index.js",
-    "import": "./src/index.js",
-    "require": "./dist/commonjs.js"
-  },
-  "types": "./types/index.d.ts",
-  "scripts": {
-    "build": "rm -rf dist && tsc -p tsconfig.esm.json && tsc -p tsconfig.cjs.json && node ../../scripts/declare-dist-type.js"
-  },
-  "type": "module",
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@fetch-mock/core": "^0.6.0"
-  }
+    "version": "0.1.0"
 }

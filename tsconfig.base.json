@@ -1,46 +1,25 @@
 {
-    "compilerOptions": {
-        "inlineSourceMap": false,
-        "listEmittedFiles": false,
-        "listFiles": false,
-        "pretty": true,
-        "traceResolution": false,
-        "lib": [
-            "es2021",
-            "dom",
-            "dom.iterable"
-        ],
-        "moduleResolution": "nodenext",
-        "allowJs": true,
-        "checkJs": true,
-        "strict": true,
-        "skipLibCheck": true,
-        "noImplicitAny": true,
-        "noImplicitThis": true,
-        "strictNullChecks": false,
-        "strictFunctionTypes": true,
-        "downlevelIteration": true,
-        "forceConsistentCasingInFileNames": true,
-        "types": [],
-        "declaration": true,
-        "removeComments": true
-    },
-    "compileOnSave": false
+	"compilerOptions": {
+		"inlineSourceMap": false,
+		"listEmittedFiles": false,
+		"listFiles": false,
+		"pretty": true,
+		"traceResolution": false,
+		"lib": ["es2021", "dom", "dom.iterable"],
+		"moduleResolution": "nodenext",
+		"allowJs": true,
+		"checkJs": true,
+		"strict": true,
+		"skipLibCheck": true,
+		"noImplicitAny": true,
+		"noImplicitThis": true,
+		"strictNullChecks": false,
+		"strictFunctionTypes": true,
+		"downlevelIteration": true,
+		"forceConsistentCasingInFileNames": true,
+		"types": [],
+		"declaration": true,
+		"removeComments": true
+	},
+	"compileOnSave": false
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

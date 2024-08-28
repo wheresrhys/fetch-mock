@@ -1,16 +1,11 @@
 {
-    "extends": "./tsconfig.base.json",
-    "rootDir": "src",
-    "compilerOptions": {
-        "module": "NodeNext",
-        "noEmit": true,
-        "target": "es2021",
-    },
-    "include": [
-        "./packages/**/src/*.ts"
-    ],
-    "exclude": [
-        "node_modules",
-        "packages/**/__tests__"
-    ]
+	"extends": "./tsconfig.base.json",
+	"rootDir": "src",
+	"compilerOptions": {
+		"module": "NodeNext",
+		"noEmit": true,
+		"target": "es2021"
+	},
+	"include": ["./packages/**/src/*.ts"],
+	"exclude": ["node_modules", "packages/**/__tests__"]
 }

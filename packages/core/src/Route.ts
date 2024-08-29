@@ -42,7 +42,7 @@ export type RouteConfig = UserRouteConfig &
 	FetchImplementations &
 	InternalRouteConfig;
 export type RouteResponseConfig = {
-	body?: string | object;
+	body?: BodyInit | object | null;
 	status?: number;
 	headers?: {
 		[key: string]: string;
@@ -71,6 +71,22 @@ export type RouteResponse =
 	| RouteResponsePromise
 	| RouteResponseFunction;
 export type RouteName = string;
+
+function isBodyInit(body: BodyInit | null | object): body is BodyInit {
+	return (
+		body instanceof Blob ||
+		body instanceof ArrayBuffer ||
+		// checks for TypedArray
+		ArrayBuffer.isView(body) ||
+		body instanceof DataView ||
+		body instanceof FormData ||
+		body instanceof ReadableStream ||
+		body instanceof URLSearchParams ||
+		body instanceof String ||
+		typeof body === 'string' || 
+		body === null
+	) 
+}
 
 function sanitizeStatus(status?: number): number {
 	if (!status) {
@@ -195,15 +211,20 @@ class Route {
 		responseInput: RouteResponseConfig,
 		responseOptions: ResponseInitUsingHeaders,
 	): BodyInit | null {
-		// start to construct the body
 		let body = responseInput.body;
-		// convert to json if we need to
-		if (typeof body === 'object') {
-			if (this.config.sendAsJson && responseInput.body != null) {
+		const bodyIsBodyInit = isBodyInit(body);
+
+		if (!bodyIsBodyInit) {
+			if (typeof body === 'undefined') {
+				body = null
+			} else if (typeof body === 'object' && this.config.sendAsJson) {
+				// convert to json if we need to
 				body = JSON.stringify(body);
 				if (!responseOptions.headers.has('Content-Type')) {
 					responseOptions.headers.set('Content-Type', 'application/json');
 				}
+			} else {
+				throw new TypeError('Invalid body provided to construct response');
 			}
 		}
 
@@ -215,27 +236,9 @@ class Route {
 			) {
 				responseOptions.headers.set('Content-Length', body.length.toString());
 			}
-			return body;
 		}
 
-		if (
-			body instanceof Blob ||
-			body instanceof ArrayBuffer ||
-			// checks for TypedArray
-			ArrayBuffer.isView(body) ||
-			body instanceof DataView ||
-			body instanceof FormData ||
-			body instanceof ReadableStream ||
-			body instanceof URLSearchParams ||
-			body instanceof String ||
-			typeof body === 'string'
-		) {
-			return body as BodyInit;
-		}
-		if (!body) {
-			return null;
-		}
-		throw new TypeError('Invalid body provided to construct response');
+		return body as BodyInit;
 	}
 
 	static defineMatcher(matcher: MatcherDefinition) {

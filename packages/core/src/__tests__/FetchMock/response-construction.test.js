@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 
 import fetchMock from '../../FetchMock';
 
-describe('response generation', () => {
+describe('response construction', () => {
 	let fm;
 	beforeEach(() => {
 		fm = fetchMock.createInstance();

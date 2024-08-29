@@ -27,7 +27,7 @@ class FetchMockVitest extends FetchMock {
 }
 
 export function manageFetchMockGlobally() {
-	const { clearAllMocks, resetAllMocks, restoreAllMocks } = vi;
+	const { clearAllMocks, resetAllMocks, restoreAllMocks, unstubAllGlobals } = vi;
 
 	vi.clearAllMocks = () => {
 		clearAllMocks.apply(vi);
@@ -35,15 +35,21 @@ export function manageFetchMockGlobally() {
 		return vi;
 	};
 
-	vi.resetAllMocks = (options?: MockResetOptions) => {
+	vi.resetAllMocks = () => {
 		resetAllMocks.apply(vi);
-		fetchMockVitest.mockReset(options);
+		fetchMockVitest.mockReset();
 		return vi;
 	};
 
-	vi.restoreAllMocks = (options?: MockResetOptions) => {
+	vi.restoreAllMocks = () => {
 		restoreAllMocks.apply(vi);
-		fetchMockVitest.mockRestore(options);
+		fetchMockVitest.mockRestore();
+		return vi;
+	};
+
+	vi.unstubAllGlobals = () => {
+		unstubAllGlobals.apply(vi);
+		fetchMockVitest.mockRestore();
 		return vi;
 	};
 }

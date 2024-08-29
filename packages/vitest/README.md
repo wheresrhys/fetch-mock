@@ -55,6 +55,7 @@ Hooks fetchMock up to vitest's global mock management so that
 - `vi.clearAllMocks()` will call `fetchMock.mockClear()`
 - `vi.resetAllMocks()` will call `fetchMock.mockReset()`
 - `vi.restoreAllMocks()` will call `fetchMock.mockRestore()`
+- `vi.unstubAllGlobals()` will also call `fetchMock.mockRestore()`
 
 Note that these **will not** clear any sticky routes added to fetchMock. You will need to make an additional call to `fetchMock.removeRoutes({includeSticky: true})`.
 

@@ -18,7 +18,7 @@ Features include:
 
 - [Node.js](https://nodejs.org/) 18+ for full feature operation
 - Any modern browser that supports the `fetch` API
-- [node-fetch](https://www.npmjs.com/package/node-fetch) when testing in earlier versions of Node.js (this is untested, but shoudl mostly work)
+- [node-fetch](https://www.npmjs.com/package/node-fetch) when testing in earlier versions of Node.js (this is untested, but should mostly work)
 
 ## Documentation and Usage
 

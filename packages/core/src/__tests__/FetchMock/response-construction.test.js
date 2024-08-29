@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-
 import fetchMock from '../../FetchMock';
 
 describe('response construction', () => {
@@ -117,26 +116,81 @@ describe('response construction', () => {
 		expect(res.headers.get('header')).toEqual('val');
 		expect(await res.json()).toEqual({ an: 'object' });
 	});
+	describe('encoded and streamed data', () => {
+		function ab2str(buf) {
+			return String.fromCharCode.apply(null, new Uint16Array(buf));
+		}
 
-	if (typeof Buffer !== 'undefined') {
-		it('can respond with a buffer', () => {
-			fm.route(/a/, new Buffer('buffer'));
-			return fm
-				.fetchHandler('http://a.com')
-				.then((res) => res.text())
-				.then((txt) => {
-					expect(txt).to.equal('buffer');
-				});
+		function str2ab(str) {
+			var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
+			var bufView = new Uint16Array(buf);
+			for (var i = 0, strLen = str.length; i < strLen; i++) {
+				bufView[i] = str.charCodeAt(i);
+			}
+			return buf;
+		}
+
+		it('respond with Blob', async () => {
+			const blobParts = ['<q id="a"><span id="b">hey!</span></q>'];
+			const body = new Blob(blobParts, { type: 'text/html' });
+			fm.route('*', body);
+			const res = await fm.fetchHandler('http://a.com');
+			expect(res.status).to.equal(200);
+			const receivedData = await res.blob();
+			expect(receivedData).to.eql(body);
 		});
-	}
+		it('respond with ArrayBuffer', async () => {
+			const body = str2ab('test value');
+			fm.route('*', body);
+			const res = await fm.fetchHandler('http://a.com');
+			expect(res.status).to.equal(200);
+			const receivedData = await res.arrayBuffer();
+			expect(ab2str(receivedData)).to.eql('test value');
+		});
+		it('respond with TypedArray', async () => {
+			const buffer = str2ab('test value');
+			const body = new Uint8Array(buffer);
+			fm.route('*', body);
+			const res = await fm.fetchHandler('http://a.com');
+			expect(res.status).to.equal(200);
+			const receivedData = await res.arrayBuffer();
+			expect(new Uint8Array(receivedData)).to.eql(body);
+		});
+		it('respond with DataView', async () => {
+			const buffer = str2ab('test value');
+			const body = new DataView(buffer, 0);
+			fm.route('*', body);
+			const res = await fm.fetchHandler('http://a.com');
+			expect(res.status).to.equal(200);
+			const receivedData = await res.arrayBuffer();
+			expect(new DataView(receivedData, 0)).to.eql(body);
+		});
 
-	it('respond with blob', async () => {
-		const blob = new Blob();
-		fm.route('*', blob);
+		it('respond with ReadableStream', async () => {
+			const body = ReadableStream.from(['a', 'b']);
+			fm.route('*', body);
+			const res = await fm.fetchHandler('http://a.com');
+			expect(res.status).to.equal(200);
+			const receivedData = await res.text();
+			console.log(receivedData);
+			expect(receivedData).to.eql(body);
+		});
+	});
+	it('respond with FormData', async () => {
+		const body = new FormData();
+		fm.route('*', body);
 		const res = await fm.fetchHandler('http://a.com');
 		expect(res.status).to.equal(200);
-		const blobData = await res.blob();
-		expect(blobData).to.eql(blob);
+		const receivedData = await res.blob();
+		expect(receivedData).to.eql(body);
+	});
+	it('respond with URLSearchParams', async () => {
+		const body = new URLSearchParams();
+		fm.route('*', body);
+		const res = await fm.fetchHandler('http://a.com');
+		expect(res.status).to.equal(200);
+		const receivedData = await res.blob();
+		expect(receivedData).to.eql(body);
 	});
 
 	it('should set the url property on responses', async () => {

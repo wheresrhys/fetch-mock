@@ -83,9 +83,9 @@ function isBodyInit(body: BodyInit | null | object): body is BodyInit {
 		body instanceof ReadableStream ||
 		body instanceof URLSearchParams ||
 		body instanceof String ||
-		typeof body === 'string' || 
+		typeof body === 'string' ||
 		body === null
-	) 
+	);
 }
 
 function sanitizeStatus(status?: number): number {
@@ -216,7 +216,7 @@ class Route {
 
 		if (!bodyIsBodyInit) {
 			if (typeof body === 'undefined') {
-				body = null
+				body = null;
 			} else if (typeof body === 'object') {
 				// convert to json if we need to
 				body = JSON.stringify(body);

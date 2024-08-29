@@ -1,4 +1,4 @@
-import Router, {RemoveRouteOptions} from './Router.js';
+import Router, { RemoveRouteOptions } from './Router.js';
 import Route, { RouteName, UserRouteConfig, RouteResponse } from './Route.js';
 import { MatcherDefinition, RouteMatcher } from './Matchers.js';
 import CallHistory from './CallHistory.js';

@@ -8,8 +8,7 @@ import './vitest-extensions';
 
 type MockResetOptions = {
 	includeSticky: boolean;
-}
-
+};
 
 class FetchMockVitest extends FetchMock {
 	mockClear() {
@@ -17,7 +16,10 @@ class FetchMockVitest extends FetchMock {
 		return this;
 	}
 	mockReset(options: MockResetOptions = { includeSticky: false }) {
-		this.removeRoutes({...options, includeFallback: true} as RemoveRouteOptions);
+		this.removeRoutes({
+			...options,
+			includeFallback: true,
+		} as RemoveRouteOptions);
 		return this.mockClear();
 	}
 	mockRestore(options?: MockResetOptions) {
@@ -27,7 +29,8 @@ class FetchMockVitest extends FetchMock {
 }
 
 export function manageFetchMockGlobally() {
-	const { clearAllMocks, resetAllMocks, restoreAllMocks, unstubAllGlobals } = vi;
+	const { clearAllMocks, resetAllMocks, restoreAllMocks, unstubAllGlobals } =
+		vi;
 
 	vi.clearAllMocks = () => {
 		clearAllMocks.apply(vi);

@@ -102,39 +102,6 @@ describe('response construction', () => {
 			const res = await fm.fetchHandler('http://a.com/');
 			expect(res.headers.get('content-type')).toEqual('application/json');
 		});
-
-		describe('sendAsJson option', () => {
-			it('convert object responses to json by default', async () => {
-				fm.route('*', { an: 'object' });
-				const res = await fm.fetchHandler('http://it.at.there');
-				expect(res.headers.get('content-type')).toEqual('application/json');
-			});
-
-			it("don't convert when configured false", async () => {
-				fm.config.sendAsJson = false;
-				fm.route('*', { an: 'object' });
-				const res = await fm.fetchHandler('http://it.at.there');
-				// can't check for existence as the spec says, in the browser, that
-				// a default value should be set
-				expect(res.headers.get('content-type')).not.toEqual('application/json');
-			});
-
-			it('local setting can override to true', async () => {
-				fm.config.sendAsJson = false;
-				fm.route('*', { an: 'object' }, { sendAsJson: true });
-				const res = await fm.fetchHandler('http://it.at.there');
-				expect(res.headers.get('content-type')).toEqual('application/json');
-			});
-
-			it('local setting can override to false', async () => {
-				fm.config.sendAsJson = true;
-				fm.route('*', { an: 'object' }, { sendAsJson: false });
-				const res = await fm.fetchHandler('http://it.at.there');
-				// can't check for existence as the spec says, in the browser, that
-				// a default value should be set
-				expect(res.headers.get('content-type')).not.toEqual('application/json');
-			});
-		});
 	});
 
 	it('respond with a complex response, including headers', async () => {
@@ -153,7 +120,7 @@ describe('response construction', () => {
 
 	if (typeof Buffer !== 'undefined') {
 		it('can respond with a buffer', () => {
-			fm.route(/a/, new Buffer('buffer'), { sendAsJson: false });
+			fm.route(/a/, new Buffer('buffer'));
 			return fm
 				.fetchHandler('http://a.com')
 				.then((res) => res.text())
@@ -165,7 +132,7 @@ describe('response construction', () => {
 
 	it('respond with blob', async () => {
 		const blob = new Blob();
-		fm.route('*', blob, { sendAsJson: false });
+		fm.route('*', blob);
 		const res = await fm.fetchHandler('http://a.com');
 		expect(res.status).to.equal(200);
 		const blobData = await res.blob();

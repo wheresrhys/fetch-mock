@@ -217,7 +217,7 @@ class Route {
 		if (!bodyIsBodyInit) {
 			if (typeof body === 'undefined') {
 				body = null
-			} else if (typeof body === 'object' && this.config.sendAsJson) {
+			} else if (typeof body === 'object') {
 				// convert to json if we need to
 				body = JSON.stringify(body);
 				if (!responseOptions.headers.has('Content-Type')) {

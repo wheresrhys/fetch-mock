@@ -1,4 +1,4 @@
-# fetch-mock
+# @fetch-mock/core
 
 Work in progress reimplememntation of fetch-mock.
 

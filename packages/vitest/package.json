@@ -1,7 +1,7 @@
 {
 	"name": "@fetch-mock/vitest",
 	"description": "Vitest wrapper for fetch-mock",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"exports": {
 		"browser": "./src/index.js",
 		"import": "./src/index.js",
@@ -16,7 +16,7 @@
 		"node": ">=18.0.0"
 	},
 	"dependencies": {
-		"@fetch-mock/core": "^0.6.2"
+		"@fetch-mock/core": "^0.6.3"
 	},
 	"repository": {
 		"directory": "packages/vitest",

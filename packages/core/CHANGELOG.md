@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.6.3](https://github.com/wheresrhys/fetch-mock/compare/core-v0.6.2...core-v0.6.3) (2024-08-29)
+
+
+### Documentation Changes
+
+* minor corrections ([d77978a](https://github.com/wheresrhys/fetch-mock/commit/d77978a17825f166f06cbb1bbb911e7fb8790a4a))
+* readme for @fetch-mock/core ([5fd7c5a](https://github.com/wheresrhys/fetch-mock/commit/5fd7c5a1d37e546ab8dd6e173761ae0b8fb43878))
+* wrote a README for @fetch-mock/vitest ([d2d1ea3](https://github.com/wheresrhys/fetch-mock/commit/d2d1ea3f14012772edeb77a543384b99b3475e16))
+
 ## [0.6.2](https://github.com/wheresrhys/fetch-mock/compare/core-v0.6.1...core-v0.6.2) (2024-08-28)
 
 

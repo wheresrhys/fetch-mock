@@ -1,4 +1,4 @@
-import Router from './Router.js';
+import Router, {RemoveRouteOptions} from './Router.js';
 import Route, { RouteName, UserRouteConfig, RouteResponse } from './Route.js';
 import { MatcherDefinition, RouteMatcher } from './Matchers.js';
 import CallHistory from './CallHistory.js';
@@ -131,11 +131,7 @@ export class FetchMock {
 	defineMatcher(matcher: MatcherDefinition) {
 		Route.defineMatcher(matcher);
 	}
-	removeRoutes(options?: {
-		names?: string[];
-		includeSticky?: boolean;
-		includeFallback?: boolean;
-	}): FetchMock {
+	removeRoutes(options?: RemoveRouteOptions): FetchMock {
 		this.router.removeRoutes(options);
 		return this;
 	}
@@ -143,7 +139,6 @@ export class FetchMock {
 		this.callHistory.clear();
 		return this;
 	}
-
 	mockGlobal(this: FetchMock): FetchMock {
 		globalThis.fetch = this.fetchHandler;
 		return this;

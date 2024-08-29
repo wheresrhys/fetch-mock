@@ -228,16 +228,29 @@ class Route {
 			}
 		}
 
-		if (typeof body === 'string') {
-			// add a Content-Length header if we need to
-			if (
-				this.config.includeContentLength &&
-				!responseOptions.headers.has('Content-Length')
+		// add a Content-Length header if we need to
+		if (
+			this.config.includeContentLength &&
+			!responseOptions.headers.has('Content-Length') &&
+			!(body instanceof ReadableStream) &&
+			!(body instanceof FormData)
+		) {
+			let length = 0;
+			if (body instanceof Blob) {
+				length = body.size;
+			} else if (
+				body instanceof ArrayBuffer ||
+				ArrayBuffer.isView(body) ||
+				body instanceof DataView
 			) {
-				responseOptions.headers.set('Content-Length', body.length.toString());
+				length = body.byteLength;
+			} else if (body instanceof URLSearchParams) {
+				length = body.toString().length;
+			} else if (typeof body === 'string' || body instanceof String) {
+				length = body.length;
 			}
+			responseOptions.headers.set('Content-Length', length.toString());
 		}
-
 		return body as BodyInit;
 	}
 

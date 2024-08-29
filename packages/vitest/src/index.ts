@@ -8,11 +8,11 @@ import './vitest-extensions';
 
 class FetchMockVitest extends FetchMock {
 	mockClear() {
-		this.callHistory.clear();
+		this.clearHistory();
 		return this;
 	}
 	mockReset(options?: RemoveRouteOptions) {
-		this.router.removeRoutes(options);
+		this.removeRoutes(options);
 		return this.mockClear();
 	}
 	mockRestore(options?: RemoveRouteOptions) {

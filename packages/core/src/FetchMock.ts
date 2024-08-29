@@ -143,6 +143,7 @@ export class FetchMock {
 		this.callHistory.clear();
 		return this;
 	}
+
 	mockGlobal(this: FetchMock): FetchMock {
 		globalThis.fetch = this.fetchHandler;
 		return this;

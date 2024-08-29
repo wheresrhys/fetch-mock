@@ -194,7 +194,7 @@ class Route {
 	constructResponseBody(
 		responseInput: RouteResponseConfig,
 		responseOptions: ResponseInitUsingHeaders,
-	): string | null {
+	): BodyInit | null {
 		// start to construct the body
 		let body = responseInput.body;
 		// convert to json if we need to
@@ -217,8 +217,25 @@ class Route {
 			}
 			return body;
 		}
-		// @ts-expect-error TODO need to implement handling of non-string bodies properlyy
-		return body || null;
+
+		if (
+			body instanceof Blob ||
+			body instanceof ArrayBuffer ||
+			// checks for TypedArray
+			ArrayBuffer.isView(body) ||
+			body instanceof DataView ||
+			body instanceof FormData ||
+			body instanceof ReadableStream ||
+			body instanceof URLSearchParams ||
+			body instanceof String ||
+			typeof body === 'string'
+		) {
+			return body as BodyInit;
+		}
+		if (!body) {
+			return null;
+		}
+		throw new TypeError('Invalid body provided to construct response');
 	}
 
 	static defineMatcher(matcher: MatcherDefinition) {

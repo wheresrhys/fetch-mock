@@ -1,129 +1,85 @@
 # @fetch-mock/vitest
 
-Wrapper around [fetch-mock](http://www.wheresrhys.co.uk/fetch-mock) - a comprehensive, isomorphic mock for the [fetch api](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) - which provides an interface that is more idiomatic when working in [jest](https://jestjs.io).
+A wrapper for fetch-mock that improves the developer experience when working with vitest. It provides the following:
 
-The example at the bottom of this readme demonstrates the intuitive API, but shows off only a fraction of fetch-mock's functionality. Features include:
+- Adds methods to fetchMock which wrap its default methods, but align more closely with vitest's naming conventions.
+- Extends `expect` with convenience methods allowing for expressive tests such as `expect(fetchMock).toHavePosted('http://example.com', {id: 'test-id'})`.
+- Can optionally be hooked in to vitest's global mock management methods such as `clearAllMocks()`.
 
-- mocks most of the fetch API spec, even advanced behaviours such as streaming and aborting
-- declarative matching for most aspects of a http request, including url, headers, body and query parameters
-- shorthands for the most commonly used features, such as matching a http method or matching one fetch only
-- support for delaying responses, or using your own async functions to define custom race conditions
-- can be used as a spy to observe real network requests
-- isomorphic, and supports either a global fetch instance or a locally required instanceg
+## Requirements
 
-# Requirements
+@fetch-mock/vitest requires either of the following to run:
 
-fetch-mock-jest requires the following to run:
+- [vitest](https://vitest.dev/guide/)
+- The `fetch` API, via one of the following:
+  - [Node.js](https://nodejs.org/) 18+ for full feature operation
+  - Any modern browser that supports the `fetch` API
+  - [node-fetch](https://www.npmjs.com/package/node-fetch) when testing in earlier versions of Node.js (this is untested, but should mostly work)
 
-- [Node.js](https://Node.js.org/) 8+ for full feature operation
-- [Node.js](https://Node.js.org/) 0.12+ with [limitations](http://www.wheresrhys.co.uk/fetch-mock/installation)
-- [npm](https://www.npmjs.com/package/npm) (normally comes with Node.js)
-- [jest](https://www.npmjs.com/package/jest) 25+ (may work with earlier versions, but untested)
-- Either
-  - [node-fetch](https://www.npmjs.com/package/node-fetch) when testing in Node.js. To allow users a choice over which version to use, `node-fetch` is not included as a dependency of `fetch-mock`.
-  - A browser that supports the `fetch` API either natively or via a [polyfill/ponyfill](https://ponyfoo.com/articles/polyfills-or-ponyfills)
+## Installation
 
-# Installation
-
-`npm install -D fetch-mock-jest`
-
-## global fetch
-
-`const fetchMock = require('fetch-mock-jest')`
-
-## node-fetch
-
-```
-jest.mock('node-fetch', () => require('fetch-mock-jest').sandbox())
-const fetchMock = require('node-fetch')
+```shell
+npm i -D @fetch-mock/vitest
 ```
 
-# API
+## Setup
 
-## Setting up mocks
+```js
+import fetchMock, { manageFetchMockGlobally } from '@fetch-mock/vitest';
 
-Please refer to the [fetch-mock documentation](http://wheresrhys.co.uk/fetch-mock) and [cheatsheet](https://github.com/wheresrhys/fetch-mock/blob/master/docs/cheatsheet.md)
+manageFetchMockGlobally(); // optional
+```
 
-All jest methods for configuring mock functions are disabled as fetch-mock's own methods should always be used
+## API
 
-## Inspecting mocks
+### fetchMock
 
-All the built in jest function inspection assertions can be used, e.g. `expect(fetchMock).toHaveBeenCalledWith('http://example.com')`.
+An instance of [@fetch-mock/core](https://www.wheresrhys.co.uk/fetch-mock/docs/@fetch-mock/core/), with the following methods added:
 
-`fetchMock.mock.calls` and `fetchMock.mock.results` are also exposed, giving access to manually inspect the calls.
+#### fetchMock.mockClear()
 
-The following custom jest expectation methods, proxying through to `fetch-mock`'s inspection methods are also available. They can all be prefixed with the `.not` helper for negative assertions.
+Clears all call history from the mocked `fetch` implementation.
 
-- `expect(fetchMock).toHaveFetched(filter, options)`
-- `expect(fetchMock).toHaveLastFetched(filter, options)`
-- `expect(fetchMock).toHaveNthFetched(n, filter, options)`
-- `expect(fetchMock).toHaveFetchedTimes(n, filter, options)`
-- `expect(fetchMock).toBeDone(filter)`
+#### fetchMock.mockReset({includeSticky: boolean})
+
+Clears all call history from the mocked `fetch` implementation _and_ removes all routes (including fallback routes defined using `.spy()` or `.catch()`) with the exception of sticky routes. To remove these, pass in the `includeSticky: true` option. FOr more fine grained control over fallback routes and named routes please use `fetchMock.removeRoutes()`
+
+#### fetchMock.mockRestore({includeSticky: boolean})
+
+Calls `mockReset()` and additionally restores global fetch to its unmocked implementation.
+
+### manageFetchMockGlobally()
+
+Hooks fetchMock up to vitest's global mock management so that
+
+- `vi.clearAllMocks()` will call `fetchMock.mockClear()`
+- `vi.resetAllMocks()` will call `fetchMock.mockReset()`
+- `vi.restoreAllMocks()` will call `fetchMock.mockRestore()`
+- `vi.unstubAllGlobals()` will also call `fetchMock.mockRestore()`
+
+Note that these **will not** clear any sticky routes added to fetchMock. You will need to make an additional call to `fetchMock.removeRoutes({includeSticky: true})`.
+
+### Expect extensions
+
+These are added to vitest automatically and are available on any expect call that is passed fetchMock as an argument. Their behaviour is similar to the vitest expectation methods mentioned in the comments below
+
+```js
+expect(fetchMock).toHaveFetched(filter, options); // .toHaveBeenCalled()/.toHaveBeenCalledWith()
+expect(fetchMock).toHaveLastFetched(filter, options); // .toHaveBeenLastCalledWith()
+expect(fetchMock).toHaveNthFetched(n, filter, options); //  .toHaveBeenNthCalled()/.toHaveBeenNthCalledWith()
+expect(fetchMock).toHaveFetchedTimes(n, filter, options); // .toHaveBeenCalledTimes()
+expect(fetchMock).toBeDone(filter);
+```
 
 ### Notes
 
-- `filter` and `options` are the same as those used by [`fetch-mock`'s inspection methods](http://www.wheresrhys.co.uk/fetch-mock/#api-inspectionfundamentals)
-- The obove methods can have `Fetched` replaced by any of the following verbs to scope to a particular method: + Got + Posted + Put + Deleted + FetchedHead + Patched
-
-e.g. `expect(fetchMock).toHaveLastPatched(filter, options)`
-
-## Tearing down mocks
-
-`fetchMock.mockClear()` can be used to reset the call history
-
-`fetchMock.mockReset()` can be used to remove all configured mocks
-
-Please report any bugs in resetting mocks on the [issues board](https://github.com/wheresrhys/fetch-mock-jest/issues)
-
-# Example
-
-```js
-const fetchMock = require('fetch-mock-jest');
-const userManager = require('../src/user-manager');
-
-test(async () => {
-	const users = [{ name: 'bob' }];
-	fetchMock
-		.get('http://example.com/users', users)
-		.post('http://example.com/user', (url, options) => {
-			if (typeof options.body.name === 'string') {
-				users.push(options.body);
-				return 202;
-			}
-			return 400;
-		})
-		.patch(
-			{
-				url: 'http://example.com/user'
-			},
-			405
-		);
-
-	expect(await userManager.getAll()).toEqual([{ name: 'bob' }]);
-	expect(fetchMock).toHaveLastFetched('http://example.com/users
-		get');
-	await userManager.create({ name: true });
-	expect(fetchMock).toHaveLastFetched(
-		{
-			url: 'http://example.com/user',
-			body: { name: true }
-		},
-		'post'
-	);
-	expect(await userManager.getAll()).toEqual([{ name: 'bob' }]);
-	fetchMock.mockClear();
-	await userManager.create({ name: 'sarah' });
-	expect(fetchMock).toHaveLastFetched(
-		{
-			url: 'http://example.com/user',
-			body: { name: 'sarah' }
-		},
-		'post'
-	);
-	expect(await userManager.getAll()).toEqual([
-		{ name: 'bob' },
-		{ name: 'sarah' }
-	]);
-	fetchMock.mockReset();
-});
-```
+- `filter` and `options` are the same as those used by `fetchMock.callHistory.calls()`.
+- Each method can be prefixed with the `.not` helper for negative assertions. e.g. `expect(fetchMock).not.toBeDone('my-route')`
+- In each of the method names `Fetched` can be replaced by any of the following verbs to scope to a particular method:
+  - Got
+  - Posted
+  - Put
+  - Deleted
+  - FetchedHead
+  - Patched
+    e.g. `expect(fetchMock).toHaveDeleted('http://example.com/user/1')`

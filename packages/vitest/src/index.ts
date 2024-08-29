@@ -6,22 +6,27 @@ import {
 } from '@fetch-mock/core';
 import './vitest-extensions';
 
+type MockResetOptions = {
+	includeSticky: boolean;
+}
+
+
 class FetchMockVitest extends FetchMock {
 	mockClear() {
 		this.clearHistory();
 		return this;
 	}
-	mockReset(options?: RemoveRouteOptions) {
-		this.removeRoutes(options);
+	mockReset(options: MockResetOptions = { includeSticky: false }) {
+		this.removeRoutes({...options, includeFallback: true} as RemoveRouteOptions);
 		return this.mockClear();
 	}
-	mockRestore(options?: RemoveRouteOptions) {
+	mockRestore(options?: MockResetOptions) {
 		this.unmockGlobal();
 		return this.mockReset(options);
 	}
 }
 
-export function hookIntoVitestMockResetMethods() {
+export function manageFetchMockGlobally() {
 	const { clearAllMocks, resetAllMocks, restoreAllMocks } = vi;
 
 	vi.clearAllMocks = () => {
@@ -30,13 +35,13 @@ export function hookIntoVitestMockResetMethods() {
 		return vi;
 	};
 
-	vi.resetAllMocks = (options?: RemoveRouteOptions) => {
+	vi.resetAllMocks = (options?: MockResetOptions) => {
 		resetAllMocks.apply(vi);
 		fetchMockVitest.mockReset(options);
 		return vi;
 	};
 
-	vi.restoreAllMocks = (options?: RemoveRouteOptions) => {
+	vi.restoreAllMocks = (options?: MockResetOptions) => {
 		restoreAllMocks.apply(vi);
 		fetchMockVitest.mockRestore(options);
 		return vi;

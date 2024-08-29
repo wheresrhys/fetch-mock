@@ -131,8 +131,8 @@ describe('response construction', () => {
 		}
 
 		it('respond with Blob', async () => {
-			const blobParts = ['<q id="a"><span id="b">hey!</span></q>'];
-			const body = new Blob(blobParts, { type: 'text/html' });
+			const blobParts = ['test value'];
+			const body = new Blob(blobParts);
 			fm.route('*', body);
 			const res = await fm.fetchHandler('http://a.com');
 			expect(res.status).to.equal(200);
@@ -167,30 +167,32 @@ describe('response construction', () => {
 		});
 
 		it('respond with ReadableStream', async () => {
-			const body = ReadableStream.from(['a', 'b']);
+			const body = new Blob(['test value']).stream();
 			fm.route('*', body);
 			const res = await fm.fetchHandler('http://a.com');
 			expect(res.status).to.equal(200);
 			const receivedData = await res.text();
-			console.log(receivedData);
-			expect(receivedData).to.eql(body);
+			expect(receivedData).to.eql('test value');
 		});
 	});
 	it('respond with FormData', async () => {
 		const body = new FormData();
+		body.append('field', 'value');
 		fm.route('*', body);
 		const res = await fm.fetchHandler('http://a.com');
 		expect(res.status).to.equal(200);
-		const receivedData = await res.blob();
+		const receivedData = await res.formData();
+		console.log(receivedData);
 		expect(receivedData).to.eql(body);
 	});
 	it('respond with URLSearchParams', async () => {
 		const body = new URLSearchParams();
+		body.append('field', 'value');
 		fm.route('*', body);
 		const res = await fm.fetchHandler('http://a.com');
 		expect(res.status).to.equal(200);
-		const receivedData = await res.blob();
-		expect(receivedData).to.eql(body);
+		const receivedData = await res.formData();
+		expect(receivedData.get('field')).to.equal('value');
 	});
 
 	it('should set the url property on responses', async () => {

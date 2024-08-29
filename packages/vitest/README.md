@@ -52,37 +52,23 @@ Calls `mockReset()` and additionally restores global fetch to its unmocked imple
 
 Hooks fetchMock up to vitest's global mock management so that
 
-- `vitest.clearAllMocks()` will call `fetchMock.mockClear()`
-- `vitest.resetAllMocks()` will call `fetchMock.mockReset()`
-- `vitest.restoreAllMocks()` will call `fetchMock.mockRestore()`
+- `vi.clearAllMocks()` will call `fetchMock.mockClear()`
+- `vi.resetAllMocks()` will call `fetchMock.mockReset()`
+- `vi.restoreAllMocks()` will call `fetchMock.mockRestore()`
 
 Note that these **will not** clear any sticky routes added to fetchMock. You will need to make an additional call to `fetchMock.removeRoutes({includeSticky: true})`.
 
 ### Expect extensions
 
-These are added to vitest automatically and are available on any expect call that is passed fetchMock as an argument e.g.
+These are added to vitest automatically and are available on any expect call that is passed fetchMock as an argument. Their behaviour is similar to the vitest expectation methods mentioned in the comments below
 
 ```js
-expect(fetchMock).toHaveFetched('http://example.com');
+expect(fetchMock).toHaveFetched(filter, options); // .toHaveBeenCalled()/.toHaveBeenCalledWith()
+expect(fetchMock).toHaveLastFetched(filter, options); // .toHaveBeenLastCalledWith()
+expect(fetchMock).toHaveNthFetched(n, filter, options); //  .toHaveBeenNthCalled()/.toHaveBeenNthCalledWith()
+expect(fetchMock).toHaveFetchedTimes(n, filter, options); // .toHaveBeenCalledTimes()
+expect(fetchMock).toBeDone(filter);
 ```
-
-They can all be prefixed with the `.not` helper for negative assertions.
-
-The following custom jest expectation methods, proxying through to `fetch-mock`'s inspection methods are also available.
-
-- `expect(fetchMock).toHaveFetched(filter, options)`
-- `expect(fetchMock).toHaveLastFetched(filter, options)`
-- `expect(fetchMock).toHaveNthFetched(n, filter, options)`
-- `expect(fetchMock).toHaveFetchedTimes(n, filter, options)`
-- `expect(fetchMock).toBeDone(filter)`
-
-The following custom jest expectation methods, proxying through to `fetch-mock`'s inspection methods are also available.
-
-- `expect(fetchMock).toHaveFetched(filter, options)`
-- `expect(fetchMock).toHaveLastFetched(filter, options)`
-- `expect(fetchMock).toHaveNthFetched(n, filter, options)`
-- `expect(fetchMock).toHaveFetchedTimes(n, filter, options)`
-- `expect(fetchMock).toBeDone(filter)`
 
 ### Notes
 

@@ -15,12 +15,6 @@ fetchMock.config.sendAsJson = false;
 
 Options marked with a `†` can also be overridden for individual calls to `.mock(matcher, response, options)` by setting as properties on the `options` parameter
 
-### sendAsJson<sup>†</sup>
-
-`{Boolean}` default: `true`
-
-Always convert objects passed to `.mock()` to JSON strings before building reponses. Can be useful to set to `false` globally if e.g. dealing with a lot of `ArrayBuffer`s. When `true` the `Content-Type: application/json` header will also be set on each response.
-
 ### includeContentLength<sup>†</sup>
 
 `{Boolean}` default: `true`

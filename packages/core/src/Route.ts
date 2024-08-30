@@ -42,7 +42,7 @@ export type RouteConfig = UserRouteConfig &
 	FetchImplementations &
 	InternalRouteConfig;
 export type RouteResponseConfig = {
-	body?: BodyInit | object | null;
+	body?: BodyInit | object ;
 	status?: number;
 	headers?: {
 		[key: string]: string;
@@ -72,7 +72,7 @@ export type RouteResponse =
 	| RouteResponseFunction;
 export type RouteName = string;
 
-function isBodyInit(body: BodyInit | null | object): body is BodyInit {
+function isBodyInit(body: BodyInit | object): body is BodyInit {
 	return (
 		body instanceof Blob ||
 		body instanceof ArrayBuffer ||
@@ -210,7 +210,7 @@ class Route {
 	constructResponseBody(
 		responseInput: RouteResponseConfig,
 		responseOptions: ResponseInitUsingHeaders,
-	): BodyInit | null {
+	): BodyInit {
 		let body = responseInput.body;
 		const bodyIsBodyInit = isBodyInit(body);
 

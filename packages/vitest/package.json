@@ -18,6 +18,9 @@
 	"dependencies": {
 		"@fetch-mock/core": "^0.7.0"
 	},
+	"peerDependencies": {
+		"vitest": "*"
+	},
 	"repository": {
 		"directory": "packages/vitest",
 		"type": "git",

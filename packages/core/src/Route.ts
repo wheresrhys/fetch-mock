@@ -42,7 +42,7 @@ export type RouteConfig = UserRouteConfig &
 	FetchImplementations &
 	InternalRouteConfig;
 export type RouteResponseConfig = {
-	body?: string | object;
+	body?: BodyInit | object;
 	status?: number;
 	headers?: {
 		[key: string]: string;
@@ -71,6 +71,22 @@ export type RouteResponse =
 	| RouteResponsePromise
 	| RouteResponseFunction;
 export type RouteName = string;
+
+function isBodyInit(body: BodyInit | object): body is BodyInit {
+	return (
+		body instanceof Blob ||
+		body instanceof ArrayBuffer ||
+		// checks for TypedArray
+		ArrayBuffer.isView(body) ||
+		body instanceof DataView ||
+		body instanceof FormData ||
+		body instanceof ReadableStream ||
+		body instanceof URLSearchParams ||
+		body instanceof String ||
+		typeof body === 'string' ||
+		body === null
+	);
+}
 
 function sanitizeStatus(status?: number): number {
 	if (!status) {
@@ -194,31 +210,48 @@ class Route {
 	constructResponseBody(
 		responseInput: RouteResponseConfig,
 		responseOptions: ResponseInitUsingHeaders,
-	): string | null {
-		// start to construct the body
+	): BodyInit {
 		let body = responseInput.body;
-		// convert to json if we need to
-		if (typeof body === 'object') {
-			if (this.config.sendAsJson && responseInput.body != null) {
+		const bodyIsBodyInit = isBodyInit(body);
+
+		if (!bodyIsBodyInit) {
+			if (typeof body === 'undefined') {
+				body = null;
+			} else if (typeof body === 'object') {
+				// convert to json if we need to
 				body = JSON.stringify(body);
 				if (!responseOptions.headers.has('Content-Type')) {
 					responseOptions.headers.set('Content-Type', 'application/json');
 				}
+			} else {
+				throw new TypeError('Invalid body provided to construct response');
 			}
 		}
 
-		if (typeof body === 'string') {
-			// add a Content-Length header if we need to
-			if (
-				this.config.includeContentLength &&
-				!responseOptions.headers.has('Content-Length')
+		// add a Content-Length header if we need to
+		if (
+			this.config.includeContentLength &&
+			!responseOptions.headers.has('Content-Length') &&
+			!(body instanceof ReadableStream) &&
+			!(body instanceof FormData)
+		) {
+			let length = 0;
+			if (body instanceof Blob) {
+				length = body.size;
+			} else if (
+				body instanceof ArrayBuffer ||
+				ArrayBuffer.isView(body) ||
+				body instanceof DataView
 			) {
-				responseOptions.headers.set('Content-Length', body.length.toString());
+				length = body.byteLength;
+			} else if (body instanceof URLSearchParams) {
+				length = body.toString().length;
+			} else if (typeof body === 'string' || body instanceof String) {
+				length = body.length;
 			}
-			return body;
+			responseOptions.headers.set('Content-Length', length.toString());
 		}
-		// @ts-expect-error TODO need to implement handling of non-string bodies properlyy
-		return body || null;
+		return body as BodyInit;
 	}
 
 	static defineMatcher(matcher: MatcherDefinition) {

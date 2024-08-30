@@ -32,9 +32,13 @@ If the object _only_ contains properties from among those listed below it is use
 
 ### body
 
-`{String|Object}`
+`{String|Object|BodyInit}`
 
-Set the `Response` body, e.g. `"Server responded ok"`, `{ token: 'abcdef' }`. See the `Object` section of the docs below for behaviour when passed an `Object`.
+Set the `Response` body. This could be
+
+- a string e.g. `"Server responded ok"`, `{ token: 'abcdef' }`.
+- an object literal (see the `Object` section of the docs below).
+- Anything else that satisfies the specification for the [body parameter of new Response()](https://developer.mozilla.org/en-US/docs/Web/API/Response/Response#body). This currently allows instances of Blob, ArrayBuffer, TypedArray, DataView, FormData, ReadableStream, URLSearchParams, and String.
 
 ### status
 
@@ -62,9 +66,15 @@ Forces `fetch` to return a `Promise` rejected with the value of `throws` e.g. `n
 
 ## Object
 
-`{Object|ArrayBuffer|...`
+`{Object}`
 
-If the `sendAsJson` option is set to `true`, any object that does not match the schema for a response config will be converted to a `JSON` string and set as the response `body`. Otherwise, the object will be set as the response `body` (useful for `ArrayBuffer`s etc.)
+Any object literal that does not match the schema for a response config will be converted to a `JSON` string and set as the response `body`.
+
+The `Content-Type: application/json` header will also be set on each response. To send JSON responses that do not set this header (e.g. to mock a poorly configured server) manually convert the object to a string first e.g.
+
+```js
+fetchMock.route('http://a.com', JSON.stringify({ prop: 'value' }));
+```
 
 ## Promise
 

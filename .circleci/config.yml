@@ -8,7 +8,7 @@ references:
 
   node18: &node18
     docker:
-      - image: cimg/node:18.0
+      - image: cimg/node:18.11
   nodelts: &nodelts
     docker:
       - image: cimg/node:lts

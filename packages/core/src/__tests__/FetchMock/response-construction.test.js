@@ -1,8 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-
 import fetchMock from '../../FetchMock';
 
-describe('response generation', () => {
+describe('response construction', () => {
 	let fm;
 	beforeEach(() => {
 		fm = fetchMock.createInstance();
@@ -48,95 +47,6 @@ describe('response generation', () => {
 		});
 	});
 
-	describe('json', () => {
-		it('respond with a json', async () => {
-			fm.route('*', { an: 'object' });
-			const res = await fm.fetchHandler('http://a.com/');
-			expect(res.status).toEqual(200);
-			expect(res.statusText).toEqual('OK');
-			expect(res.headers.get('content-type')).toEqual('application/json');
-			expect(await res.json()).toEqual({ an: 'object' });
-		});
-
-		it('convert body properties to json', async () => {
-			fm.route('*', {
-				body: { an: 'object' },
-			});
-			const res = await fm.fetchHandler('http://a.com/');
-			expect(res.headers.get('content-type')).toEqual('application/json');
-			expect(await res.json()).toEqual({ an: 'object' });
-		});
-
-		it('not overide existing content-type-header', async () => {
-			fm.route('*', {
-				body: { an: 'object' },
-				headers: {
-					'content-type': 'text/html',
-				},
-			});
-			const res = await fm.fetchHandler('http://a.com/');
-			expect(res.headers.get('content-type')).toEqual('text/html');
-			expect(await res.json()).toEqual({ an: 'object' });
-		});
-
-		it('not convert if `body` property exists', async () => {
-			fm.route('*', { body: 'exists' });
-			const res = await fm.fetchHandler('http://a.com/');
-			expect(res.headers.get('content-type')).not.toEqual('application/json');
-		});
-
-		it('not convert if `headers` property exists', async () => {
-			fm.route('*', { headers: {} });
-			const res = await fm.fetchHandler('http://a.com/');
-			expect(res.headers.get('content-type')).toBeNull();
-		});
-
-		it('not convert if `status` property exists', async () => {
-			fm.route('*', { status: 300 });
-			const res = await fm.fetchHandler('http://a.com/');
-			expect(res.headers.get('content-type')).toBeNull();
-		});
-
-		it('convert if non-whitelisted property exists', async () => {
-			fm.route('*', { status: 300, weird: true });
-			const res = await fm.fetchHandler('http://a.com/');
-			expect(res.headers.get('content-type')).toEqual('application/json');
-		});
-
-		describe('sendAsJson option', () => {
-			it('convert object responses to json by default', async () => {
-				fm.route('*', { an: 'object' });
-				const res = await fm.fetchHandler('http://it.at.there');
-				expect(res.headers.get('content-type')).toEqual('application/json');
-			});
-
-			it("don't convert when configured false", async () => {
-				fm.config.sendAsJson = false;
-				fm.route('*', { an: 'object' });
-				const res = await fm.fetchHandler('http://it.at.there');
-				// can't check for existence as the spec says, in the browser, that
-				// a default value should be set
-				expect(res.headers.get('content-type')).not.toEqual('application/json');
-			});
-
-			it('local setting can override to true', async () => {
-				fm.config.sendAsJson = false;
-				fm.route('*', { an: 'object' }, { sendAsJson: true });
-				const res = await fm.fetchHandler('http://it.at.there');
-				expect(res.headers.get('content-type')).toEqual('application/json');
-			});
-
-			it('local setting can override to false', async () => {
-				fm.config.sendAsJson = true;
-				fm.route('*', { an: 'object' }, { sendAsJson: false });
-				const res = await fm.fetchHandler('http://it.at.there');
-				// can't check for existence as the spec says, in the browser, that
-				// a default value should be set
-				expect(res.headers.get('content-type')).not.toEqual('application/json');
-			});
-		});
-	});
-
 	it('respond with a complex response, including headers', async () => {
 		fm.route('*', {
 			status: 202,
@@ -150,26 +60,146 @@ describe('response generation', () => {
 		expect(res.headers.get('header')).toEqual('val');
 		expect(await res.json()).toEqual({ an: 'object' });
 	});
+	describe('encoded and streamed data', () => {
+		function ab2str(buf) {
+			return String.fromCharCode.apply(null, new Uint16Array(buf));
+		}
 
-	if (typeof Buffer !== 'undefined') {
-		it('can respond with a buffer', () => {
-			fm.route(/a/, new Buffer('buffer'), { sendAsJson: false });
-			return fm
-				.fetchHandler('http://a.com')
-				.then((res) => res.text())
-				.then((txt) => {
-					expect(txt).to.equal('buffer');
-				});
+		function str2ab(str) {
+			var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
+			var bufView = new Uint16Array(buf);
+			for (var i = 0, strLen = str.length; i < strLen; i++) {
+				bufView[i] = str.charCodeAt(i);
+			}
+			return buf;
+		}
+
+		it('respond with Blob', async () => {
+			const blobParts = ['test value'];
+			const body = new Blob(blobParts);
+			fm.route('*', body);
+			const res = await fm.fetchHandler('http://a.com');
+			expect(res.status).to.equal(200);
+			const receivedData = await res.blob();
+			expect(receivedData).to.eql(body);
+			expect(res.headers.get('content-length')).toEqual('10');
 		});
-	}
+		it('respond with ArrayBuffer', async () => {
+			const body = str2ab('test value');
+			fm.route('*', body);
+			const res = await fm.fetchHandler('http://a.com');
+			expect(res.status).to.equal(200);
+			const receivedData = await res.arrayBuffer();
+			expect(ab2str(receivedData)).to.eql('test value');
+			expect(res.headers.get('content-length')).toEqual('20');
+		});
+		it('respond with TypedArray', async () => {
+			const buffer = str2ab('test value');
+			const body = new Uint8Array(buffer);
+			fm.route('*', body);
+			const res = await fm.fetchHandler('http://a.com');
+			expect(res.status).to.equal(200);
+			const receivedData = await res.arrayBuffer();
+			expect(new Uint8Array(receivedData)).to.eql(body);
+			expect(res.headers.get('content-length')).toEqual('20');
+		});
+		it('respond with DataView', async () => {
+			const buffer = str2ab('test value');
+			const body = new DataView(buffer, 0);
+			fm.route('*', body);
+			const res = await fm.fetchHandler('http://a.com');
+			expect(res.status).to.equal(200);
+			const receivedData = await res.arrayBuffer();
+			expect(new DataView(receivedData, 0)).to.eql(body);
+			expect(res.headers.get('content-length')).toEqual('20');
+		});
 
-	it('respond with blob', async () => {
-		const blob = new Blob();
-		fm.route('*', blob, { sendAsJson: false });
-		const res = await fm.fetchHandler('http://a.com');
-		expect(res.status).to.equal(200);
-		const blobData = await res.blob();
-		expect(blobData).to.eql(blob);
+		it('respond with ReadableStream', async () => {
+			const body = new Blob(['test value']).stream();
+			fm.route('*', body);
+			const res = await fm.fetchHandler('http://a.com');
+			expect(res.status).to.equal(200);
+			const receivedData = await res.text();
+			expect(receivedData).to.eql('test value');
+			expect(res.headers.get('content-length')).toBe(null);
+		});
+	});
+	describe('structured data', () => {
+		it('respond with FormData', async () => {
+			const body = new FormData();
+			body.append('field', 'value');
+			fm.route('*', body);
+			const res = await fm.fetchHandler('http://a.com');
+			expect(res.status).to.equal(200);
+			const receivedData = await res.formData();
+			expect(receivedData).to.eql(body);
+			expect(res.headers.get('content-length')).toBe(null);
+		});
+		it('respond with URLSearchParams', async () => {
+			const body = new URLSearchParams();
+			body.append('field', 'value');
+			fm.route('*', body);
+			const res = await fm.fetchHandler('http://a.com');
+			expect(res.status).to.equal(200);
+			const receivedData = await res.formData();
+			expect(receivedData.get('field')).to.equal('value');
+			expect(res.headers.get('content-length')).toEqual('11');
+		});
+		describe('json', () => {
+			it('respond with a json', async () => {
+				fm.route('*', { an: 'object' });
+				const res = await fm.fetchHandler('http://a.com/');
+				expect(res.status).toEqual(200);
+				expect(res.statusText).toEqual('OK');
+				expect(res.headers.get('content-type')).toEqual('application/json');
+				expect(await res.json()).toEqual({ an: 'object' });
+			});
+
+			it('convert body properties to json', async () => {
+				fm.route('*', {
+					body: { an: 'object' },
+				});
+				const res = await fm.fetchHandler('http://a.com/');
+				expect(res.headers.get('content-type')).toEqual('application/json');
+				expect(await res.json()).toEqual({ an: 'object' });
+			});
+
+			it('not overide existing content-type-header', async () => {
+				fm.route('*', {
+					body: { an: 'object' },
+					headers: {
+						'content-type': 'text/html',
+					},
+				});
+				const res = await fm.fetchHandler('http://a.com/');
+				expect(res.headers.get('content-type')).toEqual('text/html');
+				expect(await res.json()).toEqual({ an: 'object' });
+			});
+
+			it('not convert if `body` property exists', async () => {
+				fm.route('*', { body: 'exists' });
+				const res = await fm.fetchHandler('http://a.com/');
+				expect(res.headers.get('content-type')).not.toEqual('application/json');
+			});
+
+			it('not convert if `headers` property exists', async () => {
+				fm.route('*', { headers: {} });
+				const res = await fm.fetchHandler('http://a.com/');
+				expect(res.headers.get('content-type')).toBeNull();
+			});
+
+			it('not convert if `status` property exists', async () => {
+				fm.route('*', { status: 300 });
+				const res = await fm.fetchHandler('http://a.com/');
+				expect(res.headers.get('content-type')).toBeNull();
+			});
+
+			it('convert if non-whitelisted property exists', async () => {
+				fm.route('*', { status: 300, weird: true });
+				const res = await fm.fetchHandler('http://a.com/');
+				expect(res.headers.get('content-type')).toEqual('application/json');
+			});
+		});
 	});
 
 	it('should set the url property on responses', async () => {

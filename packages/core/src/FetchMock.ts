@@ -5,7 +5,6 @@ import CallHistory from './CallHistory.js';
 import * as requestUtils from './RequestUtils.js';
 
 export type FetchMockGlobalConfig = {
-	sendAsJson?: boolean;
 	includeContentLength?: boolean;
 	matchPartialBody?: boolean;
 	allowRelativeUrls?: boolean;
@@ -20,7 +19,6 @@ export type FetchMockConfig = FetchMockGlobalConfig & FetchImplementations;
 
 export const defaultFetchMockConfig: FetchMockConfig = {
 	includeContentLength: true,
-	sendAsJson: true,
 	matchPartialBody: false,
 	Request: globalThis.Request,
 	Response: globalThis.Response,

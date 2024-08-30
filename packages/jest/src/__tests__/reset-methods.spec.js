@@ -5,10 +5,12 @@ import {
 	afterAll,
 	expect,
 	afterEach,
-	vi,
-} from 'vitest';
+	jest,
+} from '@jest/globals';
 
-import fetchMock, { manageFetchMockGlobally } from '../index';
+import fetchMockModule, { manageFetchMockGlobally } from '../index';
+
+const fetchMock = fetchMockModule.default;
 
 describe('reset methods', () => {
 	describe('new fetch-mock methods', () => {
@@ -98,14 +100,14 @@ describe('reset methods', () => {
 	describe('manageFetchMockGlobally', () => {
 		const originalMethods = {};
 		beforeAll(() => {
-			// cannot use vi.spyOn as that is part of the functionality we are
+			// cannot use jest.spyOn as that is part of the functionality we are
 			// aiming to test!
 			originalMethods.mockClear = fetchMock.mockClear;
-			fetchMock.mockClear = vi.fn();
+			fetchMock.mockClear = jest.fn();
 			originalMethods.mockReset = fetchMock.mockReset;
-			fetchMock.mockReset = vi.fn();
+			fetchMock.mockReset = jest.fn();
 			originalMethods.mockRestore = fetchMock.mockRestore;
-			fetchMock.mockRestore = vi.fn();
+			fetchMock.mockRestore = jest.fn();
 		});
 		afterEach(() => {
 			fetchMock.mockClear.mockClear();
@@ -116,40 +118,32 @@ describe('reset methods', () => {
 		afterAll(() => {
 			Object.assign(fetchMock, originalMethods);
 		});
-		it('by default does not hook into vitest global mock management', () => {
-			vi.clearAllMocks();
+		it('by default does not hook into jesttest global mock management', () => {
+			jest.clearAllMocks();
 			expect(fetchMock.mockClear).not.toHaveBeenCalled();
-			vi.resetAllMocks();
+			jest.resetAllMocks();
 			expect(fetchMock.mockReset).not.toHaveBeenCalled();
-			vi.restoreAllMocks();
-			expect(fetchMock.mockRestore).not.toHaveBeenCalled();
-			vi.unstubAllGlobals();
+			jest.restoreAllMocks();
 			expect(fetchMock.mockRestore).not.toHaveBeenCalled();
 		});
 		describe('when enabled', () => {
 			beforeAll(() => {
 				manageFetchMockGlobally();
 			});
-			it('vi.clearAllMocks() calls .mockClear()', () => {
-				vi.clearAllMocks();
+			it('jest.clearAllMocks() calls .mockClear()', () => {
+				jest.clearAllMocks();
 				expect(fetchMock.mockClear).toHaveBeenCalled();
 				expect(fetchMock.mockReset).not.toHaveBeenCalled();
 				expect(fetchMock.mockRestore).not.toHaveBeenCalled();
 			});
-			it('vi.resetAllMocks() calls .mockReset()', () => {
-				vi.resetAllMocks();
+			it('jest.resetAllMocks() calls .mockReset()', () => {
+				jest.resetAllMocks();
 				expect(fetchMock.mockClear).not.toHaveBeenCalled();
 				expect(fetchMock.mockReset).toHaveBeenCalled();
 				expect(fetchMock.mockRestore).not.toHaveBeenCalled();
 			});
-			it('vi.restoreAllMocks() calls .mockRestore()', () => {
-				vi.restoreAllMocks();
-				expect(fetchMock.mockClear).not.toHaveBeenCalled();
-				expect(fetchMock.mockReset).not.toHaveBeenCalled();
-				expect(fetchMock.mockRestore).toHaveBeenCalled();
-			});
-			it('vi.unstubAllGlobals() calls .mockRestore()', () => {
-				vi.unstubAllGlobals();
+			it('jest.restoreAllMocks() calls .mockRestore()', () => {
+				jest.restoreAllMocks();
 				expect(fetchMock.mockClear).not.toHaveBeenCalled();
 				expect(fetchMock.mockReset).not.toHaveBeenCalled();
 				expect(fetchMock.mockRestore).toHaveBeenCalled();

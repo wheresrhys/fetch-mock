@@ -10,7 +10,7 @@ type MockResetOptions = {
 	includeSticky: boolean;
 };
 
-class FetchMockVitest extends FetchMock {
+class FetchMockJest extends FetchMock {
 	mockClear() {
 		this.clearHistory();
 		return this;
@@ -29,31 +29,31 @@ class FetchMockVitest extends FetchMock {
 }
 
 export function manageFetchMockGlobally() {
-	const { clearAllMocks, resetAllMocks, restoreAllMocks } =
-		jest;
+	const { clearAllMocks, resetAllMocks, restoreAllMocks } = jest;
 
 	jest.clearAllMocks = () => {
+		console.log('yeah')
 		clearAllMocks.apply(jest);
-		fetchMockVitest.mockClear();
+		fetchMockJest.mockClear();
 		return jest;
 	};
 
 	jest.resetAllMocks = () => {
 		resetAllMocks.apply(jest);
-		fetchMockVitest.mockReset();
+		fetchMockJest.mockReset();
 		return jest;
 	};
 
 	jest.restoreAllMocks = () => {
 		restoreAllMocks.apply(jest);
-		fetchMockVitest.mockRestore();
+		fetchMockJest.mockRestore();
 		return jest;
 	};
 
 }
 
-const fetchMockVitest = new FetchMockVitest({
+const fetchMockJest = new FetchMockJest({
 	...defaultFetchMockConfig,
 });
 
-export default fetchMockVitest;
+export default fetchMockJest;

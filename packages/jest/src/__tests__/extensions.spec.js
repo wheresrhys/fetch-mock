@@ -1,6 +1,8 @@
 import { describe, it, beforeAll, afterAll, expect } from '@jest/globals';
 
-import fetchMock from '../index';
+import fetchMockModule from '../index';
+const fetchMock = fetchMockModule.default;
+
 describe('expect extensions', () => {
 	[
 		'Fetched',

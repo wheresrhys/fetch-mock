@@ -1,3 +1,4 @@
+import fetchMockModule, { manageFetchMockGlobally } from '../index';
 import {
 	describe,
 	it,
@@ -7,8 +8,6 @@ import {
 	afterEach,
 	jest,
 } from '@jest/globals';
-
-import fetchMockModule, { manageFetchMockGlobally } from '../index';
 
 const fetchMock = fetchMockModule.default;
 
@@ -128,7 +127,7 @@ describe('reset methods', () => {
 		});
 		describe('when enabled', () => {
 			beforeAll(() => {
-				manageFetchMockGlobally();
+				manageFetchMockGlobally(jest);
 			});
 			it('jest.clearAllMocks() calls .mockClear()', () => {
 				jest.clearAllMocks();

@@ -1,10 +1,10 @@
-import { jest } from '@jest/globals';
 import {
 	FetchMock,
 	defaultFetchMockConfig,
 	RemoveRouteOptions,
 } from '@fetch-mock/core';
 import './jest-extensions';
+import type { Jest } from '@jest/environment';
 
 type MockResetOptions = {
 	includeSticky: boolean;
@@ -28,7 +28,7 @@ class FetchMockJest extends FetchMock {
 	}
 }
 
-export function manageFetchMockGlobally() {
+export function manageFetchMockGlobally(jest: Jest) {
 	const { clearAllMocks, resetAllMocks, restoreAllMocks } = jest;
 
 	jest.clearAllMocks = () => {

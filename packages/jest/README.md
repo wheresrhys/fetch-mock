@@ -26,8 +26,9 @@ npm i -D @fetch-mock/jest
 
 ```js
 import fetchMock, { manageFetchMockGlobally } from '@fetch-mock/jest';
+import { jest } from '@jest/glonals';
 
-manageFetchMockGlobally(); // optional
+manageFetchMockGlobally(jest); // optional
 ```
 
 ## API
@@ -48,13 +49,13 @@ Clears all call history from the mocked `fetch` implementation _and_ removes all
 
 Calls `mockReset()` and additionally restores global fetch to its unmocked implementation.
 
-### manageFetchMockGlobally()
+### manageFetchMockGlobally(jest)
 
 Hooks fetchMock up to jest's global mock management so that
 
-- `vi.clearAllMocks()` will call `fetchMock.mockClear()`
-- `vi.resetAllMocks()` will call `fetchMock.mockReset()`
-- `vi.restoreAllMocks()` will call `fetchMock.mockRestore()`
+- `jest.clearAllMocks()` will call `fetchMock.mockClear()`
+- `jest.resetAllMocks()` will call `fetchMock.mockReset()`
+- `jest.restoreAllMocks()` will call `fetchMock.mockRestore()`
 
 Note that these **will not** clear any sticky routes added to fetchMock. You will need to make an additional call to `fetchMock.removeRoutes({includeSticky: true})`.
 

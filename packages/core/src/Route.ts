@@ -42,7 +42,7 @@ export type RouteConfig = UserRouteConfig &
 	FetchImplementations &
 	InternalRouteConfig;
 export type RouteResponseConfig = {
-	body?: BodyInit | object ;
+	body?: BodyInit | object;
 	status?: number;
 	headers?: {
 		[key: string]: string;

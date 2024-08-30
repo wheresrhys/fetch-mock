@@ -138,6 +138,7 @@ function scopeExpectationNameToMethod(name: string, humanVerb: string): string {
 	const extensions = Object.fromEntries(
 		Object.entries(methodlessExtensions).map(([name, func]) => [
 			scopeExpectationNameToMethod(name, humanVerb),
+			//@ts-expect-error
 			scopeExpectationFunctionToMethod(func, method),
 		]),
 	);

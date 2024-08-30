@@ -33,8 +33,8 @@
 		"docs": "npm run start -w docs",
 		"test": "vitest . --ui --exclude=packages/jest/src/__tests__/*",
 		"test:ci": "vitest . --reporter=junit --outputFile=test-results/junit.xml --coverage.provider=istanbul --exclude=packages/jest/src/__tests__/*",
-		"test:jest": "node --experimental-vm-modules node_modules/jest/bin/jest.js packages/jest",
-		"test:browser": "vitest . --browser.enabled --browser.name chromium --browser.provider playwright",
+		"test:jest": "node --experimental-vm-modules node_modules/jest/bin/jest.js packages/jest --watch",
+		"test:browser": "vitest . --browser.enabled --browser.name chromium --browser.provider playwright --exclude=packages/jest/src/__tests__/*",
 		"coverage:send": "cat ./coverage/lcov.info | coveralls",
 		"compat:module": "npm run compat:module -w import-compat"
 	},

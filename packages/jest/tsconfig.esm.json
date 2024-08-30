@@ -1,0 +1,11 @@
+{
+	"extends": "../../tsconfig.base.json",
+	"include": ["src"],
+	"exclude": ["node_modules", "src/__tests__"],
+	"rootDir": "src",
+	"compilerOptions": {
+		"module": "nodenext",
+		"outDir": "dist/esm",
+		"target": "es2021"
+	}
+}

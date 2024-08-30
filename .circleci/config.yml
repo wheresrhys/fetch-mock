@@ -90,9 +90,11 @@ jobs:
       - run: npm run test:browser
   test-jest:
     <<: *nodelts
-    - run: npm run test:jest
-    - store_test_results:
-        path: test-results
+    steps:
+      - *workspace
+      - run: npm run test:jest
+      - store_test_results:
+          path: test-results
   module-compat:
     <<: *nodelts
     steps:

@@ -273,8 +273,8 @@ export default class Router {
 				if (typeof response[name] === 'function') {
 					//@ts-expect-error TODO probably make use of generics here
 					return new Proxy(response[name], {
-						apply: (matcherFunction, thisArg, args) => {
-							const result = matcherFunction.apply(response, args);
+						apply: (func, thisArg, args) => {
+							const result = func.apply(response, args);
 							if (result.then) {
 								pendingPromises.push(
 									//@ts-expect-error TODO probably make use of generics here

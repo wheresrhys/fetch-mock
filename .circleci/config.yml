@@ -88,6 +88,11 @@ jobs:
       - *workspace
       - run: npx playwright install
       - run: npm run test:browser
+  test-jest:
+    <<: *nodelts
+    - run: npm run test:jest
+    - store_test_results:
+        path: test-results
   module-compat:
     <<: *nodelts
     steps:
@@ -132,6 +137,9 @@ workflows:
       - test-node18:
           <<: *triggerable-by-tag
           <<: *after-build-test-lint
+      - test-jest:
+          <<: *triggerable-by-tag
+          <<: *after-build-test-lint
       - module-compat:
           <<: *triggerable-by-tag
           <<: *after-build-lint
@@ -139,6 +147,7 @@ workflows:
           requires:
             - test-node18
             - test-browser
+            - test-jest
             - build
             - test
             - lint

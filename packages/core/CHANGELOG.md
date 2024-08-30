@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.7.0](https://github.com/wheresrhys/fetch-mock/compare/core-v0.6.3...core-v0.7.0) (2024-08-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove sendAsJson option
+
+### Features
+
+* remove sendAsJson option ([4b11fc4](https://github.com/wheresrhys/fetch-mock/commit/4b11fc4a5c92c81de8f89b1993a57c2645805ddb))
+* send content=length header whenever calculable ([ef4c684](https://github.com/wheresrhys/fetch-mock/commit/ef4c684bddb617e95c54217c86b6953637f21f74))
+
+
+### Bug Fixes
+
+* force engine to be &gt;=18.11.0 as this fixes an issue in proxying a response ([dde5e6b](https://github.com/wheresrhys/fetch-mock/commit/dde5e6beb9aee103296cf060a9f027bffb4818e9))
+* handle all types of BodyInit correctly ([0242ea2](https://github.com/wheresrhys/fetch-mock/commit/0242ea2d6c30e36418f21a37a962fe1cf84c9271))
+
 ## [0.6.3](https://github.com/wheresrhys/fetch-mock/compare/core-v0.6.2...core-v0.6.3) (2024-08-29)
 
 

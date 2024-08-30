@@ -19,7 +19,7 @@ Options marked with a `†` can also be overridden for individual calls to `.moc
 
 `{Boolean}` default: `true`
 
-Sets a `Content-Length` header on each response.
+Sets a `Content-Length` header on each response, with the exception of responses whose body is a `FormData` or `ReadableStream` instance as these are hard/impossible to calculate up front.
 
 ### matchPartialBody
 

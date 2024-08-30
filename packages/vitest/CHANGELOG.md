@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.3](https://github.com/wheresrhys/fetch-mock/compare/vitest-v0.1.2...vitest-v0.1.3) (2024-08-30)
+
+
+### Bug Fixes
+
+* force engine to be &gt;=18.11.0 as this fixes an issue in proxying a response ([dde5e6b](https://github.com/wheresrhys/fetch-mock/commit/dde5e6beb9aee103296cf060a9f027bffb4818e9))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fetch-mock/core bumped from ^0.6.3 to ^0.7.0
+
 ## [0.1.2](https://github.com/wheresrhys/fetch-mock/compare/vitest-v0.1.1...vitest-v0.1.2) (2024-08-29)
 
 

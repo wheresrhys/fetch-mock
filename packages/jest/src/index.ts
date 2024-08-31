@@ -32,7 +32,7 @@ export function manageFetchMockGlobally(jest: Jest) {
 	const { clearAllMocks, resetAllMocks, restoreAllMocks } = jest;
 
 	jest.clearAllMocks = () => {
-		console.log('yeah')
+		console.log('yeah');
 		clearAllMocks.apply(jest);
 		fetchMockJest.mockClear();
 		return jest;
@@ -49,7 +49,6 @@ export function manageFetchMockGlobally(jest: Jest) {
 		fetchMockJest.mockRestore();
 		return jest;
 	};
-
 }
 
 const fetchMockJest = new FetchMockJest({

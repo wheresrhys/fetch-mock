@@ -138,7 +138,7 @@ function scopeExpectationNameToMethod(name: string, humanVerb: string): string {
 	const extensions = Object.fromEntries(
 		Object.entries(methodlessExtensions).map(([name, func]) => [
 			scopeExpectationNameToMethod(name, humanVerb),
-			//@ts-expect-error
+			//@ts-expect-error Still need to work on getting the generics here correct
 			scopeExpectationFunctionToMethod(func, method),
 		]),
 	);

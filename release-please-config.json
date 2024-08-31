@@ -31,7 +31,7 @@
 		"packages/core": {},
 		"packages/vitest": {},
 		"packages/jest": {
-			"releaseAs": "0.1.0"
+			"release-as": "0.1.0"
 		},
 		"packages/fetch-mock": {}
 	},

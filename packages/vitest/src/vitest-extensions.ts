@@ -110,11 +110,14 @@ expect.extend({
 		};
 	},
 });
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function scopeExpectationFunctionToMethod<Args extends any[]>(
-	func: (...args: Args) => SyncExpectationResult,
+
+function scopeExpectationFunctionToMethod<
+	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+	Fn extends (...args: any[]) => SyncExpectationResult,
+>(
+	func: Fn,
 	method: string,
-): (...args: Args) => SyncExpectationResult {
+): (...args: Parameters<Fn>) => SyncExpectationResult {
 	return (...args) => {
 		const opts = args[func.length - 1] || {};
 		args[func.length - 1] = { ...opts, method };
@@ -136,10 +139,12 @@ function scopeExpectationNameToMethod(name: string, humanVerb: string): string {
 ].forEach((verbs) => {
 	const [humanVerb, method] = verbs.split(':');
 
-	const extensions = Object.fromEntries(
+	const extensions: {
+		// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+		[key: string]: (...args: any[]) => SyncExpectationResult;
+	} = Object.fromEntries(
 		Object.entries(methodlessExtensions).map(([name, func]) => [
 			scopeExpectationNameToMethod(name, humanVerb),
-			//@ts-expect-error awaiting this fix https://github.com/vitest-dev/vitest/pull/6351
 			scopeExpectationFunctionToMethod(func, method),
 		]),
 	);

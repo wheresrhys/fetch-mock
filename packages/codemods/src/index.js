@@ -1,11 +1,4 @@
-import type {
-	JSCodeshift,
-	MemberExpression,
-	Identifier,
-	FileInfo,
-	API,
-} from 'jscodeshift';
-export function codemod(source: string, j: JSCodeshift) {
+export function codemod(source, j) {
 	const root = j(source);
 	let fetchMockVariableName;
 	try {
@@ -101,17 +94,15 @@ export function codemod(source: string, j: JSCodeshift) {
 		});
 
 	fetchMockMethodCalls.forEach((path) => {
-		const callee = path.value.callee as MemberExpression;
-		const property = callee.property as Identifier;
-		const method = property.name;
+		const method = path.value.callee.property.name;
 		if (method === 'mock') {
-			property.name = 'route';
+			path.value.callee.property.name = 'route';
 		}
 	});
 
 	return root.toSource();
 }
 
-export default function transformer(file: FileInfo, api: API): string {
+export default function transformer(file, api) {
 	return codemod(file.source, api.j);
 }

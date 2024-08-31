@@ -30,6 +30,7 @@
 	},
 	"homepage": "http://www.wheresrhys.co.uk/fetch-mock",
 	"dependencies": {
+		"@types/jscodeshift": "^0.11.11",
 		"jscodeshift": "^17.0.0"
 	}
 }

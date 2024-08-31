@@ -1,4 +1,7 @@
-export function codemod(source, j) {
+import type {
+  JSCodeshift, MemberExpression, Identifier, Transform, FileInfo, API
+} from 'jscodeshift';
+export function codemod(source: string, j: JSCodeshift) {
   const root = j(source);
   const fetchMockVariableName = root
     .find(j.CallExpression, {
@@ -30,9 +33,11 @@ export function codemod(source, j) {
       return paths;
     })
     .forEach((path) => {
-      const method = path.value.callee.property.name;
+      const callee = path.value.callee as MemberExpression;
+      const property = callee.property as Identifier;
+      const method = property.name;
       if (method === "mock") {
-        path.value.callee.property.name = "route";
+        property.name = "route";
       }
     });
 
@@ -40,6 +45,6 @@ export function codemod(source, j) {
 }
 
 
-export default function transformer(file, api) {
+export default function transformer(file: FileInfo, api: API): string {
   return codemod(file.source, api.j);
 }

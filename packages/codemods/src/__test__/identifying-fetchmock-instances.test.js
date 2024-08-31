@@ -55,4 +55,7 @@ describe('identifying fetch-mock instances', () => {
         `,
 		);
 	});
+	// Identify fetch - mock references when mocking node - fetch in jest
+	// sandbox() instances
+	// sandbox() instances used by jest / vitest.mock
 });

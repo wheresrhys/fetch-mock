@@ -1,0 +1,35 @@
+{
+	"name": "@fetch-mock/codemods",
+	"description": "Codemods for upgrading fetch-mock",
+	"version": "0.0.0",
+	"exports": {
+		"browser": "./src/index.js",
+		"import": "./src/index.js",
+		"require": "./dist/commonjs.js",
+		"types": "./types/index.d.ts"
+	},
+	"main": "./dist/commonjs.js",
+	"module": "./src/index.js",
+	"types": "./types/index.d.ts",
+	"type": "module",
+	"engines": {
+		"node": ">=18.11.0"
+	},
+	"repository": {
+		"directory": "packages/codemods",
+		"type": "git",
+		"url": "git+https://github.com/wheresrhys/fetch-mock.git"
+	},
+	"scripts": {
+		"build": "rm -rf dist && tsc -p tsconfig.esm.json && tsc -p tsconfig.cjs.json && node ../../scripts/declare-dist-type.js"
+	},
+	"license": "MIT",
+	"author": "Rhys Evans",
+	"bugs": {
+		"url": "https://github.com/wheresrhys/fetch-mock/issues"
+	},
+	"homepage": "http://www.wheresrhys.co.uk/fetch-mock",
+	"dependencies": {
+		"jscodeshift": "^17.0.0"
+	}
+}

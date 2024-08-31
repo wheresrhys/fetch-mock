@@ -1,6 +1,5 @@
-export default function transformer(file, api) {
-  const j = api.jscodeshift;
-  const root = j(file.source);
+export function codemod(source, j) {
+  const root = j(source);
   const fetchMockVariableName = root
     .find(j.CallExpression, {
       callee: {
@@ -38,4 +37,9 @@ export default function transformer(file, api) {
     });
 
   return root.toSource();
+}
+
+
+export default function transformer(file, api) {
+  return codemod(file.source, j);
 }

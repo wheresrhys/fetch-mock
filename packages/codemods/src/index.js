@@ -1,5 +1,8 @@
-export function codemod(source, j) {
-	const root = j(source);
+import {simpleOptions} from './codemods/options'
+import {simpleMethods} from './codemods/methods'
+
+
+function findFetchMockVariableName (root, j) {
 	let fetchMockVariableName;
 	try {
 		fetchMockVariableName = root
@@ -19,86 +22,19 @@ export function codemod(source, j) {
 				})
 				.find(j.ImportDefaultSpecifier)
 				.get().value.local.name;
-			console.log(fetchMockVariableName);
 		} catch (err) {
-			console.log(err);
+			throw new Error("No fetch-mock references found")
 		}
 	}
+	return fetchMockVariableName;
+}
 
-	const configSets = root
-		.find(j.CallExpression, {
-			callee: {
-				object: {
-					type: 'Identifier',
-					name: 'Object',
-				},
-				property: { name: 'assign' },
-			},
-		})
-		.filter((path) => {
-			const firstArg = path.value.arguments[0];
-			const secondArg = path.value.arguments[1];
-			return (
-				firstArg.type === 'MemberExpression' &&
-				firstArg.property.name === 'config' &&
-				firstArg.object.type === 'Identifier' &&
-				firstArg.object.name === fetchMockVariableName &&
-				secondArg.type === 'ObjectExpression'
-			);
-		});
-	['overwriteRoutes', 'warnOnFallback', 'sendAsJson'].forEach((name) => {
-		root
-			.find(j.AssignmentExpression, {
-				left: {
-					type: 'MemberExpression',
-					property: { name },
-					object: {
-						type: 'MemberExpression',
-						property: { name: 'config' },
-						object: {
-							type: 'Identifier',
-							name: fetchMockVariableName,
-						},
-					},
-				},
-			})
-			.remove();
-		configSets.find(j.Property, { key: { name } }).remove();
-	});
+export function codemod(source, j) {
+	const root = j(source);
+	const fetchMockVariableName = findFetchMockVariableName(root, j)
 
-	configSets
-		.filter((path) => {
-			const secondArg = path.value.arguments[1];
-			return secondArg.properties.length === 0;
-		})
-		.remove();
-
-	const fetchMockMethodCalls = root
-		.find(j.CallExpression, {
-			callee: {
-				object: {
-					type: 'Identifier',
-					name: fetchMockVariableName,
-				},
-			},
-		})
-		.map((path) => {
-			const paths = [path];
-			while (path.parentPath.value.type !== 'ExpressionStatement') {
-				path = path.parentPath;
-				if (path.value.type === 'CallExpression') {
-					paths.push(path);
-				}
-			}
-			return paths;
-		});
-
-	fetchMockMethodCalls.forEach((path) => {
-		const method = path.value.callee.property.name;
-		if (method === 'mock') {
-			path.value.callee.property.name = 'route';
-		}
-	});
+	simpleOptions(fetchMockVariableName, root, j)
+	simpleMethods(fetchMockVariableName, root, j)
 
 	return root.toSource();
 }

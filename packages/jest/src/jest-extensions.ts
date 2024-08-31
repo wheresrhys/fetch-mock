@@ -1,6 +1,5 @@
 import { expect } from '@jest/globals';
 import type { SyncExpectationResult } from 'expect';
-import fetchMock from '@fetch-mock/core';
 import type {
 	FetchMock,
 	RouteName,
@@ -110,8 +109,11 @@ expect.extend({
 		};
 	},
 });
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function scopeExpectationFunctionToMethod<Fn extends (...args: any[]) => SyncExpectationResult>(
+
+function scopeExpectationFunctionToMethod<
+	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+	Fn extends (...args: any[]) => SyncExpectationResult,
+>(
 	func: Fn,
 	method: string,
 ): (...args: Parameters<Fn>) => SyncExpectationResult {
@@ -136,10 +138,13 @@ function scopeExpectationNameToMethod(name: string, humanVerb: string): string {
 ].forEach((verbs) => {
 	const [humanVerb, method] = verbs.split(':');
 
-	const extensions = Object.fromEntries(
+	const extensions: {
+		// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+		[key: string]: (...args: any[]) => SyncExpectationResult;
+	} = Object.fromEntries(
 		Object.entries(methodlessExtensions).map(([name, func]) => [
 			scopeExpectationNameToMethod(name, humanVerb),
-			scopeExpectationFunctionToMethod(func, method) ,
+			scopeExpectationFunctionToMethod(func, method),
 		]),
 	);
 

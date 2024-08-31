@@ -1,5 +1,6 @@
 import { expect } from '@jest/globals';
 import type { SyncExpectationResult } from 'expect';
+import fetchMock from '@fetch-mock/core';
 import type {
 	FetchMock,
 	RouteName,
@@ -110,10 +111,10 @@ expect.extend({
 	},
 });
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function scopeExpectationFunctionToMethod<Args extends any[]>(
-	func: (...args: Args) => SyncExpectationResult,
+function scopeExpectationFunctionToMethod<Fn extends (...args: any[]) => SyncExpectationResult>(
+	func: Fn,
 	method: string,
-): (...args: Args) => SyncExpectationResult {
+): (...args: Parameters<Fn>) => SyncExpectationResult {
 	return (...args) => {
 		const opts = args[func.length - 1] || {};
 		args[func.length - 1] = { ...opts, method };
@@ -138,8 +139,7 @@ function scopeExpectationNameToMethod(name: string, humanVerb: string): string {
 	const extensions = Object.fromEntries(
 		Object.entries(methodlessExtensions).map(([name, func]) => [
 			scopeExpectationNameToMethod(name, humanVerb),
-			//@ts-expect-error Still need to work on getting the generics here correct
-			scopeExpectationFunctionToMethod(func, method),
+			scopeExpectationFunctionToMethod(func, method) ,
 		]),
 	);
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4](https://github.com/wheresrhys/fetch-mock/compare/vitest-v0.1.3...vitest-v0.1.4) (2024-08-31)
+
+
+### Bug Fixes
+
+* applied same type fixes to vitest wrapper ([817af39](https://github.com/wheresrhys/fetch-mock/commit/817af39040a8573a2be802207b9247f166a4c68b))
+
 ## [0.1.3](https://github.com/wheresrhys/fetch-mock/compare/vitest-v0.1.2...vitest-v0.1.3) (2024-08-30)
 
 

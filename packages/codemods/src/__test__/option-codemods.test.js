@@ -12,11 +12,7 @@ function expectCodemodResult(src, expected) {
 }
 
 describe('codemods operating on options', () => {
-	[
-		'overwriteRoutes',
-		// ,
-		//  'warnOnFallback', 'sendAsJson'
-	].forEach((optionName) => {
+	['overwriteRoutes', 'warnOnFallback', 'sendAsJson'].forEach((optionName) => {
 		describe(optionName, () => {
 			it('Removes as global option when setting directly as property', () => {
 				expectCodemodResult(`fetchMock.config.${optionName} = true`, '');

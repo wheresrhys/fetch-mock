@@ -17,55 +17,53 @@ export function codemod(source: string, j: JSCodeshift) {
 		.closest(j.VariableDeclarator)
 		.get().value.id.name;
 
-  const directConfigSets = root.find(j.AssignmentExpression, {
-      left: {
-        type: 'MemberExpression',
-        property: {name: 'overwriteRoutes'},
-        object: {
-          type: 'MemberExpression',
-          property: {name: 'config'},
-          object: {
-            type: 'Identifier',
-            name: fetchMockVariableName,
-          }
-        }
-      },
-  }).remove();
+	const configSets = root
+		.find(j.CallExpression, {
+			callee: {
+				object: {
+					type: 'Identifier',
+					name: 'Object',
+				},
+				property: { name: 'assign' },
+			},
+		})
+		.filter((path) => {
+			const firstArg = path.value.arguments[0];
+			const secondArg = path.value.arguments[1];
+			return (
+				firstArg.type === 'MemberExpression' &&
+				firstArg.property.name === 'config' &&
+				firstArg.object.type === 'Identifier' &&
+				firstArg.object.name === fetchMockVariableName &&
+				secondArg.type === 'ObjectExpression'
+			);
+		});
+	['overwriteRoutes', 'warnOnFallback', 'sendAsJson'].forEach((name) => {
+		root
+			.find(j.AssignmentExpression, {
+				left: {
+					type: 'MemberExpression',
+					property: { name },
+					object: {
+						type: 'MemberExpression',
+						property: { name: 'config' },
+						object: {
+							type: 'Identifier',
+							name: fetchMockVariableName,
+						},
+					},
+				},
+			})
+			.remove();
+		configSets.find(j.Property, { key: { name } }).remove();
+	});
 
- const configSets = root
-    .find(j.CallExpression, {
-      callee: {
-        object: {
-          type: "Identifier",
-          name: "Object"
-        },
-        property: { name: "assign" }
-      }
-    })
-    .filter((path) => {
-      const firstArg = path.value.arguments[0];
-      const secondArg = path.value.arguments[1];
-      return (
-        firstArg.type === "MemberExpression" &&
-        firstArg.property.name === "config" &&
-        firstArg.object.type === "Identifier" &&
-        firstArg.object.name === fetchMockVariableName
-      ) && (secondArg.type === 'ObjectExpression'
-      && secondArg.properties.some(property => property.key.name === 'overwriteRoutes') );
-    })
-
-  configSets.filter((path) => {
-    const secondArg = path.value.arguments[1];
-    return (secondArg.properties.length === 1)
-  }).remove();
-
-  configSets.filter((path) => {
-    const secondArg = path.value.arguments[1];
-    return (secondArg.properties.length > 1)
-  })
-  .find(j.Property, { key: { name: "overwriteRoutes" } }).remove()
-
-
+	configSets
+		.filter((path) => {
+			const secondArg = path.value.arguments[1];
+			return secondArg.properties.length === 0;
+		})
+		.remove();
 
 	const fetchMockMethodCalls = root.find(j.CallExpression, {
 		callee: {
@@ -74,9 +72,7 @@ export function codemod(source: string, j: JSCodeshift) {
 				name: fetchMockVariableName,
 			},
 		},
-	});
-  fetchMockMethodCalls
-		.map((path) => {
+	}).map((path) => {
 			const paths = [path];
 			while (path.parentPath.value.type !== 'ExpressionStatement') {
 				path = path.parentPath;
@@ -85,7 +81,9 @@ export function codemod(source: string, j: JSCodeshift) {
 				}
 			}
 			return paths;
-		})
+		});
+  
+  fetchMockMethodCalls
 		.forEach((path) => {
 			const callee = path.value.callee as MemberExpression;
 			const property = callee.property as Identifier;

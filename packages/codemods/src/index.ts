@@ -41,5 +41,5 @@ export function codemod(source, j) {
 
 
 export default function transformer(file, api) {
-  return codemod(file.source, j);
+  return codemod(file.source, api.j);
 }

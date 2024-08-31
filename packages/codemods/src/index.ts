@@ -17,7 +17,24 @@ export function codemod(source: string, j: JSCodeshift) {
 		.closest(j.VariableDeclarator)
 		.get().value.id.name;
 
-	const usesOfFetchmock = root.find(j.CallExpression, {
+  const directConfigSets = root.find(j.AssignmentExpression, {
+      left: {
+        type: 'MemberExpression',
+        property: {name: 'overwriteRoutes'},
+        object: {
+          type: 'MemberExpression',
+          property: {name: 'config'},
+          object: {
+            type: 'Identifier',
+            name: fetchMockVariableName,
+          }
+        }
+      },
+  }).remove();
+
+
+
+	const fetchMockMethodCalls = root.find(j.CallExpression, {
 		callee: {
 			object: {
 				type: 'Identifier',
@@ -25,8 +42,7 @@ export function codemod(source: string, j: JSCodeshift) {
 			},
 		},
 	});
-
-	usesOfFetchmock
+  fetchMockMethodCalls
 		.map((path) => {
 			const paths = [path];
 			while (path.parentPath.value.type !== 'ExpressionStatement') {

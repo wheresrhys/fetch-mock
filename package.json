@@ -67,7 +67,6 @@
 		"rollup-plugin-copy": "^3.5.0",
 		"rollup-plugin-sourcemaps": "^0.6.3",
 		"ts-jest": "^29.2.5",
-		"ts-to-jsdoc": "^2.1.0",
 		"tsd": "^0.31.1",
 		"typescript": "^5.5.4",
 		"typescript-eslint": "^8.0.1",

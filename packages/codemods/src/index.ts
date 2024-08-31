@@ -7,15 +7,30 @@ import type {
 } from 'jscodeshift';
 export function codemod(source: string, j: JSCodeshift) {
 	const root = j(source);
-	const fetchMockVariableName = root
-		.find(j.CallExpression, {
-			callee: {
-				name: 'require',
-			},
-			arguments: [{ value: 'fetch-mock' }],
-		})
-		.closest(j.VariableDeclarator)
-		.get().value.id.name;
+	let fetchMockVariableName;
+	try {
+		fetchMockVariableName = root
+			.find(j.CallExpression, {
+				callee: {
+					name: 'require',
+				},
+				arguments: [{ value: 'fetch-mock' }],
+			})
+			.closest(j.VariableDeclarator)
+			.get().value.id.name;
+	} catch {
+		try {
+			fetchMockVariableName = root
+				.find(j.ImportDeclaration, {
+					source: { value: 'fetch-mock' },
+				})
+				.find(j.ImportDefaultSpecifier)
+				.get().value.local.name;
+			console.log(fetchMockVariableName);
+		} catch (err) {
+			console.log(err);
+		}
+	}
 
 	const configSets = root
 		.find(j.CallExpression, {
@@ -65,14 +80,16 @@ export function codemod(source: string, j: JSCodeshift) {
 		})
 		.remove();
 
-	const fetchMockMethodCalls = root.find(j.CallExpression, {
-		callee: {
-			object: {
-				type: 'Identifier',
-				name: fetchMockVariableName,
+	const fetchMockMethodCalls = root
+		.find(j.CallExpression, {
+			callee: {
+				object: {
+					type: 'Identifier',
+					name: fetchMockVariableName,
+				},
 			},
-		},
-	}).map((path) => {
+		})
+		.map((path) => {
 			const paths = [path];
 			while (path.parentPath.value.type !== 'ExpressionStatement') {
 				path = path.parentPath;
@@ -82,16 +99,15 @@ export function codemod(source: string, j: JSCodeshift) {
 			}
 			return paths;
 		});
-  
-  fetchMockMethodCalls
-		.forEach((path) => {
-			const callee = path.value.callee as MemberExpression;
-			const property = callee.property as Identifier;
-			const method = property.name;
-			if (method === 'mock') {
-				property.name = 'route';
-			}
-		});
+
+	fetchMockMethodCalls.forEach((path) => {
+		const callee = path.value.callee as MemberExpression;
+		const property = callee.property as Identifier;
+		const method = property.name;
+		if (method === 'mock') {
+			property.name = 'route';
+		}
+	});
 
 	return root.toSource();
 }

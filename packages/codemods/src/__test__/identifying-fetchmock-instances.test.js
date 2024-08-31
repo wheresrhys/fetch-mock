@@ -46,11 +46,11 @@ describe('identifying fetch-mock instances', () => {
 	it('esm import named something else', () => {
 		expectCodemodResult(
 			`
-            import fetchMock as fetchNot from 'fetch-mock';
+            import fetchNot from 'fetch-mock';
             fetchNot.mock("blah", 200)
         `,
 			`
-            import fetchMock as fetchNot from 'fetch-mock';
+            import fetchNot from 'fetch-mock';
             fetchNot.route("blah", 200)
         `,
 		);

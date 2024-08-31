@@ -32,6 +32,39 @@ export function codemod(source: string, j: JSCodeshift) {
       },
   }).remove();
 
+ const configSets = root
+    .find(j.CallExpression, {
+      callee: {
+        object: {
+          type: "Identifier",
+          name: "Object"
+        },
+        property: { name: "assign" }
+      }
+    })
+    .filter((path) => {
+      const firstArg = path.value.arguments[0];
+      const secondArg = path.value.arguments[1];
+      return (
+        firstArg.type === "MemberExpression" &&
+        firstArg.property.name === "config" &&
+        firstArg.object.type === "Identifier" &&
+        firstArg.object.name === fetchMockVariableName
+      ) && (secondArg.type === 'ObjectExpression'
+      && secondArg.properties.some(property => property.key.name === 'overwriteRoutes') );
+    })
+
+  configSets.filter((path) => {
+    const secondArg = path.value.arguments[1];
+    return (secondArg.properties.length === 1)
+  }).remove();
+
+  configSets.filter((path) => {
+    const secondArg = path.value.arguments[1];
+    return (secondArg.properties.length > 1)
+  })
+  .find(j.Property, { key: { name: "overwriteRoutes" } }).remove()
+
 
 
 	const fetchMockMethodCalls = root.find(j.CallExpression, {

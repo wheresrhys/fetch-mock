@@ -24,13 +24,15 @@ describe('codemods operating on options', () => {
 			it('Removes as global option when using Object.assign', () => {
 				expectCodemodResult(
 					`Object.assign(fetchMock.config, {${optionName}: true})`,
-					`Object.assign(fetchMock.config, {})`,
+					'',
 				);
 			});
 			it('Removes as global option when using Object.assign alongside other options', () => {
 				expectCodemodResult(
 					`Object.assign(fetchMock.config, {${optionName}: true, other: 'value'})`,
-					`Object.assign(fetchMock.config, {other: 'value'})`,
+					`Object.assign(fetchMock.config, {
+  other: 'value'
+})`,
 				);
 			});
 			it.skip('Removes as global option when using spread', () => {

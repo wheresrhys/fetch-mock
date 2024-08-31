@@ -30,6 +30,9 @@
 	"packages": {
 		"packages/core": {},
 		"packages/vitest": {},
+		"packages/jest": {
+			"releaseAs": "0.1.0"
+		},
 		"packages/fetch-mock": {}
 	},
 	"bootstrap-sha": "812f462efde5ade292394b94c9f2cbe0aedf8e3f",

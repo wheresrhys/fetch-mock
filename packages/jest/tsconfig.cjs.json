@@ -1,0 +1,13 @@
+{
+	"extends": "../../tsconfig.base.json",
+	"include": ["src"],
+	"exclude": ["node_modules", "src/__tests__"],
+	"rootDir": "src",
+	"compilerOptions": {
+		"esModuleInterop": true,
+		"moduleResolution": "node",
+		"module": "commonjs",
+		"outDir": "dist/cjs",
+		"target": "es2021"
+	}
+}

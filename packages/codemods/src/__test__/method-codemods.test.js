@@ -135,11 +135,56 @@ describe('codemods operating on methods', () => {
 		});
 	});
 
-	//
-	// .lastOptions() => .callHistory.lastCall()?.options
-	// .lastResponse() => .callHistory.lastCall()?.response
+	['get', 'post', 'put', 'delete', 'head', 'patch'].forEach((method) => {
+		describe(`${method}Any() -> any()`, () => {
+			it('when only has response', () => {
+				expectCodemodResult(
+					`fetchMock.${method}Any(200)`,
+					`fetchMock.any(200, {method: '${method}'})`,
+				);
+			});
+			it('when has additional options', () => {
+				expectCodemodResult(
+					`fetchMock.${method}Any(200, {name: "my-route"})`,
+					`fetchMock.any(200, {
+  name: "my-route",
+  method: '${method}'
+})`,
+				);
+			});
+			it('when has name', () => {
+				expectCodemodResult(
+					`fetchMock.${method}Any(200, "my-route")`,
+					`fetchMock.any(200, {name: "my-route", method: '${method}'})`,
+				);
+			});
+		});
+		describe(`${method}AnyOnce() -> anyOnce()`, () => {
+			it('when only has response', () => {
+				expectCodemodResult(
+					`fetchMock.${method}AnyOnce(200)`,
+					`fetchMock.anyOnce(200, {method: '${method}'})`,
+				);
+			});
+			it('when has additional options', () => {
+				expectCodemodResult(
+					`fetchMock.${method}AnyOnce(200, {name: "my-route"})`,
+					`fetchMock.anyOnce(200, {
+  name: "my-route",
+  method: '${method}'
+})`,
+				);
+			});
+			it('when has name', () => {
+				expectCodemodResult(
+					`fetchMock.${method}AnyOnce(200, "my-route")`,
+					`fetchMock.anyOnce(200, {name: "my-route", method: '${method}'})`,
+				);
+			});
+		});
+	});
+
 	// .sandbox() => .fetchHandler(and maybe a comment about.createInstance())
-	// .getAny(), .postAny(), .putAny(), .deleteAny(), .headAny(), .patchAny(), .getAnyOnce(), .postAnyOnce(), .putAnyOnce(), .deleteAnyOnce(), .headAnyOnce(), .patchAnyOnce() => calls to the underlying method + options
 	// restore() / reset()... once I've decided how to implement these
 	// lastCall() => try to change uses of this to expect a callLog, but probably just insert a commemnt / error
 });

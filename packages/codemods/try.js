@@ -5,7 +5,7 @@ console.log(
 	codemod(
 		`
 import fetchMock from 'fetch-mock';
-fetchMock.lastUrl(1, 2)
+fetchMock.getAny(200, {name: 'who'})
 `,
 		jscodeshift,
 	),

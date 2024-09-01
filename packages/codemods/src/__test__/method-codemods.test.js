@@ -136,49 +136,43 @@ describe('codemods operating on methods', () => {
 	});
 
 	['get', 'post', 'put', 'delete', 'head', 'patch'].forEach((method) => {
-		describe(`${method}Any() -> any()`, () => {
+		describe(`${method}Any() -> ${method}("*")`, () => {
 			it('when only has response', () => {
 				expectCodemodResult(
 					`fetchMock.${method}Any(200)`,
-					`fetchMock.any(200, {method: '${method}'})`,
+					`fetchMock.${method}("*", 200)`,
 				);
 			});
 			it('when has additional options', () => {
 				expectCodemodResult(
 					`fetchMock.${method}Any(200, {name: "my-route"})`,
-					`fetchMock.any(200, {
-  name: "my-route",
-  method: '${method}'
-})`,
+					`fetchMock.${method}("*", 200, {name: "my-route"})`,
 				);
 			});
 			it('when has name', () => {
 				expectCodemodResult(
 					`fetchMock.${method}Any(200, "my-route")`,
-					`fetchMock.any(200, {name: "my-route", method: '${method}'})`,
+					`fetchMock.${method}("*", 200, "my-route")`,
 				);
 			});
 		});
-		describe(`${method}AnyOnce() -> anyOnce()`, () => {
+		describe(`${method}AnyOnce() -> ${method}Once("*")`, () => {
 			it('when only has response', () => {
 				expectCodemodResult(
 					`fetchMock.${method}AnyOnce(200)`,
-					`fetchMock.anyOnce(200, {method: '${method}'})`,
+					`fetchMock.${method}Once("*", 200)`,
 				);
 			});
 			it('when has additional options', () => {
 				expectCodemodResult(
 					`fetchMock.${method}AnyOnce(200, {name: "my-route"})`,
-					`fetchMock.anyOnce(200, {
-  name: "my-route",
-  method: '${method}'
-})`,
+					`fetchMock.${method}Once("*", 200, {name: "my-route"})`,
 				);
 			});
 			it('when has name', () => {
 				expectCodemodResult(
 					`fetchMock.${method}AnyOnce(200, "my-route")`,
-					`fetchMock.anyOnce(200, {name: "my-route", method: '${method}'})`,
+					`fetchMock.${method}Once("*", 200, "my-route")`,
 				);
 			});
 		});

@@ -89,6 +89,52 @@ describe('codemods operating on methods', () => {
 		});
 	});
 
+	describe('converting lastOptions()', () => {
+		it('single .lastOptions()', () => {
+			expectCodemodResult(
+				'fetchMock.lastOptions()',
+				'fetchMock.callHistory.lastCall()?.options',
+			);
+		});
+		it('lastOptions() with arguments', () => {
+			expectCodemodResult(
+				`fetchMock.lastOptions('name', {method: 'get'})`,
+				`fetchMock.callHistory.lastCall('name', {method: 'get'})?.options`,
+			);
+		});
+
+		it('works with other names for fetch-mock', () => {
+			expectCodemodResult(
+				`fm.lastOptions('name', {method: 'get'})`,
+				`fm.callHistory.lastCall('name', {method: 'get'})?.options`,
+				'fm',
+			);
+		});
+	});
+
+	describe('converting lastResponse()', () => {
+		it('single .lastResponse()', () => {
+			expectCodemodResult(
+				'fetchMock.lastResponse()',
+				'fetchMock.callHistory.lastCall()?.response',
+			);
+		});
+		it('lastResponse() with arguments', () => {
+			expectCodemodResult(
+				`fetchMock.lastResponse('name', {method: 'get'})`,
+				`fetchMock.callHistory.lastCall('name', {method: 'get'})?.response`,
+			);
+		});
+
+		it('works with other names for fetch-mock', () => {
+			expectCodemodResult(
+				`fm.lastResponse('name', {method: 'get'})`,
+				`fm.callHistory.lastCall('name', {method: 'get'})?.response`,
+				'fm',
+			);
+		});
+	});
+
 	//
 	// .lastOptions() => .callHistory.lastCall()?.options
 	// .lastResponse() => .callHistory.lastCall()?.response

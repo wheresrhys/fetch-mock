@@ -1,5 +1,4 @@
-export function simpleOptions (fetchMockVariableName, root, j) {
-
+export function simpleOptions(fetchMockVariableName, root, j) {
 	const configSets = root
 		.find(j.CallExpression, {
 			callee: {

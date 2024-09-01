@@ -1,4 +1,4 @@
-export function simpleMethods (fetchMockVariableName, root, j)  {
+export function simpleMethods(fetchMockVariableName, root, j) {
 	const fetchMockMethodCalls = root
 		.find(j.CallExpression, {
 			callee: {
@@ -24,5 +24,26 @@ export function simpleMethods (fetchMockVariableName, root, j)  {
 		if (method === 'mock') {
 			path.value.callee.property.name = 'route';
 		}
+	});
+	const lastUrl = root
+		.find(j.CallExpression, {
+			callee: {
+				object: {
+					type: 'Identifier',
+					name: fetchMockVariableName,
+				},
+				property: {
+					name: 'lastUrl',
+				},
+			},
+		})
+		.closest(j.ExpressionStatement);
+
+	lastUrl.replaceWith((path) => {
+		const oldCall = j(path).find(j.CallExpression).get();
+		const builder = j(`${fetchMockVariableName}.callHistory.lastCall()?.url`);
+		const newCall = builder.find(j.CallExpression).get();
+		newCall.value.arguments = oldCall.value.arguments;
+		return builder.find(j.ExpressionStatement).get().value;
 	});
 }

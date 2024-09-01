@@ -2,18 +2,22 @@ import { describe, it, expect } from 'vitest';
 import { codemod } from '../index';
 import jscodeshift from 'jscodeshift';
 
-const prependFetchMock = (src) =>
-	`const fetchMock = require('fetch-mock');\n${src}`;
+const prependFetchMock = (src, fetchMockVariableName) =>
+	`const ${fetchMockVariableName} = require('fetch-mock');\n${src}`;
 
-function expectCodemodResult(src, expected) {
-	expect(codemod(prependFetchMock(src), jscodeshift)).toEqual(
-		prependFetchMock(expected),
-	);
+function expectCodemodResult(
+	src,
+	expected,
+	fetchMockVariableName = 'fetchMock',
+) {
+	expect(
+		codemod(prependFetchMock(src, fetchMockVariableName), jscodeshift),
+	).toEqual(prependFetchMock(expected, fetchMockVariableName));
 }
 
 describe('codemods operating on methods', () => {
 	describe('converting mock() to route()', () => {
-		//Next to the first one in a file leave a comment explaining that they need to use mockGlobal() too
+		//TODO Next to the first one in a file leave a comment explaining that they need to use mockGlobal() too
 		it('single .mock()', () => {
 			expectCodemodResult(
 				'fetchMock.mock("blah", 200)',
@@ -62,7 +66,30 @@ describe('codemods operating on methods', () => {
 		});
 	});
 
-	// .lastUrl() => .callHistory.lastCall()?.url
+	describe('converting lastUrl()', () => {
+		it('single .lastUrl()', () => {
+			expectCodemodResult(
+				'fetchMock.lastUrl()',
+				'fetchMock.callHistory.lastCall()?.url',
+			);
+		});
+		it('lastUrl() with arguments', () => {
+			expectCodemodResult(
+				`fetchMock.lastUrl('name', {method: 'get'})`,
+				`fetchMock.callHistory.lastCall('name', {method: 'get'})?.url`,
+			);
+		});
+
+		it('works with other names for fetch-mock', () => {
+			expectCodemodResult(
+				`fm.lastUrl('name', {method: 'get'})`,
+				`fm.callHistory.lastCall('name', {method: 'get'})?.url`,
+				'fm',
+			);
+		});
+	});
+
+	//
 	// .lastOptions() => .callHistory.lastCall()?.options
 	// .lastResponse() => .callHistory.lastCall()?.response
 	// .sandbox() => .fetchHandler(and maybe a comment about.createInstance())

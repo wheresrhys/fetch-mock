@@ -1,8 +1,7 @@
-import {simpleOptions} from './codemods/options'
-import {simpleMethods} from './codemods/methods'
+import { simpleOptions } from './codemods/options.js';
+import { simpleMethods } from './codemods/methods.js';
 
-
-function findFetchMockVariableName (root, j) {
+function findFetchMockVariableName(root, j) {
 	let fetchMockVariableName;
 	try {
 		fetchMockVariableName = root
@@ -23,7 +22,7 @@ function findFetchMockVariableName (root, j) {
 				.find(j.ImportDefaultSpecifier)
 				.get().value.local.name;
 		} catch (err) {
-			throw new Error("No fetch-mock references found")
+			throw new Error('No fetch-mock references found', err);
 		}
 	}
 	return fetchMockVariableName;
@@ -31,11 +30,9 @@ function findFetchMockVariableName (root, j) {
 
 export function codemod(source, j) {
 	const root = j(source);
-	const fetchMockVariableName = findFetchMockVariableName(root, j)
-
-	simpleOptions(fetchMockVariableName, root, j)
-	simpleMethods(fetchMockVariableName, root, j)
-
+	const fetchMockVariableName = findFetchMockVariableName(root, j);
+	simpleOptions(fetchMockVariableName, root, j);
+	simpleMethods(fetchMockVariableName, root, j);
 	return root.toSource();
 }
 

@@ -55,31 +55,48 @@ describe('codemods operating on options', () => {
 				// all though the src doesn't actually handle these explicitly,
 				// these tests ensure that the renaming of these methods to ones that
 				// do get handled happens first
-				'getAnyOnce',
-				'mock',
-			].forEach((methodName) => {
+				'getAnyOnce:getOnce',
+				'mock:route',
+			].forEach((methods) => {
+				const [methodName, newMethodName = methodName] = methods.split(':');
 				describe(`when using ${methodName}`, () => {
-					if (/any/i.test(methodName)) {
+					if (methodName === 'getAnyOnce') {
 						it(`Removes as option on third parameter of ${methodName}()`, () => {
 							expectCodemodResult(
-								`fetchMock.${methodName}(200, {name: 'rio', ${optionName}: true})`,
-								`fetchMock.${methodName}(200, {
-	  name: 'rio'
-	})`,
+								`fetchMock.getAnyOnce(200, {name: 'rio', ${optionName}: true})`,
+								`fetchMock.getOnce("*", 200, {
+  name: 'rio'
+})`,
 							);
 						});
 
 						it(`Removes third parameter of ${methodName}() if no other options remain`, () => {
 							expectCodemodResult(
-								`fetchMock.${methodName}('*', 200, {${optionName}: true})`,
-								`fetchMock.${methodName}('*', 200)`,
+								`fetchMock.getAnyOnce(200, {${optionName}: true})`,
+								`fetchMock.getOnce("*", 200)`,
+							);
+						});
+					} else if (/any/.test(methodName)) {
+						it(`Removes as option on third parameter of ${methodName}()`, () => {
+							expectCodemodResult(
+								`fetchMock.${methodName}(200, {name: 'rio', ${optionName}: true})`,
+								`fetchMock.${newMethodName}(200, {
+  name: 'rio'
+})`,
+							);
+						});
+
+						it(`Removes third parameter of ${methodName}() if no other options remain`, () => {
+							expectCodemodResult(
+								`fetchMock.${methodName}(200, {${optionName}: true})`,
+								`fetchMock.${newMethodName}(200)`,
 							);
 						});
 					} else {
 						it(`Removes as option on first parameter of ${methodName}()`, () => {
 							expectCodemodResult(
 								`fetchMock.${methodName}({url: '*', response: 200, ${optionName}: true})`,
-								`fetchMock.${methodName}({
+								`fetchMock.${newMethodName}({
   url: '*',
   response: 200
 })`,
@@ -88,16 +105,16 @@ describe('codemods operating on options', () => {
 						it(`Removes as option on third parameter of ${methodName}()`, () => {
 							expectCodemodResult(
 								`fetchMock.${methodName}('*', 200, {name: 'rio', ${optionName}: true})`,
-								`fetchMock.${methodName}('*', 200, {
-	  name: 'rio'
-	})`,
+								`fetchMock.${newMethodName}('*', 200, {
+  name: 'rio'
+})`,
 							);
 						});
 
 						it(`Removes third parameter of ${methodName}() if no other options remain`, () => {
 							expectCodemodResult(
 								`fetchMock.${methodName}('*', 200, {${optionName}: true})`,
-								`fetchMock.${methodName}('*', 200)`,
+								`fetchMock.${newMethodName}('*', 200)`,
 							);
 						});
 					}

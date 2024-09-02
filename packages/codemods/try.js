@@ -5,7 +5,7 @@ console.log(
 	codemod(
 		`
 import fetchMock from 'fetch-mock';
-fetchMock.once({url: '*', response: 200, sendAsJson: true})
+fetchMock.getAnyOnce(200, {sendAsJson: true})
 `,
 		jscodeshift,
 	),

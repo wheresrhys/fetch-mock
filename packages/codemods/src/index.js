@@ -31,8 +31,11 @@ function findFetchMockVariableName(root, j) {
 export function codemod(source, j) {
 	const root = j(source);
 	const fetchMockVariableName = findFetchMockVariableName(root, j);
-	simpleOptions(fetchMockVariableName, root, j);
 	simpleMethods(fetchMockVariableName, root, j);
+	// run after simpleMethods because means the options rewriters have to iterate
+	// over smaller list of methods
+	simpleOptions(fetchMockVariableName, root, j);
+
 	return root.toSource();
 }
 

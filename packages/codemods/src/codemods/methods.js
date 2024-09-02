@@ -1,5 +1,5 @@
-export function simpleMethods(fetchMockVariableName, root, j) {
-	const fetchMockMethodCalls = root
+export function getAllChainedMethodCalls(fetchMockVariableName, root, j) {
+	return root
 		.find(j.CallExpression, {
 			callee: {
 				object: {
@@ -18,6 +18,14 @@ export function simpleMethods(fetchMockVariableName, root, j) {
 			}
 			return paths;
 		});
+}
+
+export function simpleMethods(fetchMockVariableName, root, j) {
+	const fetchMockMethodCalls = getAllChainedMethodCalls(
+		fetchMockVariableName,
+		root,
+		j,
+	);
 
 	fetchMockMethodCalls.forEach((path) => {
 		const method = path.value.callee.property.name;
@@ -34,28 +42,7 @@ export function simpleMethods(fetchMockVariableName, root, j) {
 				path.value.callee.property.name = `${httpMethod}Once`;
 			}
 			if (prependStar) {
-				// const options =
 				path.value.arguments.unshift(j.stringLiteral('*'));
-				// [1];
-				// if (!options) {
-				// 	path.value.arguments.push(
-				// 		j(`const options = {method: '${httpMethod}'}`)
-				// 			.find(j.ObjectExpression)
-				// 			.get().value,
-				// 	);
-				// } else if (options.type === 'Literal') {
-				// 	path.value.arguments[1] = j(
-				// 		`const options = {name: ${options.raw}, method: '${httpMethod}'}`,
-				// 	)
-				// 		.find(j.ObjectExpression)
-				// 		.get().value;
-				// } else if (options.type === 'ObjectExpression') {
-				// 	options.properties.push(
-				// 		j(`const options = {method: '${httpMethod}'}`)
-				// 			.find(j.Property)
-				// 			.get().value,
-				// 	);
-				// }
 			}
 		});
 	});

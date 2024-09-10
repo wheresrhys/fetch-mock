@@ -14,7 +14,7 @@ Features include:
 
 _New_ If using jest, try the new [fetch-mock-jest](https://www.npmjs.com/package/fetch-mock-jest) wrapper.
 
-_New_ [Cheatsheet](https://github.com/wheresrhys/fetch-mock/blob/master/docs/cheatsheet.md)
+_New_ [Cheatsheet](https://github.com/wheresrhys/fetch-mock/blob/main/docs/docs/fetch-mock/Usage/cheatsheet.md)
 
 ![node version](https://img.shields.io/node/v/fetch-mock.svg?style=flat-square)
 [![licence](https://img.shields.io/npm/l/fetch-mock.svg?style=flat-square)](https://github.com/wheresrhys/fetch-mock/blob/master/LICENSE)

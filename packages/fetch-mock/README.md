@@ -54,7 +54,7 @@ fetch-mock requires the following to run:
 
 ## Documentation and Usage
 
-See the [project website](http://www.wheresrhys.co.uk/fetch-mock/) or [cheatsheet](https://github.com/wheresrhys/fetch-mock/blob/master/docs/cheatsheet.md)
+See the [project website](http://www.wheresrhys.co.uk/fetch-mock/) or [cheatsheet](https://github.com/wheresrhys/fetch-mock/blob/main/docs/docs/fetch-mock/Usage/cheatsheet.md)
 
 If you're using jest as your test runner, consider using [fetch-mock-jest](https://www.npmjs.com/package/fetch-mock-jest), a lightweight, jest-friendly wrapper around fetch-mock.
 

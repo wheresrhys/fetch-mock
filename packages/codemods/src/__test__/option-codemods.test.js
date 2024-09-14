@@ -194,6 +194,27 @@ describe('codemods operating on options', () => {
 		});
 	});
 	describe('fallbackToNetwork', () => {
-		// try to replace fallbackToNetwork: always with spyGlobal()... but probably just insert an error / comment that points at the docs
+		const errorString =
+			'throw new Error("fallbackToNetwork option is deprecated. Use the `spyGlobal()` method instead")';
+		it('Removes fallbackToNetwork as global option when setting directly as property', () => {
+			expectCodemodResult(
+				`fetchMock.config.fallbackToNetwork = true`,
+				errorString,
+			);
+		});
+		it('Removes fallbackToNetwork as global option when using Object.assign', () => {
+			expectCodemodResult(
+				`Object.assign(fetchMock.config, {fallbackToNetwork: true})`,
+				errorString,
+			);
+		});
+		it('Removes fallbackToNetwork as global option when using Object.assign alongside other options', () => {
+			expectCodemodResult(
+				`Object.assign(fetchMock.config, {fallbackToNetwork: true, other: 'value'})`,
+				`Object.assign(fetchMock.config, {
+  other: 'value'
+})${errorString}`,
+			);
+		});
 	});
 });

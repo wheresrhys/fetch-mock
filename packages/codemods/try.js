@@ -5,7 +5,7 @@ console.log(
 	codemod(
 		`
 import fetchMock from 'fetch-mock';
-fetchMock.getAnyOnce(200, {sendAsJson: true})
+Object.assign(fetchMock.config, {fallbackToNetwork: true})
 `,
 		jscodeshift,
 	),

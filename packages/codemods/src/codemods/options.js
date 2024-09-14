@@ -1,5 +1,13 @@
 import { getAllChainedMethodCalls } from './methods.js';
 const simpleOptionNames = ['overwriteRoutes', 'warnOnFallback', 'sendAsJson'];
+
+function appendError(message, path, j) {
+	path
+		.closest(j.ExpressionStatement)
+		.insertAfter(
+			j(`throw new Error("${message}")`).find(j.ThrowStatement).get().value,
+		);
+}
 export function simpleOptions(fetchMockVariableName, root, j) {
 	const configSets = root
 		.find(j.CallExpression, {
@@ -22,24 +30,31 @@ export function simpleOptions(fetchMockVariableName, root, j) {
 				secondArg.type === 'ObjectExpression'
 			);
 		});
-	simpleOptionNames.forEach((name) => {
-		root
-			.find(j.AssignmentExpression, {
-				left: {
+	[...simpleOptionNames, 'fallbackToNetwork'].forEach((name) => {
+		const propertyAssignments = root.find(j.AssignmentExpression, {
+			left: {
+				type: 'MemberExpression',
+				property: { name },
+				object: {
 					type: 'MemberExpression',
-					property: { name },
+					property: { name: 'config' },
 					object: {
-						type: 'MemberExpression',
-						property: { name: 'config' },
-						object: {
-							type: 'Identifier',
-							name: fetchMockVariableName,
-						},
+						type: 'Identifier',
+						name: fetchMockVariableName,
 					},
 				},
-			})
-			.remove();
-		configSets.find(j.Property, { key: { name } }).remove();
+			},
+		});
+		const objectAssignments = configSets.find(j.Property, { key: { name } });
+
+		if (name === 'fallbackToNetwork') {
+			const errorMessage =
+				'fallbackToNetwork option is deprecated. Use the `spyGlobal()` method instead';
+			appendError(errorMessage, propertyAssignments, j);
+			appendError(errorMessage, objectAssignments, j);
+		}
+		propertyAssignments.remove();
+		objectAssignments.remove();
 	});
 
 	configSets

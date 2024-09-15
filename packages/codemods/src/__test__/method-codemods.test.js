@@ -17,7 +17,6 @@ function expectCodemodResult(
 
 describe('codemods operating on methods', () => {
 	describe('converting mock() to route()', () => {
-		//TODO Next to the first one in a file leave a comment explaining that they need to use mockGlobal() too
 		it('single .mock()', () => {
 			expectCodemodResult(
 				'fetchMock.mock("blah", 200)',
@@ -62,6 +61,89 @@ describe('codemods operating on methods', () => {
 					.get("blah", 200)
 					.route("bloop", 300)
 				`,
+			);
+		});
+	});
+
+	describe('converting resetting methods', () => {
+		it('rewrites restore()', () => {
+			expectCodemodResult(
+				'fetchMock.restore()',
+				`
+				fetchMock.clearHistory();
+				fetchMock.removeRoutes({
+					includeFallback: true,
+				});
+				fetchMock.unmockGlobal();
+			`,
+			);
+		});
+		it('rewrites restore() with {sticky: true}', () => {
+			expectCodemodResult(
+				'fetchMock.restore({sticky: true})',
+				`
+				fetchMock.clearHistory();
+				fetchMock.removeRoutes({
+					includeSticky: true,
+					includeFallback: true,
+				});
+				fetchMock.unmockGlobal();
+			`,
+			);
+		});
+		it('rewrites reset()', () => {
+			expectCodemodResult(
+				'fetchMock.reset()',
+				`
+				fetchMock.clearHistory();
+				fetchMock.removeRoutes({
+					includeFallback: true,
+				});
+				fetchMock.unmockGlobal();
+			`,
+			);
+		});
+		it('rewrites reset() with {sticky: true}', () => {
+			expectCodemodResult(
+				'fetchMock.reset({sticky: true})',
+				`
+				fetchMock.clearHistory();
+				fetchMock.removeRoutes({
+					includeSticky: true,
+					includeFallback: true,
+				});
+				fetchMock.unmockGlobal();
+			`,
+			);
+		});
+
+		it('rewrites resetBehavior()', () => {
+			expectCodemodResult(
+				'fetchMock.resetBehavior()',
+				`
+				fetchMock.removeRoutes({
+					includeFallback: true,
+				});
+				fetchMock.unmockGlobal();
+			`,
+			);
+		});
+		it('rewrites resetBehavior() with {sticky: true}', () => {
+			expectCodemodResult(
+				'fetchMock.resetBehavior({sticky: true})',
+				`
+				fetchMock.removeRoutes({
+					includeSticky: true,
+					includeFallback: true,
+				});
+				fetchMock.unmockGlobal();
+			`,
+			);
+		});
+		it('rewrites resetHistory()', () => {
+			expectCodemodResult(
+				'fetchMock.resetHistory()',
+				'fetchMock.clearHistory()',
 			);
 		});
 	});
@@ -179,6 +261,7 @@ describe('codemods operating on methods', () => {
 	});
 
 	// .sandbox() => .fetchHandler(and maybe a comment about.createInstance())
-	// restore() / reset()... once I've decided how to implement these
+
 	// lastCall() => try to change uses of this to expect a callLog, but probably just insert a commemnt / error
+	// calls() => add error
 });

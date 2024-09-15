@@ -5,7 +5,7 @@ console.log(
 	codemod(
 		`
 import fetchMock from 'fetch-mock';
-Object.assign(fetchMock.config, {fallbackToNetwork: true})
+fetchMock.resetHistory()
 `,
 		jscodeshift,
 	),

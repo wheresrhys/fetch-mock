@@ -32,6 +32,14 @@ export function simpleMethods(fetchMockVariableName, root, j) {
 		if (method === 'mock') {
 			path.value.callee.property.name = 'route';
 		}
+
+		if (method === 'mock') {
+			path.value.callee.property.name = 'route';
+		}
+
+		if (method === 'resetHistory') {
+			path.value.callee.property.name = 'clearHistory';
+		}
 		['get', 'post', 'put', 'delete', 'head', 'patch'].some((httpMethod) => {
 			let prependStar = false;
 			if (method === `${httpMethod}Any`) {

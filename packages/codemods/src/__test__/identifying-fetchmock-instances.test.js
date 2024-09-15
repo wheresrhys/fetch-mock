@@ -59,4 +59,5 @@ describe('identifying fetch-mock instances', () => {
 	// sandbox() instances
 	// sandbox() instances used by jest / vitest.mock
 	// identify multiple instances on a page e.g. fetchMock and fm=fetchMock.sandbox()
+	// identify when a fm instance with lots of chained methods is assigned to a new variable
 });

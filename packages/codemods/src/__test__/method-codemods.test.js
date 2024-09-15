@@ -144,12 +144,19 @@ fetchMock.unmockGlobal();`,
 		});
 	});
 
-	describe('converting lastCall()', () => {
-		it('single .lastUrl()', () => {
+	describe('warning about CallLog', () => {
+		it('lastCall()', () => {
 			expectCodemodResult(
 				'fetchMock.lastCall()',
 				`throw new Error("lastCall() now returns a CallLog object instead of an array. Refer to the documentation")
 fetchMock.lastCall()`,
+			);
+		});
+		it('calls()', () => {
+			expectCodemodResult(
+				'fetchMock.calls()',
+				`throw new Error("calls() now returns an array of CallLog objects instead of an array of arrays. Refer to the documentation")
+fetchMock.calls()`,
 			);
 		});
 	});
@@ -244,6 +251,4 @@ fetchMock.lastCall()`,
 	});
 
 	// .sandbox() => .fetchHandler(and maybe a comment about.createInstance())
-	// lastCall() => try to change uses of this to expect a callLog, but probably just insert a commemnt / error
-	// calls() => add error
 });

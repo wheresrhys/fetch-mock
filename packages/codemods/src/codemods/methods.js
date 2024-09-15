@@ -136,4 +136,25 @@ fetchMock.unmockGlobal();
 				.find(j.ThrowStatement)
 				.get().value,
 		);
+
+	root
+		.find(j.CallExpression, {
+			callee: {
+				object: {
+					type: 'Identifier',
+					name: fetchMockVariableName,
+				},
+				property: {
+					name: 'calls',
+				},
+			},
+		})
+		.closest(j.ExpressionStatement)
+		.insertBefore(
+			j(
+				'throw new Error("calls() now returns an array of CallLog objects instead of an array of arrays. Refer to the documentation")',
+			)
+				.find(j.ThrowStatement)
+				.get().value,
+		);
 }

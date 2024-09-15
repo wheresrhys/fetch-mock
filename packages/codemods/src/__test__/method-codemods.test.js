@@ -250,5 +250,21 @@ fetchMock.calls()`,
 		});
 	});
 
+	describe('sandbox()', () => {
+		it('replace simple case with fetchHandler', () => {
+			expectCodemodResult(
+				`fetchMock.sandbox()`,
+				`throw new Error('In most cases .sandbox() can now be replaced by .fetchHandler. Refer to the docs if this does not work for you')
+fetchMock.fetchHandler`,
+			);
+		});
+		it('replace complex case with fetchHandler', () => {
+			expectCodemodResult(
+				`jest.mock('node-fetch', () => fetchMock.sandbox())`,
+				`throw new Error('In most cases .sandbox() can now be replaced by .fetchHandler. Refer to the docs if this does not work for you')
+jest.mock('node-fetch', () => fetchMock.fetchHandler)`,
+			);
+		});
+	});
 	// .sandbox() => .fetchHandler(and maybe a comment about.createInstance())
 });

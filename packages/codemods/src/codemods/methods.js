@@ -54,36 +54,37 @@ export function simpleMethods(fetchMockVariableName, root, j) {
 			}
 		});
 	});
-
-	root
-		.find(j.CallExpression, {
-			callee: {
-				object: {
-					type: 'Identifier',
-					name: fetchMockVariableName,
+	['reset', 'restore'].forEach((methodName) => {
+		root
+			.find(j.CallExpression, {
+				callee: {
+					object: {
+						type: 'Identifier',
+						name: fetchMockVariableName,
+					},
+					property: {
+						name: methodName,
+					},
 				},
-				property: {
-					name: 'reset',
-				},
-			},
-		})
-		.forEach((path) => {
-			const newExpressions = j(`
+			})
+			.forEach((path) => {
+				const newExpressions = j(`
 fetchMock.clearHistory();
 fetchMock.removeRoutes({
 	includeFallback: true,
 });
 fetchMock.unmockGlobal();
 `)
-				.find(j.ExpressionStatement)
-				.paths();
-			const insertLocation = j(path)
-				.closest(j.ExpressionStatement)
-				.replaceWith(newExpressions.shift().value);
-			while (newExpressions.length) {
-				insertLocation.insertAfter(newExpressions.pop().value);
-			}
-		});
+					.find(j.ExpressionStatement)
+					.paths();
+				const insertLocation = j(path)
+					.closest(j.ExpressionStatement)
+					.replaceWith(newExpressions.shift().value);
+				while (newExpressions.length) {
+					insertLocation.insertAfter(newExpressions.pop().value);
+				}
+			});
+	});
 
 	[
 		['lastUrl', 'url'],

@@ -5,7 +5,7 @@ console.log(
 	codemod(
 		`
 import fetchMock from 'fetch-mock';
-fetchMock.reset();
+fetchMock.restore();
 `,
 		jscodeshift,
 	),

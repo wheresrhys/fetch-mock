@@ -69,75 +69,48 @@ describe('codemods operating on methods', () => {
 		it('rewrites restore()', () => {
 			expectCodemodResult(
 				'fetchMock.restore()',
-				`
-				fetchMock.clearHistory();
-				fetchMock.removeRoutes({
-					includeFallback: true,
-				});
-				fetchMock.unmockGlobal();
-			`,
+				`fetchMock.clearHistory();
+fetchMock.removeRoutes();
+fetchMock.unmockGlobal();`,
 			);
 		});
 		it('rewrites restore() with {sticky: true}', () => {
 			expectCodemodResult(
 				'fetchMock.restore({sticky: true})',
-				`
-				fetchMock.clearHistory();
-				fetchMock.removeRoutes({
-					includeSticky: true,
-					includeFallback: true,
-				});
-				fetchMock.unmockGlobal();
-			`,
+				`fetchMock.clearHistory();
+fetchMock.removeRoutes({includeSticky: true});
+fetchMock.unmockGlobal();`,
 			);
 		});
 		it('rewrites reset()', () => {
 			expectCodemodResult(
 				'fetchMock.reset()',
-				`
-				fetchMock.clearHistory();
-				fetchMock.removeRoutes({
-					includeFallback: true,
-				});
-				fetchMock.unmockGlobal();
-			`,
+				`fetchMock.clearHistory();
+fetchMock.removeRoutes();
+fetchMock.unmockGlobal();`,
 			);
 		});
 		it('rewrites reset() with {sticky: true}', () => {
 			expectCodemodResult(
 				'fetchMock.reset({sticky: true})',
-				`
-				fetchMock.clearHistory();
-				fetchMock.removeRoutes({
-					includeSticky: true,
-					includeFallback: true,
-				});
-				fetchMock.unmockGlobal();
-			`,
+				`fetchMock.clearHistory();
+fetchMock.removeRoutes({includeSticky: true});
+fetchMock.unmockGlobal();`,
 			);
 		});
 
 		it('rewrites resetBehavior()', () => {
 			expectCodemodResult(
 				'fetchMock.resetBehavior()',
-				`
-				fetchMock.removeRoutes({
-					includeFallback: true,
-				});
-				fetchMock.unmockGlobal();
-			`,
+				`fetchMock.removeRoutes();
+fetchMock.unmockGlobal();`,
 			);
 		});
 		it('rewrites resetBehavior() with {sticky: true}', () => {
 			expectCodemodResult(
 				'fetchMock.resetBehavior({sticky: true})',
-				`
-				fetchMock.removeRoutes({
-					includeSticky: true,
-					includeFallback: true,
-				});
-				fetchMock.unmockGlobal();
-			`,
+				`fetchMock.removeRoutes({includeSticky: true});
+fetchMock.unmockGlobal();`,
 			);
 		});
 		it('rewrites resetHistory()', () => {

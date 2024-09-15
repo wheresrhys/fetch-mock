@@ -54,7 +54,7 @@ export function simpleMethods(fetchMockVariableName, root, j) {
 			}
 		});
 	});
-	['reset', 'restore'].forEach((methodName) => {
+	['reset', 'restore', 'resetBehavior'].forEach((methodName) => {
 		root
 			.find(j.CallExpression, {
 				callee: {
@@ -68,11 +68,12 @@ export function simpleMethods(fetchMockVariableName, root, j) {
 				},
 			})
 			.forEach((path) => {
+				const sticky = path?.value?.arguments[0]?.properties?.find(
+					(prop) => prop.key.name === 'sticky',
+				)?.value?.value;
 				const newExpressions = j(`
-fetchMock.clearHistory();
-fetchMock.removeRoutes({
-	includeFallback: true,
-});
+${methodName !== 'resetBehavior' ? 'fetchMock.clearHistory()' : ''};
+fetchMock.removeRoutes(${sticky ? '{includeSticky: true}' : ''});
 fetchMock.unmockGlobal();
 `)
 					.find(j.ExpressionStatement)

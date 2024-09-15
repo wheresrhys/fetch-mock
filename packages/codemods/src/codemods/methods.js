@@ -115,4 +115,25 @@ fetchMock.unmockGlobal();
 				return builder.find(j.ExpressionStatement).get().value;
 			});
 	});
+
+	root
+		.find(j.CallExpression, {
+			callee: {
+				object: {
+					type: 'Identifier',
+					name: fetchMockVariableName,
+				},
+				property: {
+					name: 'lastCall',
+				},
+			},
+		})
+		.closest(j.ExpressionStatement)
+		.insertBefore(
+			j(
+				'throw new Error("lastCall() now returns a CallLog object instead of an array. Refer to the documentation")',
+			)
+				.find(j.ThrowStatement)
+				.get().value,
+		);
 }

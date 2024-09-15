@@ -33,10 +33,6 @@ export function simpleMethods(fetchMockVariableName, root, j) {
 			path.value.callee.property.name = 'route';
 		}
 
-		if (method === 'mock') {
-			path.value.callee.property.name = 'route';
-		}
-
 		if (method === 'resetHistory') {
 			path.value.callee.property.name = 'clearHistory';
 		}
@@ -157,4 +153,30 @@ fetchMock.unmockGlobal();
 				.find(j.ThrowStatement)
 				.get().value,
 		);
+
+	const sandboxes = root.find(j.CallExpression, {
+		callee: {
+			object: {
+				type: 'Identifier',
+				name: fetchMockVariableName,
+			},
+			property: {
+				name: 'sandbox',
+			},
+		},
+	});
+
+	sandboxes
+		.closest(j.ExpressionStatement)
+		.insertBefore(
+			j(
+				'throw new Error("In most cases .sandbox() can now be replaced by .fetchHandler. Refer to the docs on .createInstance() if this does not work for you")',
+			)
+				.find(j.ThrowStatement)
+				.get().value,
+		);
+
+	sandboxes.replaceWith(
+		j('fetchMock.fetchHandler').find(j.MemberExpression).get().value,
+	);
 }

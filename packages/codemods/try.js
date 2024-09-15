@@ -4,8 +4,8 @@ import jscodeshift from 'jscodeshift';
 console.log(
 	codemod(
 		`
-import fetchMock from 'fetch-mock';
-fetchMock.lastCall();
+const fetchMock = require('fetch-mock');
+jest.mock('node-fetch', () => fetchMock.fetchHandler)
 `,
 		jscodeshift,
 	),

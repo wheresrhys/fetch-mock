@@ -10,7 +10,11 @@ export function getAllChainedMethodCalls(fetchMockVariableName, root, j) {
 		})
 		.map((path) => {
 			const paths = [path];
-			while (path.parentPath.value.type !== 'ExpressionStatement') {
+			while (
+				!['ArrowFunctionExpression', 'ExpressionStatement'].includes(
+					path.parentPath.value.type,
+				)
+			) {
 				path = path.parentPath;
 				if (path.value.type === 'CallExpression') {
 					paths.push(path);

@@ -1,7 +1,8 @@
+import j from 'jscodeshift';
 import { simpleOptions } from './codemods/options.js';
 import { simpleMethods } from './codemods/methods.js';
 
-function findFetchMockVariableName(root, j) {
+function findFetchMockVariableName(root) {
 	let fetchMockVariableName;
 	try {
 		fetchMockVariableName = root
@@ -28,17 +29,17 @@ function findFetchMockVariableName(root, j) {
 	return fetchMockVariableName;
 }
 
-export function codemod(source, j) {
+export function codemod(source) {
 	const root = j(source);
-	const fetchMockVariableName = findFetchMockVariableName(root, j);
-	simpleMethods(fetchMockVariableName, root, j);
+	const fetchMockVariableName = findFetchMockVariableName(root);
+	simpleMethods(fetchMockVariableName, root);
 	// run after simpleMethods because means the options rewriters have to iterate
 	// over smaller list of methods
-	simpleOptions(fetchMockVariableName, root, j);
+	simpleOptions(fetchMockVariableName, root);
 
 	return root.toSource();
 }
 
-export default function transformer(file, api) {
-	return codemod(file.source, api.j);
+export default function transformer(file) {
+	return codemod(file.source);
 }

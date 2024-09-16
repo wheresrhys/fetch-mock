@@ -1,14 +1,15 @@
+import j from 'jscodeshift';
 import { getAllChainedMethodCalls } from './methods.js';
 const simpleOptionNames = ['overwriteRoutes', 'warnOnFallback', 'sendAsJson'];
 
-function appendError(message, path, j) {
+function appendError(message, path) {
 	path
 		.closest(j.ExpressionStatement)
 		.insertAfter(
 			j(`throw new Error("${message}")`).find(j.ThrowStatement).get().value,
 		);
 }
-export function simpleOptions(fetchMockVariableName, root, j) {
+export function simpleOptions(fetchMockVariableName, root) {
 	const configSets = root
 		.find(j.CallExpression, {
 			callee: {
@@ -50,8 +51,8 @@ export function simpleOptions(fetchMockVariableName, root, j) {
 		if (name === 'fallbackToNetwork') {
 			const errorMessage =
 				'fallbackToNetwork option is deprecated. Use the `spyGlobal()` method instead';
-			appendError(errorMessage, propertyAssignments, j);
-			appendError(errorMessage, objectAssignments, j);
+			appendError(errorMessage, propertyAssignments);
+			appendError(errorMessage, objectAssignments);
 		}
 		propertyAssignments.remove();
 		objectAssignments.remove();

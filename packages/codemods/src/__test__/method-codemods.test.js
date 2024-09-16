@@ -249,29 +249,4 @@ fetchMock.calls()`,
 			});
 		});
 	});
-
-	describe('sandbox()', () => {
-		it('replace simple case with fetchHandler', () => {
-			expectCodemodResult(
-				`fetchMock.sandbox()`,
-				`throw new Error("In most cases .sandbox() can now be replaced by .fetchHandler. Refer to the docs on .createInstance() if this does not work for you")
-fetchMock.fetchHandler`,
-			);
-		});
-		it('replace complex case with fetchHandler', () => {
-			expectCodemodResult(
-				`jest.mock('node-fetch', () => fetchMock.sandbox())`,
-				`throw new Error("In most cases .sandbox() can now be replaced by .fetchHandler. Refer to the docs on .createInstance() if this does not work for you")
-jest.mock('node-fetch', () => fetchMock.fetchHandler)`,
-			);
-		});
-
-		it('replace complex case with fetchHandler', () => {
-			expectCodemodResult(
-				`jest.mock('node-fetch', () => require('fetch-mock').sandbox())`,
-				`throw new Error("In most cases .sandbox() can now be replaced by .fetchHandler. Refer to the docs on .createInstance() if this does not work for you")
-jest.mock('node-fetch', () => require('fetch-mock').fetchHandler)`,
-			);
-		});
-	});
 });

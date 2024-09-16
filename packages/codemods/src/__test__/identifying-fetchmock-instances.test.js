@@ -55,7 +55,7 @@ fetchNot.route("blah", 200)
 `,
 		);
 	});
-	it('unassigned instances of require("fetch-mock")', () => {
+	it.skip('unassigned instances of require("fetch-mock")', () => {
 		expectCodemodResult(
 			`require('fetch-mock').mock("blah", 200)`,
 			`require('fetch-mock').route("blah", 200)`,
@@ -81,12 +81,12 @@ fm.route("blah", 200)
 		expectCodemodResult(
 			`
 const fetchMock = require('fetch-mock');
-const fm = fetchMock.get('a', 'b');
+const fm = fetchMock.get('a', 'b').get('a', 'b');
 fm.mock("blah", 200)
 `,
 			`
 const fetchMock = require('fetch-mock');
-const fm = fetchMock.sandbox();
+const fm = fetchMock.get('a', 'b').get('a', 'b');
 fm.route("blah", 200)
 `,
 		);

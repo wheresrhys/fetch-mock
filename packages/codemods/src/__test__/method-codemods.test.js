@@ -120,7 +120,22 @@ fetchMock.unmockGlobal();`,
 			);
 		});
 	});
-
+	describe('warning about CallLog', () => {
+		it('lastCall()', () => {
+			expectCodemodResult(
+				'fetchMock.lastCall()',
+				`throw new Error("lastCall() now returns a CallLog object instead of an array. Refer to the documentation")
+fetchMock.lastCall()`,
+			);
+		});
+		it('calls()', () => {
+			expectCodemodResult(
+				'fetchMock.calls()',
+				`throw new Error("calls() now returns an array of CallLog objects instead of an array of arrays. Refer to the documentation")
+fetchMock.calls()`,
+			);
+		});
+	});
 	describe('converting lastUrl()', () => {
 		it('single .lastUrl()', () => {
 			expectCodemodResult(
@@ -140,23 +155,6 @@ fetchMock.unmockGlobal();`,
 				`fm.lastUrl('name', {method: 'get'})`,
 				`fm.callHistory.lastCall('name', {method: 'get'})?.url`,
 				'fm',
-			);
-		});
-	});
-
-	describe('warning about CallLog', () => {
-		it('lastCall()', () => {
-			expectCodemodResult(
-				'fetchMock.lastCall()',
-				`throw new Error("lastCall() now returns a CallLog object instead of an array. Refer to the documentation")
-fetchMock.lastCall()`,
-			);
-		});
-		it('calls()', () => {
-			expectCodemodResult(
-				'fetchMock.calls()',
-				`throw new Error("calls() now returns an array of CallLog objects instead of an array of arrays. Refer to the documentation")
-fetchMock.calls()`,
 			);
 		});
 	});

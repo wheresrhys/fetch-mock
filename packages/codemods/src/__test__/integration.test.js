@@ -1,3 +1,9 @@
-// won't rewrite similarly named methods such as jest.mock
-// allow passing in a name of a fm variable to treat as an extra fetch-mock
-// The error for calls() should actually spell out the CallLog interface
+import { it, describe } from 'vitest';
+
+describe('integration', () => {
+	it('allow passing in one or more variable names for fetch-mock', () => {});
+	it('can operate on a js file', () => {});
+	it('can operate on a ts file', () => {});
+	it('can operate on a jsx file', () => {});
+	it('can operate on a tsx file', () => {});
+});

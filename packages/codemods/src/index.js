@@ -40,7 +40,7 @@ export function codemod(source, variableName) {
 	return root.toSource();
 }
 
-export default function transformer(file) {
+export default function transformer(file, api) {
 	let modifiedSource = codemod(file.source);
 	if (process.env.FM_VARIABLES) {
 		const extraVariables = process.env.FM_VARIABLES.split(',');

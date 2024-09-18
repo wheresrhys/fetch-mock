@@ -1,5 +1,6 @@
-import j from 'jscodeshift';
-export function getAllChainedMethodCalls(fetchMockVariableName, root) {
+const j = require('jscodeshift');
+
+function getAllChainedMethodCalls(fetchMockVariableName, root) {
 	return root
 		.find(j.CallExpression, {
 			callee: {
@@ -25,7 +26,8 @@ export function getAllChainedMethodCalls(fetchMockVariableName, root) {
 		});
 }
 
-export function simpleMethods(fetchMockVariableName, root) {
+module.exports.getAllChainedMethodCalls = getAllChainedMethodCalls;
+module.exports.simpleMethods = function(fetchMockVariableName, root) {
 	const fetchMockMethodCalls = getAllChainedMethodCalls(
 		fetchMockVariableName,
 		root,

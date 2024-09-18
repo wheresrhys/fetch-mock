@@ -1,6 +1,6 @@
-import j from 'jscodeshift';
-import { simpleOptions } from './codemods/options.js';
-import { simpleMethods } from './codemods/methods.js';
+const j = require( 'jscodeshift');
+const { simpleOptions } = require( './codemods/options.js');
+const { simpleMethods } = require( './codemods/methods.js');
 
 function findFetchMockVariableName(root) {
 	let fetchMockVariableName;
@@ -29,7 +29,7 @@ function findFetchMockVariableName(root) {
 	return fetchMockVariableName;
 }
 
-export function codemod(source, variableName) {
+function codemod(source, variableName) {
 	const root = j(source);
 	const fetchMockVariableName = variableName || findFetchMockVariableName(root);
 	simpleMethods(fetchMockVariableName, root);
@@ -40,7 +40,7 @@ export function codemod(source, variableName) {
 	return root.toSource();
 }
 
-export default function transformer(file, api) {
+function transformer(file, api) {
 	let modifiedSource = codemod(file.source);
 	if (process.env.FM_VARIABLES) {
 		const extraVariables = process.env.FM_VARIABLES.split(',');
@@ -50,3 +50,6 @@ export default function transformer(file, api) {
 	}
 	return modifiedSource;
 }
+
+module.exports = transformer;
+module.exports.codemod = codemod;

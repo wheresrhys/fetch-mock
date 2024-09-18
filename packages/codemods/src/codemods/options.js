@@ -1,5 +1,5 @@
-import j from 'jscodeshift';
-import { getAllChainedMethodCalls } from './methods.js';
+const j = require('jscodeshift');
+const { getAllChainedMethodCalls } = require('./methods.js');
 const simpleOptionNames = ['overwriteRoutes', 'warnOnFallback', 'sendAsJson'];
 
 function appendError(message, path) {
@@ -9,7 +9,7 @@ function appendError(message, path) {
 			j(`throw new Error("${message}")`).find(j.ThrowStatement).get().value,
 		);
 }
-export function simpleOptions(fetchMockVariableName, root) {
+module.exports.simpleOptions = function(fetchMockVariableName, root) {
 	const configSets = root
 		.find(j.CallExpression, {
 			callee: {

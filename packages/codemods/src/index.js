@@ -29,9 +29,9 @@ function findFetchMockVariableName(root) {
 	return fetchMockVariableName;
 }
 
-export function codemod(source) {
+export function codemod(source, variableName) {
 	const root = j(source);
-	const fetchMockVariableName = findFetchMockVariableName(root);
+	const fetchMockVariableName = variableName || findFetchMockVariableName(root);
 	simpleMethods(fetchMockVariableName, root);
 	// run after simpleMethods because means the options rewriters have to iterate
 	// over smaller list of methods
@@ -41,5 +41,12 @@ export function codemod(source) {
 }
 
 export default function transformer(file) {
-	return codemod(file.source);
+	let modifiedSource = codemod(file.source);
+	if (process.env.FM_VARIABLES) {
+		const extraVariables = process.env.FM_VARIABLES.split(',');
+		extraVariables.forEach((variableName) => {
+			modifiedSource = codemod(modifiedSource, variableName);
+		});
+	}
+	return modifiedSource;
 }

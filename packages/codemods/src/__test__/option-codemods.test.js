@@ -1,14 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { codemod } from '../index';
-import jscodeshift from 'jscodeshift';
 
 const prependFetchMock = (src) =>
 	`const fetchMock = require('fetch-mock');${src ? '\n' : ''}${src}`;
 
 function expectCodemodResult(src, expected) {
-	expect(codemod(prependFetchMock(src), jscodeshift)).toEqual(
-		prependFetchMock(expected),
-	);
+	expect(codemod(prependFetchMock(src))).toEqual(prependFetchMock(expected));
 }
 
 describe('codemods operating on options', () => {

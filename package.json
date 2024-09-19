@@ -27,7 +27,7 @@
 		"lint:ci": "eslint .",
 		"prettier": "prettier --cache --write *.md \"./**/*.md\" *.json \"./**/*.json\"",
 		"prettier:ci": "prettier *.md \"./**/*.md\" *.json \"./**/*.json\"",
-		"types:check": "tsc --project ./tsconfig.json && echo 'types check done'",
+		"types:check": "tsc --project ./jsconfig.json && echo 'types check done'",
 		"prepare": "husky || echo \"husky not available\"",
 		"build": "npm run build -w=packages",
 		"docs": "npm run start -w docs",

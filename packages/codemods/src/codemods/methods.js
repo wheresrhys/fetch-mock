@@ -27,7 +27,7 @@ function getAllChainedMethodCalls(fetchMockVariableName, root) {
 }
 
 module.exports.getAllChainedMethodCalls = getAllChainedMethodCalls;
-module.exports.simpleMethods = function(fetchMockVariableName, root) {
+module.exports.simpleMethods = function (fetchMockVariableName, root) {
 	const fetchMockMethodCalls = getAllChainedMethodCalls(
 		fetchMockVariableName,
 		root,
@@ -160,4 +160,4 @@ fetchMock.unmockGlobal();
 				.find(j.ThrowStatement)
 				.get().value,
 		);
-}
+};

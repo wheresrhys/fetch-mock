@@ -9,7 +9,7 @@ function appendError(message, path) {
 			j(`throw new Error("${message}")`).find(j.ThrowStatement).get().value,
 		);
 }
-module.exports.simpleOptions = function(fetchMockVariableName, root) {
+module.exports.simpleOptions = function (fetchMockVariableName, root) {
 	const configSets = root
 		.find(j.CallExpression, {
 			callee: {
@@ -46,7 +46,9 @@ module.exports.simpleOptions = function(fetchMockVariableName, root) {
 				},
 			},
 		});
-		const objectAssignments = configSets.find(j.ObjectProperty, { key: { name } });
+		const objectAssignments = configSets.find(j.ObjectProperty, {
+			key: { name },
+		});
 
 		if (name === 'fallbackToNetwork') {
 			const errorMessage =
@@ -118,4 +120,4 @@ module.exports.simpleOptions = function(fetchMockVariableName, root) {
 			})
 			.remove();
 	});
-}
+};

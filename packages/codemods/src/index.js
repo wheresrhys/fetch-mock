@@ -1,6 +1,6 @@
-const j = require( 'jscodeshift').withParser('tsx');
-const { simpleOptions } = require( './codemods/options.js');
-const { simpleMethods } = require( './codemods/methods.js');
+const j = require('jscodeshift').withParser('tsx');
+const { simpleOptions } = require('./codemods/options.js');
+const { simpleMethods } = require('./codemods/methods.js');
 
 function findFetchMockVariableName(root) {
 	let fetchMockVariableName;

@@ -11,7 +11,7 @@ export default [
 		ignores: [
 			'docs/**/*.js',
 			'packages/*/test/fixtures/*',
-			'packages/**/__test__/fixtures/*',
+			'packages/**/__tests__/fixtures/*',
 			'**/dist/**/*',
 			'packages/fetch-mock/types/index.test-d.ts',
 		],

@@ -1,6 +1,7 @@
 import { it, describe, expect } from 'vitest';
-const util = require('node:util');
-const exec = util.promisify(require('node:child_process').exec);
+import { promisify } from 'node:util';
+import { exec as callbackExec } from 'node:child_process';
+const exec = promisify(callbackExec);
 
 describe('integration', () => {
 	it('can operate on typescript', async () => {

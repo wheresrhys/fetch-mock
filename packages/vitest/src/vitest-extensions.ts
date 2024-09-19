@@ -89,7 +89,6 @@ const methodlessExtensions = {
 	},
 };
 
-//@ts-expect-error awaiting this fix https://github.com/vitest-dev/vitest/pull/6351
 expect.extend(methodlessExtensions);
 
 expect.extend({

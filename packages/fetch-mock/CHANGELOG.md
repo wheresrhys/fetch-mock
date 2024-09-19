@@ -1,5 +1,13 @@
 # Changelog
 
+## [11.1.4](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v11.1.3...fetch-mock-v11.1.4) (2024-09-19)
+
+
+### Documentation Changes
+
+* another occurrence of the cheatsheet ref ([875e4f6](https://github.com/wheresrhys/fetch-mock/commit/875e4f6bd7b50229b6f83e14075c1a3fcd6210a4))
+* fix link to cheatsheet ([33e75b1](https://github.com/wheresrhys/fetch-mock/commit/33e75b1cd2391c9d4c1c9770c3be4fb771f7f726))
+
 ## [11.1.3](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v11.1.2...fetch-mock-v11.1.3) (2024-08-28)
 
 

@@ -1,4 +1,4 @@
-const j = require('jscodeshift');
+const j = require('jscodeshift').withParser('tsx');
 
 function getAllChainedMethodCalls(fetchMockVariableName, root) {
 	return root
@@ -31,7 +31,6 @@ module.exports.simpleMethods = function(fetchMockVariableName, root) {
 	const fetchMockMethodCalls = getAllChainedMethodCalls(
 		fetchMockVariableName,
 		root,
-		j,
 	);
 
 	fetchMockMethodCalls.forEach((path) => {
@@ -43,6 +42,7 @@ module.exports.simpleMethods = function(fetchMockVariableName, root) {
 		if (method === 'resetHistory') {
 			path.value.callee.property.name = 'clearHistory';
 		}
+
 		['get', 'post', 'put', 'delete', 'head', 'patch'].some((httpMethod) => {
 			let prependStar = false;
 			if (method === `${httpMethod}Any`) {

@@ -210,7 +210,8 @@ describe('codemods operating on options', () => {
 				`Object.assign(fetchMock.config, {fallbackToNetwork: true, other: 'value'})`,
 				`Object.assign(fetchMock.config, {
   other: 'value'
-})${errorString}`,
+});
+${errorString}`,
 			);
 		});
 	});

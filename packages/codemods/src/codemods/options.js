@@ -1,4 +1,4 @@
-const j = require('jscodeshift');
+const j = require('jscodeshift').withParser('tsx');
 const { getAllChainedMethodCalls } = require('./methods.js');
 const simpleOptionNames = ['overwriteRoutes', 'warnOnFallback', 'sendAsJson'];
 
@@ -46,7 +46,7 @@ module.exports.simpleOptions = function(fetchMockVariableName, root) {
 				},
 			},
 		});
-		const objectAssignments = configSets.find(j.Property, { key: { name } });
+		const objectAssignments = configSets.find(j.ObjectProperty, { key: { name } });
 
 		if (name === 'fallbackToNetwork') {
 			const errorMessage =
@@ -72,23 +72,23 @@ module.exports.simpleOptions = function(fetchMockVariableName, root) {
 	);
 
 	[
-		'once',
-		'route',
-		'sticky',
-		'any',
-		'anyOnce',
+		// 'once',
+		// 'route',
+		// 'sticky',
+		// 'any',
+		// 'anyOnce',
 		'get',
-		'getOnce',
-		'post',
-		'postOnce',
-		'put',
-		'putOnce',
-		'delete',
-		'deleteOnce',
-		'head',
-		'headOnce',
-		'patch',
-		'patchOnce',
+		// 'getOnce',
+		// 'post',
+		// 'postOnce',
+		// 'put',
+		// 'putOnce',
+		// 'delete',
+		// 'deleteOnce',
+		// 'head',
+		// 'headOnce',
+		// 'patch',
+		// 'patchOnce',
 	].some((methodName) => {
 		const optionsObjects = fetchMockMethodCalls
 			.filter((path) => path.value.callee.property.name === methodName)
@@ -102,13 +102,12 @@ module.exports.simpleOptions = function(fetchMockVariableName, root) {
 					})
 					.paths();
 			});
-
 		if (!optionsObjects.length) {
 			return;
 		}
 		simpleOptionNames.forEach((optionName) => {
 			optionsObjects
-				.find(j.Property, {
+				.find(j.ObjectProperty, {
 					key: { name: optionName },
 				})
 				.remove();

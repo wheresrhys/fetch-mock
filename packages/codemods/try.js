@@ -1,12 +1,9 @@
-import { codemod } from './src/index.js';
-import jscodeshift from 'jscodeshift';
+const { codemod } = require('./src/index.js');
 
 console.log(
 	codemod(
-		`
-const fetchMock = require('fetch-mock');
-jest.mock('node-fetch', () => fetchMock.fetchHandler)
+		`const fetchMock = require('fetch-mock');
+fetchMock.get('*', 200, {name: 'rio', sendAsJson: true});
 `,
-		jscodeshift,
 	),
 );

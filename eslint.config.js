@@ -11,12 +11,15 @@ export default [
 		ignores: [
 			'docs/**/*.js',
 			'packages/*/test/fixtures/*',
+			'packages/**/__test__/fixtures/*',
 			'**/dist/**/*',
 			'packages/fetch-mock/types/index.test-d.ts',
 		],
 	},
 	eslint.configs.recommended,
-	...tseslint.configs.recommended,
+	...tseslint.configs.recommended.map((config) => {
+		return { ...config, ignores: ['packages/codemods/**'] };
+	}),
 	eslintConfigPrettier,
 	{
 		rules: {

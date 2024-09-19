@@ -6,7 +6,7 @@ A tool for helping upgrade to fetch-mock@12.
 
 1. Install `npm i -D @fetch-mock/codemods jscodeshift`;
 2. Manually modify any code using `.sandbox()` according to the example above.
-3. Run `jscodeshift -t node_modules/@fetch-mock/codemods/wrc/index.jscodeshift .` to run over your entire project, or replace `.` with the directory/file paths you wish to modify. [The jscodeshift CLI has many options](https://jscodeshift.com/run/cli/) - adjust them to suit your project.
+3. Run `jscodeshift -t node_modules/@fetch-mock/codemods/wrc/index.jscodeshift .` to run over your entire project, or replace `.` with the directory/file paths you wish to modify. [The jscodeshift CLI has many options](https://jscodeshift.com/run/cli/) - adjust them to suit your project. **Note that the parser option should not be used as @fetch-mock/codemods forces use of the TSX parser in order to ensure compatibility with teh greatest range of projects**.
 4. For scenarios where the codemod is unable to detect which variable contains a fetch-mock instance (e.g. when it is required in a global set up file, or when using `jest.mock()`) you may pass in one or more variable names using the `FM_VARIABLES` environment variable e.g. `FM_VARIABLES=fm,fetch`
 5. After the codemods have executed, run your tests, correcting all the errors thrown. The notes on what is in/out of scope will help guide you.
 6. Once all your tests are fixed you should be able to uninstall the codemods: `npm uninstall @fetch-mock/codemods jscodeshift`

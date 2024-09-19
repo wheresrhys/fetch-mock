@@ -28,11 +28,12 @@
 
 	"plugins": ["node-workspace"],
 	"packages": {
-		"packages/core": {},
-		"packages/vitest": {},
-		"packages/jest": {
+		"packages/codemods": {
 			"release-as": "0.1.0"
 		},
+		"packages/core": {},
+		"packages/vitest": {},
+		"packages/jest": {},
 		"packages/fetch-mock": {}
 	},
 	"bootstrap-sha": "812f462efde5ade292394b94c9f2cbe0aedf8e3f",

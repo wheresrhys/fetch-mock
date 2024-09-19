@@ -1,4 +1,4 @@
-const j = require( 'jscodeshift');
+const j = require( 'jscodeshift').withParser('tsx');
 const { simpleOptions } = require( './codemods/options.js');
 const { simpleMethods } = require( './codemods/methods.js');
 
@@ -40,7 +40,7 @@ function codemod(source, variableName) {
 	return root.toSource();
 }
 
-function transformer(file, api) {
+function transformer(file) {
 	let modifiedSource = codemod(file.source);
 	if (process.env.FM_VARIABLES) {
 		const extraVariables = process.env.FM_VARIABLES.split(',');

@@ -9,7 +9,7 @@ function expectCodemodResult(src, expected) {
 describe('integration', () => {
 
 	it('can operate on typescript', async () => {
-		const { stdout, stderr } = await exec('jscodeshift -d -t ./packages/codemods/src/index.js ./packages/codemods/src/__test__/fixtures/typescript.ts')
+		const { stdout, stderr } = await exec('jscodeshift --parser ts -d -t ./packages/codemods/src/index.js ./packages/codemods/src/__test__/fixtures/typescript.ts')
 		console.log({ stdout, stderr })
 // 		expectCodemodResult(
 // 			`import fetchMock from 'fetch-mock';

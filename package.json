@@ -63,7 +63,7 @@
 		"lint-staged": "^15.2.7",
 		"playwright": "^1.46.0",
 		"prettier": "^3.1.1",
-		"rollup": "^4.9.1",
+		"rollup": "^4.22.4",
 		"rollup-plugin-copy": "^3.5.0",
 		"rollup-plugin-sourcemaps": "^0.6.3",
 		"ts-jest": "^29.2.5",

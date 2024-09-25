@@ -1,7 +1,7 @@
 {
 	"name": "@fetch-mock/core",
 	"description": "Mock http requests made using fetch",
-	"version": "0.7.0",
+	"version": "0.7.1",
 	"exports": {
 		"browser": "./dist/esm/index.js",
 		"import": {

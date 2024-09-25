@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/wheresrhys/fetch-mock/compare/codemods-v0.1.0...codemods-v0.1.1) (2024-09-25)
+
+
+### Documentation Changes
+
+* fix mistakes in codemods docs ([315365e](https://github.com/wheresrhys/fetch-mock/commit/315365e86b7e15d5bc725cd61dd8b1893f7c5fad))
+
 ## [0.1.0](https://github.com/wheresrhys/fetch-mock/compare/codemods-v0.1.0...codemods-v0.1.0) (2024-09-25)
 
 

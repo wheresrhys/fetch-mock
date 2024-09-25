@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.1](https://github.com/wheresrhys/fetch-mock/compare/core-v0.7.0...core-v0.7.1) (2024-09-25)
+
+
+### Bug Fixes
+
+* change export order so default is last ([bc9c41d](https://github.com/wheresrhys/fetch-mock/commit/bc9c41d04609c40e609e672254df5ff1ddf0cad9))
+
 ## [0.7.0](https://github.com/wheresrhys/fetch-mock/compare/core-v0.6.3...core-v0.7.0) (2024-08-30)
 
 

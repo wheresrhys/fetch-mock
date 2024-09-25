@@ -3,14 +3,19 @@
 	"description": "Vitest wrapper for fetch-mock",
 	"version": "0.1.4",
 	"exports": {
-		"browser": "./src/index.js",
-		"import": "./src/index.js",
-		"require": "./dist/commonjs.js",
-		"types": "./types/index.d.ts"
+		"browser": "./dist/esm/index.js",
+		"import": {
+			"types": "./dist/esm/index.d.ts",
+			"default": "./dist/esm/index.js"
+		},
+		"require": {
+			"types": "./dist/cjs/index.d.ts",
+			"default": "./dist/cjs/index.js"
+		}
 	},
-	"main": "./dist/commonjs.js",
-	"module": "./src/index.js",
-	"types": "./types/index.d.ts",
+	"main": "./dist/cjs/index.js",
+	"module": "./dist/esm/index.js",
+	"types": "./dist/esm/index.d.ts",
 	"type": "module",
 	"engines": {
 		"node": ">=18.11.0"

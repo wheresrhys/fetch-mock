@@ -28,9 +28,7 @@
 
 	"plugins": ["node-workspace"],
 	"packages": {
-		"packages/codemods": {
-			"release-as": "0.1.0"
-		},
+		"packages/codemods": {},
 		"packages/core": {},
 		"packages/vitest": {},
 		"packages/jest": {},

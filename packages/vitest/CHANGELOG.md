@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.5](https://github.com/wheresrhys/fetch-mock/compare/vitest-v0.1.4...vitest-v0.1.5) (2024-09-25)
+
+
+### Bug Fixes
+
+* change export order so default is last ([bc9c41d](https://github.com/wheresrhys/fetch-mock/commit/bc9c41d04609c40e609e672254df5ff1ddf0cad9))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fetch-mock/core bumped from ^0.7.0 to ^0.7.1
+
 ## [0.1.4](https://github.com/wheresrhys/fetch-mock/compare/vitest-v0.1.3...vitest-v0.1.4) (2024-08-31)
 
 

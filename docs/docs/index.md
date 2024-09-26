@@ -1,5 +1,5 @@
 ---
-sidebar_label: 'fetch-mock'
+sidebar_label: Overview
 sidebar_position: 1
 ---
 

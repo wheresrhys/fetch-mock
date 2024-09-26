@@ -1,9 +1,9 @@
 ---
-sidebar_label: '@fetch-mock/core'
+sidebar_label: 'fetch-mock'
 sidebar_position: 1
 ---
 
-# @fetch-mock/core
+# fetch-mock
 
 This library implements three main features
 

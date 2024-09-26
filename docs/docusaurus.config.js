@@ -60,14 +60,14 @@ const config = {
 						type: 'docSidebar',
 						sidebarId: 'fetchMockSidebar',
 						position: 'left',
-						label: 'fetch-mock docs',
+						label: 'Docs'
 					},
 					{
 						type: 'docSidebar',
-						sidebarId: 'suiteSidebar',
+						sidebarId: 'legacySidebar',
 						position: 'left',
-						label: '@fetch-mock docs',
-						className: 'new',
+						label: 'Legacy docs',
+
 					},
 					{ to: 'blog', label: 'Blog', position: 'right' },
 					{

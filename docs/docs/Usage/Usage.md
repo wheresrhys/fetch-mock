@@ -9,11 +9,32 @@ It supports most JavaScript environments, including browsers, Node.js, web worke
 
 As well as shorthand methods for the simplest use cases, it offers a flexible API for customising all aspects of mocking behaviour.
 
-## Example
+## Examples
 
 ```js
-fetchMock.mock('http://example.com', 200);
+import fetchMock from 'fetch-mock';
+fetchMock.mockGlobal().route('http://example.com', 200);
 const res = await fetch('http://example.com');
 assert(res.ok);
-fetchMock.restore();
+```
+
+```js
+import fetchMock from 'fetch-mock';
+
+fetchMock
+	.mockGlobal()
+	.route({
+		express: '/api/users/:user'
+		expressParams: {user: 'kenneth'}
+	}, {
+		userData: {
+			email: 'kenneth@example.com'
+		}
+	}, 'userDataFetch');
+
+const res = await fetch('http://example.com/api/users/kenneth');
+assert(fetchMock.called('userDataFetch'))
+const data = await res.json();
+assertEqual(data.userData.email, 'kenneth@example.com')
+
 ```

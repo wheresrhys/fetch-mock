@@ -22,19 +22,18 @@ assert(res.ok);
 import fetchMock from 'fetch-mock';
 
 fetchMock
-	.mockGlobal()
-	.route({
-		express: '/api/users/:user'
-		expressParams: {user: 'kenneth'}
-	}, {
-		userData: {
-			email: 'kenneth@example.com'
-		}
-	}, 'userDataFetch');
+  .mockGlobal()
+  .route({
+    express: '/api/users/:user'
+    expressParams: {user: 'kenneth'}
+  }, {
+    userData: {
+      email: 'kenneth@example.com'
+    }
+  }, 'userDataFetch');
 
 const res = await fetch('http://example.com/api/users/kenneth');
 assert(fetchMock.called('userDataFetch'))
 const data = await res.json();
 assertEqual(data.userData.email, 'kenneth@example.com')
-
 ```

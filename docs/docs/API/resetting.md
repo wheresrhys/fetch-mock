@@ -26,7 +26,7 @@ A boolean indicating whether or not to remove the fallback route (added using `.
 
 Clears all data recorded for `fetch`'s calls.
 
-## unmockGlobal()
+## .unmockGlobal()
 
 Restores global `fetch` to its original state if `.mockGlobal()` or `.spyGlobal()` have been used .
 

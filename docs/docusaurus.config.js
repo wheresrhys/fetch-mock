@@ -63,9 +63,7 @@ const config = {
 						label: 'Docs'
 					},
 					{
-						type: 'docSidebar',
-						sidebarId: 'legacySidebar',
-						position: 'left',
+						href: '/fetch-mock/docs/legacy-api',
 						label: 'Legacy docs',
 
 					},

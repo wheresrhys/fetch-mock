@@ -24,6 +24,9 @@ import fetchMock from 'fetch-mock';
 const fetchMock = require('fetch-mock');
 ```
 
-## Using with Jest
+## Using alongside other frameworks
 
-Please try out the new jest-friendly wrapper for fetch-mock, [fetch-mock-jest](https://github.com/wheresrhys/fetch-mock-jest).
+When using one of the following frameworks consider using the appropriate wrapper library, which modify/extend fetch-mock to make using it more idiomatic to your testing environment e.g. adding methods equivalent to Jest's `mockRestore()` etc.
+
+- Jest - ADD LINK HERE
+- Vitest - ADD LINK HERE

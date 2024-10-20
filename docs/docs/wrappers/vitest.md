@@ -37,7 +37,7 @@ manageFetchMockGlobally(); // optional
 
 ## API
 
-### fetchMock
+### fetchMock (default export)
 
 An instance of [fetch-mock](/fetch-mock/docs/), with the following methods added:
 

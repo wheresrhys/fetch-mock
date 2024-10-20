@@ -65,7 +65,6 @@ const config = {
 					{
 						href: '/fetch-mock/docs/legacy-api',
 						label: 'Legacy docs',
-
 					},
 					{ to: 'blog', label: 'Blog', position: 'right' },
 					{

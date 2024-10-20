@@ -61,7 +61,7 @@ An options object compatible with the [route api](#api-mockingmock_options) to b
 
 `fetchMock.callHistory` exposes the following methods.
 
-> Note that fetch calls made using `(url, options)` pairs are added synchronously, but calls using a `Request` are added asynchronously. This is because when a `Request` is used access to many of its internals is via asynchronous methods, while for an options object they can be read directly. In general it's best to `await` your code to complete before attempting to access call history.
+> Note that fetch calls made using `(url, options)` pairs are added synchronously, but calls using a `Request` are added asynchronously. This is because when a `Request` is used access to many of its internals is via asynchronous methods, while for an options object they can be read directly. In general it's best to `await` your application code to complete before attempting to access call history.
 
 ### .recordCall(callLog)
 
@@ -85,7 +85,7 @@ Returns a Boolean indicating whether `fetch` was called the expected number of t
 
 A single name or an array of names can be passed in the `routeNames` parameter to check only certain routes. If no routeNames are passed it runs over all routes.
 
-### .flush(waitForResponseMethods)
+### .flush(waitForBody)
 
 Returns a `Promise` that resolves once all fetches handled by fetch-mock have resolved
 

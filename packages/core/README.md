@@ -1,6 +1,4 @@
-# @fetch-mock/core
-
-Work in progress reimplememntation of fetch-mock.
+# fetch-mock
 
 Features include:
 
@@ -14,7 +12,7 @@ Features include:
 
 ## Requirements
 
-@fetch-mock/core requires either of the following to run:
+@fetch-mock requires either of the following to run:
 
 - [Node.js](https://nodejs.org/) 18+ for full feature operation
 - Any modern browser that supports the `fetch` API
@@ -22,9 +20,9 @@ Features include:
 
 ## Documentation and Usage
 
-See the [project website](https://www.wheresrhys.co.uk/fetch-mock/docs/@fetch-mock/core/)
+See the [project website](https://www.wheresrhys.co.uk/fetch-mock/)
 
 ## License
 
-@fetch-mock/core is licensed under the [MIT](https://github.com/wheresrhys/fetch-mock/blob/master/LICENSE) license.
+fetch-mock is licensed under the [MIT](https://github.com/wheresrhys/fetch-mock/blob/master/LICENSE) license.
 Copyright © 2024, Rhys Evans

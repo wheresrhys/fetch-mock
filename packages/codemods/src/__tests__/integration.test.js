@@ -6,7 +6,7 @@ const exec = promisify(callbackExec);
 describe('integration', () => {
 	it('can operate on typescript', async () => {
 		const { stdout } = await exec(
-			'jscodeshift --parser ts -p -d -t ./packages/codemods/src/index.js ./packages/codemods/src/__tests__/fixtures/typescript.ts',
+			'npx jscodeshift --parser ts -p -d -t ./packages/codemods/src/index.js ./packages/codemods/src/__tests__/fixtures/typescript.ts',
 		);
 		expect(stdout).toContain(`import fetchMock from 'fetch-mock';
 function helper (res: number): void {
@@ -15,7 +15,7 @@ function helper (res: number): void {
 	});
 	it('can operate on jsx', async () => {
 		const { stdout } = await exec(
-			'jscodeshift --parser ts -p -d -t ./packages/codemods/src/index.js ./packages/codemods/src/__tests__/fixtures/jsx.jsx',
+			'npx jscodeshift --parser ts -p -d -t ./packages/codemods/src/index.js ./packages/codemods/src/__tests__/fixtures/jsx.jsx',
 		);
 		expect(stdout).toContain(`import fetchMock from 'fetch-mock';
 fetchMock.route("blah", <div>Content</div>);`);
@@ -23,7 +23,7 @@ fetchMock.route("blah", <div>Content</div>);`);
 
 	it('can operate on tsx', async () => {
 		const { stdout } = await exec(
-			'jscodeshift --parser ts -p -d -t ./packages/codemods/src/index.js ./packages/codemods/src/__tests__/fixtures/tsx.tsx',
+			'npx jscodeshift --parser ts -p -d -t ./packages/codemods/src/index.js ./packages/codemods/src/__tests__/fixtures/tsx.tsx',
 		);
 		expect(stdout).toContain(`import fetchMock from 'fetch-mock';
 function helper (res: number): void {
@@ -32,7 +32,7 @@ function helper (res: number): void {
 	});
 	it('allow passing in one or more additional variable names for fetch-mock', async () => {
 		const { stdout } = await exec(
-			'FM_VARIABLES=fm1,fm2 jscodeshift --parser ts -p -d -t ./packages/codemods/src/index.js ./packages/codemods/src/__tests__/fixtures/extra-vars.js',
+			'FM_VARIABLES=fm1,fm2 npx jscodeshift --parser ts -p -d -t ./packages/codemods/src/index.js ./packages/codemods/src/__tests__/fixtures/extra-vars.js',
 		);
 		expect(stdout).toContain(`const fetchMock = require('fetch-mock');
 fetchMock.route('blah', 200);

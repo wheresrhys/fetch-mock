@@ -21,7 +21,7 @@
 		"node": ">=18.11.0"
 	},
 	"dependencies": {
-		"@fetch-mock/core": "^0.7.1"
+		"fetch-mock": "11.1.5"
 	},
 	"peerDependencies": {
 		"jest": "*",

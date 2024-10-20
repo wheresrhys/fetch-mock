@@ -5,7 +5,7 @@ import type {
 	RouteName,
 	CallHistoryFilter,
 	UserRouteConfig,
-} from '@fetch-mock/core';
+} from 'fetch-mock';
 const methodlessExtensions = {
 	toHaveFetched: (
 		{ fetchMock }: { fetchMock: FetchMock },

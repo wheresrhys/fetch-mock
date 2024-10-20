@@ -2,7 +2,7 @@ import {
 	FetchMock,
 	defaultFetchMockConfig,
 	RemoveRouteOptions,
-} from '@fetch-mock/core';
+} from 'fetch-mock';
 import './jest-extensions';
 import type { Jest } from '@jest/environment';
 

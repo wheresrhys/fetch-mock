@@ -28,5 +28,5 @@ const fetchMock = require('fetch-mock');
 
 When using one of the following frameworks consider using the appropriate wrapper library, which modify/extend fetch-mock to make using it more idiomatic to your testing environment e.g. adding methods equivalent to Jest's `mockRestore()` etc.
 
-- Jest - ADD LINK HERE
-- Vitest - ADD LINK HERE
+- Jest - [@fetch-mock/jest](/fetch-mock/docs/wrappers/jest)
+- Vitest - [@fetch-mock/vitest](/fetch-mock/docs/wrappers/vitest)

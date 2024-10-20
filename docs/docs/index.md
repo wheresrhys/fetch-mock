@@ -1,4 +1,6 @@
 ---
+title: Overview
+sidebar_position: 0
 ---
 
 fetch-mock is the most comprehensive library for mocking the fetch API.

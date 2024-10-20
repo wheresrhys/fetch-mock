@@ -3,7 +3,7 @@ import {
 	FetchMock,
 	defaultFetchMockConfig,
 	RemoveRouteOptions,
-} from '@fetch-mock/core';
+} from 'fetch-mock';
 import './vitest-extensions';
 
 type MockResetOptions = {

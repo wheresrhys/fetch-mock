@@ -170,7 +170,11 @@ export default class Router {
 					}
 
 					if (callLog?.response?.body) {
-						callLog.response.body.cancel(error);
+						if (callLog.response.body.locked) {
+							callLog.response.body.getReader().cancel(error);
+						} else {
+							callLog.response.body.cancel(error);
+						}
 					}
 					reject(error);
 				};

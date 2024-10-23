@@ -89,8 +89,8 @@ When the `express:` keyword is used in a string matcher, it can be combined with
 
 The values of express parameters are made available in the `expressParams` property when
 
-- [Inspecting call history](/fetch-mock/docs/@fetch-mock/core/CallHistory#calllog-schema)
-- [Using a function to construct a response](/fetch-mock/docs/@fetch-mock/core/route/response#function)
+- [Inspecting call history](/fetch-mock/docs/API/CallHistory#calllog-schema)
+- [Using a function to construct a response](/fetch-mock/docs/API/route/response#function)
 
 ### Multiple url matchers
 
@@ -149,7 +149,7 @@ Match only requests that have these query parameters set (in any order). Query p
 
 Match only requests that send a JSON body with the exact structure and properties as the one provided here.
 
-Note that if matching on body _and_ using `Request` instances in your source code, this forces fetch-mock into an asynchronous flow _before_ it is able to route requests effectively. This means no [inspection methods](#api-inspectionfundamentals) can be used synchronously. You must first either await the fetches to resolve, or `await fetchMock.callHistory.flush()`. The popular library [Ky](https://github.com/sindresorhus/ky) uses `Request` instances internally, and so also triggers this mode.
+Note that if matching on body _and_ using `Request` instances in your source code, this forces fetch-mock into an asynchronous flow _before_ it is able to route requests effectively. This means no [call history methods](/fetch-mock/docs/API/CallHistory) can be used synchronously. You must first either await the fetches to resolve, or `await fetchMock.callHistory.flush()`. The popular library [Ky](https://github.com/sindresorhus/ky) uses `Request` instances internally, and so also triggers this mode.
 
 e.g.`{body: { "key1": "value1", "key2": "value2" }}`
 
@@ -166,7 +166,7 @@ When matching a body, this option ignores any properties not mentioned in the ma
 }
 ```
 
-This option can also be [set in the global configuration](/fetch-mock/docs/@fetch-mock/core/configuration)
+This option can also be [set in the global configuration](/fetch-mock/docs/Usage/configuration)
 
 ## Function matchers
 

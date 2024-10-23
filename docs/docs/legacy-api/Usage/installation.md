@@ -10,7 +10,7 @@ Install fetch-mock using
 npm install --save-dev fetch-mock
 ```
 
-fetch-mock supports both [ES modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules) and [commonjs](https://requirejs.org/docs/commonjs.html). The following should work in most environments. Check the [importing the correct version](#usageimporting) section of the docs if you experience problems.
+fetch-mock supports both [ES modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules) and [commonjs](https://requirejs.org/docs/commonjs.html). The following should work in most environments. Check the [importing the correct version](/fetch-mock/docs/legacy-api/Troubleshooting/importing) section of the docs if you experience problems.
 
 ## ES modules
 

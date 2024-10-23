@@ -23,4 +23,4 @@ All routes have an identifier:
 
 Returns true if the routes specified by the identifier has been called the expected number of times
 
-If several routes have the same matcher/url, but use [mocking options](#apimockingmock_options), the recommended way to handle this is to [name each route](#api-mockingmock_options) and filter using those names
+If several routes have the same matcher/url, but use [mocking options](/fetch-mock/docs/legacy-api/API/Mocking/Parameters/options), the recommended way to handle this is to [name each route](/fetch-mock/docs/legacy-api/API/Mocking/Parameters/options) and filter using those names

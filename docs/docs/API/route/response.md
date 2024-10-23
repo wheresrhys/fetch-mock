@@ -86,7 +86,7 @@ A `Promise` that resolves to any of the options documented above e.g. `new Promi
 
 `{Function}`
 
-A function that is passed a [`CallLog`](/fetch-mock/docs/@fetch-mock/core/CallHistory#calllog-schema) and returns any of the options documented above (including `Promise`).
+A function that is passed a [`CallLog`](/fetch-mock/docs/API/CallHistory#calllog-schema) and returns any of the options documented above (including `Promise`).
 
 ### Examples
 

@@ -49,13 +49,13 @@ Retrieve all calls to `fetch` matched by a particular named route.
 #### matcher
 
 `{String|RegExp|function|Object}`
-Any matcher compatible with the [route api](#api-mockingmock_matcher) can be passed in to filter the calls arbitrarily.
+Any matcher compatible with the [route api](/fetch-mock/docs/API/route/matcher) can be passed in to filter the calls arbitrarily.
 
 ### options
 
 `{Object}`
 
-An options object compatible with the [route api](#api-mockingmock_options) to be used to filter the list of calls further.
+An options object compatible with the [route api](/fetch-mock/docs/API/route/options) to be used to filter the list of calls further.
 
 ## Methods
 

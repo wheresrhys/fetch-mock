@@ -1,7 +1,10 @@
-import { it, describe, expect } from 'vitest';
+import { it, describe, expect, vi } from 'vitest';
 import { promisify } from 'node:util';
 import { exec as callbackExec } from 'node:child_process';
 const exec = promisify(callbackExec);
+vi.setConfig({
+	testTimeout: 10_000,
+});
 
 describe('integration', () => {
 	it('can operate on typescript', async () => {

@@ -13,7 +13,7 @@ Configures the http response returned by the mock. Accepts any of the following 
 `{Response}`
 A [`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response/Response) instance to return unaltered.
 
-Note that it must use the same constructor as that used in the `fetch` implementation your application uses. [See how to configure this](#usagecustom-classes) e.g. `new Response('ok', {status: 200})`
+Note that it must use the same constructor as that used in the `fetch` implementation your application uses. [See how to configure this](/fetch-mock/docs/legacy-api/Usage/configuration#custom-fetch-implementations) e.g. `new Response('ok', {status: 200})`
 
 ### Status code
 

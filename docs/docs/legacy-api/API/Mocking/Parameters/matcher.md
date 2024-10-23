@@ -6,7 +6,7 @@ sidebar_position: 1
 
 Criteria for deciding which requests to mock.
 
-Note that if you use matchers that target anything other than the url string, you may also need to add a `name` to your matcher object so that a) you can add multiple mocks on the same url that differ only in other properties (e.g. query strings or headers) b) if you [inspect](#api-inspectionfundamentals) the result of the fetch calls, retrieving the correct results will be easier.
+Note that if you use matchers that target anything other than the url string, you may also need to add a `name` to your matcher object so that a) you can add multiple mocks on the same url that differ only in other properties (e.g. query strings or headers) b) if you [inspect](/fetch-mock/docs/legacy-api/API/Inspection/inspecting-calls) the result of the fetch calls, retrieving the correct results will be easier.
 
 ## Argument values
 
@@ -60,7 +60,7 @@ Match a url that satisfies a regular expression, e.g. `/(article|post)\/\d+/`
 `{Function}`
 Match if a function returns something truthy. The function will be passed the `url` and `options` `fetch` was called with. If `fetch` was called with a `Request` instance, it will be passed `url` and `options` inferred from the `Request` instance, with the original `Request` will be passed as a third argument.
 
-This can also be set as a `functionMatcher` in the [options parameter](#api-mockingmock_options), and in this way powerful arbitrary matching criteria can be combined with the ease of the declarative matching rules above.
+This can also be set as a `functionMatcher` in the [options parameter](/fetch-mock/docs/legacy-api/API/Mocking/Parameters/options), and in this way powerful arbitrary matching criteria can be combined with the ease of the declarative matching rules above.
 
 #### Examples
 

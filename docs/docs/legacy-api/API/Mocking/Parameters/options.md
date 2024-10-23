@@ -19,7 +19,7 @@ A unique string naming the route. Used to subsequently retrieve references to th
 
 ### response
 
-Instead of defining the response as the second argument of `mock()`, it can be passed as a property on the first argument. See the [response documentation](#usageapimock_response) for valid values.
+Instead of defining the response as the second argument of `mock()`, it can be passed as a property on the first argument. See the [response documentation](/fetch-mock/docs/legacy-api/API/Mocking/Parameters/response) for valid values.
 
 ### repeat
 
@@ -43,19 +43,19 @@ Avoids a route being removed when `reset()`, `restore()` or `resetBehavior()` ar
 
 `{Boolean}`
 
-See [global configuration](#usageconfiguration)
+See [global configuration](/fetch-mock/docs/legacy-api/Usage/configuration)
 
 ### includeContentLength
 
 `{Boolean}`
 
-See [global configuration](#usageconfiguration)
+See [global configuration](/fetch-mock/docs/legacy-api/Usage/configuration)
 
 ### overwriteRoutes
 
 `{Boolean}`
 
-See [global configuration](#usageconfiguration)
+See [global configuration](/fetch-mock/docs/legacy-api/Usage/configuration)
 
 ## Options for defining matchers
 
@@ -91,7 +91,7 @@ Match only requests that have these headers set, e.g. `{"Accepts": "text/html"}`
 
 Match only requests that send a JSON body with the exact structure and properties as the one provided here.
 
-Note that if matching on body _and_ using `Request` instances in your source code, this forces fetch-mock into an asynchronous flow _before_ it is able to route requests effectively. This means no [inspection methods](#api-inspectionfundamentals) can be used synchronously. You must first either await the fetches to resolve, or `await fetchMock.flush()`. The popular library [Ky](https://github.com/sindresorhus/ky) uses `Request` instances internally, and so also triggers this mode.
+Note that if matching on body _and_ using `Request` instances in your source code, this forces fetch-mock into an asynchronous flow _before_ it is able to route requests effectively. This means no [inspection methods](/fetch-mock/docs/legacy-api/API/Inspection/inspecting-calls) can be used synchronously. You must first either await the fetches to resolve, or `await fetchMock.flush()`. The popular library [Ky](https://github.com/sindresorhus/ky) uses `Request` instances internally, and so also triggers this mode.
 
 e.g.`{ "key1": "value1", "key2": "value2" }`
 
@@ -99,7 +99,7 @@ e.g.`{ "key1": "value1", "key2": "value2" }`
 
 `{Boolean}`
 
-Match calls that only partially match a specified body json. See [global configuration](#usageconfiguration) for details.
+Match calls that only partially match a specified body json. See [global configuration](/fetch-mock/docs/legacy-api/Usage/configuration) for details.
 
 ### query
 

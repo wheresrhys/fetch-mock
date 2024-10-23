@@ -18,7 +18,7 @@ Determines which calls to `fetch` should be handled by this route
 
 Alternatively a single parameter, `options`, an Object with `matcher`, `response` and other options defined, can be passed in.
 
-Note that if you use matchers that target anything other than the url string, you may also need to add a `name` to your matcher object so that a) you can add multiple mocks on the same url that differ only in other properties (e.g. query strings or headers) b) if you [inspect](#api-inspectionfundamentals) the result of the fetch calls, retrieving the correct results will be easier.
+Note that if you use matchers that target anything other than the url string, you may also need to add a `name` to your matcher object so that a) you can add multiple mocks on the same url that differ only in other properties (e.g. query strings or headers) b) if you [inspect](/fetch-mock/docs/legacy-api/API/Inspection/inspecting-calls) the result of the fetch calls, retrieving the correct results will be easier.
 
 ### response
 

@@ -16,7 +16,7 @@ A unique string naming the route. Used to subsequently retrieve references to th
 
 ### response
 
-When using pattern 3. above, `response` can be passed as a property on the options object. See the [response documentation](#usageapimock_response) for valid values.
+When using pattern 3. above, `response` can be passed as a property on the options object. See the [response documentation](/fetch-mock/docs/API/route/response) for valid values.
 
 ### repeat
 
@@ -40,10 +40,10 @@ Avoids a route being removed when `removeRoutes()` is called.
 
 `{Boolean}`
 
-See [global configuration](#usageconfiguration)
+See [global configuration](/fetch-mock/docs/Usage/configuration)
 
 ### includeContentLength
 
 `{Boolean}`
 
-See [global configuration](#usageconfiguration)
+See [global configuration](/fetch-mock/docs/Usage/configuration)

@@ -73,7 +73,7 @@ Retrieve all calls to `fetch` not matched by some route defined by `fetch-mock`.
 
 All routes have an identifier:
 
-- If it's a [named route](#api-mockingmock_options), the identifier is the route's `name`
+- If it's a [named route](/fetch-mock/docs/legacy-api/API/Mocking/Parameters/options), the identifier is the route's `name`
 - If the route is unnamed, the identifier is the value of the `matcher` argument that was passed in to `.mock()`
 
 All calls that were handled by the route with the given identifier will be retrieved
@@ -81,19 +81,19 @@ All calls that were handled by the route with the given identifier will be retri
 ##### matcher
 
 `{String|RegExp|function}`
-Any matcher compatible with the [mocking api](#api-mockingmock_matcher) can be passed in to filter the calls arbitrarily. The matcher will be executed using exactly the same rules as the mocking api
+Any matcher compatible with the [mocking api](/fetch-mock/docs/legacy-api/API/Mocking/Parameters/matcher) can be passed in to filter the calls arbitrarily. The matcher will be executed using exactly the same rules as the mocking api
 
 #### options
 
 `{Object|String}`
 
-Either an object compatible with the [mocking api](#api-mockingmock_options) or a string specifying a http method to filter by. This will be used to filter the list of calls further
+Either an object compatible with the [mocking api](/fetch-mock/docs/legacy-api/API/Mocking/Parameters/options) or a string specifying a http method to filter by. This will be used to filter the list of calls further
 
 ### Caveats
 
 #### Confusing API
 
-The filtering API is powerful, but potentially confusing. If in doubt, [add a `name` to your route](#api-mockingmock_options), and pass that name in to retrieve exactly the calls you want.
+The filtering API is powerful, but potentially confusing. If in doubt, [add a `name` to your route](/fetch-mock/docs/legacy-api/API/Mocking/Parameters/options), and pass that name in to retrieve exactly the calls you want.
 
 The API will be simplified and changed significantly in the next major version
 

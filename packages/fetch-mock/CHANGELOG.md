@@ -1,5 +1,16 @@
 # Changelog
 
+## [12.0.0](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v11.1.5...fetch-mock-v12.0.0) (2024-10-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* Replaced legacy fetch-mock code with fetch-mock/core code
+
+### Features
+
+* Replaced legacy fetch-mock code with fetch-mock/core code ([999ce92](https://github.com/wheresrhys/fetch-mock/commit/999ce9257de6683830c8e70dcda3862c3d13699e))
+
 ## [0.7.1](https://github.com/wheresrhys/fetch-mock/compare/core-v0.7.0...core-v0.7.1) (2024-09-25)
 
 

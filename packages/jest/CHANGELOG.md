@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.2.0](https://github.com/wheresrhys/fetch-mock/compare/jest-v0.1.1...jest-v0.2.0) (2024-10-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* Replaced legacy fetch-mock code with fetch-mock/core code
+
+### Features
+
+* Replaced legacy fetch-mock code with fetch-mock/core code ([999ce92](https://github.com/wheresrhys/fetch-mock/commit/999ce9257de6683830c8e70dcda3862c3d13699e))
+
+
+### Documentation Changes
+
+* bring jest docs into website ([18ae8b6](https://github.com/wheresrhys/fetch-mock/commit/18ae8b63d4c01a3aacf71f84d6af1a49f6409685))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * fetch-mock bumped from 11.1.5 to 12.0.0
+
 ## [0.1.1](https://github.com/wheresrhys/fetch-mock/compare/jest-v0.1.0...jest-v0.1.1) (2024-09-25)
 
 

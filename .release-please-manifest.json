@@ -1,5 +1,4 @@
 {
-	"packages/core": "0.7.1",
 	"packages/fetch-mock": "11.1.5",
 	"packages/vitest": "0.1.5",
 	"packages/jest": "0.1.1",

@@ -29,7 +29,6 @@
 	"plugins": ["node-workspace"],
 	"packages": {
 		"packages/codemods": {},
-		"packages/core": {},
 		"packages/vitest": {},
 		"packages/jest": {},
 		"packages/fetch-mock": {}

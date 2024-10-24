@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.2.0](https://github.com/wheresrhys/fetch-mock/compare/vitest-v0.1.5...vitest-v0.2.0) (2024-10-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* Replaced legacy fetch-mock code with fetch-mock/core code
+
+### Features
+
+* Replaced legacy fetch-mock code with fetch-mock/core code ([999ce92](https://github.com/wheresrhys/fetch-mock/commit/999ce9257de6683830c8e70dcda3862c3d13699e))
+
+
+### Documentation Changes
+
+* bring vitest docs into website ([22b549b](https://github.com/wheresrhys/fetch-mock/commit/22b549bf997d243ea765082ffcda0d429d3cf903))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * fetch-mock bumped from 11.1.5 to 12.0.0
+
 ## [0.1.5](https://github.com/wheresrhys/fetch-mock/compare/vitest-v0.1.4...vitest-v0.1.5) (2024-09-25)
 
 

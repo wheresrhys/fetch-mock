@@ -31,7 +31,7 @@ npm i -D @fetch-mock/jest
 
 ```js
 import fetchMock, { manageFetchMockGlobally } from '@fetch-mock/jest';
-import { jest } from '@jest/glonals';
+import { jest } from '@jest/globals';
 
 manageFetchMockGlobally(jest); // optional
 ```

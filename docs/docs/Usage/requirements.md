@@ -20,4 +20,4 @@ If using node-fetch in your application fetch-mock@12 and above may work for you
 As react-native ships with a non-spec-compliant version of the URL and URLSearchParams classes, fetch-mock will not run in a react-native environment unless you also include [react-native-url-polyfill](https://www.npmjs.com/package/react-native-url-polyfill). You can either:
 
 1. Include it in your application code. This will add approx 11kb of gzipped code to your bundle.
-2. Include it in your test files only. If doing this, its recommended that you have somne integration tests that _don't_ use fetch-mock in order to avoid inserting behaviour into your application that relies on the polyfill.
+2. Include it in your test files only. If doing this, its recommended that you have some integration tests that _don't_ use fetch-mock in order to avoid inserting behaviour into your application that relies on the polyfill.

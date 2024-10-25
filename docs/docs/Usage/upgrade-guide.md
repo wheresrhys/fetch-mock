@@ -22,10 +22,12 @@ The filtering behaviour has been rewritten around named routes, and methods retu
 
 ## Some convenience routing methods removed
 
-`getOnce()` and `getAnyOnce()`. have all been removed, but the behaviour can still be implemented by the user as follows:
+`getOnce()` and `getAnyOnce()` have been removed, but the behaviour can still be implemented by the user as follows:
 
 - `getOnce()` -> `get(url, response, {repeat: 1})`
 - `getAnyOnce()` -> `get('*', response, {repeat: 1})`
+
+The same is true for `postOnce()`, `deleteOnce()` etc.
 
 ## Options removed
 

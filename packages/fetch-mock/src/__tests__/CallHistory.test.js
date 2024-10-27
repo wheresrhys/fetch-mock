@@ -11,7 +11,38 @@ describe('CallHistory', () => {
 	const fetchTheseUrls = (...urls) =>
 		Promise.all(urls.map((url) => fm.fetchHandler(url)));
 
-	describe('helper methods', () => {
+	describe('clear', () => {
+		it('should clear all call logs', async () => {
+			fm.route('http://a.com', 200).route('http://b.com', 200);
+			fm.fetchHandler('http://a.com');
+			fm.fetchHandler('http://b.com');
+
+			expect(fm.callHistory.callLogs.length).toEqual(2);
+			fm.callHistory.clear();
+			expect(fm.callHistory.callLogs.length).toEqual(0);
+		});
+		it('should clear counter in routes that are set to only respond a set number of times', async () => {
+			fm.once('http://a.com', 200);
+			fm.fetchHandler('http://a.com');
+			fm.callHistory.clear();
+			await expect(fm.fetchHandler('http://a.com')).resolves.not.toThrow();
+		});
+		it('should not error if there are unmatched calls', async () => {
+			try {
+				await fm.fetchHandler('https://example.com');
+			} catch {
+				expect(() => fm.callHistory.clear()).not.toThrow(); // Error
+			}
+		});
+
+		it('is aliased to fetchMock.clearHistory()', async () => {
+			vi.spyOn(fm.callHistory, 'clear');
+			fm.clearHistory();
+			expect(fm.callHistory.clear).toHaveBeenCalled();
+			fm.callHistory.clear.mockRestore();
+		});
+	});
+	describe('inspecting call history methods', () => {
 		describe('called()', () => {
 			it('returns a suitable boolean', () => {
 				fm.catch();

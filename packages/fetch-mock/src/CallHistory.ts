@@ -55,7 +55,11 @@ class CallHistory {
 	}
 
 	clear() {
-		this.callLogs.forEach(({ route }) => route.reset());
+		this.callLogs.forEach(({ route }) => {
+			if (route) {
+				route.reset();
+			}
+		});
 		this.callLogs = [];
 	}
 

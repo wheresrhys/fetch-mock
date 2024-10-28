@@ -27,6 +27,13 @@ describe('response construction', () => {
 				);
 			}
 		});
+
+		it('should be able to send status 0', async () => {
+			fm.route('*', { status: 0 });
+			const res = await fm.fetchHandler('http://a.com/');
+			expect(res.status).toEqual(0);
+			expect(res.statusText).toEqual('');
+		});
 	});
 
 	describe('string', () => {

@@ -89,6 +89,12 @@ function isBodyInit(body: BodyInit | object): body is BodyInit {
 }
 
 function sanitizeStatus(status?: number): number {
+	if (status === 0) {
+		// we do this here for now because we can't construct a Response with status 0
+		// we overwrite to 0 later in the proxy wrapper around teh response.
+		return 200;
+	}
+
 	if (!status) {
 		return 200;
 	}

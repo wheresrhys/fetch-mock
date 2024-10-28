@@ -70,7 +70,7 @@ function shouldSendAsObject(responseInput: RouteResponseData): boolean {
 	// TODO improve this... make it less hacky and magic
 	if (
 		responseConfigProps.some(
-			(prop) => (responseInput as RouteResponseConfig)[prop],
+			(prop) => prop in (responseInput as RouteResponseConfig),
 		)
 	) {
 		if (
@@ -275,6 +275,11 @@ export default class Router {
 					if (name === 'redirected') {
 						return false;
 					}
+				}
+
+				if (responseInput.status === 0) {
+					if (name === 'status') return 0;
+					if (name === 'statusText') return '';
 				}
 				// TODO fix these types properly
 				//@ts-expect-error TODO probably make use of generics here

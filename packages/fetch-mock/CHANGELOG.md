@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.0.2](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v12.0.1...fetch-mock-v12.0.2) (2024-10-28)
+
+
+### Bug Fixes
+
+* allow sending responses with status 0 ([92c06e9](https://github.com/wheresrhys/fetch-mock/commit/92c06e933fc8bd2e6b1027d1640d657bcf9a49a9))
+
 ## [12.0.1](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v12.0.0...fetch-mock-v12.0.1) (2024-10-27)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/wheresrhys/fetch-mock/compare/vitest-v0.2.2...vitest-v0.2.3) (2024-10-30)
+
+
+### Bug Fixes
+
+* use file extension to avoid import errors for vitest and jest wrappers ([f1f25f1](https://github.com/wheresrhys/fetch-mock/commit/f1f25f1bd921daf585033ac43ddbca1f32c9aafb))
+
 ## [0.2.2](https://github.com/wheresrhys/fetch-mock/compare/vitest-v0.2.1...vitest-v0.2.2) (2024-10-28)
 
 

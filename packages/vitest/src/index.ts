@@ -4,7 +4,7 @@ import {
 	defaultFetchMockConfig,
 	RemoveRouteOptions,
 } from 'fetch-mock';
-import './vitest-extensions';
+import './vitest-extensions.js';
 
 type MockResetOptions = {
 	includeSticky: boolean;

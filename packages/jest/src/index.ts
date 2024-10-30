@@ -3,7 +3,7 @@ import {
 	defaultFetchMockConfig,
 	RemoveRouteOptions,
 } from 'fetch-mock';
-import './jest-extensions';
+import './jest-extensions.js';
 import type { Jest } from '@jest/environment';
 
 type MockResetOptions = {

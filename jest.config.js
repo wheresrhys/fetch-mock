@@ -6,5 +6,6 @@ export default {
 	},
 	moduleNameMapper: {
 		'@fetch-mock/core': '<rootDir>/packages/core/dist/cjs/index.js',
+		'(.+)\\.js': '$1',
 	},
 };

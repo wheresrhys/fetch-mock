@@ -2,7 +2,6 @@ import { RouteConfig } from './Route.js';
 import { CallLog } from './CallHistory.js';
 import glob from 'glob-to-regexp';
 import * as regexparam from 'regexparam';
-import { isSubsetOf } from 'is-subset-of';
 import { dequal as isEqual } from 'dequal';
 import { normalizeHeaders, getPath, normalizeUrl } from './RequestUtils.js';
 
@@ -211,6 +210,19 @@ const getBodyMatcher: MatcherGenerator = (route) => {
 				: isEqual(expectedBody, sentBody))
 		);
 	};
+};
+
+const isSubsetOf = (
+	subset: Record<string, any>,
+	superset: Record<string, any>,
+): boolean => {
+	return Object.entries(subset).every(([key, value]) => {
+		if (!(key in superset)) return false;
+		if (typeof value === 'object' && value !== null) {
+			return isEqual(value, superset[key]);
+		}
+		return superset[key] === value;
+	});
 };
 
 const getFunctionMatcher: MatcherGenerator = ({ matcherFunction }) =>

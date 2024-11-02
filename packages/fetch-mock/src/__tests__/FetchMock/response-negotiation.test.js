@@ -254,7 +254,7 @@ describe('response negotiation', () => {
 				signal: controller.signal,
 			});
 			controller.abort();
-			await expect(res.json()).rejects.toThrowError(
+			await expect(res.bytes()).rejects.toThrowError(
 				new DOMException('The operation was aborted.', 'AbortError'),
 			);
 
@@ -263,7 +263,7 @@ describe('response negotiation', () => {
 			);
 		});
 
-		it('aborts receiving body stream response', async () => {
+		it('aborts receiving body stream response when in middle of reading stream', async () => {
 			const controller = new AbortController();
 
 			const body = new ReadableStream();
@@ -272,20 +272,14 @@ describe('response negotiation', () => {
 			const res = await fm.fetchHandler('http://a.com', {
 				signal: controller.signal,
 			});
-
-			const jsonReadExpectation = expect(res.json()).rejects.toThrowError(
+			const bodyPromise = res.bytes();
+			controller.abort();
+			await expect(bodyPromise).rejects.toThrowError(
 				new DOMException('The operation was aborted.', 'AbortError'),
 			);
-			controller.abort();
-			await jsonReadExpectation;
 			expect(body.cancel).toHaveBeenCalledWith(
 				new DOMException('The operation was aborted.', 'AbortError'),
 			);
-		});
-
-		it.skip('aborts receiving response body stream', async () => {
-			// so fiddly to implement a test for this. Uses the same mechanism as cancelling request body though
-			// so I trust that if one works the other does
 		});
 
 		it('go into `done` state even when aborted', async () => {

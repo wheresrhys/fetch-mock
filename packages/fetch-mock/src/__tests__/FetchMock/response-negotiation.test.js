@@ -207,7 +207,7 @@ describe('response negotiation', () => {
 			);
 		});
 
-		it('aborts sending request options body stream', async () => {
+		it('aborts sending when a body stream is provided as a request option', async () => {
 			fm.route('*', 200, { delay: 50 });
 			const body = new ReadableStream();
 			vi.spyOn(body, 'cancel');
@@ -225,7 +225,7 @@ describe('response negotiation', () => {
 			);
 		});
 
-		// this doesn't work as the callLog creatde from the request awaits the body
+		// this doesn't work as the callLog created from the request awaits the body
 		it.skip('aborts sending request body stream', async () => {
 			fm.route('*', 200, { delay: 50 });
 			const body = new ReadableStream();
@@ -244,9 +244,42 @@ describe('response negotiation', () => {
 			);
 		});
 
-		it.skip('aborts receiving response body stream', async () => {
-			// so fiddly to implement a test for this. Uses the same mechanism as cancelling request body though
-			// so I trust that if one works the other does
+		it('aborts receiving body stream response', async () => {
+			const controller = new AbortController();
+
+			const body = new ReadableStream();
+			vi.spyOn(body, 'cancel');
+			fm.route('*', body);
+			const res = await fm.fetchHandler('http://a.com', {
+				signal: controller.signal,
+			});
+			controller.abort();
+			await expect(res.bytes()).rejects.toThrowError(
+				new DOMException('The operation was aborted.', 'AbortError'),
+			);
+
+			expect(body.cancel).toHaveBeenCalledWith(
+				new DOMException('The operation was aborted.', 'AbortError'),
+			);
+		});
+
+		it('aborts receiving body stream response when in middle of reading stream', async () => {
+			const controller = new AbortController();
+
+			const body = new ReadableStream();
+			vi.spyOn(body, 'cancel');
+			fm.route('*', body);
+			const res = await fm.fetchHandler('http://a.com', {
+				signal: controller.signal,
+			});
+			const bodyPromise = res.bytes();
+			controller.abort();
+			await expect(bodyPromise).rejects.toThrowError(
+				new DOMException('The operation was aborted.', 'AbortError'),
+			);
+			expect(body.cancel).toHaveBeenCalledWith(
+				new DOMException('The operation was aborted.', 'AbortError'),
+			);
 		});
 
 		it('go into `done` state even when aborted', async () => {

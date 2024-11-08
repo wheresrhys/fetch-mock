@@ -9,6 +9,7 @@ import { normalizeHeaders, getPath, normalizeUrl } from './RequestUtils.js';
 export type URLMatcherObject = {
 	begin?: string;
 	end?: string;
+	include?: string;
 	glob?: string;
 	express?: string;
 	path?: string;
@@ -41,11 +42,15 @@ const stringMatchers: { [key: string]: UrlMatcherGenerator } = {
 	begin:
 		(targetString) =>
 		({ url }) =>
-			url.indexOf(targetString) === 0,
+			url.startsWith(targetString),
 	end:
 		(targetString) =>
 		({ url }) =>
-			url.substr(-targetString.length) === targetString,
+			url.endsWith(targetString),
+	include:
+		(targetString) =>
+		({ url }) =>
+			url.includes(targetString),
 
 	glob: (targetString) => {
 		const urlRX = glob(targetString);

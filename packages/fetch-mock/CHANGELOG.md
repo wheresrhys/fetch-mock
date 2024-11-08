@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.1.0](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v12.0.3...fetch-mock-v12.1.0) (2024-11-08)
+
+
+### Features
+
+* **fetch-mock:** add include: matcher for urls ([02f880c](https://github.com/wheresrhys/fetch-mock/commit/02f880c64f96559efbccee6ba6d7ca4288efd92a))
+
 ## [12.0.3](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v12.0.2...fetch-mock-v12.0.3) (2024-11-08)
 
 

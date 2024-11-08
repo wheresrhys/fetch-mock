@@ -17,7 +17,7 @@ export type NormalizedRequestOptions =
 export function hasCredentialsInUrl(url: string): boolean {
 	const urlObject = new URL(
 		url,
-		protocolRelativeUrlRX.test(url) ? 'http://dummy' : undefined,
+		!absoluteUrlRX.test(url) ? 'http://dummy' : undefined,
 	);
 	return Boolean(urlObject.username || urlObject.password);
 }

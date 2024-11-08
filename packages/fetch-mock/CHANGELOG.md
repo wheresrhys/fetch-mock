@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.0.3](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v12.0.2...fetch-mock-v12.0.3) (2024-11-08)
+
+
+### Bug Fixes
+
+* allow matching relative URLs ([2cba1bc](https://github.com/wheresrhys/fetch-mock/commit/2cba1bc0fdf6a042a715b2cb329ba5f369a71a5e))
+
 ## [12.0.2](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v12.0.1...fetch-mock-v12.0.2) (2024-10-28)
 
 

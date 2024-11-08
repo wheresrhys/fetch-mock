@@ -50,6 +50,12 @@ Match a url beginning with a string, e.g. `"begin:http://www.site.com"`
 
 Match a url ending with a string, e.g. `"end:.jpg"`
 
+### include:...
+
+`{String}`
+
+Match a url including a string, e.g. `"include:site.com/api"`
+
 ### path:...
 
 `{String}`

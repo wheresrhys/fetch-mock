@@ -47,6 +47,19 @@ describe('url matching', () => {
 		expect(route.matcher({ url: 'http://b.com/path' })).toBe(true);
 	});
 
+	it('match include: keyword', () => {
+		const route = new Route({
+			url: 'include:m/p',
+			response: 200,
+		});
+
+		expect(route.matcher({ url: 'http://a.com/path' })).toBe(true);
+		expect(route.matcher({ url: 'http://a.com/ram/path' })).toBe(true);
+		expect(route.matcher({ url: 'http://a.com/p' })).toBe(true);
+		expect(route.matcher({ url: 'http://a.com/P' })).toBe(false);
+		expect(route.matcher({ url: 'http://a.com/ramp' })).toBe(false);
+	});
+
 	it('match glob: keyword', () => {
 		const route = new Route({ url: 'glob:/its/*/*', response: 200 });
 		expect(route.matcher({ url: '/its/alive' })).toBe(false);

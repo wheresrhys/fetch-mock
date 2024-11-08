@@ -23,6 +23,15 @@ describe('Spec compliance', () => {
 				),
 			);
 		});
+		it('rejects on protocol agnostic url containing credentials', async () => {
+			await expect(
+				fetchMock.fetchHandler('//user:password@a.com'),
+			).rejects.toThrow(
+				new TypeError(
+					'Request cannot be constructed from a URL that includes credentials: //user:password@a.com/',
+				),
+			);
+		});
 		it('reject if the request method is GET or HEAD and the body is non-null.', async () => {
 			await expect(
 				fetchMock.fetchHandler('http://a.com', { body: 'a' }),

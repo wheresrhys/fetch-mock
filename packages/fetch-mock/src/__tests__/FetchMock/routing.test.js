@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import fetchMock from '../../FetchMock';
 
 describe('Routing', () => {
@@ -248,19 +248,6 @@ describe('Routing', () => {
 
 			const res = await fm.fetchHandler('http://a.com/');
 			expect(res.status).toEqual(200);
-		});
-	});
-
-	describe('relative routes', () => {
-		beforeEach(() => {
-			fm.config.allowRelativeUrls = true;
-		});
-		afterEach(() => {
-			fm.config.allowRelativeUrls = false;
-		});
-		it('allows handling relative routes', async () => {
-			fm.route('/relative/path', 200);
-			await fm.fetchHandler('/relative/path');
 		});
 	});
 });

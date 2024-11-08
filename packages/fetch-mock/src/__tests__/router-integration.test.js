@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import fetchMock from '../FetchMock';
 describe('router integration', () => {
+	const isBrowser = Boolean(globalThis.location);
 	it('matchurls  when called with Request', async () => {
 		const fm = fetchMock.createInstance();
 		fm.post('http://a.com/', 200).catch();
@@ -65,6 +66,14 @@ describe('router integration', () => {
 			),
 		).resolves.not.toThrow();
 	});
+	if (!isBrowser) {
+		it('can match relative urls when allowRelativeUrls option is true', async () => {
+			const fm = fetchMock.createInstance();
+			fm.route('/path', 200, { allowRelativeUrls: true });
+			const res = await fm.fetchHandler('/path');
+			expect(res.status).toEqual(200);
+		});
+	}
 });
 describe('user defined matchers', () => {
 	it('match on sync property', async () => {

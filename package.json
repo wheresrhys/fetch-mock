@@ -87,5 +87,8 @@
 		"**/*.md": [
 			"npm run prettier"
 		]
+	},
+	"dependencies": {
+		"@docusaurus/preset-classic": "^3.6.1"
 	}
 }

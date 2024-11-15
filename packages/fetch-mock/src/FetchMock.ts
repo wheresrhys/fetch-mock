@@ -4,6 +4,10 @@ import { MatcherDefinition, RouteMatcher } from './Matchers.js';
 import CallHistory from './CallHistory.js';
 import * as requestUtils from './RequestUtils.js';
 
+export type HardResetOptions  = {
+	includeSticky?: boolean;
+}
+
 export type FetchMockGlobalConfig = {
 	includeContentLength?: boolean;
 	matchPartialBody?: boolean;
@@ -143,6 +147,13 @@ export class FetchMock {
 	}
 	unmockGlobal(this: FetchMock): FetchMock {
 		globalThis.fetch = this.config.fetch;
+		return this;
+	}
+
+	hardReset(options?: HardResetOptions): FetchMock {
+		this.clearHistory();
+		this.removeRoutes(options as RemoveRouteOptions);
+		this.unmockGlobal();
 		return this;
 	}
 

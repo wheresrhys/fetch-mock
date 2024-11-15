@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.2.6](https://github.com/wheresrhys/fetch-mock/compare/jest-v0.2.5...jest-v0.2.6) (2024-11-15)
+
+
+### Bug Fixes
+
+* remove extraneous console.log ([c2c92a4](https://github.com/wheresrhys/fetch-mock/commit/c2c92a48e393c2bf503d51dd436b6788cf66eb52))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * fetch-mock bumped from ^12.1.0 to ^12.2.0
+
 ## [0.2.5](https://github.com/wheresrhys/fetch-mock/compare/jest-v0.2.4...jest-v0.2.5) (2024-11-08)
 
 

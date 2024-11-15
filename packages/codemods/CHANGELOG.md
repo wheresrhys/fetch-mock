@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/wheresrhys/fetch-mock/compare/codemods-v0.1.1...codemods-v0.1.2) (2024-11-15)
+
+
+### Features
+
+* update codemods to use hardReset() ([757d480](https://github.com/wheresrhys/fetch-mock/commit/757d480532cfa8054471dec1bfcd89688966e37b))
+
 ## [0.1.1](https://github.com/wheresrhys/fetch-mock/compare/codemods-v0.1.0...codemods-v0.1.1) (2024-09-25)
 
 

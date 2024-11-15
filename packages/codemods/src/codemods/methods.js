@@ -74,11 +74,16 @@ module.exports.simpleMethods = function (fetchMockVariableName, root) {
 				const sticky = path?.value?.arguments[0]?.properties?.find(
 					(prop) => prop.key.name === 'sticky',
 				)?.value?.value;
-				const newExpressions = j(`
-${methodName !== 'resetBehavior' ? 'fetchMock.clearHistory()' : ''};
+				let expressionsString;
+				if (methodName === 'resetBehavior') {
+					expressionsString = `
 fetchMock.removeRoutes(${sticky ? '{includeSticky: true}' : ''});
-fetchMock.unmockGlobal();
-`)
+fetchMock.unmockGlobal();`;
+				} else {
+					expressionsString = `
+fetchMock.hardReset(${sticky ? '{includeSticky: true}' : ''});`;
+				}
+				const newExpressions = j(expressionsString)
 					.find(j.ExpressionStatement)
 					.paths();
 				const insertLocation = j(path)

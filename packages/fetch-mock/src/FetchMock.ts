@@ -4,9 +4,9 @@ import { MatcherDefinition, RouteMatcher } from './Matchers.js';
 import CallHistory from './CallHistory.js';
 import * as requestUtils from './RequestUtils.js';
 
-export type HardResetOptions  = {
+export type HardResetOptions = {
 	includeSticky?: boolean;
-}
+};
 
 export type FetchMockGlobalConfig = {
 	includeContentLength?: boolean;

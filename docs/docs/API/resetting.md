@@ -8,7 +8,7 @@ The methods below can be used to restore some or all of fetchMock's behaviour to
 
 ## .hardReset(options)
 
-Removes all the behaviour and state that's been added so far. It runs `.removeRoutes()`, `.clearHistory()` and `.unmockGlobal()`. Pass `{includeSticky: true}` to force even sticky routes to be reomved.
+Removes all the behaviour and state that's been added so far. It runs `.removeRoutes()`, `.clearHistory()` and `.unmockGlobal()`. Pass `{includeSticky: true}` to force even sticky routes to be removed.
 
 ## .removeRoutes(options)
 

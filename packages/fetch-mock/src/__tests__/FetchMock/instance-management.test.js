@@ -154,4 +154,27 @@ describe('instance management', () => {
 			expect(fm.router.routes.length).toEqual(0);
 		});
 	});
+
+	describe('hardReset', () => {
+		it('can hardReset and leave just sticky routes', () => {
+			const fm = fetchMock.createInstance();
+			fm.route('*', 200, { sticky: true, name: 'sticky' }).route('*', 200);
+			fm.mockGlobal();
+			fm.fetchHandler('http://a.com');
+			fm.hardReset();
+			expect(fm.callHistory.callLogs.length).toBe(0);
+			expect(globalThis.fetch).not.toEqual(fm.fetchHandler);
+			expect(fm.router.routes[0].config.name).toBe('sticky');
+		});
+		it('can hardReset including sticky routes', () => {
+			const fm = fetchMock.createInstance();
+			fm.route('*', 200, { sticky: true, name: 'sticky' }).route('*', 200);
+			fm.mockGlobal();
+			fm.fetchHandler('http://a.com');
+			fm.hardReset({ includeSticky: true });
+			expect(fm.callHistory.callLogs.length).toBe(0);
+			expect(globalThis.fetch).not.toEqual(fm.fetchHandler);
+			expect(fm.router.routes.length).toBe(0);
+		});
+	});
 });

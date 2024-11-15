@@ -51,6 +51,10 @@ describe('mock and spy', () => {
 			fm.mockGlobal().unmockGlobal();
 			expect(globalThis.fetch).toEqual(nativeFetch);
 		});
+
+		it('does not error when called on unmocked fetch', () => {
+			expect(() => fm.unmockGlobal()).not.toThrow();
+		});
 	});
 	describe('.spy()', () => {
 		testChainableMethod('spy');

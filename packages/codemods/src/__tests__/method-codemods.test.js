@@ -66,35 +66,21 @@ describe('codemods operating on methods', () => {
 
 	describe('converting resetting methods', () => {
 		it('rewrites restore()', () => {
-			expectCodemodResult(
-				'fetchMock.restore()',
-				`fetchMock.clearHistory();
-fetchMock.removeRoutes();
-fetchMock.unmockGlobal();`,
-			);
+			expectCodemodResult('fetchMock.restore()', `fetchMock.hardReset();`);
 		});
 		it('rewrites restore() with {sticky: true}', () => {
 			expectCodemodResult(
 				'fetchMock.restore({sticky: true})',
-				`fetchMock.clearHistory();
-fetchMock.removeRoutes({includeSticky: true});
-fetchMock.unmockGlobal();`,
+				`fetchMock.hardReset({includeSticky: true});`,
 			);
 		});
 		it('rewrites reset()', () => {
-			expectCodemodResult(
-				'fetchMock.reset()',
-				`fetchMock.clearHistory();
-fetchMock.removeRoutes();
-fetchMock.unmockGlobal();`,
-			);
+			expectCodemodResult('fetchMock.reset()', `fetchMock.hardReset();`);
 		});
 		it('rewrites reset() with {sticky: true}', () => {
 			expectCodemodResult(
 				'fetchMock.reset({sticky: true})',
-				`fetchMock.clearHistory();
-fetchMock.removeRoutes({includeSticky: true});
-fetchMock.unmockGlobal();`,
+				`fetchMock.hardReset({includeSticky: true});`,
 			);
 		});
 

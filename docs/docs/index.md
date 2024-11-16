@@ -11,7 +11,7 @@ It supports most JavaScript environments, including browsers, Node.js, web worke
 
 As well as shorthand methods for the simplest use cases, it offers a flexible API for customising all aspects of mocking behaviour.
 
-> **For documentation for fetch-mock v11 and below visist the [Legacy API docs](/fetch-mock/docs/legacy-api)**
+> **For documentation for fetch-mock v11 and below visit the [Legacy API docs](/fetch-mock/docs/legacy-api)**
 
 ## Examples
 

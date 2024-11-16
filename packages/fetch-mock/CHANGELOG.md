@@ -1,5 +1,13 @@
 # Changelog
 
+## [12.2.0](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v12.1.0...fetch-mock-v12.2.0) (2024-11-15)
+
+
+### Features
+
+* implement new hardReset method ([d7e0776](https://github.com/wheresrhys/fetch-mock/commit/d7e0776ea54011bcccaee1e1edfb986e9f1a4397))
+* update codemods to use hardReset() ([757d480](https://github.com/wheresrhys/fetch-mock/commit/757d480532cfa8054471dec1bfcd89688966e37b))
+
 ## [12.1.0](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v12.0.3...fetch-mock-v12.1.0) (2024-11-08)
 
 

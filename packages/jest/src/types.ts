@@ -72,11 +72,18 @@ export type FetchMockMatchers = {
 
 // types for use doing some intermediate type checking in extensions to make sure things don't get out of sync
 /**
+ * This reflects the Object.assign that FetchMock does on the fetch function
+ */
+export type PatchedFetch = {
+	fetchMock: FetchMock;
+};
+
+/**
  * This type allows us to take the Matcher type and creat another one
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type RawMatcher<T extends (...args: any[]) => any> = (
-	input: { fetchMock: FetchMock },
+	input: PatchedFetch | FetchMock,
 	...args: Parameters<T>
 ) => ReturnType<T>;
 

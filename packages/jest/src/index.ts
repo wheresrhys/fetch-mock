@@ -67,6 +67,7 @@ declare global {
 		// Type-narrow expect for FetchMock
 		interface Expect {
 			(actual: FetchMock): FetchMockMatchers;
+			(actual: typeof fetch): FetchMockMatchers;
 		}
 	}
 }

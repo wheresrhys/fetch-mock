@@ -1,6 +1,6 @@
 import { expect } from '@jest/globals';
 import type { SyncExpectationResult } from 'expect';
-import type {
+import {
 	FetchMock,
 	RouteName,
 	CallHistoryFilter,
@@ -9,18 +9,32 @@ import type {
 import {
 	HumanVerbMethodNames,
 	HumanVerbs,
+	PatchedFetch,
 	RawFetchMockMatchers,
 } from './types.js';
+
+function getFetchMockFromInput(input: PatchedFetch | FetchMock) {
+	const fetchMock = (input as PatchedFetch)['fetchMock']
+		? (input as PatchedFetch).fetchMock
+		: input;
+	if (!fetchMock || !(fetchMock instanceof FetchMock)) {
+		throw new Error(
+			'Unable to get fetchMock instance!  Please make sure you passed a patched fetch or fetchMock!',
+		);
+	}
+	return fetchMock;
+}
 
 const methodlessExtensions: Pick<
 	RawFetchMockMatchers,
 	HumanVerbMethodNames<'Fetched'>
 > = {
 	toHaveFetched: (
-		{ fetchMock }: { fetchMock: FetchMock },
+		input: PatchedFetch | FetchMock,
 		filter: CallHistoryFilter,
 		options: UserRouteConfig,
 	): SyncExpectationResult => {
+		const fetchMock = getFetchMockFromInput(input);
 		if (fetchMock.callHistory.called(filter, options)) {
 			return { pass: true, message: () => 'fetch was called as expected' };
 		}
@@ -31,10 +45,11 @@ const methodlessExtensions: Pick<
 		};
 	},
 	toHaveLastFetched: (
-		{ fetchMock }: { fetchMock: FetchMock },
+		input: PatchedFetch | FetchMock,
 		filter: CallHistoryFilter,
 		options: UserRouteConfig,
 	): SyncExpectationResult => {
+		const fetchMock = getFetchMockFromInput(input);
 		const allCalls = fetchMock.callHistory.calls();
 		if (!allCalls.length) {
 			return {
@@ -57,11 +72,12 @@ const methodlessExtensions: Pick<
 	},
 
 	toHaveNthFetched: (
-		{ fetchMock }: { fetchMock: FetchMock },
+		input: PatchedFetch | FetchMock,
 		n: number,
 		filter: CallHistoryFilter,
 		options: UserRouteConfig,
 	): SyncExpectationResult => {
+		const fetchMock = getFetchMockFromInput(input);
 		const nthCall = fetchMock.callHistory.calls()[n - 1];
 		const matchingCalls = fetchMock.callHistory.calls(filter, options);
 		if (matchingCalls.some((call) => call === nthCall)) {
@@ -78,11 +94,12 @@ const methodlessExtensions: Pick<
 	},
 
 	toHaveFetchedTimes: (
-		{ fetchMock }: { fetchMock: FetchMock },
+		input: PatchedFetch | FetchMock,
 		times: number,
 		filter: CallHistoryFilter,
 		options: UserRouteConfig,
 	): SyncExpectationResult => {
+		const fetchMock = getFetchMockFromInput(input);
 		const calls = fetchMock.callHistory.calls(filter, options);
 		if (calls.length === times) {
 			return {
@@ -102,9 +119,10 @@ expect.extend(methodlessExtensions);
 
 expect.extend({
 	toBeDone: (
-		{ fetchMock }: { fetchMock: FetchMock },
+		input: PatchedFetch | FetchMock,
 		routes: RouteName | RouteName[],
 	): SyncExpectationResult => {
+		const fetchMock = getFetchMockFromInput(input);
 		const done = fetchMock.callHistory.done(routes);
 		if (done) {
 			return { pass: true, message: () => '' };

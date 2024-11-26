@@ -6,7 +6,16 @@ import type {
 	CallHistoryFilter,
 	UserRouteConfig,
 } from 'fetch-mock';
-const methodlessExtensions = {
+import {
+	HumanVerbMethodNames,
+	HumanVerbs,
+	RawFetchMockMatchers,
+} from './types.js';
+
+const methodlessExtensions: Pick<
+	RawFetchMockMatchers,
+	HumanVerbMethodNames<'Fetched'>
+> = {
 	toHaveFetched: (
 		{ fetchMock }: { fetchMock: FetchMock },
 		filter: CallHistoryFilter,
@@ -128,25 +137,24 @@ function scopeExpectationNameToMethod(name: string, humanVerb: string): string {
 	return name.replace('Fetched', humanVerb);
 }
 
-[
-	'Got:get',
-	'Posted:post',
-	'Put:put',
-	'Deleted:delete',
-	'FetchedHead:head',
-	'Patched:patch',
-].forEach((verbs) => {
-	const [humanVerb, method] = verbs.split(':');
+const expectMethodNameToMethodMap: {
+	[humanVerb in Exclude<HumanVerbs, 'Fetched'>]: string;
+} = {
+	Got: 'get',
+	Posted: 'post',
+	Put: 'put',
+	Deleted: 'delete',
+	FetchedHead: 'head',
+	Patched: 'patch',
+};
 
-	const extensions: {
-		// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-		[key: string]: (...args: any[]) => SyncExpectationResult;
-	} = Object.fromEntries(
+Object.entries(expectMethodNameToMethodMap).forEach(([humanVerb, method]) => {
+	const extensions = Object.fromEntries(
 		Object.entries(methodlessExtensions).map(([name, func]) => [
 			scopeExpectationNameToMethod(name, humanVerb),
 			scopeExpectationFunctionToMethod(func, method),
 		]),
-	);
+	) as Omit<RawFetchMockMatchers, HumanVerbMethodNames<'Fetched'>>;
 
 	expect.extend(extensions);
 });

@@ -66,8 +66,12 @@ declare global {
 	namespace jest {
 		// Type-narrow expect for FetchMock
 		interface Expect {
-			(actual: FetchMock): FetchMockMatchers;
-			(actual: typeof fetch): FetchMockMatchers;
+			(actual: FetchMock): FetchMockMatchers & {
+				not: FetchMockMatchers;
+			};
+			(actual: typeof fetch): FetchMockMatchers & {
+				not: FetchMockMatchers;
+			};
 		}
 	}
 }

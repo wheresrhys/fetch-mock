@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.7](https://github.com/wheresrhys/fetch-mock/compare/jest-v0.2.6...jest-v0.2.7) (2024-11-29)
+
+
+### Bug Fixes
+
+* add not type definitions ([68b24e7](https://github.com/wheresrhys/fetch-mock/commit/68b24e74f508a42dcfa795c040019eff446281d6))
+* adding jestMock extension support to match documentation ([9e41a81](https://github.com/wheresrhys/fetch-mock/commit/9e41a8165bd2caf2cda1d88615be907fcf6f0bc4))
+* adding types to jest matchers ([033048a](https://github.com/wheresrhys/fetch-mock/commit/033048a47ffc07508fc0cb2ce79078b4facb86fb))
+
 ## [0.2.6](https://github.com/wheresrhys/fetch-mock/compare/jest-v0.2.5...jest-v0.2.6) (2024-11-15)
 
 

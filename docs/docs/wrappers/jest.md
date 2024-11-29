@@ -70,7 +70,7 @@ Note that these **will not** clear any sticky routes added to fetchMock. You wil
 
 ### Expect extensions
 
-These are added to jest automatically and are available on any expect call that is passed fetchMock as an argument. Their behaviour is similar to the jest expectation methods mentioned in the comments below
+These are added to jest automatically and are available on any expect call that is passed `fetchMock` (or `fetch`, if it has been mocked globally by fetchMock) as an argument. Their behaviour is similar to the jest expectation methods mentioned in the comments below
 
 ```js
 expect(fetchMock).toHaveFetched(filter, options); // .toHaveBeenCalled()/.toHaveBeenCalledWith()

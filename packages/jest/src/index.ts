@@ -5,6 +5,8 @@ import {
 } from 'fetch-mock';
 import './jest-extensions.js';
 import type { Jest } from '@jest/environment';
+import type { FetchMockMatchers } from './types.js';
+export { FetchMockMatchers } from './types.js';
 
 type MockResetOptions = {
 	includeSticky: boolean;
@@ -55,3 +57,22 @@ const fetchMockJest = new FetchMockJest({
 });
 
 export default fetchMockJest;
+
+/* eslint-disable @typescript-eslint/no-namespace */
+/**
+ * Export types on the expect object
+ */
+declare global {
+	namespace jest {
+		// Type-narrow expect for FetchMock
+		interface Expect {
+			(actual: FetchMock): FetchMockMatchers & {
+				not: FetchMockMatchers;
+			};
+			(actual: typeof fetch): FetchMockMatchers & {
+				not: FetchMockMatchers;
+			};
+		}
+	}
+}
+/* eslint-enable @typescript-eslint/no-namespace */

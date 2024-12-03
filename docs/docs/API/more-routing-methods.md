@@ -7,6 +7,8 @@ sidebar_label: More routing methods
 
 These methods allow defining routes for common use cases while avoiding writing hard to read configuration objects. They all return the fetchMock instance, and are therefor chainable. Unless noted otherwise, each of the methods below have the same signature as `.route()`.
 
+> Note that in older versions of fetch-mock these methods also replaced global `fetch` with your mock. From version 12 onwards this is no longer the case, and you will need to start your tests with `fetchMock.mockGlobal()` or similar. [Read the mocking and spying docs](/fetch-mock/docs/API/mocking-and-spying).
+
 ## .catch()
 
 `.catch(response)`

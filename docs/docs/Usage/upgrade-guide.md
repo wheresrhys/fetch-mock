@@ -16,6 +16,10 @@ Previously this was true in browsers, but in node.js the node-fetch library was 
 
 This combined adding a route with mocking the global instance of `fetch`. These are now split into 2 methods: `.route()` and `.mockGlobal()`.
 
+### Routing convenience methods no longer mock `fetch`
+
+Similar to the last point, `.once()`, `.get()`, `.post()`, `getOnce()`, `postOnce()` and all other routing convenience methods no longer mock the global instance of `fetch`, and you will need to call `.mockGlobal()` explicitly.
+
 ### Reset methods changed
 
 `.reset()`, `.restore()`, `.resetBehavior()` and `.resetHistory()` have been removed and replaced with [methods that are more granular and clearly named](/fetch-mock/docs/API/resetting). Note that the [jest](/fetch-mock/docs/wrappers/jest) and [vitest](/fetch-mock/docs/wrappers/vitest) wrappers for fetch-mock still implement `.mockClear()`, `mockReset()` and `mockRestore()`.

@@ -108,7 +108,7 @@ fetchMock
   .route('*', 'ok')
   .route('*', 404)
   .route('*', {results: []})
-  .route('*', {throw: new Error('Bad kitty')))
+  .route('*', {throw: new Error('Bad kitty')})
   .route('*', new Promise(res => setTimeout(res, 1000, 404)))
   .route('*', (url, opts) => {
     status: 302,

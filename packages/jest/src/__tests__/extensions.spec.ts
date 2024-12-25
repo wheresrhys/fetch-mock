@@ -1,17 +1,17 @@
-import { describe, it, beforeAll, afterAll, expect } from '@jest/globals';
+import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
 
-import fetchMockModule from '../index';
-const fetchMock = fetchMockModule.default;
+import fetchMock from '../index';
+import { expectTypeOf } from 'expect-type';
 
 const humanVerbToMethods = [
-	'Fetched',
-	'Got:get',
-	'Posted:post',
-	'Put:put',
-	'Deleted:delete',
-	'FetchedHead:head',
-	'Patched:patch',
-];
+	{ humanVerb: 'Fetched', method: 'get' },
+	{ humanVerb: 'Got', method: 'get' },
+	{ humanVerb: 'Posted', method: 'post' },
+	{ humanVerb: 'Put', method: 'put' },
+	{ humanVerb: 'Deleted', method: 'delete' },
+	{ humanVerb: 'FetchedHead', method: 'head' },
+	{ humanVerb: 'Patched', method: 'patch' },
+] as const;
 
 // initialize a mock here so fetch is patched across all tests
 fetchMock.mockGlobal();
@@ -20,8 +20,7 @@ describe.each([
 	['patched fetch input', fetch],
 	['fetchMock input', fetchMock],
 ])('expect extensions %s', (_str, expectInput) => {
-	humanVerbToMethods.forEach((verbs) => {
-		const [humanVerb, method] = verbs.split(':');
+	humanVerbToMethods.forEach(({ humanVerb, method }) => {
 		describe(`${humanVerb} expectations`, () => {
 			describe('when no calls', () => {
 				beforeAll(() => {
@@ -29,18 +28,21 @@ describe.each([
 				});
 				afterAll(() => fetchMock.mockReset());
 				it(`toHave${humanVerb} should be falsy`, () => {
+					expect(expectInput).not[`toHave${humanVerb}`]();
 					expect(expectInput).not[`toHave${humanVerb}`](
 						'http://example.com/path',
 					);
 				});
 
 				it(`toHaveLast${humanVerb} should be falsy`, () => {
+					expect(expectInput).not[`toHaveLast${humanVerb}`]();
 					expect(expectInput).not[`toHaveLast${humanVerb}`](
 						'http://example.com/path',
 					);
 				});
 
 				it(`toHaveNth${humanVerb} should be falsy`, () => {
+					expect(expectInput).not[`toHaveNth${humanVerb}`](1);
 					expect(expectInput).not[`toHaveNth${humanVerb}`](
 						1,
 						'http://example.com/path',
@@ -48,6 +50,7 @@ describe.each([
 				});
 
 				it(`toHave${humanVerb}Times should be falsy`, () => {
+					expect(expectInput).not[`toHave${humanVerb}Times`](1);
 					expect(expectInput).not[`toHave${humanVerb}Times`](
 						1,
 						'http://example.com/path',
@@ -58,19 +61,23 @@ describe.each([
 				beforeAll(() => {
 					fetchMock.mockGlobal().route('*', 200);
 					fetch('http://example.com/path2', {
-						method: method || 'get',
+						method,
 						headers: {
 							test: 'header',
 						},
 					});
 					fetch('http://example.com/path', {
-						method: method || 'get',
+						method,
 						headers: {
 							test: 'header',
 						},
 					});
 				});
 				afterAll(() => fetchMock.mockReset());
+
+				it('matches without any matcher supplied', () => {
+					expect(expectInput)[`toHave${humanVerb}`]();
+				});
 
 				it('matches with just url', () => {
 					expect(expectInput)[`toHave${humanVerb}`]('http://example.com/path');
@@ -111,18 +118,29 @@ describe.each([
 						},
 					);
 				});
+
+				it('should not be any', () => {
+					expectTypeOf(expect(expectInput)[`toHave${humanVerb}`]).not.toBeAny();
+					expectTypeOf(
+						expect(expectInput).not[`toHave${humanVerb}`],
+					).not.toBeAny();
+				});
 			});
 			describe(`toHaveLast${humanVerb}`, () => {
 				beforeAll(() => {
 					fetchMock.mockGlobal().route('*', 200);
 					fetch('http://example.com/path', {
-						method: method || 'get',
+						method,
 						headers: {
 							test: 'header',
 						},
 					});
 				});
 				afterAll(() => fetchMock.mockReset());
+
+				it('matches without any matcher supplied', () => {
+					expect(expectInput)[`toHaveLast${humanVerb}`]();
+				});
 
 				it('matches with just url', () => {
 					expect(expectInput)[`toHaveLast${humanVerb}`](
@@ -168,25 +186,38 @@ describe.each([
 						},
 					);
 				});
+
+				it('should not be any', () => {
+					expectTypeOf(
+						expect(expectInput)[`toHaveLast${humanVerb}`],
+					).not.toBeAny();
+					expectTypeOf(
+						expect(expectInput).not[`toHaveLast${humanVerb}`],
+					).not.toBeAny();
+				});
 			});
 
 			describe(`toHaveNth${humanVerb}`, () => {
 				beforeAll(() => {
 					fetchMock.mockGlobal().route('*', 200);
 					fetch('http://example1.com/path', {
-						method: method || 'get',
+						method,
 						headers: {
 							test: 'header',
 						},
 					});
 					fetch('http://example2.com/path', {
-						method: method || 'get',
+						method,
 						headers: {
 							test: 'header',
 						},
 					});
 				});
 				afterAll(() => fetchMock.mockReset());
+
+				it('matches without any matcher supplied', () => {
+					expect(expectInput)[`toHaveNth${humanVerb}`](2);
+				});
 
 				it('matches with just url', () => {
 					expect(expectInput)[`toHaveNth${humanVerb}`](
@@ -244,25 +275,38 @@ describe.each([
 						'http://example2.com/path',
 					);
 				});
+
+				it('should not be any', () => {
+					expectTypeOf(
+						expect(expectInput)[`toHaveNth${humanVerb}`],
+					).not.toBeAny();
+					expectTypeOf(
+						expect(expectInput).not[`toHaveNth${humanVerb}`],
+					).not.toBeAny();
+				});
 			});
 
 			describe(`toHave${humanVerb}Times`, () => {
 				beforeAll(() => {
 					fetchMock.mockGlobal().route('*', 200);
 					fetch('http://example.com/path', {
-						method: method || 'get',
+						method,
 						headers: {
 							test: 'header',
 						},
 					});
 					fetch('http://example.com/path', {
-						method: method || 'get',
+						method,
 						headers: {
 							test: 'header',
 						},
 					});
 				});
 				afterAll(() => fetchMock.mockReset());
+
+				it('matches without any matcher supplied', () => {
+					expect(expectInput)[`toHave${humanVerb}Times`](2);
+				});
 
 				it('matches with just url', () => {
 					expect(expectInput)[`toHave${humanVerb}Times`](
@@ -327,6 +371,15 @@ describe.each([
 						'http://example.com/path',
 					);
 				});
+
+				it('should not be any', () => {
+					expectTypeOf(
+						expect(expectInput)[`toHave${humanVerb}Times`],
+					).not.toBeAny();
+					expectTypeOf(
+						expect(expectInput).not[`toHave${humanVerb}Times`],
+					).not.toBeAny();
+				});
 			});
 		});
 	});
@@ -359,12 +412,16 @@ describe.each([
 		it("doesn't match if too few calls", () => {
 			expect(expectInput).not.toBeDone('route2');
 		});
+
+		it('should not be any', () => {
+			expectTypeOf(expect(expectInput).toBeDone).not.toBeAny();
+			expectTypeOf(expect(expectInput).not.toBeDone).not.toBeAny();
+		});
 	});
 });
 
 describe('expect extensions: bad inputs', () => {
-	humanVerbToMethods.forEach((verbs) => {
-		const [humanVerb] = verbs.split(':');
+	humanVerbToMethods.forEach(({ humanVerb }) => {
 		it(`${humanVerb} - throws an error if we the input is not patched with fetchMock`, () => {
 			expect(() => {
 				// This simulates a "fetch" implementation that doesn't have fetchMock

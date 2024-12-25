@@ -172,7 +172,7 @@ Object.entries(expectMethodNameToMethodMap).forEach(([humanVerb, method]) => {
 			scopeExpectationNameToMethod(name, humanVerb),
 			scopeExpectationFunctionToMethod(func, method),
 		]),
-	) as Omit<RawFetchMockMatchers, HumanVerbMethodNames<'Fetched'>>;
+	) as Omit<RawFetchMockMatchers, HumanVerbMethodNames<'Fetched'> | 'toBeDone'>;
 
 	expect.extend(extensions);
 });

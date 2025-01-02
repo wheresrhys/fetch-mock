@@ -76,3 +76,8 @@ declare global {
 	}
 }
 /* eslint-enable @typescript-eslint/no-namespace */
+
+declare module '@jest/expect' {
+	// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+	interface Matchers<R> extends FetchMockMatchers<R> {}
+}

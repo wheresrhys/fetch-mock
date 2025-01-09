@@ -127,7 +127,7 @@ class CallHistory {
 	called(filter?: CallHistoryFilter, options?: RouteConfig): boolean {
 		return Boolean(this.calls(filter, options).length);
 	}
-	lastCall(filter?: CallHistoryFilter, options?: RouteConfig): CallLog | void {
+	lastCall(filter?: CallHistoryFilter, options?: RouteConfig): CallLog | undefined {
 		return this.calls(filter, options).pop();
 	}
 

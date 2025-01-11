@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.8](https://github.com/wheresrhys/fetch-mock/compare/jest-v0.2.7...jest-v0.2.8) (2025-01-11)
+
+
+### Bug Fixes
+
+* incorrect Jest extension TypeScript type ([9d47c33](https://github.com/wheresrhys/fetch-mock/commit/9d47c333a097ed9d1bd68f24bd745d200f3982b3))
+
 ## [0.2.7](https://github.com/wheresrhys/fetch-mock/compare/jest-v0.2.6...jest-v0.2.7) (2024-11-29)
 
 

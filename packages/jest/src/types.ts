@@ -1,4 +1,9 @@
-import type { CallHistoryFilter, FetchMock, UserRouteConfig } from 'fetch-mock';
+import type {
+	CallHistoryFilter,
+	FetchMock,
+	RouteName,
+	UserRouteConfig,
+} from 'fetch-mock';
 import type { SyncExpectationResult } from 'expect';
 
 export type HumanVerbs =
@@ -14,60 +19,66 @@ export type HumanVerbs =
  * Verify that a particular call for the HTTP method implied in the function name
  * has occurred
  */
-export type ToHaveFunc = (
-	filter: CallHistoryFilter,
-	options: UserRouteConfig,
-) => SyncExpectationResult;
+export type ToHaveFunc<R> = (
+	filter?: CallHistoryFilter,
+	options?: UserRouteConfig,
+) => R;
 
 /**
  * Verify that a particular Nth call for the HTTP method implied in the function name
  * has occurred
  */
-export type ToHaveNthFunc = (
+export type ToHaveNthFunc<R> = (
 	n: number,
-	filter: CallHistoryFilter,
-	options: UserRouteConfig,
-) => SyncExpectationResult;
+	filter?: CallHistoryFilter,
+	options?: UserRouteConfig,
+) => R;
 
 /**
  * Verify that a particular call for the HTTP method implied in the function name
  * has been made N times
  */
-export type ToHaveTimesFunc = (
+export type ToHaveTimesFunc<R> = (
 	times: number,
-	filter: CallHistoryFilter,
-	options: UserRouteConfig,
-) => SyncExpectationResult;
+	filter?: CallHistoryFilter,
+	options?: UserRouteConfig,
+) => R;
 
-export type FetchMockMatchers = {
-	toHaveFetched: ToHaveFunc;
-	toHaveLastFetched: ToHaveFunc;
-	toHaveFetchedTimes: ToHaveTimesFunc;
-	toHaveNthFetched: ToHaveNthFunc;
-	toHaveGot: ToHaveFunc;
-	toHaveLastGot: ToHaveFunc;
-	toHaveGotTimes: ToHaveTimesFunc;
-	toHaveNthGot: ToHaveNthFunc;
-	toHavePosted: ToHaveFunc;
-	toHaveLastPosted: ToHaveFunc;
-	toHavePostedTimes: ToHaveTimesFunc;
-	toHaveNthPosted: ToHaveNthFunc;
-	toHavePut: ToHaveFunc;
-	toHaveLastPut: ToHaveFunc;
-	toHavePutTimes: ToHaveTimesFunc;
-	toHaveNthPut: ToHaveNthFunc;
-	toHaveDeleted: ToHaveFunc;
-	toHaveLastDeleted: ToHaveFunc;
-	toHaveDeletedTimes: ToHaveTimesFunc;
-	toHaveNthDeleted: ToHaveNthFunc;
-	toHaveFetchedHead: ToHaveFunc;
-	toHaveLastFetchedHead: ToHaveFunc;
-	toHaveFetchedHeadTimes: ToHaveTimesFunc;
-	toHaveNthFetchedHead: ToHaveNthFunc;
-	toHavePatched: ToHaveFunc;
-	toHaveLastPatched: ToHaveFunc;
-	toHavePatchedTimes: ToHaveTimesFunc;
-	toHaveNthPatched: ToHaveNthFunc;
+/**
+ * Verify that a particular route names(s) has been called
+ */
+export type ToBeDoneFunc<R> = (routes?: RouteName | RouteName[]) => R;
+
+export type FetchMockMatchers<R = void> = {
+	toHaveFetched: ToHaveFunc<R>;
+	toHaveLastFetched: ToHaveFunc<R>;
+	toHaveFetchedTimes: ToHaveTimesFunc<R>;
+	toHaveNthFetched: ToHaveNthFunc<R>;
+	toHaveGot: ToHaveFunc<R>;
+	toHaveLastGot: ToHaveFunc<R>;
+	toHaveGotTimes: ToHaveTimesFunc<R>;
+	toHaveNthGot: ToHaveNthFunc<R>;
+	toHavePosted: ToHaveFunc<R>;
+	toHaveLastPosted: ToHaveFunc<R>;
+	toHavePostedTimes: ToHaveTimesFunc<R>;
+	toHaveNthPosted: ToHaveNthFunc<R>;
+	toHavePut: ToHaveFunc<R>;
+	toHaveLastPut: ToHaveFunc<R>;
+	toHavePutTimes: ToHaveTimesFunc<R>;
+	toHaveNthPut: ToHaveNthFunc<R>;
+	toHaveDeleted: ToHaveFunc<R>;
+	toHaveLastDeleted: ToHaveFunc<R>;
+	toHaveDeletedTimes: ToHaveTimesFunc<R>;
+	toHaveNthDeleted: ToHaveNthFunc<R>;
+	toHaveFetchedHead: ToHaveFunc<R>;
+	toHaveLastFetchedHead: ToHaveFunc<R>;
+	toHaveFetchedHeadTimes: ToHaveTimesFunc<R>;
+	toHaveNthFetchedHead: ToHaveNthFunc<R>;
+	toHavePatched: ToHaveFunc<R>;
+	toHaveLastPatched: ToHaveFunc<R>;
+	toHavePatchedTimes: ToHaveTimesFunc<R>;
+	toHaveNthPatched: ToHaveNthFunc<R>;
+	toBeDone: ToBeDoneFunc<R>;
 };
 
 // types for use doing some intermediate type checking in extensions to make sure things don't get out of sync
@@ -88,7 +99,9 @@ type RawMatcher<T extends (...args: any[]) => any> = (
 ) => ReturnType<T>;
 
 export type RawFetchMockMatchers = {
-	[k in keyof FetchMockMatchers]: RawMatcher<FetchMockMatchers[k]>;
+	[k in keyof FetchMockMatchers<SyncExpectationResult>]: RawMatcher<
+		FetchMockMatchers<SyncExpectationResult>[k]
+	>;
 };
 
 export type HumanVerbMethodNames<M extends HumanVerbs> =

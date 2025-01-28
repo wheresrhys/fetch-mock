@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.2.1](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v12.2.0...fetch-mock-v12.2.1) (2025-01-28)
+
+
+### Bug Fixes
+
+* fix failure to spy in browsers ([bfaa5f3](https://github.com/wheresrhys/fetch-mock/commit/bfaa5f33c133af17a0bd097d2d3dbcb01966a0a8))
+
 ## [12.2.0](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v12.1.0...fetch-mock-v12.2.0) (2024-11-15)
 
 

@@ -59,6 +59,7 @@ describe('mock and spy', () => {
 	describe('.spy()', () => {
 		testChainableMethod('spy');
 		testChainableMethod('spyGlobal');
+
 		it('passes all requests through to the network by default', async () => {
 			vi.spyOn(fm.config, 'fetch');
 			fm.spy();
@@ -133,6 +134,13 @@ describe('mock and spy', () => {
 			expect(fm.config.fetch).toHaveBeenCalledWith('http://a.com/', {
 				method: 'post',
 			});
+		});
+
+		it('can call actual native fetch without erroring', async () => {
+			fm.spyGlobal();
+			await expect(
+				fm.fetchHandler('http://example.com/'),
+			).resolves.toBeInstanceOf(Response);
 		});
 	});
 });

@@ -135,12 +135,13 @@ describe('mock and spy', () => {
 				method: 'post',
 			});
 		});
-		const isBrowser = Boolean(globalThis.location);
-		if (isBrowser) {
-			it('can call actual native fetch without erroring', async () => {
-				fm.spyGlobal();
-				await expect(fm.fetchHandler('/')).resolves.toBeInstanceOf(Response);
-			});
-		}
+
+		it('can call actual native fetch without erroring', async () => {
+			fm.spyGlobal();
+			const isBrowser = Boolean(globalThis.location);
+			// avoids getting caught by a cors error
+			const testUrl = isBrowser ? '/' : 'http://a.com/';
+			await expect(fm.fetchHandler(testUrl)).resolves.toBeInstanceOf(Response);
+		});
 	});
 });

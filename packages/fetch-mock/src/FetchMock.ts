@@ -162,12 +162,18 @@ export class FetchMock {
 		matcher?: RouteMatcher | UserRouteConfig,
 		name?: RouteName,
 	): FetchMock {
+		const boundFetch = this.config.fetch.bind(globalThis);
 		if (matcher) {
-			//@ts-expect-error TODO findo out how to overload an overload
-			this.route(matcher, ({ args }) => this.config.fetch.bind(globalThis)(...args), name);
+			this.route(
+				// @ts-expect-error
+				matcher,
+				// @ts-expect-error
+				({ args }) => boundFetch(...args),
+				name,
+			);
 		} else {
-			//@ts-expect-error TODO findo out how to overload an overload
-			this.catch(({ args }) => this.config.fetch.bind(globalThis)(...args));
+			// @ts-expect-error
+			this.catch(({ args }) => boundFetch(...args));
 		}
 
 		return this;

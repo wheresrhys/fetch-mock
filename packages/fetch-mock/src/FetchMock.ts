@@ -164,10 +164,10 @@ export class FetchMock {
 	): FetchMock {
 		if (matcher) {
 			//@ts-expect-error TODO findo out how to overload an overload
-			this.route(matcher, ({ args }) => this.config.fetch(...args), name);
+			this.route(matcher, ({ args }) => this.config.fetch.bind(globalThis)(...args), name);
 		} else {
 			//@ts-expect-error TODO findo out how to overload an overload
-			this.catch(({ args }) => this.config.fetch(...args));
+			this.catch(({ args }) => this.config.fetch.bind(globalThis)(...args));
 		}
 
 		return this;

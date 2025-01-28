@@ -165,14 +165,14 @@ export class FetchMock {
 		const boundFetch = this.config.fetch.bind(globalThis);
 		if (matcher) {
 			this.route(
-				// @ts-expect-error
+				// @ts-expect-error related to the overloading of .route()
 				matcher,
-				// @ts-expect-error
+				// @ts-expect-error this is just args from a fetch call being passed into a bound fetch - no idea why the error
 				({ args }) => boundFetch(...args),
 				name,
 			);
 		} else {
-			// @ts-expect-error
+			// @ts-expect-error this is just args from a fetch call being passed into a bound fetch - no idea why the error
 			this.catch(({ args }) => boundFetch(...args));
 		}
 

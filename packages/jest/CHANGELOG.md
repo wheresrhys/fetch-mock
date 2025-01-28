@@ -1,6 +1,20 @@
 # Changelog
 
 
+## [0.2.9](https://github.com/wheresrhys/fetch-mock/compare/jest-v0.2.8...jest-v0.2.9) (2025-01-28)
+
+
+### Bug Fixes
+
+* force release of @fetch-mock/jest ([7ff5915](https://github.com/wheresrhys/fetch-mock/commit/7ff59159cf3e770249db6b4216c1764291cb8c8d))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * fetch-mock bumped from ^12.2.0 to ^12.2.1
+
 ## [0.2.8](https://github.com/wheresrhys/fetch-mock/compare/jest-v0.2.7...jest-v0.2.8) (2025-01-11)
 
 

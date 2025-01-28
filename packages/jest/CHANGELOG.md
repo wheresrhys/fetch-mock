@@ -1,5 +1,6 @@
 # Changelog
 
+
 ## [0.2.8](https://github.com/wheresrhys/fetch-mock/compare/jest-v0.2.7...jest-v0.2.8) (2025-01-11)
 
 

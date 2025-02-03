@@ -69,7 +69,7 @@ Creates a route that only responds to a single request using a particular http m
 
 Modifies a route's behaviour, overwriting any options (including matcher and response) passed into the named route when first created. Useful when writing tests for special cases that require different behaviour to that required by the majority of your tests.
 
-## deleteRoute(routeName)
+## removeRoute(routeName)
 
 Removes a route. Useful when writing tests for special cases that do not require a route that's required by the majority of your tests.
 

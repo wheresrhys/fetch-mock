@@ -126,6 +126,7 @@ export class FetchMock {
 		this.router.addRoute(matcher, response, options);
 		return this;
 	}
+
 	catch(response?: RouteResponse): FetchMock {
 		this.router.setFallback(response);
 		return this;
@@ -137,6 +138,12 @@ export class FetchMock {
 		this.router.removeRoutes(options);
 		return this;
 	}
+
+	removeRoute(routeName: string): FetchMock {
+		this.router.removeRoutes({ names: [routeName] });
+		return this;
+	}
+
 	clearHistory(): FetchMock {
 		this.callHistory.clear();
 		return this;

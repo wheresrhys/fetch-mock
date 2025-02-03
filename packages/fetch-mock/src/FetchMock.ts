@@ -1,5 +1,10 @@
 import Router, { RemoveRouteOptions } from './Router.js';
-import Route, { RouteName, UserRouteConfig, RouteResponse } from './Route.js';
+import Route, {
+	RouteName,
+	UserRouteConfig,
+	RouteResponse,
+	NullableUserRouteConfig,
+} from './Route.js';
 import { MatcherDefinition, RouteMatcher } from './Matchers.js';
 import CallHistory from './CallHistory.js';
 import * as requestUtils from './RequestUtils.js';
@@ -138,9 +143,13 @@ export class FetchMock {
 		this.router.removeRoutes(options);
 		return this;
 	}
-
 	removeRoute(routeName: string): FetchMock {
 		this.router.removeRoutes({ names: [routeName] });
+		return this;
+	}
+
+	modifyRoute(routeName: string, options: NullableUserRouteConfig) {
+		this.router.modifyRoute(routeName, options);
 		return this;
 	}
 

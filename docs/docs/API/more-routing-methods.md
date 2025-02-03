@@ -67,7 +67,7 @@ Creates a route that only responds to a single request using a particular http m
 
 ## modifyRoute(routeName, options)
 
-Modifies a route's behaviour, overwriting any options (including matcher and response) passed into the named route when first created. Useful when writing tests for special cases that require different behaviour to that required by the majority of your tests.
+Modifies a route's behaviour, overwriting any options (including matcher and response) passed into the named route when first created. Useful when writing tests for special cases that require different behaviour to that required by the majority of your tests. To remove an option, pass in null in the options e.g. `.modifyRoute('my-name', {headers: null})`.
 
 ## removeRoute(routeName)
 

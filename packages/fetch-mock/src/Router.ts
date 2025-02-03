@@ -6,12 +6,20 @@ import Route, {
 	RouteResponse,
 	RouteResponseData,
 	RouteResponseConfig,
+	NullableUserRouteConfig,
 } from './Route.js';
 import { isUrlMatcher, isFunctionMatcher } from './Matchers.js';
 import { RouteMatcher } from './Matchers.js';
 import { FetchMockConfig } from './FetchMock.js';
 import { hasCredentialsInUrl } from './RequestUtils.js';
 import type { CallLog } from './CallHistory.js';
+
+// const nullablePerson: Nullable<Person> = {
+//   name: 'Daffodil',
+//   email: null,
+//   age: null,
+//   admin: true,
+// };
 
 export type ResponseConfigProp =
 	| 'body'
@@ -375,5 +383,36 @@ export default class Router {
 		if (includeFallback) {
 			delete this.fallbackRoute;
 		}
+	}
+
+	modifyRoute(routeName: string, options: NullableUserRouteConfig) {
+		const route = this.routes.find(
+			({ config: { name } }) => name === routeName,
+		);
+		if (!route) {
+			throw new Error(
+				`Cannot call modifyRoute() on route \`${routeName}\`: route of that name not found`,
+			);
+		}
+		if (route.config.sticky) {
+			throw new Error(
+				`Cannot call modifyRoute() on route \`${routeName}\`: route is sticky and cannot be modified`,
+			);
+		}
+
+		if (options.name) {
+			throw new Error(
+				`Cannot rename the route \`${routeName}\` as \`${options.name}\`: renaming routes is not supported`,
+			);
+		}
+
+		const newConfig = { ...route.config, ...options };
+		Object.entries(options).forEach(([key, value]) => {
+			if (value === null) {
+				// @ts-expect-error this is unsetting a property of user route options, so should be no issue
+				delete newConfig[key];
+			}
+		});
+		route.init(newConfig);
 	}
 }

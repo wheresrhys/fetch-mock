@@ -38,6 +38,9 @@ export type InternalRouteConfig = {
 	isFallback?: boolean;
 };
 export type UserRouteConfig = UserRouteSpecificConfig & FetchMockGlobalConfig;
+type Nullable<T> = { [K in keyof T]: T[K] | null };
+export type NullableUserRouteConfig = Nullable<UserRouteConfig>;
+
 export type RouteConfig = UserRouteConfig &
 	FetchImplementations &
 	InternalRouteConfig;
@@ -118,6 +121,10 @@ class Route {
 	matcher: RouteMatcherFunction;
 
 	constructor(config: RouteConfig) {
+		this.init(config);
+	}
+
+	init(config: RouteConfig | NullableUserRouteConfig) {
 		this.config = config;
 		this.#sanitize();
 		this.#validate();

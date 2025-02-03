@@ -251,6 +251,7 @@ describe('Routing', () => {
 		});
 	});
 	describe('modifyRoute', () => {
+		// testChainableMethod(`modifyRoute`);
 		it('can modify a matcher', async () => {
 			fm.route('http://a.com/', 200, 'named');
 			fm.modifyRoute('named', {
@@ -315,11 +316,35 @@ describe('Routing', () => {
 				fm.modifyRoute('named', {
 					headers: null,
 				}),
-			).toError('Cannot call modifyRoute() on sticky route `named`');
+			).toThrow(
+				'Cannot call modifyRoute() on route `named`: route is sticky and cannot be modified',
+			);
+		});
+
+		it('errors when route not found', () => {
+			fm.route('http://a.com/', 200, 'named');
+			expect(() =>
+				fm.modifyRoute('wrong name', {
+					headers: null,
+				}),
+			).toThrow(
+				'Cannot call modifyRoute() on route `wrong name`: route of that name not found',
+			);
+		});
+
+		it('errors when trying to rename a route', () => {
+			fm.route('http://a.com/', 200, { name: 'named' });
+			expect(() =>
+				fm.modifyRoute('named', {
+					name: 'new name',
+				}),
+			).toThrow(
+				'Cannot rename the route `named` as `new name`: renaming routes is not supported',
+			);
 		});
 	});
 	describe('removeRoute', () => {
-		testChainableRoutingMethod(`removeRoute`);
+		testChainableMethod(`removeRoute`);
 		it.skip('error informatively when name not found', () => {
 			fm.route('http://a.com/', 200).route('http://b.com/', 201, 'named');
 			expect(() => fm.removeRoute('misnamed')).toThrowError(

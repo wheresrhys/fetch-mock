@@ -43,7 +43,7 @@ The same is true for `postOnce()`, `deleteOnce()` etc.
 
 ### Options removed
 
-- `overwriteRoutes` - this reflects that multiple routes using the same underlying matcher but different options no longer throw an error.
+- `overwriteRoutes` - this reflects that multiple routes using the same underlying matcher but different options no longer throw an error. If you still need to overwrite route behaviour (equivalent to `overwriteRoutes: true`) use [`modifyRoute()` or `deleteRoute()`](/fetch-mock/docs/API/more-routing-methods#)
 - `warnOnFallback` - given the improved state of node.js debugging tools compared to when fetch-mock was first written, this debugging utilty has been removed.
 - `sendAsJson` - fetch-mock@12 implements streams more robustly than previous options, so the user no longer needs to flag when an object response should be converted to JSON.
 - `fallbackToNetwork` - The [`spyGlobal()` method](/fetch-mock/docs/API/mocking-and-spying#spyglobal) should now be used.

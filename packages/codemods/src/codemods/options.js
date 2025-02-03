@@ -107,6 +107,7 @@ module.exports.simpleOptions = function (fetchMockVariableName, root) {
 		if (!optionsObjects.length) {
 			return;
 		}
+		// TODO handle overwriteRoutes: true differently
 		simpleOptionNames.forEach((optionName) => {
 			optionsObjects
 				.find(j.ObjectProperty, {

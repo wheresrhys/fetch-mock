@@ -14,13 +14,6 @@ import { FetchMockConfig } from './FetchMock.js';
 import { hasCredentialsInUrl } from './RequestUtils.js';
 import type { CallLog } from './CallHistory.js';
 
-// const nullablePerson: Nullable<Person> = {
-//   name: 'Daffodil',
-//   email: null,
-//   age: null,
-//   admin: true,
-// };
-
 export type ResponseConfigProp =
 	| 'body'
 	| 'headers'

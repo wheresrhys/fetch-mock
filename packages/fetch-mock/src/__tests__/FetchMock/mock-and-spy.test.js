@@ -141,11 +141,6 @@ describe('mock and spy', () => {
 			const isBrowser = Boolean(globalThis.location);
 			// avoids getting caught by a cors error
 			const testUrl = isBrowser ? '/' : 'http://example.com/';
-			try {
-				await fm.fetchHandler('testUrl');
-			} catch (err) {
-				console.log(err);
-			}
 			await expect(fm.fetchHandler(testUrl)).resolves.toBeInstanceOf(Response);
 		});
 	});

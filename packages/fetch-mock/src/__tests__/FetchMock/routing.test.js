@@ -251,7 +251,12 @@ describe('Routing', () => {
 		});
 	});
 	describe('modifyRoute', () => {
-		// testChainableMethod(`modifyRoute`);
+		describe('chainability', () => {
+			beforeEach(() => {
+				fm.route('http://a.com', 200, 'named');
+			});
+			testChainableMethod(`modifyRoute`, 'named', { response: 200 });
+		});
 		it('can modify a matcher', async () => {
 			fm.route('http://a.com/', 200, 'named');
 			fm.modifyRoute('named', {

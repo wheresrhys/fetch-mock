@@ -406,6 +406,12 @@ export default class Router {
 			);
 		}
 
+		if ('sticky' in options) {
+			throw new Error(
+				`Altering the stickiness of route \`${routeName}\` is not supported`,
+			);
+		}
+
 		const newConfig = { ...route.config, ...options };
 		Object.entries(options).forEach(([key, value]) => {
 			if (value === null) {

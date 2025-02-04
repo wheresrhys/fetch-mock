@@ -342,6 +342,15 @@ describe('Routing', () => {
 				'Cannot rename the route `named` as `new name`: renaming routes is not supported',
 			);
 		});
+
+		it("errors when trying to alter a route's stickiness", () => {
+			fm.route('http://a.com/', 200, { name: 'named' });
+			expect(() =>
+				fm.modifyRoute('named', {
+					sticky: true,
+				}),
+			).toThrow('Altering the stickiness of route `named` is not supported');
+		});
 	});
 	describe('removeRoute', () => {
 		testChainableMethod(`removeRoute`);

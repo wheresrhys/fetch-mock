@@ -107,13 +107,23 @@ module.exports.simpleOptions = function (fetchMockVariableName, root) {
 		if (!optionsObjects.length) {
 			return;
 		}
-		// TODO handle overwriteRoutes: true differently
 		simpleOptionNames.forEach((optionName) => {
-			optionsObjects
-				.find(j.ObjectProperty, {
-					key: { name: optionName },
-				})
-				.remove();
+			const properties = optionsObjects.find(j.ObjectProperty, {
+				key: { name: optionName },
+			});
+
+			properties.forEach((path) => {
+				if (
+					path.value.key.name === 'overwriteRoutes' &&
+					path.value.value.value === true
+				) {
+					const errorMessage =
+						'`overwriteRoutes: true` option is deprecated. Use the `modifyRoute()` method instead';
+					appendError(errorMessage, j(path));
+				}
+			});
+
+			properties.remove();
 		});
 		optionsObjects
 			.filter((path) => {

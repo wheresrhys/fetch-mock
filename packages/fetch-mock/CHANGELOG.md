@@ -1,5 +1,20 @@
 # Changelog
 
+## [12.3.0](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v12.2.1...fetch-mock-v12.3.0) (2025-02-04)
+
+
+### Features
+
+* added overwriteRoutes: true rule to codemods ([b3d1468](https://github.com/wheresrhys/fetch-mock/commit/b3d1468f93fb1bf18b5d3bf8c0a21dd56ad4d0aa))
+* implemented modifyRoute() method ([f62e3d6](https://github.com/wheresrhys/fetch-mock/commit/f62e3d6f9cf36d4bcb282089b63b0b5a5ee0c21c))
+* implemented removeRoute method ([584a861](https://github.com/wheresrhys/fetch-mock/commit/584a8619cae2e8ae513d2edc784dc7bbe13aa614))
+
+
+### Bug Fixes
+
+* make types for modify route config more accurate ([6894569](https://github.com/wheresrhys/fetch-mock/commit/689456923ea902c820688cbb9010b25ecf1387a1))
+* prevented overwriting stickiness of a route ([87f8c9b](https://github.com/wheresrhys/fetch-mock/commit/87f8c9beaf66e07bfc145b1a4069f157f535a248))
+
 ## [12.2.1](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v12.2.0...fetch-mock-v12.2.1) (2025-01-28)
 
 

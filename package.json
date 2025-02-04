@@ -33,7 +33,7 @@
 		"docs": "npm run start -w docs",
 		"test": "vitest . --ui --exclude=packages/jest/src/__tests__/*",
 		"test:ci": "vitest . --reporter=junit --outputFile=test-results/junit.xml --coverage.provider=istanbul --exclude=packages/jest/src/__tests__/*",
-		"test:jest": "node --experimental-vm-modules node_modules/jest/bin/jest.js packages/jest",
+		"test:jest": "node --experimental-vm-modules node_modules/jest/bin/jest.js packages/jest/src/__tests__/*.spec.?s",
 		"test:browser": "vitest . --browser.enabled --browser.name chromium --browser.provider playwright --exclude=packages/{jest,codemods}/src/__tests__/*",
 		"coverage:send": "cat ./coverage/lcov.info | coveralls",
 		"compat:module": "npm run compat:module -w import-compat"
@@ -60,6 +60,7 @@
 		"globals": "^15.9.0",
 		"husky": "^9.0.11",
 		"jest": "^29.7.0",
+		"jest-environment-jsdom": "^29.7.0",
 		"jsdom": "^23.2.0",
 		"lint-staged": "^15.2.7",
 		"playwright": "^1.46.0",

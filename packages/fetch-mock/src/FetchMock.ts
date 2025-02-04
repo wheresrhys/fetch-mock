@@ -3,7 +3,7 @@ import Route, {
 	RouteName,
 	UserRouteConfig,
 	RouteResponse,
-	NullableUserRouteConfig,
+	ModifyRouteConfig,
 } from './Route.js';
 import { MatcherDefinition, RouteMatcher } from './Matchers.js';
 import CallHistory from './CallHistory.js';
@@ -148,7 +148,7 @@ export class FetchMock {
 		return this;
 	}
 
-	modifyRoute(routeName: string, options: NullableUserRouteConfig) {
+	modifyRoute(routeName: string, options: ModifyRouteConfig) {
 		this.router.modifyRoute(routeName, options);
 		return this;
 	}

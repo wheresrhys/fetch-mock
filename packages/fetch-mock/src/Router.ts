@@ -6,7 +6,7 @@ import Route, {
 	RouteResponse,
 	RouteResponseData,
 	RouteResponseConfig,
-	NullableUserRouteConfig,
+	ModifyRouteConfig,
 } from './Route.js';
 import { isUrlMatcher, isFunctionMatcher } from './Matchers.js';
 import { RouteMatcher } from './Matchers.js';
@@ -385,7 +385,7 @@ export default class Router {
 		}
 	}
 
-	modifyRoute(routeName: string, options: NullableUserRouteConfig) {
+	modifyRoute(routeName: string, options: ModifyRouteConfig) {
 		const route = this.routes.find(
 			({ config: { name } }) => name === routeName,
 		);
@@ -400,7 +400,7 @@ export default class Router {
 			);
 		}
 
-		if (options.name) {
+		if ('name' in options) {
 			throw new Error(
 				`Cannot rename the route \`${routeName}\` as \`${options.name}\`: renaming routes is not supported`,
 			);

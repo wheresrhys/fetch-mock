@@ -39,7 +39,10 @@ export type InternalRouteConfig = {
 };
 export type UserRouteConfig = UserRouteSpecificConfig & FetchMockGlobalConfig;
 type Nullable<T> = { [K in keyof T]: T[K] | null };
-export type NullableUserRouteConfig = Nullable<UserRouteConfig>;
+export type ModifyRouteConfig = Omit<
+	Nullable<UserRouteSpecificConfig>,
+	'name' | 'sticky'
+>;
 
 export type RouteConfig = UserRouteConfig &
 	FetchImplementations &
@@ -124,7 +127,7 @@ class Route {
 		this.init(config);
 	}
 
-	init(config: RouteConfig | NullableUserRouteConfig) {
+	init(config: RouteConfig | ModifyRouteConfig) {
 		this.config = config;
 		this.#sanitize();
 		this.#validate();

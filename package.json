@@ -73,7 +73,7 @@
 		"typescript": "^5.5.4",
 		"typescript-eslint": "^8.0.1",
 		"v8": "^0.1.0",
-		"vitest": "^3.0.0",
+		"vitest": "^3.0.5",
 		"webdriverio": "^8.27.0"
 	},
 	"volta": {

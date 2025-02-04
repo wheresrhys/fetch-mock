@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.3](https://github.com/wheresrhys/fetch-mock/compare/codemods-v0.1.2...codemods-v0.1.3) (2025-02-04)
+
+
+### Features
+
+* added overwriteRoutes: true rule to codemods ([b3d1468](https://github.com/wheresrhys/fetch-mock/commit/b3d1468f93fb1bf18b5d3bf8c0a21dd56ad4d0aa))
+
+
+### Documentation Changes
+
+* added documentation fro new modifyRoute method ([0d007d6](https://github.com/wheresrhys/fetch-mock/commit/0d007d6d3acba0ea23b64a08ef03806ba5c827f0))
+
 ## [0.1.2](https://github.com/wheresrhys/fetch-mock/compare/codemods-v0.1.1...codemods-v0.1.2) (2024-11-15)
 
 

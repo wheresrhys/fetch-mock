@@ -6,6 +6,7 @@ import Route, {
 	RouteResponse,
 	RouteResponseData,
 	RouteResponseConfig,
+	ModifyRouteConfig,
 } from './Route.js';
 import { isUrlMatcher, isFunctionMatcher } from './Matchers.js';
 import { RouteMatcher } from './Matchers.js';
@@ -375,5 +376,42 @@ export default class Router {
 		if (includeFallback) {
 			delete this.fallbackRoute;
 		}
+	}
+
+	modifyRoute(routeName: string, options: ModifyRouteConfig) {
+		const route = this.routes.find(
+			({ config: { name } }) => name === routeName,
+		);
+		if (!route) {
+			throw new Error(
+				`Cannot call modifyRoute() on route \`${routeName}\`: route of that name not found`,
+			);
+		}
+		if (route.config.sticky) {
+			throw new Error(
+				`Cannot call modifyRoute() on route \`${routeName}\`: route is sticky and cannot be modified`,
+			);
+		}
+
+		if ('name' in options) {
+			throw new Error(
+				`Cannot rename the route \`${routeName}\` as \`${options.name}\`: renaming routes is not supported`,
+			);
+		}
+
+		if ('sticky' in options) {
+			throw new Error(
+				`Altering the stickiness of route \`${routeName}\` is not supported`,
+			);
+		}
+
+		const newConfig = { ...route.config, ...options };
+		Object.entries(options).forEach(([key, value]) => {
+			if (value === null) {
+				// @ts-expect-error this is unsetting a property of user route options, so should be no issue
+				delete newConfig[key];
+			}
+		});
+		route.init(newConfig);
 	}
 }

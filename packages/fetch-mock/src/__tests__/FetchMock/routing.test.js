@@ -250,4 +250,126 @@ describe('Routing', () => {
 			expect(res.status).toEqual(200);
 		});
 	});
+	describe('modifyRoute', () => {
+		describe('chainability', () => {
+			beforeEach(() => {
+				fm.route('http://a.com', 200, 'named');
+			});
+			testChainableMethod(`modifyRoute`, 'named', { response: 200 });
+		});
+		it('can modify a matcher', async () => {
+			fm.route('http://a.com/', 200, 'named');
+			fm.modifyRoute('named', {
+				url: 'http://b.com/',
+			});
+			const res = await fm.fetchHandler('http://b.com/');
+			expect(res.status).toEqual(200);
+		});
+		it('can modify a response', async () => {
+			fm.route('http://a.com/', 200, 'named');
+			fm.modifyRoute('named', {
+				response: 201,
+			});
+			const res = await fm.fetchHandler('http://a.com/');
+			expect(res.status).toEqual(201);
+		});
+		it('can add an option', async () => {
+			fm.route('http://a.com/', 200, 'named').route('http://a.com/', 201);
+			fm.modifyRoute('named', {
+				headers: { a: 'a' },
+			});
+			const res1 = await fm.fetchHandler('http://a.com/');
+			expect(res1.status).toEqual(201);
+			const res2 = await fm.fetchHandler('http://a.com/', {
+				headers: { a: 'a' },
+			});
+			expect(res2.status).toEqual(200);
+		});
+		it('can modify an option', async () => {
+			fm.route('http://a.com/', 200, {
+				name: 'named',
+				headers: { a: 'a' },
+			}).route('http://a.com/', 201);
+			fm.modifyRoute('named', {
+				headers: { a: 'b' },
+			});
+			const res1 = await fm.fetchHandler('http://a.com/');
+			expect(res1.status).toEqual(201);
+			const res2 = await fm.fetchHandler('http://a.com/', {
+				headers: { a: 'a' },
+			});
+			expect(res2.status).toEqual(201);
+			const res3 = await fm.fetchHandler('http://a.com/', {
+				headers: { a: 'b' },
+			});
+			expect(res3.status).toEqual(200);
+		});
+		it('can remove an option', async () => {
+			fm.route('http://a.com/', 200, {
+				name: 'named',
+				headers: { a: 'a' },
+			}).route('http://a.com/', 201);
+			fm.modifyRoute('named', {
+				headers: null,
+			});
+			const res1 = await fm.fetchHandler('http://a.com/');
+			expect(res1.status).toEqual(200);
+		});
+		it('errors when called on a sticky route', () => {
+			fm.route('http://a.com/', 200, { name: 'named', sticky: true });
+			expect(() =>
+				fm.modifyRoute('named', {
+					headers: null,
+				}),
+			).toThrow(
+				'Cannot call modifyRoute() on route `named`: route is sticky and cannot be modified',
+			);
+		});
+
+		it('errors when route not found', () => {
+			fm.route('http://a.com/', 200, 'named');
+			expect(() =>
+				fm.modifyRoute('wrong name', {
+					headers: null,
+				}),
+			).toThrow(
+				'Cannot call modifyRoute() on route `wrong name`: route of that name not found',
+			);
+		});
+
+		it('errors when trying to rename a route', () => {
+			fm.route('http://a.com/', 200, { name: 'named' });
+			expect(() =>
+				fm.modifyRoute('named', {
+					name: 'new name',
+				}),
+			).toThrow(
+				'Cannot rename the route `named` as `new name`: renaming routes is not supported',
+			);
+		});
+
+		it("errors when trying to alter a route's stickiness", () => {
+			fm.route('http://a.com/', 200, { name: 'named' });
+			expect(() =>
+				fm.modifyRoute('named', {
+					sticky: true,
+				}),
+			).toThrow('Altering the stickiness of route `named` is not supported');
+		});
+	});
+	describe('removeRoute', () => {
+		testChainableMethod(`removeRoute`);
+		it.skip('error informatively when name not found', () => {
+			fm.route('http://a.com/', 200).route('http://b.com/', 201, 'named');
+			expect(() => fm.removeRoute('misnamed')).toThrowError(
+				'Could not delete route `misnamed` - route with that name does not exist',
+			);
+		});
+		it('deletes a route', async () => {
+			fm.route('http://a.com/', 200, 'named').route('http://a.com/', 201);
+			fm.removeRoute('named');
+			const res = await fm.fetchHandler('http://a.com');
+			expect(res.status).toEqual(201);
+		});
+	});
 });

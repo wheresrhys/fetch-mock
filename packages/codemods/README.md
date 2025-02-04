@@ -27,7 +27,8 @@ For everyt variable containing an instance of fetch-mock imported using `require
 - Rewrite `.lastUrl()`, `.lastOptions()` and `lastResponse()` to their equivalents in fetch-mock@12
 - Adds an informative error whenever `.lastCall()` or `.calls()` are used with advice on how to manually correct these
 - Converts `.getOnce()`, `.getAnyOnce()`, `.postOnce()` etc... - which have been removed - to calls to the underlying `.get()` method with additional options passed in.
-- Removes uses of the deprecated options `overwriteRoutes`, `warnOnFallback`, `sendAsJson`
+- Removes uses of the deprecated options `warnOnFallback` and `sendAsJson`
+- Removes uses of the deprecated `overwriteRoutes` option, and adds an informative error with details of how to replace with the `modifyRoute()` method
 - Removes uses of the deprecated `fallbackToNetwork` option, and adds an informative error with details of how to replace with the `spyGlobal()` method
 
 ## Limitations/Out of scope

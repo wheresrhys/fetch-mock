@@ -1,17 +1,40 @@
 import { expect } from 'vitest';
 import { SyncExpectationResult } from '@vitest/expect';
-import type {
+import {
 	FetchMock,
 	RouteName,
 	CallHistoryFilter,
 	UserRouteConfig,
 } from 'fetch-mock';
-const methodlessExtensions = {
+import {
+	HumanVerbMethodNames,
+	HumanVerbs,
+	PatchedFetch,
+	RawFetchMockMatchers,
+} from './types.js';
+
+function getFetchMockFromInput(input: PatchedFetch | FetchMock) {
+	const fetchMock = (input as PatchedFetch)['fetchMock']
+		? (input as PatchedFetch).fetchMock
+		: input;
+	if (!fetchMock || !(fetchMock instanceof FetchMock)) {
+		throw new Error(
+			'Unable to get fetchMock instance!  Please make sure you passed a patched fetch or fetchMock!',
+		);
+	}
+	return fetchMock;
+}
+
+const methodlessExtensions: Pick<
+	RawFetchMockMatchers,
+	HumanVerbMethodNames<'Fetched'>
+> = {
 	toHaveFetched: (
-		{ fetchMock }: { fetchMock: FetchMock },
+		input: PatchedFetch | FetchMock,
 		filter: CallHistoryFilter,
 		options: UserRouteConfig,
 	): SyncExpectationResult => {
+		const fetchMock = getFetchMockFromInput(input);
 		if (fetchMock.callHistory.called(filter, options)) {
 			return { pass: true, message: () => 'fetch was called as expected' };
 		}
@@ -22,10 +45,11 @@ const methodlessExtensions = {
 		};
 	},
 	toHaveLastFetched: (
-		{ fetchMock }: { fetchMock: FetchMock },
+		input: PatchedFetch | FetchMock,
 		filter: CallHistoryFilter,
 		options: UserRouteConfig,
 	): SyncExpectationResult => {
+		const fetchMock = getFetchMockFromInput(input);
 		const allCalls = fetchMock.callHistory.calls();
 		if (!allCalls.length) {
 			return {
@@ -48,11 +72,12 @@ const methodlessExtensions = {
 	},
 
 	toHaveNthFetched: (
-		{ fetchMock }: { fetchMock: FetchMock },
+		input: PatchedFetch | FetchMock,
 		n: number,
 		filter: CallHistoryFilter,
 		options: UserRouteConfig,
 	): SyncExpectationResult => {
+		const fetchMock = getFetchMockFromInput(input);
 		const nthCall = fetchMock.callHistory.calls()[n - 1];
 		const matchingCalls = fetchMock.callHistory.calls(filter, options);
 		if (matchingCalls.some((call) => call === nthCall)) {
@@ -69,11 +94,12 @@ const methodlessExtensions = {
 	},
 
 	toHaveFetchedTimes: (
-		{ fetchMock }: { fetchMock: FetchMock },
+		input: PatchedFetch | FetchMock,
 		times: number,
 		filter: CallHistoryFilter,
 		options: UserRouteConfig,
 	): SyncExpectationResult => {
+		const fetchMock = getFetchMockFromInput(input);
 		const calls = fetchMock.callHistory.calls(filter, options);
 		if (calls.length === times) {
 			return {
@@ -93,9 +119,10 @@ expect.extend(methodlessExtensions);
 
 expect.extend({
 	toBeDone: (
-		{ fetchMock }: { fetchMock: FetchMock },
+		input: PatchedFetch | FetchMock,
 		routes: RouteName | RouteName[],
 	): SyncExpectationResult => {
+		const fetchMock = getFetchMockFromInput(input);
 		const done = fetchMock.callHistory.done(routes);
 		if (done) {
 			return { pass: true, message: () => '' };
@@ -128,25 +155,24 @@ function scopeExpectationNameToMethod(name: string, humanVerb: string): string {
 	return name.replace('Fetched', humanVerb);
 }
 
-[
-	'Got:get',
-	'Posted:post',
-	'Put:put',
-	'Deleted:delete',
-	'FetchedHead:head',
-	'Patched:patch',
-].forEach((verbs) => {
-	const [humanVerb, method] = verbs.split(':');
+const expectMethodNameToMethodMap: {
+	[humanVerb in Exclude<HumanVerbs, 'Fetched'>]: string;
+} = {
+	Got: 'get',
+	Posted: 'post',
+	Put: 'put',
+	Deleted: 'delete',
+	FetchedHead: 'head',
+	Patched: 'patch',
+};
 
-	const extensions: {
-		// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-		[key: string]: (...args: any[]) => SyncExpectationResult;
-	} = Object.fromEntries(
+Object.entries(expectMethodNameToMethodMap).forEach(([humanVerb, method]) => {
+	const extensions = Object.fromEntries(
 		Object.entries(methodlessExtensions).map(([name, func]) => [
 			scopeExpectationNameToMethod(name, humanVerb),
 			scopeExpectationFunctionToMethod(func, method),
 		]),
-	);
+	) as Omit<RawFetchMockMatchers, HumanVerbMethodNames<'Fetched'> | 'toBeDone'>;
 
 	expect.extend(extensions);
 });

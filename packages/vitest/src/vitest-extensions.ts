@@ -1,3 +1,4 @@
+import 'vitest';
 import { expect } from 'vitest';
 import { SyncExpectationResult } from '@vitest/expect';
 import {
@@ -12,6 +13,7 @@ import {
 	PatchedFetch,
 	RawFetchMockMatchers,
 } from './types.js';
+import type { FetchMockMatchers } from './types.js';
 
 function getFetchMockFromInput(input: PatchedFetch | FetchMock) {
 	const fetchMock = (input as PatchedFetch)['fetchMock']
@@ -176,3 +178,8 @@ Object.entries(expectMethodNameToMethodMap).forEach(([humanVerb, method]) => {
 
 	expect.extend(extensions);
 });
+
+declare module 'vitest' {
+	interface Assertion extends FetchMockMatchers {} //eslint-disable-line  @typescript-eslint/no-empty-object-type
+	interface AsymmetricMatchersContaining extends FetchMockMatchers {} //eslint-disable-line  @typescript-eslint/no-empty-object-type
+}

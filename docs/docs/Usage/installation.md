@@ -33,14 +33,8 @@ When using one of the following frameworks consider using the appropriate wrappe
 
 ## Deno support
 
-Import fetch-mock, or the wrappers above, using skypack:
+Import fetch-mock, or the wrappers above, using the `npm:` prefix, e.g.
 
 ```js
-import fetchMock from 'https://cdn.skypack.dev/fetch-mock';
-```
-
-or
-
-```js
-import fetchMock from 'https://cdn.skypack.dev/fetch-mock@12.3.0';
+import fetchMock from 'npm:fetch-mock@12.3.0';
 ```

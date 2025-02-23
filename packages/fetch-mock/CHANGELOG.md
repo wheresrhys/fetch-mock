@@ -1,5 +1,19 @@
 # Changelog
 
+## [12.4.0](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v12.3.0...fetch-mock-v12.4.0) (2025-02-23)
+
+
+### Features
+
+* add ability to wait for multiple routes ([c3dc9c3](https://github.com/wheresrhys/fetch-mock/commit/c3dc9c35da89e7ffb0ccb1bb72975acb15b13c30))
+* implement waitFor option ([5500228](https://github.com/wheresrhys/fetch-mock/commit/550022826826defe1f3c844972e74bb64790596f))
+
+
+### Bug Fixes
+
+* clone response before using ([2ccf18e](https://github.com/wheresrhys/fetch-mock/commit/2ccf18e1fd2c659b55c549e3be2d009d738656d2))
+* use a promise, no function, to implement waitFor ([8783101](https://github.com/wheresrhys/fetch-mock/commit/87831010c24c1de47e1b458131c07468f44e1e74))
+
 ## [12.3.0](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v12.2.1...fetch-mock-v12.3.0) (2025-02-04)
 
 

@@ -30,3 +30,17 @@ When using one of the following frameworks consider using the appropriate wrappe
 
 - Jest - [@fetch-mock/jest](/fetch-mock/docs/wrappers/jest)
 - Vitest - [@fetch-mock/vitest](/fetch-mock/docs/wrappers/vitest)
+
+## Deno support
+
+Import fetch-mock, or the wrappers above, using skypack:
+
+```js
+import fetchMock from 'https://cdn.skypack.dev/fetch-mock';
+```
+
+or
+
+```js
+import fetchMock from 'https://cdn.skypack.dev/fetch-mock@12.3.0';
+```

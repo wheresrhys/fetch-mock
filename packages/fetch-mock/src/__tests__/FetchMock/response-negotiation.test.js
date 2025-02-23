@@ -184,34 +184,44 @@ describe('response negotiation', () => {
 			);
 		});
 	});
-	it('Response', async () => {
-		fm.route('http://a.com/', new Response('http://a.com/', { status: 200 }));
-		const res = await fm.fetchHandler('http://a.com/');
-		expect(res.status).toEqual(200);
-	});
+	describe('Response', () => {
+		it('Response', async () => {
+			fm.route('http://a.com/', new Response('http://a.com/', { status: 200 }));
+			const res = await fm.fetchHandler('http://a.com/');
+			expect(res.status).toEqual(200);
+		});
 
-	it('should work with Response.error()', async () => {
-		fm.route('http://a.com', Response.error());
-		const response = await fm.fetchHandler('http://a.com');
-		expect(response.status).toBe(0);
-	});
+		it('should work with Response.error()', async () => {
+			fm.route('http://a.com', Response.error());
+			const response = await fm.fetchHandler('http://a.com');
+			expect(response.status).toBe(0);
+		});
 
-	it('function that returns a Response', async () => {
-		fm.route(
-			'http://a.com/',
-			() => new Response('http://a.com/', { status: 200 }),
-		);
-		const res = await fm.fetchHandler('http://a.com/');
-		expect(res.status).toEqual(200);
-	});
+		it('function that returns a Response', async () => {
+			fm.route(
+				'http://a.com/',
+				() => new Response('http://a.com/', { status: 200 }),
+			);
+			const res = await fm.fetchHandler('http://a.com/');
+			expect(res.status).toEqual(200);
+		});
 
-	it('Promise that returns a Response', async () => {
-		fm.route(
-			'http://a.com/',
-			Promise.resolve(new Response('http://a.com/', { status: 200 })),
-		);
-		const res = await fm.fetchHandler('http://a.com/');
-		expect(res.status).toEqual(200);
+		it('Promise that returns a Response', async () => {
+			fm.route(
+				'http://a.com/',
+				Promise.resolve(new Response('http://a.com/', { status: 200 })),
+			);
+			const res = await fm.fetchHandler('http://a.com/');
+			expect(res.status).toEqual(200);
+		});
+
+		it('Reuse a Response', async () => {
+			fm.route('http://a.com/', new Response('hello', { status: 200 }));
+			await fm.fetchHandler('http://a.com/').then((res) => res.text());
+			await expect(
+				fm.fetchHandler('http://a.com/').then((res) => res.text()),
+			).resolves.toEqual('hello');
+		});
 	});
 
 	describe('rejecting', () => {

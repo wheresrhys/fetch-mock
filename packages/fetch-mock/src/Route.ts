@@ -31,6 +31,7 @@ export type UserRouteSpecificConfig = {
 	response?: RouteResponse | RouteResponseFunction;
 	repeat?: number;
 	delay?: number;
+	waitFor?: RouteName | RouteName[];
 	sticky?: boolean;
 };
 export type InternalRouteConfig = {
@@ -122,6 +123,7 @@ e.g. {"body": {"status: "registered"}}`);
 class Route {
 	config: RouteConfig;
 	matcher: RouteMatcherFunction;
+	#responseSubscriptions: Array<() => void>;
 
 	constructor(config: RouteConfig) {
 		this.init(config);
@@ -129,6 +131,7 @@ class Route {
 
 	init(config: RouteConfig | ModifyRouteConfig) {
 		this.config = config;
+		this.#responseSubscriptions = [];
 		this.#sanitize();
 		this.#validate();
 		this.#generateMatcher();
@@ -197,6 +200,24 @@ class Route {
 		}
 	}
 
+	waitFor(awaitedRoutes: Route[]) {
+		const { response } = this.config;
+		this.config.response = Promise.all(
+			awaitedRoutes.map(
+				(awaitedRoute) =>
+					new Promise((res) =>
+						awaitedRoute.onRespond(() => {
+							res(undefined);
+						}),
+					),
+			),
+		).then(() => response);
+	}
+
+	onRespond(func: () => void) {
+		this.#responseSubscriptions.push(func);
+	}
+
 	constructResponse(responseInput: RouteResponseConfig): {
 		response: Response;
 		responseOptions: ResponseInit;
@@ -205,11 +226,15 @@ class Route {
 		const responseOptions = this.constructResponseOptions(responseInput);
 		const body = this.constructResponseBody(responseInput, responseOptions);
 
-		return {
+		const responsePackage = {
 			response: new this.config.Response(body, responseOptions),
 			responseOptions,
 			responseInput,
 		};
+
+		this.#responseSubscriptions.forEach((func) => func());
+
+		return responsePackage;
 	}
 
 	constructResponseOptions(

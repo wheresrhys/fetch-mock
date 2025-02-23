@@ -342,6 +342,30 @@ export default class Router {
 				'fetch-mock: Adding route with same name as existing route.',
 			);
 		}
+		if (route.config.waitFor) {
+			const routeNamesToWaitFor = Array.isArray(route.config.waitFor)
+				? route.config.waitFor
+				: [route.config.waitFor];
+
+			const routesToAwait: Route[] = [];
+
+			routeNamesToWaitFor.forEach((routeName) => {
+				const routeToAwait = this.routes.find(
+					({ config: { name: existingName } }) => routeName === existingName,
+				);
+
+				if (routeToAwait) {
+					routesToAwait.push(routeToAwait);
+				} else {
+					throw new Error(
+						`Cannot wait for route \`${routeName}\`: route of that name does not exist`,
+					);
+				}
+			});
+
+			route.waitFor(routesToAwait);
+		}
+
 		this.routes.push(route);
 	}
 	setFallback(response?: RouteResponse) {

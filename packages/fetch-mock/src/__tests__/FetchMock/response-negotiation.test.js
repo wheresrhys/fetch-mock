@@ -143,7 +143,7 @@ describe('response negotiation', () => {
 				fm.fetchHandler('http://b.com').then(() => routesCalled.push('b')),
 				fm.fetchHandler('http://a.com').then(() => routesCalled.push('a')),
 			]);
-			expect(routesCalled).toEqual(['a', 'c', 'b']);
+			expect(routesCalled).toEqual(['a', 'b', 'c']);
 		});
 		it('Can chain waits', async () => {
 			fm.route('http://a.com', 200, 'route-a')

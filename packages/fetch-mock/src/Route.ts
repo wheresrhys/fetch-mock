@@ -202,13 +202,11 @@ class Route {
 
 	waitFor(awaitedRoute: Route) {
 		const { response } = this.config;
-		this.config.response = () => {
-			return new Promise((res) =>
-				awaitedRoute.onRespond(() => {
-					res(response);
-				}),
-			);
-		};
+		this.config.response = new Promise((res) =>
+			awaitedRoute.onRespond(() => {
+				res(response);
+			}),
+		);
 	}
 
 	onRespond(func: () => void) {

@@ -42,79 +42,122 @@ describe('response negotiation', () => {
 		expect(res.status).toEqual(200);
 		expect(await res.text()).toEqual('test: http://a.com/');
 	});
-
-	it('delay', async () => {
-		fm.route('*', 200, { delay: 20 });
-		const req = fm.fetchHandler('http://a.com/');
-		let resolved = false;
-		req.then(() => {
-			resolved = true;
+	describe('delay', () => {
+		it('delay', async () => {
+			fm.route('*', 200, { delay: 20 });
+			const req = fm.fetchHandler('http://a.com/');
+			let resolved = false;
+			req.then(() => {
+				resolved = true;
+			});
+			await new Promise((res) => setTimeout(res, 10));
+			expect(resolved).toBe(false);
+			await new Promise((res) => setTimeout(res, 11));
+			expect(resolved).toBe(true);
+			const res = await req;
+			expect(res.status).toEqual(200);
 		});
-		await new Promise((res) => setTimeout(res, 10));
-		expect(resolved).toBe(false);
-		await new Promise((res) => setTimeout(res, 11));
-		expect(resolved).toBe(true);
-		const res = await req;
-		expect(res.status).toEqual(200);
+
+		it("delay a function response's execution", async () => {
+			const startTimestamp = new Date().getTime();
+			fm.route('http://a.com/', () => ({ timestamp: new Date().getTime() }), {
+				delay: 20,
+			});
+			const req = fm.fetchHandler('http://a.com/');
+			let resolved = false;
+			req.then(() => {
+				resolved = true;
+			});
+			await new Promise((res) => setTimeout(res, 10));
+			expect(resolved).toBe(false);
+			await new Promise((res) => setTimeout(res, 11));
+			expect(resolved).toBe(true);
+			const res = await req;
+			expect(res.status).toEqual(200);
+			const responseTimestamp = (await res.json()).timestamp;
+			expect(responseTimestamp - startTimestamp).toBeGreaterThanOrEqual(20);
+		});
+
+		it('pass values to delayed function', async () => {
+			fm.route('*', ({ url }) => `delayed: ${url}`, {
+				delay: 10,
+			});
+			const req = fm.fetchHandler('http://a.com/');
+			await new Promise((res) => setTimeout(res, 11));
+			const res = await req;
+			expect(res.status).toEqual(200);
+			expect(await res.text()).toEqual('delayed: http://a.com/');
+		});
+
+		it('call delayed response multiple times, each with the same delay', async () => {
+			fm.route('*', 200, { delay: 20 });
+			const req1 = fm.fetchHandler('http://a.com/');
+			let resolved = false;
+			req1.then(() => {
+				resolved = true;
+			});
+			await new Promise((res) => setTimeout(res, 10));
+			expect(resolved).toBe(false);
+			await new Promise((res) => setTimeout(res, 11));
+			expect(resolved).toBe(true);
+			const res1 = await req1;
+			expect(res1.status).toEqual(200);
+			const req2 = fm.fetchHandler('http://a.com/');
+			resolved = false;
+			req2.then(() => {
+				resolved = true;
+			});
+			await new Promise((res) => setTimeout(res, 10));
+			expect(resolved).toBe(false);
+			await new Promise((res) => setTimeout(res, 11));
+			expect(resolved).toBe(true);
+			const res2 = await req2;
+			expect(res2.status).toEqual(200);
+		});
 	});
 
-	it("delay a function response's execution", async () => {
-		const startTimestamp = new Date().getTime();
-		fm.route('http://a.com/', () => ({ timestamp: new Date().getTime() }), {
-			delay: 20,
+	describe('waitFor', () => {
+		it('Error informatively if route to wait for does not exist', () => {
+			expect(() => fm.route('*', 200, { waitFor: 'huh' })).toThrow(
+				'no way on your nelly',
+			);
 		});
-		const req = fm.fetchHandler('http://a.com/');
-		let resolved = false;
-		req.then(() => {
-			resolved = true;
+		it('Not respond until waited for route responds', async () => {
+			fm.route('http://a.com', 200, 'route-a').route('http://b.com', 200, {
+				waitFor: 'route-a',
+			});
+			let lastRouteCalled;
+			await Promise.all([
+				fm.fetchHandler('http://b.com').then(() => (lastRouteCalled = 'b')),
+				fm.fetchHandler('http://a.com').then(() => (lastRouteCalled = 'a')),
+			]);
+			expect(lastRouteCalled).toEqual('b');
 		});
-		await new Promise((res) => setTimeout(res, 10));
-		expect(resolved).toBe(false);
-		await new Promise((res) => setTimeout(res, 11));
-		expect(resolved).toBe(true);
-		const res = await req;
-		expect(res.status).toEqual(200);
-		const responseTimestamp = (await res.json()).timestamp;
-		expect(responseTimestamp - startTimestamp).toBeGreaterThanOrEqual(20);
+		it('Can have multiple waits on the same route', async () => {
+			fm.route('http://a.com', 200, 'route-a')
+				.route('http://b.com', 200, { waitFor: 'route-a' })
+				.route('http://c.com', 200, { waitFor: 'route-a' });
+			let routesCalled = [];
+			await Promise.all([
+				fm.fetchHandler('http://c.com').then(() => routesCalled.push('c')),
+				fm.fetchHandler('http://b.com').then(() => routesCalled.push('b')),
+				fm.fetchHandler('http://a.com').then(() => routesCalled.push('a')),
+			]);
+			expect(routesCalled).toEqual(['a', 'c', 'b']);
+		});
+		it('Can chain waits', async () => {
+			fm.route('http://a.com', 200, 'route-a')
+				.route('http://b.com', 200, { name: 'route-b', waitFor: 'route-a' })
+				.route('http://c.com', 200, { waitFor: 'route-b' });
+			let routesCalled = [];
+			await Promise.all([
+				fm.fetchHandler('http://c.com').then(() => routesCalled.push('c')),
+				fm.fetchHandler('http://b.com').then(() => routesCalled.push('b')),
+				fm.fetchHandler('http://a.com').then(() => routesCalled.push('a')),
+			]);
+			expect(routesCalled).toEqual(['a', 'b', 'c']);
+		});
 	});
-
-	it('pass values to delayed function', async () => {
-		fm.route('*', ({ url }) => `delayed: ${url}`, {
-			delay: 10,
-		});
-		const req = fm.fetchHandler('http://a.com/');
-		await new Promise((res) => setTimeout(res, 11));
-		const res = await req;
-		expect(res.status).toEqual(200);
-		expect(await res.text()).toEqual('delayed: http://a.com/');
-	});
-
-	it('call delayed response multiple times, each with the same delay', async () => {
-		fm.route('*', 200, { delay: 20 });
-		const req1 = fm.fetchHandler('http://a.com/');
-		let resolved = false;
-		req1.then(() => {
-			resolved = true;
-		});
-		await new Promise((res) => setTimeout(res, 10));
-		expect(resolved).toBe(false);
-		await new Promise((res) => setTimeout(res, 11));
-		expect(resolved).toBe(true);
-		const res1 = await req1;
-		expect(res1.status).toEqual(200);
-		const req2 = fm.fetchHandler('http://a.com/');
-		resolved = false;
-		req2.then(() => {
-			resolved = true;
-		});
-		await new Promise((res) => setTimeout(res, 10));
-		expect(resolved).toBe(false);
-		await new Promise((res) => setTimeout(res, 11));
-		expect(resolved).toBe(true);
-		const res2 = await req2;
-		expect(res2.status).toEqual(200);
-	});
-
 	it('Response', async () => {
 		fm.route('http://a.com/', new Response('http://a.com/', { status: 200 }));
 		const res = await fm.fetchHandler('http://a.com/');

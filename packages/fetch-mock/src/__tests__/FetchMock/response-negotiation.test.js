@@ -119,7 +119,7 @@ describe('response negotiation', () => {
 	describe('waitFor', () => {
 		it('Error informatively if route to wait for does not exist', () => {
 			expect(() => fm.route('*', 200, { waitFor: 'huh' })).toThrow(
-				'no way on your nelly',
+				'Cannot wait for route `huh`: route of that name does not exist',
 			);
 		});
 		it('Not respond until waited for route responds', async () => {

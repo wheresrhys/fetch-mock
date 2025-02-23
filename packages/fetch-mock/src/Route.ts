@@ -31,7 +31,7 @@ export type UserRouteSpecificConfig = {
 	response?: RouteResponse | RouteResponseFunction;
 	repeat?: number;
 	delay?: number;
-	waitFor?: RouteName;
+	waitFor?: RouteName | RouteName[];
 	sticky?: boolean;
 };
 export type InternalRouteConfig = {
@@ -200,13 +200,18 @@ class Route {
 		}
 	}
 
-	waitFor(awaitedRoute: Route) {
+	waitFor(awaitedRoutes: Route[]) {
 		const { response } = this.config;
-		this.config.response = new Promise((res) =>
-			awaitedRoute.onRespond(() => {
-				res(response);
-			}),
-		);
+		this.config.response = Promise.all(
+			awaitedRoutes.map(
+				(awaitedRoute) =>
+					new Promise((res) =>
+						awaitedRoute.onRespond(() => {
+							res(undefined);
+						}),
+					),
+			),
+		).then(() => response);
 	}
 
 	onRespond(func: () => void) {

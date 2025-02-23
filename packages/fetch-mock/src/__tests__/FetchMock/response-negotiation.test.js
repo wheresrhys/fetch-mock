@@ -157,6 +157,32 @@ describe('response negotiation', () => {
 			]);
 			expect(routesCalled).toEqual(['a', 'b', 'c']);
 		});
+
+		it('Can wait for multiple routes', async () => {
+			fm.route('http://a.com', 200, 'route-a')
+				.route('http://b.com', 200, 'route-b')
+				.route('http://c.com', 200, { waitFor: ['route-a', 'route-b'] });
+			let routesCalled = [];
+			await Promise.all([
+				fm.fetchHandler('http://c.com').then(() => routesCalled.push('c')),
+				fm.fetchHandler('http://b.com').then(() => routesCalled.push('b')),
+				fm.fetchHandler('http://a.com').then(() => routesCalled.push('a')),
+			]);
+			expect(routesCalled).toEqual(['b', 'a', 'c']);
+		});
+
+		it('Not error if waited for route responds again', async () => {
+			fm.route('http://a.com', 200, 'route-a').route('http://b.com', 200, {
+				waitFor: 'route-a',
+			});
+			await Promise.all([
+				fm.fetchHandler('http://b.com'),
+				fm.fetchHandler('http://a.com'),
+			]);
+			await expect(fm.fetchHandler('http://a.com')).resolves.toBeInstanceOf(
+				Response,
+			);
+		});
 	});
 	it('Response', async () => {
 		fm.route('http://a.com/', new Response('http://a.com/', { status: 200 }));

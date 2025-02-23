@@ -32,8 +32,8 @@ Delays responding for the number of milliseconds specified.
 
 ### waitFor
 
-`{String}`
-Useful for testing race conditions. Use the name of another route, and this route will only respond after that one has. (Note, this does not wait for the body - only the initial response payload).
+`{String|[String]}`
+Useful for testing race conditions. Use the name of another route (or a list of names), and this route will only respond after that one has. (Note, this does not wait for the body - only the initial response payload).
 
 ### sticky
 

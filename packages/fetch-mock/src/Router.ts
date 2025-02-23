@@ -343,18 +343,27 @@ export default class Router {
 			);
 		}
 		if (route.config.waitFor) {
-			const routeToAwait = this.routes.find(
-				({ config: { name: existingName } }) =>
-					route.config.waitFor === existingName,
-			);
+			const routeNamesToWaitFor = Array.isArray(route.config.waitFor)
+				? route.config.waitFor
+				: [route.config.waitFor];
 
-			if (!routeToAwait) {
-				throw new Error(
-					`Cannot wait for route \`${route.config.waitFor}\`: route of that name does not exist`,
+			const routesToAwait: Route[] = [];
+
+			routeNamesToWaitFor.forEach((routeName) => {
+				const routeToAwait = this.routes.find(
+					({ config: { name: existingName } }) => routeName === existingName,
 				);
-			} else {
-				route.waitFor(routeToAwait);
-			}
+
+				if (routeToAwait) {
+					routesToAwait.push(routeToAwait);
+				} else {
+					throw new Error(
+						`Cannot wait for route \`${routeName}\`: route of that name does not exist`,
+					);
+				}
+			});
+
+			route.waitFor(routesToAwait);
 		}
 
 		this.routes.push(route);

@@ -5,7 +5,6 @@ import {
 	RemoveRouteOptions,
 } from 'fetch-mock';
 import './vitest-extensions.js';
-import type { FetchMockMatchers } from './types.js';
 export { FetchMockMatchers } from './types.js';
 
 type MockResetOptions = {

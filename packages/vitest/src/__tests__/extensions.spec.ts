@@ -1,4 +1,11 @@
-import { describe, it, beforeAll, afterAll, expect, expectTypeOf } from 'vitest';
+import {
+	describe,
+	it,
+	beforeAll,
+	afterAll,
+	expect,
+	expectTypeOf,
+} from 'vitest';
 
 import fetchMock from '../index';
 

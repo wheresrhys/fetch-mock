@@ -30,6 +30,11 @@ Limits the number of times the route will be used to respond. If the route has a
 
 Delays responding for the number of milliseconds specified.
 
+### waitFor
+
+`{String}`
+Useful for testing race conditions. Use the name of another route, and this route will only respond after that one has. (Note, this does not wait for the body - only the initial response payload).
+
 ### sticky
 
 `{Boolean}`

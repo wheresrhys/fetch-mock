@@ -226,7 +226,7 @@ export default class Router {
 		// If the response is a pre-made Response, respond with it
 		if (responseInput instanceof Response) {
 			return {
-				response: responseInput,
+				response: responseInput.clone(),
 				responseOptions: {},
 				responseInput: {},
 			};

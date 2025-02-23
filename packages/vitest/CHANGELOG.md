@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.2.9](https://github.com/wheresrhys/fetch-mock/compare/vitest-v0.2.8...vitest-v0.2.9) (2025-02-23)
+
+
+### Features
+
+* WIP vitest wrapper types ([0f922f3](https://github.com/wheresrhys/fetch-mock/commit/0f922f3467faa89d214147de284a90c99ca79880))
+
+
+### Bug Fixes
+
+* export vitest expect extension types properly ([f8aa579](https://github.com/wheresrhys/fetch-mock/commit/f8aa579ce24eabe21db5388dd19b28857c2acff9))
+* only import types, not implementation, from vitest types ([a8d442b](https://github.com/wheresrhys/fetch-mock/commit/a8d442bbeb6f10f4ac9178091c566c27c39d3d99))
+
 ## [0.2.8](https://github.com/wheresrhys/fetch-mock/compare/vitest-v0.2.7...vitest-v0.2.8) (2025-02-04)
 
 

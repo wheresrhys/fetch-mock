@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [0.2.11](https://github.com/wheresrhys/fetch-mock/compare/jest-v0.2.10...jest-v0.2.11) (2025-02-23)
+
+
+### Documentation Changes
+
+* document patch for comptibility with jsdom ([a2f6094](https://github.com/wheresrhys/fetch-mock/commit/a2f609456400e2b769b3144a25fe1e62be323e1a))
+
 ## [0.2.10](https://github.com/wheresrhys/fetch-mock/compare/jest-v0.2.9...jest-v0.2.10) (2025-02-04)
 
 

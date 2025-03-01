@@ -2,7 +2,7 @@ import { RouteConfig } from './Route.js';
 import { CallLog } from './CallHistory.js';
 import glob from 'glob-to-regexp';
 import * as regexparam from 'regexparam';
-import { isSubsetOf } from 'is-subset-of';
+import { isSubsetOf } from './IsSubsetOf.js';
 import { dequal as isEqual } from 'dequal';
 import { normalizeHeaders, getPath, normalizeUrl } from './RequestUtils.js';
 

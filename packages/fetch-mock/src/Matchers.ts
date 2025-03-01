@@ -186,9 +186,11 @@ const getExpressParamsMatcher: MatcherGenerator = ({
 	};
 };
 
-const formDataToObject = (formData) => {
+const formDataToObject = (formData: FormData) => {
 	const fields = [...formData];
-	const result = {};
+	const result: {
+		[key: string]: FormDataEntryValue[];
+	} = {};
 	fields.forEach(([key, value]) => {
 		result[key] = result[key] || [];
 		result[key].push(value);

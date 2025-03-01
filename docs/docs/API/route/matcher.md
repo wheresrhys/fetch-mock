@@ -151,7 +151,7 @@ Match only requests that have these query parameters set (in any order). Query p
 
 ### body
 
-`{Object}`
+`{Object|FormData}`
 
 Match only requests that send a body with the exact structure and properties as the one provided here. `JSON` or `FormData` instances can be used, but a route set up with a `JSON` body will not match requests where the data is sent as `FormData`, and vice versa.
 

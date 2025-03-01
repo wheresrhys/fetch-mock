@@ -24,7 +24,7 @@ All of the following can be passed in directly as the `matcher` argument or as t
 `fetch` and other standards have strong opinions about how to interpret URLs. `fetch-mock` attempts to respect these, which can lead to unexpected behaviour. The notes below apply to all types of url matcher.
 
 1. Trailing slashes are ignored i.e. `http://thing` is treated the same as `http://thing/` ([read the spec](https://url.spec.whatwg.org/#url-equivalence))
-2. When using dot segments in urls `fetch-mock` will match both the full path containing dot segments, and the path ot resolves to e.g. `/path/../other-path` will match `/path/../other-path` and `/other-path` ([read the spec](https://github.com/wheresrhys/fetch-mock/issues/763#:~:text=resolved%20as%20per-,the%20spec,-before%20attempting%20to))
+2. When using dot segments in urls `fetch-mock` will match both the full path containing dot segments, and the path it resolves to e.g. `/path/../other-path` will match `/path/../other-path` and `/other-path` ([read the spec](https://github.com/wheresrhys/fetch-mock/issues/763#:~:text=resolved%20as%20per-,the%20spec,-before%20attempting%20to))
 3. `fetch` will convert any protocol-relative urls to ones using the protocol of the current page e.g. if the browser is at `**http:**//a.com` and your application calls `fetch('//some.url')`, a request will be made to `**http:**//some.url`. However, to discourage writing tests that pass in one environment but not another, `fetch-mock` **will only** match requests where the protocol (or lack of) is exactly the same as the route. e.g. `begin://a.com` will match `//a.com/path` but not `http://a.com/path`
 4. Fetches of relative urls e.g. `fetch('image.jg')` or `fetch('/path')` are technically not supported in node.js at all. However, `fetch-mock` will handle them if either
    a) The global `fetch-mock` option `fetchMock.config.allowRelativeUrls = true` is set
@@ -153,11 +153,16 @@ Match only requests that have these query parameters set (in any order). Query p
 
 `{Object}`
 
-Match only requests that send a JSON body with the exact structure and properties as the one provided here.
+Match only requests that send a body with the exact structure and properties as the one provided here. `JSON` or `FormData` instances can be used, but a route set up with a `JSON` body will not match requests where the data is sent as `FormData`, and vice versa.
 
 Note that if matching on body _and_ using `Request` instances in your source code, this forces fetch-mock into an asynchronous flow _before_ it is able to route requests effectively. This means no [call history methods](/fetch-mock/docs/API/CallHistory) can be used synchronously. You must first either await the fetches to resolve, or `await fetchMock.callHistory.flush()`. The popular library [Ky](https://github.com/sindresorhus/ky) uses `Request` instances internally, and so also triggers this mode.
 
-e.g.`{body: { "key1": "value1", "key2": "value2" }}`
+e.g.
+
+```js
+{body: { "key1": "value1", "key2": "value2" }}
+new FormData(document.querySelector('#login'))
+```
 
 #### matchPartialBody
 

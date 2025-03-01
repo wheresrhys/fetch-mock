@@ -96,9 +96,12 @@ export async function createCallLogFromRequest(
 	};
 
 	try {
-		derivedOptions.body = await request.clone().text();
+		try {
+			derivedOptions.body = await request.clone().formData();
+		} catch {
+			derivedOptions.body = await request.clone().text();
+		}
 	} catch {} // eslint-disable-line no-empty
-
 	if (request.headers) {
 		derivedOptions.headers = normalizeHeaders(request.headers);
 	}

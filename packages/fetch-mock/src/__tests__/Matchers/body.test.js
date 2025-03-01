@@ -297,6 +297,7 @@ describe('body matching', () => {
 				Headers,
 				Response,
 			});
+
 			const router = new Router({ Request, Headers }, { routes: [route] });
 			const normalizedRequest = await createCallLogFromRequest(
 				new Request('http://a.com/', {
@@ -326,6 +327,51 @@ describe('body matching', () => {
 					},
 				}),
 			).toBe(false);
+		});
+
+		describe('multivalue fields', () => {
+			it('match multivalue fields', async () => {
+				const routeBody = new FormData();
+				routeBody.append('foo', 'bar');
+				routeBody.append('foo', 'baz');
+				const route = new Route({ body: routeBody, response: 200 });
+
+				const requestBody = new FormData();
+				requestBody.append('foo', 'bar');
+				requestBody.append('foo', 'baz');
+				expect(
+					route.matcher({
+						url: 'http://a.com/',
+						options: {
+							method: 'POST',
+							body: requestBody,
+							headers: { 'Content-Type': 'multipart/form-data' },
+						},
+					}),
+				).toBe(true);
+			});
+
+			it('not match mismatched multivalue fields', async () => {
+				const routeBody = new FormData();
+				routeBody.append('foo', 'bar');
+				routeBody.append('foo', 'baz');
+				const route = new Route({ body: routeBody, response: 200 });
+
+				const requestBody = new FormData();
+				requestBody.append('foo', 'bar');
+				requestBody.append('foo', 'baz');
+				requestBody.append('foo', 'barry');
+				expect(
+					route.matcher({
+						url: 'http://a.com/',
+						options: {
+							method: 'POST',
+							body: requestBody,
+							headers: { 'Content-Type': 'multipart/form-data' },
+						},
+					}),
+				).toBe(false);
+			});
 		});
 
 		it('should not match if body sent isn’t FormData', () => {
@@ -367,27 +413,37 @@ describe('body matching', () => {
 			).toBe(true);
 		});
 
-		describe.skip('partial body matching', () => {
+		describe('partial body matching', () => {
 			it('match when missing properties', () => {
 				const route = new Route({
-					body: { ham: 'sandwich' },
+					body: constructFormData(),
 					matchPartialBody: true,
 					response: 200,
 				});
+
+				const requestBody = constructFormData();
+				requestBody.append('fuzz', 'ball');
 				expect(
 					route.matcher({
 						url: 'http://a.com',
 						options: {
 							method: 'POST',
-							body: JSON.stringify({ ham: 'sandwich', egg: 'mayonaise' }),
+							body: requestBody,
 						},
 					}),
 				).toBe(true);
 			});
 
-			it('match when missing nested properties', () => {
+			it('match when starting subset of multivalue field', () => {
+				const routeBody = new FormData();
+				routeBody.append('foo', 'bar');
+				routeBody.append('foo', 'baz');
+				const requestBody = new FormData();
+				requestBody.append('foo', 'bar');
+				requestBody.append('foo', 'baz');
+				requestBody.append('foo', 'barry');
 				const route = new Route({
-					body: { meal: { ham: 'sandwich' } },
+					body: routeBody,
 					matchPartialBody: true,
 					response: 200,
 				});
@@ -396,51 +452,22 @@ describe('body matching', () => {
 						url: 'http://a.com',
 						options: {
 							method: 'POST',
-							body: JSON.stringify({
-								meal: { ham: 'sandwich', egg: 'mayonaise' },
-							}),
-						},
-					}),
-				).toBe(true);
-			});
-
-			it('not match when properties at wrong depth', () => {
-				const route = new Route({
-					body: { ham: 'sandwich' },
-					matchPartialBody: true,
-					response: 200,
-				});
-				expect(
-					route.matcher({
-						url: 'http://a.com',
-						options: {
-							method: 'POST',
-							body: JSON.stringify({ meal: { ham: 'sandwich' } }),
-						},
-					}),
-				).toBe(false);
-			});
-
-			it('match when starting subset of array', () => {
-				const route = new Route({
-					body: { ham: [1, 2] },
-					matchPartialBody: true,
-					response: 200,
-				});
-				expect(
-					route.matcher({
-						url: 'http://a.com',
-						options: {
-							method: 'POST',
-							body: JSON.stringify({ ham: [1, 2, 3] }),
+							body: requestBody,
 						},
 					}),
 				).toBe(true);
 			});
 
 			it('match when subset of array has gaps', () => {
+				const routeBody = new FormData();
+				routeBody.append('foo', 'bar');
+				routeBody.append('foo', 'barry');
+				const requestBody = new FormData();
+				requestBody.append('foo', 'bar');
+				requestBody.append('foo', 'baz');
+				requestBody.append('foo', 'barry');
 				const route = new Route({
-					body: { ham: [1, 3] },
+					body: routeBody,
 					matchPartialBody: true,
 					response: 200,
 				});
@@ -449,7 +476,7 @@ describe('body matching', () => {
 						url: 'http://a.com',
 						options: {
 							method: 'POST',
-							body: JSON.stringify({ ham: [1, 2, 3] }),
+							body: requestBody,
 						},
 					}),
 				).toBe(true);

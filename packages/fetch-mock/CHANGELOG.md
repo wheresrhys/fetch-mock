@@ -1,5 +1,13 @@
 # Changelog
 
+## [12.5.1](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v12.5.0...fetch-mock-v12.5.1) (2025-03-01)
+
+
+### Bug Fixes
+
+* improve handling of abort ([5c1085d](https://github.com/wheresrhys/fetch-mock/commit/5c1085d59d0dee600691ba7fba642869a623aa68))
+* remove deprecated is-subset-of ([a2546ef](https://github.com/wheresrhys/fetch-mock/commit/a2546ef871e279ca5ef76d925f0491386c0809b2))
+
 ## [12.5.0](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v12.4.0...fetch-mock-v12.5.0) (2025-03-01)
 
 

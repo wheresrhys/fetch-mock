@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /** Copied from deprecated https://www.npmjs.com/package/is-subset-of **/
 import { Type } from './TypeDescriptor.js';
 

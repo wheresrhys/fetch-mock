@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-function-type */
+/** Copied from deprecated https://www.npmjs.com/package/typedescriptor **/
 const valueTypes = new Set([
 	'boolean',
 	'number',
@@ -96,7 +98,6 @@ class TypeDescriptor {
 		return valueTypes.has(TypeDescriptor.of(value));
 	}
 
-	// eslint-disable-next-line @typescript-eslint/ban-types
 	public static isReferenceType(
 		value: any,
 	): value is any[] | Function | object | symbol {
@@ -111,7 +112,6 @@ class TypeDescriptor {
 		return TypeDescriptor.of(value) === 'boolean';
 	}
 
-	// eslint-disable-next-line @typescript-eslint/ban-types
 	public static isFunction(value: any): value is Function {
 		return TypeDescriptor.of(value) === 'function';
 	}
@@ -124,7 +124,6 @@ class TypeDescriptor {
 		return TypeDescriptor.of(value) === 'number';
 	}
 
-	// eslint-disable-next-line @typescript-eslint/ban-types
 	public static isObject(value: any): value is object {
 		return TypeDescriptor.of(value) === 'object';
 	}

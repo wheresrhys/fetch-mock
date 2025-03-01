@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.5.0](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v12.4.0...fetch-mock-v12.5.0) (2025-03-01)
+
+
+### Features
+
+* match formdata bodies ([ab7dff4](https://github.com/wheresrhys/fetch-mock/commit/ab7dff427454b6238e2228280a828c19b1f1df31))
+
 ## [12.4.0](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v12.3.0...fetch-mock-v12.4.0) (2025-02-23)
 
 

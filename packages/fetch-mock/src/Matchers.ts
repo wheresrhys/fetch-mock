@@ -186,11 +186,29 @@ const getExpressParamsMatcher: MatcherGenerator = ({
 	};
 };
 
+const formDataToObject = (formData: FormData) => {
+	const fields = [...formData];
+	const result: {
+		[key: string]: FormDataEntryValue[];
+	} = {};
+	fields.forEach(([key, value]) => {
+		result[key] = result[key] || [];
+		result[key].push(value);
+	});
+	return result;
+};
+
 const getBodyMatcher: MatcherGenerator = (route) => {
-	const { body: expectedBody } = route;
+	let { body: expectedBody } = route;
+	let expectedBodyType = 'json';
 
 	if (!expectedBody) {
 		return;
+	}
+
+	if (expectedBody instanceof FormData) {
+		expectedBodyType = 'formData';
+		expectedBody = formDataToObject(expectedBody);
 	}
 
 	return ({ options: { body, method = 'get' } }) => {
@@ -206,8 +224,18 @@ const getBodyMatcher: MatcherGenerator = (route) => {
 		try {
 			if (typeof body === 'string') {
 				sentBody = JSON.parse(body);
+				if (expectedBodyType !== 'json') {
+					return false;
+				}
 			}
 		} catch {} //eslint-disable-line no-empty
+
+		if (body instanceof FormData) {
+			if (expectedBodyType !== 'formData') {
+				return false;
+			}
+			sentBody = formDataToObject(body);
+		}
 
 		return (
 			sentBody &&

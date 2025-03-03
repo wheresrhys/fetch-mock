@@ -212,7 +212,7 @@ const getBodyMatcher: MatcherGenerator = (route) => {
 	}
 
 	return ({ options: { body, method = 'get' } }) => {
-		if (['get', 'head', 'delete'].includes(method.toLowerCase())) {
+		if (['get', 'head'].includes(method.toLowerCase())) {
 			// GET requests don’t send a body so even if it exists in the options
 			// we treat as no body because it would never actually make it to the server
 			// in the application code

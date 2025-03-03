@@ -144,6 +144,25 @@ describe('body matching', () => {
 			).toBe(true);
 		});
 
+		it('should match if request is delete', () => {
+			const route = new Route({
+				body: { foo: 'bar' },
+				method: 'delete',
+				response: 200,
+			});
+
+			expect(
+				route.matcher({
+					url: 'http://a.com/',
+					options: {
+						method: 'DELETE',
+						body: JSON.stringify({ foo: 'bar' }),
+						headers: { 'Content-Type': 'application/json' },
+					},
+				}),
+			).toBe(true);
+		});
+
 		describe('partial body matching', () => {
 			it('match when missing properties', () => {
 				const route = new Route({

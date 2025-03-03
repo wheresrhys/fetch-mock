@@ -1,7 +1,7 @@
 {
 	"name": "@fetch-mock/vitest",
 	"description": "Vitest wrapper for fetch-mock",
-	"version": "0.2.12",
+	"version": "0.2.13",
 	"exports": {
 		"browser": "./dist/esm/index.js",
 		"import": {
@@ -21,7 +21,7 @@
 		"node": ">=18.11.0"
 	},
 	"dependencies": {
-		"fetch-mock": "^12.5.1"
+		"fetch-mock": "^12.5.2"
 	},
 	"peerDependencies": {
 		"vitest": "*"

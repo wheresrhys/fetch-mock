@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.5.2](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v12.5.1...fetch-mock-v12.5.2) (2025-03-03)
+
+
+### Bug Fixes
+
+* allow matching body for delete requests ([891197c](https://github.com/wheresrhys/fetch-mock/commit/891197c37eb6f85b50002df024bfcfcbdae500b3))
+
 ## [12.5.1](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v12.5.0...fetch-mock-v12.5.1) (2025-03-01)
 
 

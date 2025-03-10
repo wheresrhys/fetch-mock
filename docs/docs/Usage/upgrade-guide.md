@@ -26,7 +26,7 @@ Similar to the last point, `.once()`, `.get()`, `.post()`, `getOnce()`, `postOnc
 
 ### Call history methods changed
 
-The filtering behaviour has been rewritten around named routes, and methods return CallLog objects that contain far more metadata about the call. [Call history docs](/fetch-mock/docs/API/CallHistory)
+The filtering behaviour has been rewritten around named routes, and methods return CallLog objects that contain far more metadata about the call. All methods, including, `done()` shoudl now be called on `fetchMock.callHistory` (not `fetchMock`). [Call history docs](/fetch-mock/docs/API/CallHistory). 
 
 ### Relative URLs not permitted by default in Node.js
 

@@ -49,7 +49,7 @@ Clears all call history from the mocked `fetch` implementation.
 
 `fetchMock.mockReset({includeSticky: boolean})`
 
-Clears all call history from the mocked `fetch` implementation _and_ removes all routes (including fallback routes defined using `.spy()` or `.catch()`) with the exception of sticky routes. To remove these, pass in the `includeSticky: true` option. FOr more fine grained control over fallback routes and named routes please use `fetchMock.removeRoutes()`
+Clears all call history from the mocked `fetch` implementation _and_ removes all routes (including fallback routes defined using `.spy()` or `.catch()`) with the exception of sticky routes. To remove these, pass in the `includeSticky: true` option. For more fine grained control over fallback routes and named routes please use `fetchMock.removeRoutes()`
 
 #### fetchMock.mockRestore()
 

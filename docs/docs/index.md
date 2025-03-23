@@ -37,7 +37,7 @@ fetchMock
   }, 'userDataFetch');
 
 const res = await fetch('http://example.com/api/users/kenneth');
-assert(fetchMock.called('userDataFetch'))
+assert(fetchMock.callHistory.called('userDataFetch'))
 const data = await res.json();
 assertEqual(data.userData.email, 'kenneth@example.com')
 ```

@@ -74,7 +74,7 @@
 		"typescript-eslint": "^8.0.1",
 		"v8": "^0.1.0",
 		"vitest": "^3.0.5",
-		"webdriverio": "^8.27.0"
+		"webdriverio": "^9.12.2"
 	},
 	"volta": {
 		"node": "20.18.0"

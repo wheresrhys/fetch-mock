@@ -7,6 +7,7 @@ import Route, {
 	RouteResponseData,
 	RouteResponseConfig,
 	ModifyRouteConfig,
+	RouteConfigWrapper,
 } from './Route.js';
 import { isUrlMatcher, isFunctionMatcher } from './Matchers.js';
 import { RouteMatcher } from './Matchers.js';
@@ -314,6 +315,9 @@ export default class Router {
 		nameOrOptions?: UserRouteConfig | string,
 	): void {
 		const config: RouteConfig = {};
+		if (matcher instanceof RouteConfigWrapper) {
+			Object.assign(config, matcher);
+		}
 		if (isUrlMatcher(matcher)) {
 			config.url = matcher;
 		} else if (isFunctionMatcher(matcher)) {

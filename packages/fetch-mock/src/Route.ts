@@ -39,6 +39,19 @@ export type InternalRouteConfig = {
 	isFallback?: boolean;
 };
 export type UserRouteConfig = UserRouteSpecificConfig & FetchMockGlobalConfig;
+
+/**
+ * A class wrapper for UserRouteConfig to disambiguate config objects for TypeScript users.
+ *
+ * If you encounter TypeScript errors about 'url' not being assignable, wrap your config object:
+ *   fetchMock.route(new RouteConfigWrapper({ url: '...', ... }))
+ */
+export class RouteConfigWrapper implements UserRouteConfig {
+	constructor(config: UserRouteConfig) {
+		Object.assign(this, config);
+	}
+}
+
 type Nullable<T> = { [K in keyof T]: T[K] | null };
 export type ModifyRouteConfig = Omit<
 	Nullable<UserRouteSpecificConfig>,

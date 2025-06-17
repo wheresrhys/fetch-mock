@@ -49,9 +49,9 @@
 		"@types/eslint__js": "^8.42.3",
 		"@types/events": "^3.0.3",
 		"@types/node": "^20.14.10",
-		"@vitest/browser": "^3.0.0",
-		"@vitest/coverage-istanbul": "^3.0.0",
-		"@vitest/coverage-v8": "^3.0.0",
+		"@vitest/browser": "3.1.0",
+		"@vitest/coverage-istanbul": "3.1.0",
+		"@vitest/coverage-v8": "3.1.0",
 		"@vitest/ui": "^3.0.0",
 		"eslint": "9.14.0",
 		"eslint-config-prettier": "^9.1.0",
@@ -73,7 +73,7 @@
 		"typescript": "^5.5.4",
 		"typescript-eslint": "^8.0.1",
 		"v8": "^0.1.0",
-		"vitest": "^3.0.5",
+		"vitest": "3.1.0",
 		"webdriverio": "^9.12.2"
 	},
 	"volta": {

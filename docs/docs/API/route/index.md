@@ -68,6 +68,29 @@ fetchMock.route({
 
 ```
 
+#### TypeScript: Config Object Overload Workaround
+
+If you encounter a TypeScript error like:
+
+```
+Object literal may only specify known properties, and 'url' does not exist in type 'RegExp | URL | URLMatcherObject | RouteMatcherFunction'.
+```
+
+You can work around this by wrapping your config object in the provided class:
+
+```typescript
+import fetchMock, { RouteConfigWrapper } from 'fetch-mock';
+
+fetchMock.route(
+	new RouteConfigWrapper({
+		url: 'glob:*/api/v1/monitoring/metricsForRuntimes?*',
+		query: {},
+		response: Promise.resolve(allMetricsData),
+		delay: 2000,
+	}),
+);
+```
+
 ## Examples
 
 ### Strings

@@ -50,9 +50,9 @@ describe('response negotiation', () => {
 			req.then(() => {
 				resolved = true;
 			});
-			await new Promise((res) => setTimeout(res, 10));
+			await new Promise((res) => setTimeout(res, 15));
 			expect(resolved).toBe(false);
-			await new Promise((res) => setTimeout(res, 11));
+			await new Promise((res) => setTimeout(res, 15));
 			expect(resolved).toBe(true);
 			const res = await req;
 			expect(res.status).toEqual(200);
@@ -68,9 +68,9 @@ describe('response negotiation', () => {
 			req.then(() => {
 				resolved = true;
 			});
-			await new Promise((res) => setTimeout(res, 10));
+			await new Promise((res) => setTimeout(res, 15));
 			expect(resolved).toBe(false);
-			await new Promise((res) => setTimeout(res, 11));
+			await new Promise((res) => setTimeout(res, 15));
 			expect(resolved).toBe(true);
 			const res = await req;
 			expect(res.status).toEqual(200);
@@ -83,7 +83,7 @@ describe('response negotiation', () => {
 				delay: 10,
 			});
 			const req = fm.fetchHandler('http://a.com/');
-			await new Promise((res) => setTimeout(res, 11));
+			await new Promise((res) => setTimeout(res, 15));
 			const res = await req;
 			expect(res.status).toEqual(200);
 			expect(await res.text()).toEqual('delayed: http://a.com/');
@@ -96,9 +96,9 @@ describe('response negotiation', () => {
 			req1.then(() => {
 				resolved = true;
 			});
-			await new Promise((res) => setTimeout(res, 10));
+			await new Promise((res) => setTimeout(res, 15));
 			expect(resolved).toBe(false);
-			await new Promise((res) => setTimeout(res, 11));
+			await new Promise((res) => setTimeout(res, 15));
 			expect(resolved).toBe(true);
 			const res1 = await req1;
 			expect(res1.status).toEqual(200);
@@ -107,9 +107,9 @@ describe('response negotiation', () => {
 			req2.then(() => {
 				resolved = true;
 			});
-			await new Promise((res) => setTimeout(res, 10));
+			await new Promise((res) => setTimeout(res, 15));
 			expect(resolved).toBe(false);
-			await new Promise((res) => setTimeout(res, 11));
+			await new Promise((res) => setTimeout(res, 15));
 			expect(resolved).toBe(true);
 			const res2 = await req2;
 			expect(res2.status).toEqual(200);

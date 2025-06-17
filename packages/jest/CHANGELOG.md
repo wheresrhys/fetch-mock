@@ -1,6 +1,15 @@
 # Changelog
 
 
+## [0.2.16](https://github.com/wheresrhys/fetch-mock/compare/jest-v0.2.15...jest-v0.2.16) (2025-06-17)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * fetch-mock bumped from ^12.5.2 to ^12.5.3
+
 ## [0.2.15](https://github.com/wheresrhys/fetch-mock/compare/jest-v0.2.14...jest-v0.2.15) (2025-03-03)
 
 

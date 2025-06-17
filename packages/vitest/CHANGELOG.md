@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.14](https://github.com/wheresrhys/fetch-mock/compare/vitest-v0.2.13...vitest-v0.2.14) (2025-06-17)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * fetch-mock bumped from ^12.5.2 to ^12.5.3
+
 ## [0.2.13](https://github.com/wheresrhys/fetch-mock/compare/vitest-v0.2.12...vitest-v0.2.13) (2025-03-03)
 
 

@@ -43,13 +43,13 @@ fetchMock
 
 You can use the names you gave your routes to check if they have been called.
 
-- `fetchMock.called(name)` reports if any calls were handled by your route. If you just want to check `fetch` was called at all then do not pass in a name.
-- `fetchMock.lastCall(name)` will return a CallLog object that will give you access to lots of metadata about the call, including the original arguments passed in to `fetch`.
-- `fetchMock.done()` will tell you if `fetch` was called the expected number of times.
+- `fetchMock.callHistory.called(name)` reports if any calls were handled by your route. If you just want to check `fetch` was called at all then do not pass in a name.
+- `fetchMock.callHistory.lastCall(name)` will return a CallLog object that will give you access to lots of metadata about the call, including the original arguments passed in to `fetch`.
+- `fetchMock.callHistory.done()` will tell you if `fetch` was called the expected number of times.
 
 ```js
-assert(fetchMock.called('good get'));
-assertEqual(fetchMock.lastCall('good get').query['search'], 'needle');
+assert(fetchMock.callHistory.called('good get'));
+assert(fetchMock.callHistory.lastCall('good get').queryParams.get('search'), 'needle');
 ```
 
 ## Tearing down your mock

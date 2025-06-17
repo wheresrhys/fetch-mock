@@ -1,6 +1,6 @@
 {
-	"packages/fetch-mock": "12.5.2",
-	"packages/vitest": "0.2.13",
-	"packages/jest": "0.2.15",
+	"packages/fetch-mock": "12.5.3",
+	"packages/vitest": "0.2.14",
+	"packages/jest": "0.2.16",
 	"packages/codemods": "0.1.3"
 }

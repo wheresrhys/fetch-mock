@@ -1,5 +1,13 @@
 # Changelog
 
+## [12.5.3](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v12.5.2...fetch-mock-v12.5.3) (2025-06-17)
+
+
+### Bug Fixes
+
+* add wrapper class to fix type ambiguity ([b093bb0](https://github.com/wheresrhys/fetch-mock/commit/b093bb086836902761cd80ddb83198b8a22bc1e1))
+* add wrapper class to fix type ambiguity ([ea45aec](https://github.com/wheresrhys/fetch-mock/commit/ea45aec4b5d268bcf8ca253b2c1df796040aff8d))
+
 ## [12.5.2](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v12.5.1...fetch-mock-v12.5.2) (2025-03-03)
 
 

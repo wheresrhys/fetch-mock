@@ -10,6 +10,7 @@ export {
 	RouteResponse,
 	RouteName,
 	ModifyRouteConfig,
+	RouteConfigWrapper,
 } from './Route.js';
 export { RemoveRouteOptions } from './Router.js';
 

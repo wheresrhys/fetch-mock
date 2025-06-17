@@ -4,6 +4,7 @@ import Route, {
 	UserRouteConfig,
 	RouteResponse,
 	ModifyRouteConfig,
+	RouteConfigWrapper,
 } from './Route.js';
 import { MatcherDefinition, RouteMatcher } from './Matchers.js';
 import CallHistory from './CallHistory.js';
@@ -35,8 +36,13 @@ export const defaultFetchMockConfig: FetchMockConfig = {
 	fetch: globalThis.fetch,
 };
 
-const defineShorthand = (shorthandOptions: UserRouteConfig) => {
-	function shorthand(this: FetchMock, matcher: UserRouteConfig): FetchMock;
+const defineShorthand = (
+	shorthandOptions: UserRouteConfig | RouteConfigWrapper,
+) => {
+	function shorthand(
+		this: FetchMock,
+		matcher: UserRouteConfig | RouteConfigWrapper,
+	): FetchMock;
 	function shorthand(
 		this: FetchMock,
 		matcher: RouteMatcher,
@@ -117,16 +123,16 @@ export class FetchMock {
 		return responsePromise;
 	}
 
-	route(matcher: UserRouteConfig): FetchMock;
+	route(matcher: UserRouteConfig | RouteConfigWrapper): FetchMock;
 	route(
 		matcher: RouteMatcher,
 		response: RouteResponse,
-		options?: UserRouteConfig | string,
+		options?: UserRouteConfig | RouteConfigWrapper | string,
 	): FetchMock;
 	route(
-		matcher: RouteMatcher | UserRouteConfig,
+		matcher: RouteMatcher | UserRouteConfig | RouteConfigWrapper,
 		response?: RouteResponse,
-		options?: UserRouteConfig | string,
+		options?: UserRouteConfig | RouteConfigWrapper | string,
 	): FetchMock {
 		this.router.addRoute(matcher, response, options);
 		return this;
@@ -175,7 +181,7 @@ export class FetchMock {
 
 	spy(
 		this: FetchMock,
-		matcher?: RouteMatcher | UserRouteConfig,
+		matcher?: RouteMatcher | UserRouteConfig | RouteConfigWrapper,
 		name?: RouteName,
 	): FetchMock {
 		const boundFetch = this.config.fetch.bind(globalThis);

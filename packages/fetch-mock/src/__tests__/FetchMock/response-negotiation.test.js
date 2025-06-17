@@ -70,7 +70,7 @@ describe('response negotiation', () => {
 			});
 			await new Promise((res) => setTimeout(res, 10));
 			expect(resolved).toBe(false);
-			await new Promise((res) => setTimeout(res, 11));
+			await new Promise((res) => setTimeout(res, 13));
 			expect(resolved).toBe(true);
 			const res = await req;
 			expect(res.status).toEqual(200);

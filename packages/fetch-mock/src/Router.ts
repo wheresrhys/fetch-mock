@@ -169,7 +169,9 @@ export default class Router {
 					const requestBody = request?.body || options?.body;
 					if (requestBody instanceof ReadableStream) {
 						if (requestBody.locked) {
-							requestBody.getReader().cancel(error);
+							console.warn(
+								"fetch-mock: Locked request body can't be cancelled",
+							);
 						} else {
 							requestBody.cancel(error);
 						}
@@ -177,7 +179,9 @@ export default class Router {
 
 					if (callLog?.response?.body) {
 						if (callLog.response.body.locked) {
-							callLog.response.body.getReader().cancel(error);
+							console.warn(
+								"fetch-mock: Locked response body can't be cancelled",
+							);
 						} else {
 							callLog.response.body.cancel(error);
 						}

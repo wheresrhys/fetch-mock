@@ -84,24 +84,22 @@ class CallHistory {
 
 		if (isMatchedOrUnmatched(filter)) {
 			if (([true, 'matched'] as CallHistoryFilter[]).includes(filter)) {
-				calls = calls.filter(({ route }) => !route.config.isFallback);
+				calls = calls.filter(
+					({ route }) => !route?.config || !route.config.isFallback,
+				);
 			} else if (
 				([false, 'unmatched'] as CallHistoryFilter[]).includes(filter)
 			) {
-				calls = calls.filter(({ route }) => Boolean(route.config.isFallback));
+				calls = calls.filter(({ route }) =>
+					Boolean(route?.config && route.config.isFallback),
+				);
 			}
 
 			if (!options) {
 				return calls;
 			}
 		} else if (isName(filter)) {
-			calls = calls.filter(
-				({
-					route: {
-						config: { name },
-					},
-				}) => name === filter,
-			);
+			calls = calls.filter(({ route }) => route?.config?.name === filter);
 			if (!options) {
 				return calls;
 			}

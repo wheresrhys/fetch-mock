@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.5.4](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v12.5.3...fetch-mock-v12.5.4) (2025-08-28)
+
+
+### Bug Fixes
+
+* apply browser exports fix for fetch-mock package ([318cd94](https://github.com/wheresrhys/fetch-mock/commit/318cd94dce9309f2a8f10c7a6d92366835fa3ade))
+
 ## [12.5.3](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v12.5.2...fetch-mock-v12.5.3) (2025-06-17)
 
 

@@ -36,9 +36,12 @@ import { jest } from '@jest/globals';
 manageFetchMockGlobally(jest); // optional
 ```
 
-### JSDOM campatibility
+### JSDOM compatibility
 
-To use with JSDOM, import the following into your test environment instead of using `jest-environment-jsdom` directly:
+To use with JSDOM either
+
+1. Use https://github.com/mswjs/jest-fixed-jsdom instead of `jest-environment-jsdom`
+2. Import the following into your test environment instead of using `jest-environment-jsdom` directly:
 
 ```js
 import { TestEnvironment } from 'jest-environment-jsdom';

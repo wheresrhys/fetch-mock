@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.2.15](https://github.com/wheresrhys/fetch-mock/compare/vitest-v0.2.14...vitest-v0.2.15) (2025-08-28)
+
+
+### Bug Fixes
+
+* make compatible with browser builds using cjs ([4b174d0](https://github.com/wheresrhys/fetch-mock/commit/4b174d0b6068562bc5deaf3e7b4c3d5787374a8a))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * fetch-mock bumped from ^12.5.3 to ^12.5.4
+
 ## [0.2.14](https://github.com/wheresrhys/fetch-mock/compare/vitest-v0.2.13...vitest-v0.2.14) (2025-06-17)
 
 

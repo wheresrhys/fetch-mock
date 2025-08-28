@@ -1,11 +1,11 @@
 {
 	"name": "@fetch-mock/jest",
 	"description": "jest wrapper for fetch-mock",
-	"version": "0.2.16",
+	"version": "0.2.17",
 	"exports": {
 		"browser": {
-				"import": "./dist/esm/index.js",
-				"require": "./dist/cjs/index.js"
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.js"
 		},
 		"import": {
 			"types": "./dist/esm/index.d.ts",
@@ -24,7 +24,7 @@
 		"node": ">=18.11.0"
 	},
 	"dependencies": {
-		"fetch-mock": "^12.5.3"
+		"fetch-mock": "^12.5.4"
 	},
 	"peerDependencies": {
 		"jest": "*",

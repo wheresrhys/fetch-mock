@@ -1,7 +1,12 @@
 ---
-name: issue
+name: New issue
 about: Open an issue on fetch-mock
+title: ''
+labels: ''
+assignees: ''
+
 ---
+
 ISSUES NOT ADHERING TO THESE RULES WILL BE CLOSED
 If you want your issue addressed, please stick to the rules
 

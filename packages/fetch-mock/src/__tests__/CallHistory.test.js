@@ -11,6 +11,31 @@ describe('CallHistory', () => {
 	const fetchTheseUrls = (...urls) =>
 		Promise.all(urls.map((url) => fm.fetchHandler(url)));
 
+	describe('should handle call without registered routes', () => {
+		it('logs calls even when there are no registered routes', async () => {
+			try {
+				await fm.fetchHandler('http://a.com/');
+			} catch {
+				// ignore
+			}
+			try {
+				await fm.fetchHandler('http://b.com/');
+			} catch {
+				// ignore
+			}
+
+			expect(fm.callHistory.callLogs.length).toEqual(2);
+			expect(fm.callHistory.callLogs[0].url).toEqual('http://a.com/');
+			expect(fm.callHistory.callLogs[0].route).toBeUndefined();
+			expect(fm.callHistory.callLogs[1].url).toEqual('http://b.com/');
+			expect(fm.callHistory.callLogs[1].route).toBeUndefined();
+			const calls = fm.callHistory.calls(true);
+			expect(calls.length).toBe(2);
+			expect(calls[0].url).toBe('http://a.com/');
+			expect(calls[1].url).toBe('http://b.com/');
+		});
+	});
+
 	describe('clear', () => {
 		it('should clear all call logs', async () => {
 			fm.route('http://a.com', 200).route('http://b.com', 200);

@@ -1,5 +1,14 @@
 # Changelog
 
+## [12.5.5](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v12.5.4...fetch-mock-v12.5.5) (2025-10-21)
+
+
+### Bug Fixes
+
+* do not try to get a reader from a locked request oder response to cancel them ([8c23ecf](https://github.com/wheresrhys/fetch-mock/commit/8c23ecf082e056cde143592c2a57cd110cf0c1e7))
+* use optional chaining operator and do not try to cancel locked request or response to prevent errors ([b1ff114](https://github.com/wheresrhys/fetch-mock/commit/b1ff114ebb0595a2294357991e84f97d32e1b81e))
+* use optional chaining operator to prevent errors ([87f8399](https://github.com/wheresrhys/fetch-mock/commit/87f83999e49b317098dcdc845a06060bb9f0ad4d))
+
 ## [12.5.4](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v12.5.3...fetch-mock-v12.5.4) (2025-08-28)
 
 

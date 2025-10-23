@@ -156,6 +156,7 @@ export default class Router {
 		// eslint-disable-next-line no-async-promise-executor
 		return new Promise(async (resolve, reject) => {
 			const { url, options, request, pendingPromises } = callLog;
+			let eventListenerAbortController: AbortController | undefined;
 			if (callLog.signal) {
 				const abort = () => {
 					// TODO may need to bring that flushy thing back.
@@ -191,7 +192,11 @@ export default class Router {
 				if (callLog.signal.aborted) {
 					abort();
 				}
-				callLog.signal.addEventListener('abort', abort);
+				eventListenerAbortController = new AbortController();
+				callLog.signal.addEventListener('abort', abort, {
+					once: true,
+					signal: eventListenerAbortController.signal,
+				});
 			}
 
 			if (this.needsToReadBody(request)) {
@@ -218,6 +223,8 @@ export default class Router {
 					resolve(observableResponse);
 				} catch (err) {
 					reject(err);
+				} finally {
+					eventListenerAbortController?.abort();
 				}
 			} else {
 				reject(

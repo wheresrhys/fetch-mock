@@ -63,7 +63,7 @@
 		"jest-environment-jsdom": "^29.7.0",
 		"jsdom": "^23.2.0",
 		"lint-staged": "^15.2.7",
-		"playwright": "^1.46.0",
+		"playwright": "^1.56.1",
 		"prettier": "^3.1.1",
 		"rollup": "^4.22.4",
 		"rollup-plugin-copy": "^3.5.0",

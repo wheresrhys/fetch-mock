@@ -1,5 +1,13 @@
 # Changelog
 
+## [12.5.6](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v12.5.5...fetch-mock-v12.5.6) (2025-10-27)
+
+
+### Bug Fixes
+
+* clean abort event listener once it's called or response is returned ([4606250](https://github.com/wheresrhys/fetch-mock/commit/46062504b4f2c4ad7825c9be84ebc460c42fb045))
+* clean abort event listener once it's called or response is returned ([ca51920](https://github.com/wheresrhys/fetch-mock/commit/ca519206f148c06a16093a7fc02ce45e8ee5aaf0))
+
 ## [12.5.5](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v12.5.4...fetch-mock-v12.5.5) (2025-10-21)
 
 

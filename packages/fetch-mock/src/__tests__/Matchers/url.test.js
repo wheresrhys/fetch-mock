@@ -359,6 +359,7 @@ describe('url matching', () => {
 			describe('when in browser environment', () => {
 				let location;
 				let origin;
+				let host;
 				beforeAll(() => {
 					if (!isBrowser) {
 						const dom = new JSDOM(``, {
@@ -368,6 +369,7 @@ describe('url matching', () => {
 					}
 					location = globalThis.location.href;
 					origin = globalThis.location.origin;
+					host = globalThis.location.host;
 				});
 				afterAll(() => {
 					if (!isBrowser) {
@@ -412,7 +414,7 @@ describe('url matching', () => {
 
 				it('match host: keyword', () => {
 					const route = new Route({
-						url: 'host:a.com',
+						url: `host:${host}`,
 						response: 200,
 					});
 

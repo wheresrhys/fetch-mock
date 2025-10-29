@@ -4,7 +4,12 @@ import glob from 'glob-to-regexp';
 import * as regexparam from 'regexparam';
 import { isSubsetOf } from './IsSubsetOf.js';
 import { dequal as isEqual } from 'dequal';
-import { normalizeHeaders, getPath, getHost, normalizeUrl } from './RequestUtils.js';
+import {
+	normalizeHeaders,
+	getPath,
+	getHost,
+	normalizeUrl,
+} from './RequestUtils.js';
 
 export type URLMatcherObject = {
 	begin?: string;

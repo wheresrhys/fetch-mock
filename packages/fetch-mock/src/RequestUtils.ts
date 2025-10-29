@@ -129,9 +129,9 @@ export function getHost(url: string): string | null {
 	if (absoluteUrlRX.test(url)) {
 		return new URL(url).host;
 	} else if ('location' in globalThis) {
-		return globalThis.location.host
+		return globalThis.location.host;
 	}
-	return null
+	return null;
 }
 
 export function getQuery(url: string): string {

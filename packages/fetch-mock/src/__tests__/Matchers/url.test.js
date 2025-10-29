@@ -39,6 +39,18 @@ describe('url matching', () => {
 		expect(route.matcher({ url: 'http://a.com/paths' })).toBe(true);
 	});
 
+	it('match host: keyword', () => {
+		const route = new Route({
+			url: 'host:a.b.com',
+			response: 200,
+		});
+
+		expect(route.matcher({ url: 'http://b.com/path' })).toBe(false);
+		expect(route.matcher({ url: 'http://a.com/path' })).toBe(false);
+		expect(route.matcher({ url: 'http://a.b.com/path' })).toBe(true);
+		expect(route.matcher({ url: 'https://a.bcom/path' })).toBe(true);
+	});
+
 	it('match end: keyword', () => {
 		const route = new Route({ url: 'end:com/path', response: 200 });
 		expect(route.matcher({ url: 'http://a.com/paths' })).toBe(false);

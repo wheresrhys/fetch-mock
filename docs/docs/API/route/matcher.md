@@ -56,6 +56,12 @@ Match a url ending with a string, e.g. `"end:.jpg"`
 
 Match a url including a string, e.g. `"include:site.com/api"`
 
+### host:...
+
+`{String}`
+
+Match a url which has a given host, e.g. `"host:a.b.com"`
+
 ### path:...
 
 `{String}`

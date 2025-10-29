@@ -48,7 +48,7 @@ describe('url matching', () => {
 		expect(route.matcher({ url: 'http://b.com/path' })).toBe(false);
 		expect(route.matcher({ url: 'http://a.com/path' })).toBe(false);
 		expect(route.matcher({ url: 'http://a.b.com/path' })).toBe(true);
-		expect(route.matcher({ url: 'https://a.bcom/path' })).toBe(true);
+		expect(route.matcher({ url: 'https://a.b.com/path' })).toBe(true);
 	});
 
 	it('match end: keyword', () => {

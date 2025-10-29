@@ -49,7 +49,10 @@ You can use the names you gave your routes to check if they have been called.
 
 ```js
 assert(fetchMock.callHistory.called('good get'));
-assert(fetchMock.callHistory.lastCall('good get').queryParams.get('search'), 'needle');
+assert(
+	fetchMock.callHistory.lastCall('good get').queryParams.get('search'),
+	'needle',
+);
 ```
 
 ## Tearing down your mock

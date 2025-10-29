@@ -4,7 +4,7 @@ import glob from 'glob-to-regexp';
 import * as regexparam from 'regexparam';
 import { isSubsetOf } from './IsSubsetOf.js';
 import { dequal as isEqual } from 'dequal';
-import { normalizeHeaders, getPath, normalizeUrl } from './RequestUtils.js';
+import { normalizeHeaders, getPath, getHost, normalizeUrl } from './RequestUtils.js';
 
 export type URLMatcherObject = {
 	begin?: string;
@@ -12,6 +12,7 @@ export type URLMatcherObject = {
 	include?: string;
 	glob?: string;
 	express?: string;
+	host?: string;
 	path?: string;
 	regexp?: RegExp;
 };
@@ -79,6 +80,9 @@ const stringMatchers: { [key: string]: UrlMatcherGenerator } = {
 			const path = getPath(url);
 			return path === targetString || path === dotlessTargetString;
 		};
+	},
+	host: (targetString) => {
+		return ({ url }) => targetString === getHost(url);
 	},
 };
 const getHeaderMatcher: MatcherGenerator = ({ headers: expectedHeaders }) => {

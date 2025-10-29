@@ -344,6 +344,15 @@ describe('url matching', () => {
 						});
 						expect(route.matcher({ url: 'image.jpg' })).toBe(true);
 					});
+
+					it('not match host: keyword', () => {
+						const route = new Route({
+							url: 'host:a.com',
+							response: 200,
+						});
+
+						expect(route.matcher({ url: '/path' })).toBe(false);
+					});
 				});
 			}
 
@@ -399,6 +408,15 @@ describe('url matching', () => {
 				it('origin relative url matches fully qualified url', () => {
 					const route = new Route({ url: '/image.jpg', response: 200 });
 					expect(route.matcher({ url: `${origin}/image.jpg` })).toBe(true);
+				});
+
+				it('match host: keyword', () => {
+					const route = new Route({
+						url: 'host:a.com',
+						response: 200,
+					});
+
+					expect(route.matcher({ url: '/path' })).toBe(true);
 				});
 			});
 		});

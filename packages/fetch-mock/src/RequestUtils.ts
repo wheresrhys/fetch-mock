@@ -125,6 +125,15 @@ export function getPath(url: string): string {
 	return u.pathname;
 }
 
+export function getHost(url: string): string | null {
+	if (absoluteUrlRX.test(url)) {
+		return new URL(url).host;
+	} else if ('location' in globalThis) {
+		return globalThis.location.host;
+	}
+	return null;
+}
+
 export function getQuery(url: string): string {
 	const u = absoluteUrlRX.test(url)
 		? new URL(url)

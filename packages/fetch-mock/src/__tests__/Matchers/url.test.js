@@ -39,6 +39,18 @@ describe('url matching', () => {
 		expect(route.matcher({ url: 'http://a.com/paths' })).toBe(true);
 	});
 
+	it('match host: keyword', () => {
+		const route = new Route({
+			url: 'host:a.b.com',
+			response: 200,
+		});
+
+		expect(route.matcher({ url: 'http://b.com/path' })).toBe(false);
+		expect(route.matcher({ url: 'http://a.com/path' })).toBe(false);
+		expect(route.matcher({ url: 'http://a.b.com/path' })).toBe(true);
+		expect(route.matcher({ url: 'https://a.b.com/path' })).toBe(true);
+	});
+
 	it('match end: keyword', () => {
 		const route = new Route({ url: 'end:com/path', response: 200 });
 		expect(route.matcher({ url: 'http://a.com/paths' })).toBe(false);
@@ -332,12 +344,22 @@ describe('url matching', () => {
 						});
 						expect(route.matcher({ url: 'image.jpg' })).toBe(true);
 					});
+
+					it('not match host: keyword', () => {
+						const route = new Route({
+							url: 'host:a.com',
+							response: 200,
+						});
+
+						expect(route.matcher({ url: '/path' })).toBe(false);
+					});
 				});
 			}
 
 			describe('when in browser environment', () => {
 				let location;
 				let origin;
+				let host;
 				beforeAll(() => {
 					if (!isBrowser) {
 						const dom = new JSDOM(``, {
@@ -347,6 +369,7 @@ describe('url matching', () => {
 					}
 					location = globalThis.location.href;
 					origin = globalThis.location.origin;
+					host = globalThis.location.host;
 				});
 				afterAll(() => {
 					if (!isBrowser) {
@@ -387,6 +410,15 @@ describe('url matching', () => {
 				it('origin relative url matches fully qualified url', () => {
 					const route = new Route({ url: '/image.jpg', response: 200 });
 					expect(route.matcher({ url: `${origin}/image.jpg` })).toBe(true);
+				});
+
+				it('match host: keyword', () => {
+					const route = new Route({
+						url: `host:${host}`,
+						response: 200,
+					});
+
+					expect(route.matcher({ url: '/path' })).toBe(true);
 				});
 			});
 		});

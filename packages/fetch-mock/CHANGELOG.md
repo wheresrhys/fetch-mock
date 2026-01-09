@@ -1,5 +1,17 @@
 # Changelog
 
+## [12.6.0](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v12.5.6...fetch-mock-v12.6.0) (2025-10-29)
+
+
+### Features
+
+* implement host: matcher ([2b0a43d](https://github.com/wheresrhys/fetch-mock/commit/2b0a43d5857ff81dd97117c7ef150d4c3dcd3041))
+
+
+### Documentation Changes
+
+* document new host matcher ([6205357](https://github.com/wheresrhys/fetch-mock/commit/62053579df9aff2a2b6a0b296db26d35568c3a43))
+
 ## [12.5.6](https://github.com/wheresrhys/fetch-mock/compare/fetch-mock-v12.5.5...fetch-mock-v12.5.6) (2025-10-27)
 
 

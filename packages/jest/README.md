@@ -22,5 +22,5 @@ See the [project website](https://www.wheresrhys.co.uk/fetch-mock/docs/wrappers/
 
 ## License
 
-@fetch-mock/vitest is licensed under the [MIT](https://github.com/wheresrhys/fetch-mock/blob/master/LICENSE) license.
+@fetch-mock/jest is licensed under the [MIT](https://github.com/wheresrhys/fetch-mock/blob/master/LICENSE) license.
 Copyright © 2024, Rhys Evans

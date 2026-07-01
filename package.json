@@ -50,6 +50,7 @@
 		"@types/events": "^3.0.3",
 		"@types/node": "^20.14.10",
 		"@vitest/browser": "^4.0.0",
+		"@vitest/browser-playwright": "^4.1.9",
 		"@vitest/coverage-istanbul": "^4.0.0",
 		"@vitest/coverage-v8": "^4.0.0",
 		"@vitest/ui": "^4.0.0",

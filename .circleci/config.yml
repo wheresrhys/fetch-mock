@@ -6,9 +6,6 @@ references:
       tags:
         only: /.*/
 
-  node18: &node18
-    docker:
-      - image: cimg/node:18.11
   nodelts: &nodelts
     docker:
       - image: cimg/node:lts
@@ -76,11 +73,6 @@ jobs:
       - run: npm run test:ci
       - store_test_results:
           path: test-results
-  test-node18:
-    <<: *node18
-    steps:
-      - *workspace
-      - run: npm run test:ci
   test-browser:
     <<: *browsers
     steps:
@@ -135,9 +127,6 @@ workflows:
       - test-browser:
           <<: *triggerable-by-tag
           <<: *after-build-test-lint
-      - test-node18:
-          <<: *triggerable-by-tag
-          <<: *after-build-test-lint
       - test-jest:
           <<: *triggerable-by-tag
           <<: *after-build-test-lint
@@ -146,7 +135,6 @@ workflows:
           <<: *after-build-lint
       - publish:
           requires:
-            - test-node18
             - test-browser
             - test-jest
             - build

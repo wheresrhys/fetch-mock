@@ -7,13 +7,7 @@ import type {
 import type { SyncExpectationResult } from 'expect';
 
 export type HumanVerbs =
-	| 'Got'
-	| 'Posted'
-	| 'Put'
-	| 'Deleted'
-	| 'FetchedHead'
-	| 'Patched'
-	| 'Fetched';
+	'Got' | 'Posted' | 'Put' | 'Deleted' | 'FetchedHead' | 'Patched' | 'Fetched';
 
 /**
  * Verify that a particular call for the HTTP method implied in the function name
@@ -105,7 +99,4 @@ export type RawFetchMockMatchers = {
 };
 
 export type HumanVerbMethodNames<M extends HumanVerbs> =
-	| `toHave${M}`
-	| `toHaveLast${M}`
-	| `toHave${M}Times`
-	| `toHaveNth${M}`;
+	`toHave${M}` | `toHaveLast${M}` | `toHave${M}Times` | `toHaveNth${M}`;

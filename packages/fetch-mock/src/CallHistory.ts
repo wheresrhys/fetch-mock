@@ -10,11 +10,7 @@ import type { FetchMockConfig } from './FetchMock.js';
 export type Matched = 'matched';
 export type Unmatched = 'unmatched';
 export type CallHistoryFilter =
-	| RouteName
-	| Matched
-	| Unmatched
-	| boolean
-	| RouteMatcher;
+	RouteName | Matched | Unmatched | boolean | RouteMatcher;
 export type CallLog = {
 	args: unknown[];
 	url: string;

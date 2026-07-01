@@ -16,11 +16,7 @@ import { hasCredentialsInUrl } from './RequestUtils.js';
 import type { CallLog } from './CallHistory.js';
 
 export type ResponseConfigProp =
-	| 'body'
-	| 'headers'
-	| 'throws'
-	| 'status'
-	| 'redirectUrl';
+	'body' | 'headers' | 'throws' | 'status' | 'redirectUrl';
 export type RemoveRouteOptions = {
 	includeSticky?: boolean;
 	includeFallback?: boolean;

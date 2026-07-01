@@ -34,7 +34,7 @@
 		"test": "vitest . --ui --exclude=packages/jest/src/__tests__/*",
 		"test:ci": "vitest . --typecheck --reporter=junit --outputFile=test-results/junit.xml --coverage.provider=istanbul --exclude=packages/jest/src/__tests__/*",
 		"test:jest": "node --experimental-vm-modules node_modules/jest/bin/jest.js packages/jest/src/__tests__/*.spec.?s",
-		"test:browser": "vitest . --browser.enabled --browser.name chromium --browser.provider playwright --exclude=packages/{jest,codemods}/src/__tests__/*",
+		"test:browser": "vitest . --config vitest.browser.config.js",
 		"coverage:send": "cat ./coverage/lcov.info | coveralls",
 		"compat:module": "npm run compat:module -w import-compat"
 	},
@@ -49,10 +49,11 @@
 		"@types/eslint__js": "^8.42.3",
 		"@types/events": "^3.0.3",
 		"@types/node": "^20.14.10",
-		"@vitest/browser": "3.1.0",
-		"@vitest/coverage-istanbul": "3.1.0",
-		"@vitest/coverage-v8": "3.1.0",
-		"@vitest/ui": "^3.0.0",
+		"@vitest/browser": "^4.0.0",
+		"@vitest/browser-playwright": "^4.1.9",
+		"@vitest/coverage-istanbul": "^4.0.0",
+		"@vitest/coverage-v8": "^4.0.0",
+		"@vitest/ui": "^4.0.0",
 		"eslint": "9.14.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-prettier": "^5.2.1",
@@ -73,7 +74,7 @@
 		"typescript": "^5.5.4",
 		"typescript-eslint": "^8.0.1",
 		"v8": "^0.1.0",
-		"vitest": "3.1.0",
+		"vitest": "^4.0.0",
 		"webdriverio": "^9.12.2"
 	},
 	"volta": {

@@ -8,9 +8,9 @@ export default defineConfig({
 			provider: playwright(),
 			instances: [{ browser: 'chromium' }],
 		},
-		exclude: [
-			'packages/jest/src/__tests__/**',
-			'packages/codemods/src/__tests__/**',
+		include: [
+			'packages/vitest/src/__tests__/**',
+			'packages/fetch-mock/src/__tests__/**',
 		],
 	},
 });

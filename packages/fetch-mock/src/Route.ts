@@ -78,18 +78,13 @@ export type ResponseInitUsingHeaders = {
 };
 export type RouteResponseObjectData = RouteResponseConfig | object;
 export type RouteResponseData =
-	| Response
-	| number
-	| string
-	| RouteResponseObjectData;
+	Response | number | string | RouteResponseObjectData;
 export type RouteResponsePromise = Promise<RouteResponseData>;
 export type RouteResponseFunction = (
 	arg0: CallLog,
 ) => RouteResponseData | RouteResponsePromise;
 export type RouteResponse =
-	| RouteResponseData
-	| RouteResponsePromise
-	| RouteResponseFunction;
+	RouteResponseData | RouteResponsePromise | RouteResponseFunction;
 export type RouteName = string;
 
 function isBodyInit(body: BodyInit | object): body is BodyInit {

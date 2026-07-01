@@ -11,8 +11,7 @@ interface DerivedRequestOptions {
 }
 
 export type NormalizedRequestOptions =
-	| RequestInit
-	| (RequestInit & DerivedRequestOptions);
+	RequestInit | (RequestInit & DerivedRequestOptions);
 
 export function hasCredentialsInUrl(url: string): boolean {
 	const urlObject = new URL(

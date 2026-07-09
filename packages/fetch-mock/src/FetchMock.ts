@@ -134,7 +134,11 @@ export class FetchMock {
 		response?: RouteResponse,
 		options?: UserRouteConfig | RouteConfigWrapper | string,
 	): FetchMock {
-		this.router.addRoute(matcher, response, options);
+		this.router.addRoute(
+			matcher as RouteMatcher | UserRouteConfig | RouteConfigWrapper,
+			response,
+			options,
+		);
 		return this;
 	}
 
@@ -205,22 +209,22 @@ export class FetchMock {
 		return this.spy();
 	}
 
-	sticky = defineShorthand({ sticky: true });
-	once = defineShorthand({ repeat: 1 });
-	any = defineGreedyShorthand({});
-	anyOnce = defineGreedyShorthand({ repeat: 1 });
-	get = defineShorthand({ method: 'get' });
-	getOnce = defineShorthand({ method: 'get', repeat: 1 });
-	post = defineShorthand({ method: 'post' });
-	postOnce = defineShorthand({ method: 'post', repeat: 1 });
-	put = defineShorthand({ method: 'put' });
-	putOnce = defineShorthand({ method: 'put', repeat: 1 });
-	delete = defineShorthand({ method: 'delete' });
-	deleteOnce = defineShorthand({ method: 'delete', repeat: 1 });
-	head = defineShorthand({ method: 'head' });
-	headOnce = defineShorthand({ method: 'head', repeat: 1 });
-	patch = defineShorthand({ method: 'patch' });
-	patchOnce = defineShorthand({ method: 'patch', repeat: 1 });
+	sticky = defineShorthand.call(this, { sticky: true });
+	once = defineShorthand.call(this, { repeat: 1 });
+	any = defineGreedyShorthand.call(this);
+	anyOnce = defineGreedyShorthand.call(this, { repeat: 1 });
+	get = defineShorthand.call(this, { method: 'get' });
+	getOnce = defineShorthand.call(this, { method: 'get', repeat: 1 });
+	post = defineShorthand.call(this, { method: 'post' });
+	postOnce = defineShorthand.call(this, { method: 'post', repeat: 1 });
+	put = defineShorthand.call(this, { method: 'put' });
+	putOnce = defineShorthand.call(this, { method: 'put', repeat: 1 });
+	delete = defineShorthand.call(this, { method: 'delete' });
+	deleteOnce = defineShorthand.call(this, { method: 'delete', repeat: 1 });
+	head = defineShorthand.call(this, { method: 'head' });
+	headOnce = defineShorthand.call(this, { method: 'head', repeat: 1 });
+	patch = defineShorthand.call(this, { method: 'patch' });
+	patchOnce = defineShorthand.call(this, { method: 'patch', repeat: 1 });
 }
 
 const fetchMock = new FetchMock({

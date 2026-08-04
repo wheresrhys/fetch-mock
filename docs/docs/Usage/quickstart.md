@@ -84,7 +84,7 @@ import fetchMock from 'fetch-mock';
 
 // Mock the fetch() global to return a response
 fetchMock.mockGlobal().get(
-	'http://httpbin.org/my-url',
+	'http://example.com/my-url',
 	{ hello: 'world' },
 	{
 		delay: 1000, // fake a slow network
